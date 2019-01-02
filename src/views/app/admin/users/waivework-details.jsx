@@ -12,6 +12,7 @@ class WaiveWorkDetails extends Component {
       lastMonth: 0,
       lastWeek: 0,
       yesterday: 0,
+      carSearch: '',
     };
   }
 
@@ -31,12 +32,17 @@ class WaiveWorkDetails extends Component {
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
           this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
-            api.get(`/cars/${bookings[0].car.id}/history?start=${bookings[0].createdAt}`, (err, history) => {
-              if (err) {
-                return console.log(err);
-              }
-              console.log('car history: ', history);
-            });
+            api.get(
+              `/cars/${bookings[0].car.id}/history?start=${
+                bookings[0].createdAt
+              }`,
+              (err, history) => {
+                if (err) {
+                  return console.log(err);
+                }
+                console.log('car history: ', history);
+              },
+            );
           });
         }
       },
@@ -51,7 +57,7 @@ class WaiveWorkDetails extends Component {
       lastWeek,
       yesterday,
     } = this.state;
-    console.log('booking: ', currentWaiveWorkBooking);
+    //console.log('booking: ', currentWaiveWorkBooking);
     // TODO: Add conversion from km to miles
     return (
       <div className="box">
@@ -62,7 +68,7 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {this.state.currentWaiveWorkBooking ? (
             <div>
-              Current WaiveWork Booking{' '}
+              Current WaiveWork Booking:{' '}
               <Link to={`/bookings/${currentWaiveWorkBooking.id}`}>
                 {currentWaiveWorkBooking.id}
               </Link>{' '}
@@ -113,7 +119,23 @@ class WaiveWorkDetails extends Component {
               </div>
             </div>
           ) : (
-            <div>Not currently booked into a WaiveWork vehicle</div>
+            <div>
+              Not currently booked into a WaiveWork vehicle
+              <div className="row" style={{marginTop: '4px'}}>
+                <input
+                  onChange={(e) => this.setState({carSearch: e.target.value}, () => console.log(this.state.carSearch))}
+                  value={this.state.carSearch}
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  className="col-xs-6"
+                  placeholder="Name or ID"
+                />
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => console.log('clicked')}>
+                  Find Car
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
