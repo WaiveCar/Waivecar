@@ -49,6 +49,15 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  carSearch() {
+    api.get(`/cars/search/?search=${this.state.carSearch}`, (err, response) => {
+      if (err) {
+        return console.log('error searching for cars', err.message);
+      }
+      console.log('response: ', response);
+    });
+  }
+
   render() {
     let {
       currentWaiveWorkBooking,
@@ -123,15 +132,15 @@ class WaiveWorkDetails extends Component {
               Not currently booked into a WaiveWork vehicle
               <div className="row" style={{marginTop: '4px'}}>
                 <input
-                  onChange={(e) => this.setState({carSearch: e.target.value}, () => console.log(this.state.carSearch))}
+                  onChange={(e) => this.setState({carSearch: e.target.value})}
                   value={this.state.carSearch}
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}
                   className="col-xs-6"
-                  placeholder="Name or ID"
+                  placeholder="Car Number"
                 />
                 <button
                   className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => console.log('clicked')}>
+                  onClick={() => this.carSearch()}>
                   Find Car
                 </button>
               </div>
