@@ -1388,11 +1388,14 @@ module.exports = {
   },
 
   *search(query) {
-    console.log('searc', query.search)
+    console.log('search', query.search)
     let cars = yield Car.find({
       where: {
         license: {
-          $like: `%${query.search}`,
+          $and: [{$like: 'work%'}, {$like: `%${query.search}`}]
+          /*
+          $like: [`%${query.search}`, 'work%'],
+          */
         }
       }
     });
