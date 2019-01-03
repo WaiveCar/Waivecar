@@ -13,6 +13,7 @@ class WaiveWorkDetails extends Component {
       lastWeek: 0,
       yesterday: 0,
       carSearch: '',
+      searchResults: [],
     };
   }
 
@@ -54,7 +55,7 @@ class WaiveWorkDetails extends Component {
       if (err) {
         return console.log('error searching for cars', err.message);
       }
-      console.log('response: ', response);
+      this.setState({searchResults: response}, () => console.log('results: ', this.state.searchResults));
     });
   }
 
@@ -65,6 +66,7 @@ class WaiveWorkDetails extends Component {
       lastMonth,
       lastWeek,
       yesterday,
+      searchResults,
     } = this.state;
     //console.log('booking: ', currentWaiveWorkBooking);
     // TODO: Add conversion from km to miles
@@ -144,6 +146,15 @@ class WaiveWorkDetails extends Component {
                   Find Car
                 </button>
               </div>
+              {
+                searchResults && searchResults.map((item, i) => {
+                  return (
+                    <div key={i}>
+                      {item.license}
+                    </div>
+                  )
+                })
+              }
             </div>
           )}
         </div>
