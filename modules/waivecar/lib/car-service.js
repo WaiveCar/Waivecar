@@ -1388,6 +1388,14 @@ module.exports = {
   },
 
   *search(query) {
-    return query;
+    console.log('searc', query.search)
+    let cars = yield Car.find({
+      where: {
+        license: {
+          $like: `%${query.search}`,
+        }
+      }
+    });
+    return cars;
   }
 };

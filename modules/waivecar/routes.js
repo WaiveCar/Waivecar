@@ -50,6 +50,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
+Route.get('/cars/search',       [ 'isAuthenticated', 'CarsController@search' ]);
 Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);
 Route.put('/magic/:command',    [ 'isAuthenticated', 'isAdmin', 'CarsController@magic' ]);
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);
@@ -60,7 +61,6 @@ Route.get('/cars/:id/bookings', [ 'isAuthenticated', 'CarsController@bookings' ]
 Route.get('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
-Route.get('cars/search',        [ 'isAuthenticated', 'CarsController@search' ]);
 
 // ### Locations
 
