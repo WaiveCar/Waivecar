@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api} from 'bento';
+import {snackbar} from 'bento-web';
 import moment from 'moment';
 
 class WaiveWorkDetails extends Component {
@@ -29,7 +30,10 @@ class WaiveWorkDetails extends Component {
       },
       (err, bookings) => {
         if (err) {
-          return console.log(err);
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
           this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
@@ -39,7 +43,10 @@ class WaiveWorkDetails extends Component {
               }`,
               (err, history) => {
                 if (err) {
-                  return console.log(err);
+                  return snackbar.notify({
+                    type: 'danger',
+                    message: err.message,
+                  });
                 }
                 console.log('car history: ', history);
               },
@@ -53,12 +60,17 @@ class WaiveWorkDetails extends Component {
   carSearch() {
     api.get(`/cars/search/?search=${this.state.carSearch}`, (err, response) => {
       if (err) {
-        return console.log('error searching for cars', err.message);
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
       }
-      this.setState({searchResults: response}, () =>
-        console.log('results: ', this.state.searchResults),
-      );
+      this.setState({searchResults: response});
     });
+  }
+
+  book(id) {
+    console.log('booking: ', id);
   }
 
   render() {
@@ -157,7 +169,7 @@ class WaiveWorkDetails extends Component {
                       </div>
                       <button
                         className="btn btn-link col-xs-6"
-                        onClick={() => console.log('cliiiiiickkk')}>
+                        onClick={() => this.book(item.id)}>
                         Book Now
                       </button>
                     </div>
