@@ -55,7 +55,9 @@ class WaiveWorkDetails extends Component {
       if (err) {
         return console.log('error searching for cars', err.message);
       }
-      this.setState({searchResults: response}, () => console.log('results: ', this.state.searchResults));
+      this.setState({searchResults: response}, () =>
+        console.log('results: ', this.state.searchResults),
+      );
     });
   }
 
@@ -134,7 +136,7 @@ class WaiveWorkDetails extends Component {
               Not currently booked into a WaiveWork vehicle
               <div className="row" style={{marginTop: '4px'}}>
                 <input
-                  onChange={(e) => this.setState({carSearch: e.target.value})}
+                  onChange={e => this.setState({carSearch: e.target.value})}
                   value={this.state.carSearch}
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}
                   className="col-xs-6"
@@ -146,15 +148,21 @@ class WaiveWorkDetails extends Component {
                   Find Car
                 </button>
               </div>
-              {
-                searchResults && searchResults.map((item, i) => {
+              {searchResults &&
+                searchResults.map((item, i) => {
                   return (
-                    <div key={i}>
-                      {item.license}
+                    <div key={i} className="row">
+                      <div style={{padding: '10px 0'}} className="col-xs-6">
+                        {item.license}
+                      </div>
+                      <button
+                        className="btn btn-link col-xs-6"
+                        onClick={() => console.log('cliiiiiickkk')}>
+                        Book Now
+                      </button>
                     </div>
-                  )
-                })
-              }
+                  );
+                })}
             </div>
           )}
         </div>
