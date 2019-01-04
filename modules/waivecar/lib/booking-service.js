@@ -71,8 +71,8 @@ module.exports = class BookingService extends Service {
   static secretGenerate(booking) {
     var encoder = require('int-encoder');
     let hash = md5([config.secret, booking.id].join(''));
-    return encoder.encode(hash, 16).slice(0, 10) + encoder.encode(booking.id);
-  },
+    return [encoder.encode(hash, 16).slice(0, 10), encoder.encode(booking.id)].join('');
+  }
 
   static secretDecode(attempt) {
     var encoder = require('int-encoder');
@@ -81,7 +81,7 @@ module.exports = class BookingService extends Service {
     if(attempt.slice(0, 10) === encoder.encode(hash, 16).slice(0, 10)) {
       return bookingId;
     }
-  },
+  }
 
   static *updateState(state, _user, driver) {
     yield driver.update({state: state});
