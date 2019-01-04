@@ -66,6 +66,10 @@ module.exports = class OrderService extends Service {
       data.description = "Clearing outstanding balance";
     }
 
+    if(!data.description) {
+      data.description = "Miscellaneous " + (data.amount > 0 ? "Fees" : "Credit");
+    }
+
     if(!_user) {
       _user = {id: 0, name: function() { return "The Computer"; }};
     }
@@ -85,9 +89,9 @@ module.exports = class OrderService extends Service {
       // The order here matters.  If a charge fails then only the failed charge will appear
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
       if(data.amount > 0) {
-        yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
+        yield UserLog.addUserEvent(user, 'FEE', order.id, `$${(data.amount/100).toFixed(2)} ${data.description}`);
       } else {
-        yield UserLog.addUserEvent(user, 'CREDIT', order.id, data.description);
+        yield UserLog.addUserEvent(user, 'CREDIT', order.id, `$${(data.amount/100).toFixed(2)} ${data.description}`);
       }
     } catch (ex) {
       log.info(`Couldn't log the user event for an order!`);
@@ -389,7 +393,7 @@ module.exports = class OrderService extends Service {
       billableGroups = Math.ceil(minutesOver / 10);
       if(!booking.isFlagged('rush')) {
         amount = Math.round((billableGroups / 6 * 5.99) * 100);
-        description = `${ minutesOver }min overage booking ${ booking.id }`;
+        description = `${ minutesOver }min more booking ${ booking.id }`;
       } else {
         amount = 1499;
 
@@ -1096,7 +1100,7 @@ module.exports = class OrderService extends Service {
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
       if (word === 'Charges' && !opts.isTopUp) {
-        opts.subject = opts.subject || `$${ item.total } charges on your account`;
+        opts.subject = opts.subject || `$${ item.total } charged to your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
           to       : user.email,
