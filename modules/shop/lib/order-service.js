@@ -68,7 +68,7 @@ module.exports = class OrderService extends Service {
     }
 
     if(!data.description) {
-      data.description = "Miscellaneous " + (data.amount > 0 ? "Fees" : "Credit");
+      data.description = "Miscellaneous " + (data.amount > 0 ? "Fee" : "Credit");
     }
 
     if(!_user) {
@@ -800,6 +800,13 @@ module.exports = class OrderService extends Service {
 
     opts = opts || {};
 
+    // From the API, no credit can come in from the order field.
+    // Whatever the opts have we should respect if set before
+    // bludgeoning it.
+    if(!('nocredit' in opts)) {
+      opts.nocredit = order.nocredit;
+    }
+
     //
     // We need to make sure that we have up to date information on this user.
     //
@@ -841,7 +848,7 @@ module.exports = class OrderService extends Service {
     if(opts.dry) {
       return charge;
     }
-    console.log(order, credit, charge);
+    console.log(opts, order, credit, charge);
 
     if (order.amount >= 0 && credit < order.amount) {
       try {
