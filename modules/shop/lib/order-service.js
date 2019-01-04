@@ -59,8 +59,9 @@ module.exports = class OrderService extends Service {
       }, 400);
     }
       
-    data.currency = data.currency || 'usd';
-    this.verifyCurrency(data.currency);
+    data.currency = 'usd';
+    //data.currency || 'usd';
+    //this.verifyCurrency(data.currency);
 
     if(data.amount === 0) {
       data.description = "Clearing outstanding balance";
@@ -106,7 +107,11 @@ module.exports = class OrderService extends Service {
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
-        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
+        let addendum = user.getCredit();
+        if(opts.nocredit) {
+          addendum += " (credit not used)";
+        }
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }. ${ addendum }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else if(data.amount < 0) {
         yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
@@ -831,6 +836,13 @@ module.exports = class OrderService extends Service {
     //
     // We also use this routine to credit the users account so the bottom
     // condition has to be in there.
+    let amountToCharge = order.amount - credit;
+    charge.amount = amountToCharge;
+    if(opts.dry) {
+      return charge;
+    }
+    console.log(order, credit, charge);
+
     if (order.amount >= 0 && credit < order.amount) {
       try {
         let service = this.getService(config.service, 'charges');
@@ -845,11 +857,6 @@ module.exports = class OrderService extends Service {
         //
         // If the user has a credit of $2 and the fee is $4 
         // Then 4 - 2 = 2 ... we charge them $2.
-        let amountToCharge = order.amount - credit;
-        charge.amount = amountToCharge;
-        if(opts.dry) {
-          return charge;
-        }
 
         // Stripe will sensibly tell us to jump in a lake if the amount to
         // charge is under a dollar. If this is the case we don't bother.
