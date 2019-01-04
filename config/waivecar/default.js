@@ -11,6 +11,8 @@ module.exports = {
    */
 
   waivecar : {
+    secret: 'thVMHMagRGKSDWkRyAhKVw',
+
     booking : {
       parityCheckTimeWindow: 300,
       timers : {
