@@ -1109,6 +1109,7 @@ module.exports = {
     }
     let bookingService = require('./booking-service');
 
+    console.log(car, car.bookingId,  car.userId);
     yield bookingService.end(car.bookingId, _user, {}, {}); 
     yield bookingService.complete(car.bookingId, _user, {}, {}); 
 
