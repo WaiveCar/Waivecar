@@ -41,7 +41,9 @@ module.exports = class OrderService extends Service {
   static *quickCharge(data, _user, opts) {
     let user = yield this.getUser(data.userId);
     let charge = {amount: data.amount};
-    opts = opts || {};
+    // Since we don't have two objects coming in from the api level we
+    // are kinda messy here ... ideally it should be fixed but oh well.
+    opts = opts || data;
 
     if (
       !opts.overrideAdminCheck && 
