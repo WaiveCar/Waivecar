@@ -68,7 +68,6 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /*
   static secretGenerate(booking) {
     var encoder = require('int-encoder');
     let hash = md5([config.secret, booking.id].join(''));
@@ -83,7 +82,6 @@ module.exports = class BookingService extends Service {
       return bookingId;
     }
   },
-  */
 
   static *updateState(state, _user, driver) {
     yield driver.update({state: state});
