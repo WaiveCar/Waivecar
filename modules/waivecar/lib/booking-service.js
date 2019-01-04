@@ -16,7 +16,6 @@ let relay        = Bento.Relay;
 let error        = Bento.Error;
 let log          = Bento.Log;
 let config       = Bento.config.waivecar;
-let apiConfig    = Bento.config.api;
 let OrderService = Bento.module('shop/lib/order-service');
 let UserLog      = require('../../log/lib/log-service');
 let LogService   = require('./log-service');
@@ -46,6 +45,8 @@ let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
 let locationCache = false;
 
+let md5     = require('md5');
+
 module.exports = class BookingService extends Service {
 
   /*
@@ -66,6 +67,21 @@ module.exports = class BookingService extends Service {
    |  of X minutes.
    |
    */
+
+  static secretGenerate(booking) {
+    var encoder = require('int-encoder');
+    let hash = md5([config.secret, booking.id].join(''));
+    return encoder.encode(hash, 16).slice(0, 10) + encoder.encode(booking.id);
+  },
+
+  static secretDecode(attempt) {
+    var encoder = require('int-encoder');
+    let bookingId = encoder.decode(attempt.slice(10));
+    let hash = md5([config.secret, bookingId].join(''));
+    if(attempt.slice(0, 10) === encoder.encode(hash, 16).slice(0, 10)) {
+      return bookingId;
+    }
+  },
 
   static *updateState(state, _user, driver) {
     yield driver.update({state: state});
@@ -1481,8 +1497,8 @@ module.exports = class BookingService extends Service {
     }
     try { 
       if (!isLevel) { 
-        yield cars.lockCar(car.id, _user);
         yield cars.lockImmobilizer(car.id, _user);
+        yield cars.lockCar(car.id, _user);
         // This was causing problems ... I'd rather have booking ending having issues
         // then cars being idle and unlocked
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
