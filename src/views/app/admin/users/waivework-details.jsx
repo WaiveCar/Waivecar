@@ -17,7 +17,6 @@ class WaiveWorkDetails extends Component {
       carSearch: '',
       searchResults: [],
     };
-    this.service = new Service(this);
   }
 
   componentDidMount() {
@@ -73,15 +72,35 @@ class WaiveWorkDetails extends Component {
 
   book(carId) {
     let data = {source: 'web', userId: this.props.user.id, carId};
-    console.log('source: ', data);
-    api.post('/bookings', data, (err, user) => {
+    api.post('/bookings', data, (err, booking) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
           message: err.message,
         });
       }
-      this.service.setCar(carId);
+      api.put(`/bookings/${booking.id}/ready`, {}, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        api.get(`/bookings/${booking.id}`, (err, bookingWithDetails) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: err.message,
+            });
+          }
+          this.setState({currentWaiveWorkBooking: bookingWithDetails}, () => {
+            return snackbar.notify({
+              type: 'success',
+              message: `User booked into ${bookingWithDetails.car.license} for WaiveWork`,
+            });
+          });
+        });
+      });
     });
   }
 
