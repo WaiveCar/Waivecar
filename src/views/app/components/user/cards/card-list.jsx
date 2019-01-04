@@ -24,10 +24,8 @@ class CardList extends React.Component {
     this.shop = new Shop(this);
   }
 
-  /**
-   * Sets up the profile with its stripe data and hides the default
-   * application view header.
-   */
+  // Sets up the profile with its stripe data and hides the default
+  // application view header.
   componentDidMount() {
     this.shop.ensureCustomer(this.props.user);
     this.shop.setCards(this.props.user.id);
@@ -100,7 +98,7 @@ class CardList extends React.Component {
     let name = [who.firstName, who.lastName].join(' '),
       warn = '';
 
-    if(opts.bypass) {
+    if(opts.nocredit) {
       warn = '\n\nThis bypasses any credit they may have.\n';
     }
     let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + "." + warn + "\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
@@ -207,8 +205,8 @@ class CardList extends React.Component {
         { 
           auth.user().hasAccess('admin') ? 
             <span>
-              <a onClick={ this.chargeUser.bind(this, this.props.user, cards, {bypass: 1}) } className='btn btn-link btn-sm'>Bypass Charge</a> 
-              <button onClick={ this.chargeUser.bind(this, this.props.user, cards, {bypass: 0}) } className='btn btn-link btn-sm'>Charge User</button> 
+              <a onClick={ this.chargeUser.bind(this, this.props.user, cards, {nocredit: true}) } className='btn btn-link btn-sm'>Bypass Charge</a> 
+              <button onClick={ this.chargeUser.bind(this, this.props.user, cards, {}) } className='btn btn-link btn-sm'>Charge User</button> 
             </span>
             : '' 
         }
