@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import moment from 'moment';
+import Service from '../../lib/car-service';
 
 class WaiveWorkDetails extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class WaiveWorkDetails extends Component {
       carSearch: '',
       searchResults: [],
     };
+    this.service = new Service(this);
   }
 
   componentDidMount() {
@@ -69,8 +71,18 @@ class WaiveWorkDetails extends Component {
     });
   }
 
-  book(id) {
-    console.log('booking: ', id);
+  book(carId) {
+    let data = {source: 'web', userId: this.props.user.id, carId};
+    console.log('source: ', data);
+    api.post('/bookings', data, (err, user) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.service.setCar(carId);
+    });
   }
 
   render() {
