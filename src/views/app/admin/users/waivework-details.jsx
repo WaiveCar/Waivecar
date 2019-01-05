@@ -76,7 +76,7 @@ class WaiveWorkDetails extends Component {
       source: 'web',
       userId: this.props.user.id,
       carId,
-      isWaiveWork: true,
+      isWaivework: true,
       perMonth: this.state.perMonth,
     };
     api.post('/bookings', data, (err, booking) => {
