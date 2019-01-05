@@ -390,6 +390,9 @@ module.exports = class BookingService extends Service {
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     yield redis.doneWithIt(lockKeys);
+    if (data.isWaiveWork) {
+      yield this.ready(booking.id, _user);
+    }
     return booking;
   }
 
