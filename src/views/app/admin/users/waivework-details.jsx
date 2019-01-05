@@ -16,6 +16,7 @@ class WaiveWorkDetails extends Component {
       yesterday: 0,
       carSearch: '',
       searchResults: [],
+      perMonth: null,
     };
   }
 
@@ -71,7 +72,13 @@ class WaiveWorkDetails extends Component {
   }
 
   book(carId) {
-    let data = {source: 'web', userId: this.props.user.id, carId};
+    let data = {
+      source: 'web',
+      userId: this.props.user.id,
+      carId,
+      isWaiveWork: true,
+      perMonth: this.state.perMonth,
+    };
     api.post('/bookings', data, (err, booking) => {
       if (err) {
         return snackbar.notify({
@@ -96,7 +103,9 @@ class WaiveWorkDetails extends Component {
           this.setState({currentWaiveWorkBooking: bookingWithDetails}, () => {
             return snackbar.notify({
               type: 'success',
-              message: `User booked into ${bookingWithDetails.car.license} for WaiveWork`,
+              message: `User booked into ${
+                bookingWithDetails.car.license
+              } for WaiveWork`,
             });
           });
         });
@@ -112,6 +121,7 @@ class WaiveWorkDetails extends Component {
       lastWeek,
       yesterday,
       searchResults,
+      perMonth,
     } = this.state;
     //console.log('booking: ', currentWaiveWorkBooking);
     // TODO: Add conversion from km to miles
@@ -191,6 +201,12 @@ class WaiveWorkDetails extends Component {
                   Find Car
                 </button>
               </div>
+              Amount Per Month:
+              <input
+                type="number"
+                value={perMonth}
+                onChange={e => this.setState({perMonth: e.target.value})}
+              />
               {searchResults &&
                 searchResults.map((item, i) => {
                   return (
