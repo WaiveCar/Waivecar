@@ -218,12 +218,12 @@ module.exports = class BookingService extends Service {
 
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
-    if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
+    if (!(isRush || driver.isWaivework || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.rebookCheck(driver, car, data.opts, lockKeys);
     }
     t("rebook-check");
 
-    if(!driver.isWaiveWork) {
+    if(!driver.isWaivework) {
       let hoardRes = yield this.lookForHoarding(driver, car);
       if(hoardRes[0] >= 0.5) {
         yield UserLog.addUserEvent(driver, 'HOARD', hoardRes[0].toFixed(3) );
