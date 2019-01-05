@@ -850,7 +850,6 @@ module.exports = class OrderService extends Service {
     if(opts.dry) {
       return charge;
     }
-    console.log(opts, order, credit, charge);
 
     if (order.amount >= 0 && credit < order.amount) {
       try {
