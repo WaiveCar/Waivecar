@@ -225,7 +225,7 @@ module.exports = class Service {
       }
     }
 
-    if (!user.tested) {
+    if (!user.tested && !user.isWaivework) {
       throw error.parse({
         code    : `USER_READ_RULES`,
         message : `Please read or watch "the rules of the road" in the account section before booking.`
@@ -241,7 +241,7 @@ module.exports = class Service {
       after = '<br/><em>Please note: We no longer accept debit cards.</em>';
     }
 
-    if (!license || !license.isValid()) {
+    if ((!license || !license.isValid()) && !user.isWaivework) {
       missing.push('license');
     }
 
