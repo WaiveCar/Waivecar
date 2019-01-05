@@ -1041,6 +1041,7 @@ module.exports = {
 
     let bookingService = require('./booking-service');
     car = car || (yield Car.findById(id));
+    /*
     let isInSantaMonica = yield bookingService.getZone(car, 'Santa Monica');
     if(isInSantaMonica) {
       let actionService = require('./action-service');
@@ -1053,6 +1054,7 @@ module.exports = {
         }, 400);
       }
     }
+    */
   },
 
   *openDoor(id, _user){
