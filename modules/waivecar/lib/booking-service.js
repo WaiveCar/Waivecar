@@ -287,6 +287,7 @@ module.exports = class BookingService extends Service {
         }, 400));
       }
     }
+    t("second-check");
 
     //
     // --- At this point we better make damn sure that nobody else is
@@ -299,6 +300,7 @@ module.exports = class BookingService extends Service {
       }
     });
     if(currentBookingCheck) {
+      console.log(currentBookingCheck);
       yield bail(error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
