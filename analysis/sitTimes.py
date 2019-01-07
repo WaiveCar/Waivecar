@@ -42,13 +42,14 @@ def get_sit_times():
                     start_time = line[5]
                     try:
                         time_between = start_time - end_time
-                    except:
                         time_between = 0
                    
-                    long_start= round(line[3] * mult) / mult
-                    lat_start = round(line[4] * mult) / mult
-                    if long_start == long_end and lat_start == lat_end:
-                        sit_time += [(round(line[4]*2 * mult)/(2 * mult), round(line[3]*2 * mult)/(2 * mult), time_between.seconds, line[0], line[6])]
+                        long_start= round(line[3] * mult) / mult
+                        lat_start = round(line[4] * mult) / mult
+                        if long_start == long_end and lat_start == lat_end:
+                            sit_time += [(round(line[4]*2 * mult)/(2 * mult), round(line[3]*2 * mult)/(2 * mult), time_between.seconds, line[0], line[6])]
+                    except:
+                        pass
                 i += 1
                 line = cursor.fetchone()
 
