@@ -2099,6 +2099,9 @@ module.exports = class BookingService extends Service {
         }
       });
 
+      // we encoourage the person if they have credit.
+      let goad = user.credit > 1700 ? ` (You have $${(user.credit/100).toFixed(2)} in credit!)` : '';
+
       // this shit app doesn't have this crap fixed because it's such a pain to work with so I fix it here.
       let inject = ['<img style=display:none src=a onerror="if(!window.location.href.search(/basic/)){',
        "this.parentNode.previousSibling.previousSibling.innerHTML='WaiveRush Opportunity!';",
@@ -2109,7 +2112,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : 'WAIVE_RUSH',
         title   : 'WaiveRush Opportunity!',
-        message : `<div style=text-align:left>Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM.\nFind a low car for a normal WaiveCar booking.</small></div>${ inject }`,
+        message : `<div style=text-align:left>Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!${goad}<br><br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM.\nFind a low car for a normal WaiveCar booking.</small></div>${ inject }`,
         options: [{
           title: `WaiveRush for $14.99!`,
           priority: 'prefer',
