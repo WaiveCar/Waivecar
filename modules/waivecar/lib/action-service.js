@@ -40,6 +40,9 @@ function getStep(state) {
 
 function increment(state) {
   let current = getStep(state);
+  if(!current) { 
+    current = 0;
+  }
   current ++;
   state.nextStep = makeState(state, current);
 
