@@ -40,7 +40,10 @@ def get_sit_times():
                     lat_end = round(line[4] * mult) / mult
                 else:
                     start_time = line[5]
-                    time_between = start_time - end_time
+                    try:
+                        time_between = start_time - end_time
+                    except:
+                        time_between = 0
                    
                     long_start= round(line[3] * mult) / mult
                     lat_start = round(line[4] * mult) / mult
