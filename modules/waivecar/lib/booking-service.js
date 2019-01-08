@@ -1322,10 +1322,12 @@ module.exports = class BookingService extends Service {
     // Regardless of the charge we credit them here. This sends out notification for the reason and
     // it will be tallied prior to the charge.
     //
+    // We are doing penny based credit based on fractional miles mostly for marketing.
+    //
     if(deltas.charge > 0) {
       // we err in the user's favor by using the high estimates
-      let miles = Math.floor((deltas.charge / 100) * car.getRange('HIGH'));
-      let credit = Math.round(miles) / 10;
+      let miles = Math.floor(car.getRange() * deltas.charge / 10) / 10;
+      let credit = miles / 10;
       if(credit > 0) {
         yield booking.addFlag('charge');
         yield OrderService.quickCharge({
