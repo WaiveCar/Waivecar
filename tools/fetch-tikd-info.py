@@ -13,7 +13,7 @@ with open('./tikd-sheet.csv', 'r') as f:
         if not len(row[19]):
             issue_time = row[13]
             issue_time = re.sub('\.', ':', issue_time)
-            issue_date = row[14]
+            issue_date = row[15]
             plate_number = row[17]
             date_time = dateparser.parse(issue_time + ' ' + issue_date)
             local = pytz.timezone('America/Los_Angeles')
@@ -86,7 +86,7 @@ with open('./tikd-sheet.csv', 'r') as f:
             item = cursor.fetchone()
 
             if not item:
-                row[19] = 'plate number not found'
+                row[20] = 'plate number not found'
                 print('row not found: ', row, '\n This is probably due to the plate number being missing or wrong in the database')
                 continue
             cursor.execute('select created_at, type from booking_details where booking_id = {} and type="end"'.format(item[0]))
