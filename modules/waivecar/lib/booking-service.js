@@ -390,14 +390,22 @@ module.exports = class BookingService extends Service {
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     yield redis.doneWithIt(lockKeys);
+    console.log('data: ', data);
     if (data.isWaivework) {
+      try {
       yield this.handleWaivework(booking, data, _user);
+      } catch(e) {
+        console.log('error: ', e);
+      }
     }
     return booking;
   }
 
   static *handleWaivework(booking, data, _user) {
     yield this.ready(booking.id, _user);
+    let now = moment();
+    console.log('day of month: ', now.date());
+    let nextDate;
   }
 
   /*
