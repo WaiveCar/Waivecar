@@ -403,9 +403,27 @@ module.exports = class BookingService extends Service {
 
   static *handleWaivework(booking, data, _user) {
     yield this.ready(booking.id, _user);
-    let now = moment();
-    console.log('day of month: ', now.date());
+    let billingDates = [1, 8, 15, 22];
+    let currentDay = moment().date();
     let nextDate;
+    switch(true) {
+      case currentDay === 1:
+        nextDate = 1;
+        break;
+      case currentDay <= 8:
+        nextDate = 8;
+        break;
+      case currentDay <= 15:
+        nextDate = 15;
+        break;
+      case currentDay <= 22:
+        nextDate = 22;
+        break;
+      default: 
+        nextDate = 1;
+        break;
+    }
+    console.log('next date: ', nextDate);
   }
 
   /*
