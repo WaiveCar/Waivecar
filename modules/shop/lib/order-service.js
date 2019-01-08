@@ -400,7 +400,7 @@ module.exports = class OrderService extends Service {
     if (minutesOver !== 0 || booking.isFlagged('rush')) {
       billableGroups = Math.ceil(minutesOver / 10);
       if(!booking.isFlagged('rush')) {
-        let phrase = Math.floor(diff / 60) + "hr " + (diff % 60) + "min in ";
+        let phrase = Math.floor(diff / 60) + "hr " + (diff % 60) + "min";
         amount = Math.round((billableGroups / 6 * 5.99) * 100);
         description = `${ phrase } booking ${ booking.id }`;
       } else {
