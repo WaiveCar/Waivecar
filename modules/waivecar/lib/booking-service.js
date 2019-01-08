@@ -390,7 +390,6 @@ module.exports = class BookingService extends Service {
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     yield redis.doneWithIt(lockKeys);
-    console.log('data: ', data);
     if (data.isWaivework) {
       try {
       yield this.handleWaivework(booking, data, _user);
@@ -402,9 +401,12 @@ module.exports = class BookingService extends Service {
   }
 
   static *handleWaivework(booking, data, _user) {
+    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
+    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
+    // be charged a prorated amount for the amount of time before that date
     yield this.ready(booking.id, _user);
-    let billingDates = [1, 8, 15, 22];
-    let currentDay = moment().date();
+    let today = moment()
+    let currentDay = today.date();
     let nextDate;
     switch(true) {
       case currentDay === 1:
@@ -423,7 +425,17 @@ module.exports = class BookingService extends Service {
         nextDate = 1;
         break;
     }
+    console.log(nextDate - currentDay);
+    let prorating = (nextDate - currentDay) / 7;
+    let proratedChargeAmount = (data.amount * 100) * (prorating > 0 ? prorating : 1); 
+    if (prorating === 0) {
+      nextDate += 7;
+    }
+    // Here, we will need to charge the user the correct amount, create a BookingPayment, create a WaiveworkPayment for 
+    // auto payement
     console.log('next date: ', nextDate);
+    console.log('prorating: ', prorating);
+    console.log('charge Amount: ', proratedChargeAmount);
   }
 
   /*
