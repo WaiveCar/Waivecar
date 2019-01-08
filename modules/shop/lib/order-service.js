@@ -387,10 +387,11 @@ module.exports = class OrderService extends Service {
     let start = yield this.getDetails('start', booking.id);
     let end = yield this.getDetails('end', booking.id);
     let description;
+    let diff = 0;
 
     if (start && end) {
 
-      let diff = moment(end.createdAt).diff(start.createdAt, 'minutes');
+      diff = moment(end.createdAt).diff(start.createdAt, 'minutes');
       if (diff > freeTime) {
         minutesOver = Math.max(diff - freeTime, 0);
       }
