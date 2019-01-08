@@ -120,7 +120,7 @@ module.exports = class OrderService extends Service {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.name() }`;
-        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and
