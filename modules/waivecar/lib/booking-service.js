@@ -148,7 +148,7 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        if(driver.hasAccess('admin')) {
+        if(driver.hasAccess('admin') || _user.isWaivework) {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
         } else {
@@ -209,7 +209,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    if(!_user.hasAccess('admin')) {
+    if(!_user.hasAccess('admin') && !_user.isWaivework) {
       yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
       t("rush-check");
     }
