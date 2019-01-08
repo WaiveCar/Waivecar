@@ -391,9 +391,13 @@ module.exports = class BookingService extends Service {
 
     yield redis.doneWithIt(lockKeys);
     if (data.isWaivework) {
-      yield this.ready(booking.id, _user);
+      yield this.handleWaivework(booking, data, _user);
     }
     return booking;
+  }
+
+  static *handleWaivework(booking, data, _user) {
+    yield this.ready(booking.id, _user);
   }
 
   /*
