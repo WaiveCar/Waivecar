@@ -513,14 +513,14 @@ module.exports = class OrderService extends Service {
     // This creates a list of charges to be injected into the template
     let optionalText = fullAuthorization ? ( 
       `<p>
-        A temporaray $20 hold has been made on your card and is now released. This is done each time 
+        A temporaray $20 hold was made on your card and is now released. This is done each time 
         you use Waive for your first ride in every 2 days. If you would like to reduce the amount 
         of this hold to $1, you can visit our website and add a $20 credit to your account from your 
         profile.
       </p>`
     ) : (
       `<p>
-         A $1 hold has been made on your card and is now released. This is done each time you use 
+         A $1 hold was made on your card and is now released. This is done each time you use 
          Waive for your first ride in every 2 days.    
       </p>`
       );
