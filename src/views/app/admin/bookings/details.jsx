@@ -90,12 +90,12 @@ module.exports = class RideDetails extends React.Component {
                 </div>
                 <div className="ride-from">
                   <img src="/images/map/icon-start.svg" className="ride-icon" />
-                  <div className="ride-time">{ moment(ride.start.createdAt).format('dddd, MMMM Do h:mm A') }</div>
+                  <div className="ride-time">{ moment(ride.start.createdAt).format('MMMM Do h:mm A') }</div>
                   { ride.start.address }
                 </div>
                 <div className="ride-to">
                   <img src="/images/map/icon-end.svg" className="ride-icon" />
-                  <div className="ride-time">{ moment(ride.end.createdAt).format('dddd, MMMM Do h:mm A') }</div>
+                  <div className="ride-time">{ moment(ride.end.createdAt).format('MMMM Do h:mm A') }</div>
                   { ride.end.address }
                 </div>
               </div>
@@ -122,6 +122,10 @@ module.exports = class RideDetails extends React.Component {
                         <strong>{ ride.distance }</strong>
                       </div>
                   }
+                  <div>
+                    <div>Charge Change</div>
+                    <strong>{ride.end.charge - ride.start.charge}%</strong>
+                  </div>
                 </div>
               </div>
             </div>
