@@ -40,6 +40,7 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
+let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
@@ -437,8 +438,20 @@ module.exports = class BookingService extends Service {
     data.description = 'Initial Payment For WaiveWork';
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
-    let workCharge = yield OrderService.quickCharge(data, _user);
-    console.log('workCharge: ', workCharge.body);
+    let workCharge = (yield OrderService.quickCharge(data, _user)).order;
+    let bookingPayment = new BookingPayment({
+      bookingId: booking.id,
+      orderId: workCharge.id,
+    });
+    yield bookingPayment.save();
+
+    let waiveworkPayment = new WaiveworkPayment({
+      bookingId: booking.id,
+      date: moment().add(nextDate - currentDay, 'days'),
+      bookingPaymentId: null,
+      amount: weeklyAmount,
+    }); 
+    yield waiveworkPayment.save();
     /*
     console.log('next date: ', nextDate);
     console.log('prorating: ', prorating);
