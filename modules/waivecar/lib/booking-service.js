@@ -390,6 +390,7 @@ module.exports = class BookingService extends Service {
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     yield redis.doneWithIt(lockKeys);
+
     if (data.isWaivework) {
       try {
       yield this.handleWaivework(booking, data, _user);
@@ -407,6 +408,7 @@ module.exports = class BookingService extends Service {
     yield this.ready(booking.id, _user);
     let today = moment()
     let currentDay = today.date();
+    currentDay = 20
     let nextDate;
     switch(true) {
       case currentDay === 1:
@@ -425,17 +427,22 @@ module.exports = class BookingService extends Service {
         nextDate = 1;
         break;
     }
-    console.log(nextDate - currentDay);
     let prorating = (nextDate - currentDay) / 7;
-    let proratedChargeAmount = (data.amount * 100) * (prorating > 0 ? prorating : 1); 
+    let proratedChargeAmount = (Number(data.amount) * (prorating > 0 ? prorating : 1)).toFixed(2); 
     if (prorating === 0) {
       nextDate += 7;
     }
     // Here, we will need to charge the user the correct amount, create a BookingPayment, create a WaiveworkPayment for 
-    // auto payement
+    // auto payement. QuickCharge should be used for the charge.
+    data.source = 'WaiveWork Intial Payment';
+    data.description = 'Initial Payment For WaiveWork';
+    let workCharge = yield OrderService.quickCharge(data, _user);
+    /*
     console.log('next date: ', nextDate);
     console.log('prorating: ', prorating);
     console.log('charge Amount: ', proratedChargeAmount);
+    console.log('data: ', data);
+    */
   }
 
   /*
