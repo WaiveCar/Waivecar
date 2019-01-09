@@ -25,6 +25,7 @@ function *showBookings() {
     ],
   });
 
+  let carsIx = 0;
   let output = [];
   let locHash = {};
   carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } ); 
@@ -37,6 +38,7 @@ function *showBookings() {
           locHash[key] = [];
         }
         locHash[key].push(car);
+        carsIx++;
       }
     }
   }
@@ -57,10 +59,10 @@ function *showBookings() {
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let weeks = Math.round(lastBooking / 7);
-      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "" : car.repairReason);
+      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "" : (car.repairReason || "(reason unknown)"));
       if(car.userId) {
         let user = yield User.findById(car.userId);
-        warn += ' ' + user.name();
+        warn += user.name();
       }
       let msg = `${car.link()} ${lastBooking}d ${warn}`;
       if(weeks > 1) {
@@ -71,11 +73,9 @@ function *showBookings() {
     }
     output.push(`*${header}*` + row.join("\n… "));
   }
-  yield notify.notifyAdmins(
-    output.join("\n\n"),
-    ['slack'],
-    {channel: '#fleet'},
-  );
+  output = `_${carsIx} / ${carsToCheck.length} ${Math.round(100 * carsIx / carsToCheck.length)}% not booked in last day_\n` + output.join("\n\n");
+  console.log(output);
+  yield notify.notifyAdmins( output, ['slack'], {channel: '#fleet'});
 
   scheduler.add('bookings-in-last-day', {
     timer: {
