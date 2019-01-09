@@ -57,24 +57,24 @@ function *showBookings() {
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let weeks = Math.round(lastBooking / 7);
-      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "NOT IN REPAIR" : "");
+      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "" : car.repairReason);
       if(car.userId) {
         let user = yield User.findById(car.userId);
-        warn += ' ' + user.link();
+        warn += ' ' + user.name();
       }
       let msg = `${car.link()} ${lastBooking}d ${warn}`;
       if(weeks > 1) {
         msg = msg.trim();
-        msg += ` (${weeks}wk)`
+        msg += ` (${weeks}w)`
       }
       row.push(msg);
     }
     output.push(`*${header}*` + row.join("\n… "));
   }
   yield notify.notifyAdmins(
-    ':sleeping_accommodation: Sleeping cars\n' + output.join("\n\n"),
+    output.join("\n\n"),
     ['slack'],
-    {channel: '#rental-alerts'},
+    {channel: '#fleet'},
   );
 
   scheduler.add('bookings-in-last-day', {
@@ -102,13 +102,13 @@ module.exports = function*() {
     currentHour < 22
       ? moment()
           .tz('America/Los_Angeles')
-          .hours(22)
+          .hours(10)
           .minutes(0)
           .seconds(0)
       : moment()
           .tz('America/Los_Angeles')
           .add(1, 'days')
-          .hours(22)
+          .hours(10)
           .minutes(0)
           .seconds(0);
   // This gets the seconds until the cars are to be marked unavailable
@@ -117,4 +117,5 @@ module.exports = function*() {
   scheduler.add('bookings-in-last-day', {
     timer: timerObj,
   });
+  yield showBookings();
 };
