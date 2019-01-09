@@ -432,8 +432,8 @@ module.exports = class BookingService extends Service {
     if (prorating === 0) {
       nextDate += 7;
     }
-    // Here, we will need to charge the user the correct amount, create a BookingPayment, create a WaiveworkPayment for 
-    // auto payement. QuickCharge should be used for the charge.
+    // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
+    // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
     data.description = 'Initial Payment For WaiveWork';
     let weeklyAmount = data.amount;
@@ -452,12 +452,6 @@ module.exports = class BookingService extends Service {
       amount: weeklyAmount,
     }); 
     yield waiveworkPayment.save();
-    /*
-    console.log('next date: ', nextDate);
-    console.log('prorating: ', prorating);
-    console.log('charge Amount: ', proratedChargeAmount);
-    console.log('data: ', data);
-    */
   }
 
   /*
