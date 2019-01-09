@@ -9,9 +9,11 @@ let geocodeService = require('../../lib/geocoding-service');
 let redis     = require('../../lib/redis-service');
 
 function *showBookings() {
+  /*
   if (!(yield redis.shouldProcess('bookings-in-last-day', (new Date()).getDay(), 90 * 1000))) {
     return;
   }
+  */
   // This queries for all cars and their bookings from the last 24 hours
   let carsToCheck = yield Car.find({
     include: [
@@ -30,9 +32,11 @@ function *showBookings() {
   let locHash = {};
   carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } ); 
   for (let car of carsToCheck) {
-    if (car.license.search(/(waive|csula)/i) != -1 && car.bookings.length) {
+    if (car.bookings.length) {
       let lastBooking = new Date() - car.bookings[0].createdAt;
-      if(lastBooking / 1000 / 24 / 60 / 60 > 0.8) { 
+      if( (car.license.search(/(csula|waive)/i) !== -1 && lastBooking / 1000 / 24 / 60 / 60 > 0.8) || 
+          (car.license.search(/work/i) !== -1 && car.inRepair)
+        ) { 
         let key = (car.latitude).toFixed(2) + (car.longitude).toFixed(2);
         if(!locHash[key]) {
           locHash[key] = [];
@@ -59,15 +63,15 @@ function *showBookings() {
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let weeks = Math.round(lastBooking / 7);
-      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "" : (car.repairReason || "(reason unknown)"));
+      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "" : (car.repairReason || "(reason unknown) "));
       if(car.userId) {
         let user = yield User.findById(car.userId);
-        warn += user.name();
+        warn += user.name() + " ";
       }
-      let msg = `${car.link()} ${lastBooking}d ${warn}`;
+      let msg = `${car.license} ${lastBooking}d ${warn} `;
       if(weeks > 1) {
         msg = msg.trim();
-        msg += ` (${weeks}w)`
+        msg += `(${weeks}w)`
       }
       row.push(msg);
     }
@@ -113,6 +117,12 @@ module.exports = function*() {
   // This gets the seconds until the cars are to be marked unavailable
   let secondsUntilTime = Math.abs(moment().diff(timeToCheck, 'seconds'));
   let timerObj = {value: secondsUntilTime, type: 'seconds'};
+  try {
+    yield showBookings();
+  } catch(ex) {
+    console.log(ex);
+  }
+
   scheduler.add('bookings-in-last-day', {
     timer: timerObj,
   });
