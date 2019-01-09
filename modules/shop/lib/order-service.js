@@ -287,7 +287,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
@@ -319,7 +319,7 @@ module.exports = class OrderService extends Service {
     yield order.save();
     try {         
       yield this.charge(order, user, {nodebt: true});
-      yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` ${booking.link()} `);
       return;
@@ -826,7 +826,7 @@ module.exports = class OrderService extends Service {
 
     // Normally we try to capture the payment (as in, we actually charge
     // the user). We can do this two-step thing where we just see if the
-    // CC is valid by specifying an opt
+    // CC is valid by specifying an opts.nocapture
     let capture = true;
     let credit = user.credit;
     let charge = {};
@@ -838,6 +838,8 @@ module.exports = class OrderService extends Service {
       // when we aren't capturing.
       credit = 0;
     }
+
+    // We have ways of charging the user that doesn't use credit
     if(opts.nocredit) {
       credit = 0;
     }
@@ -845,15 +847,28 @@ module.exports = class OrderService extends Service {
     // If the user doesn't have enough credit to cover the entire costs, we
     // proceed to attempt to charge things.
     //
-    // We also use this routine to credit the users account so the bottom
+    // We also use this routine to credit the user's account so the bottom
     // condition has to be in there.
     let amountToCharge = order.amount - credit;
     charge.amount = amountToCharge;
+
+    // A "dry-run" basically computes all the values up to the charge amount
+    // and then returns the object prior to the charge.  This can be used
+    // to find out what would happen.
     if(opts.dry) {
       return charge;
     }
 
-    if (order.amount >= 0 && credit < order.amount) {
+    // So what's this order.amount - 100 business?  If the user has say $4.10 in credit
+    // and the charge is $5.00 then we shouldn't charge them since stripe will
+    // throw us back for a $.90 charge.
+    //
+    // So instead of asking the question "can the person's credit cover this" we ask
+    // Can the persons' credit + $1.00 cover this?
+    //
+    // Let's also demonstrate the zero case. The user has $0.00 in credit, the amount
+    // to charge is $1.00 and we go through.
+    if (order.amount >= 0 && credit <= order.amount - 100) {
       try {
         let service = this.getService(config.service, 'charges');
         t("charges-get");
