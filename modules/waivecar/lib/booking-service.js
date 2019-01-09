@@ -2044,7 +2044,6 @@ module.exports = class BookingService extends Service {
       // if they were asking to do it.
       if(failureReason) {
         if(opts.rush) {
-          yield redis.doneWithIt(lockKeys);
           throw error.parse({
             code    : 'WAIVE_RUSH',
             message : failureReason
