@@ -74,7 +74,6 @@ function *showBookings() {
     output.push(`*${header}*` + row.join("\n… "));
   }
   output = `_${carsIx} / ${carsToCheck.length} ${Math.round(100 * carsIx / carsToCheck.length)}% not booked in last day_\n` + output.join("\n\n");
-  console.log(output);
   yield notify.notifyAdmins( output, ['slack'], {channel: '#fleet'});
 
   scheduler.add('bookings-in-last-day', {
@@ -117,5 +116,4 @@ module.exports = function*() {
   scheduler.add('bookings-in-last-day', {
     timer: timerObj,
   });
-  yield showBookings();
 };
