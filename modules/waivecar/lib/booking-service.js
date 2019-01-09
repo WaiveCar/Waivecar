@@ -408,7 +408,6 @@ module.exports = class BookingService extends Service {
     yield this.ready(booking.id, _user);
     let today = moment()
     let currentDay = today.date();
-    currentDay = 20
     let nextDate;
     switch(true) {
       case currentDay === 1:
@@ -428,7 +427,7 @@ module.exports = class BookingService extends Service {
         break;
     }
     let prorating = (nextDate - currentDay) / 7;
-    let proratedChargeAmount = (Number(data.amount) * (prorating > 0 ? prorating : 1)).toFixed(2); 
+    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1)); 
     if (prorating === 0) {
       nextDate += 7;
     }
@@ -436,7 +435,10 @@ module.exports = class BookingService extends Service {
     // auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
     data.description = 'Initial Payment For WaiveWork';
+    let weeklyAmount = data.amount;
+    data.amount = proratedChargeAmount;
     let workCharge = yield OrderService.quickCharge(data, _user);
+    console.log('workCharge: ', workCharge.body);
     /*
     console.log('next date: ', nextDate);
     console.log('prorating: ', prorating);
