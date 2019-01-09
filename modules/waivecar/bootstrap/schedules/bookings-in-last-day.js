@@ -9,11 +9,9 @@ let geocodeService = require('../../lib/geocoding-service');
 let redis     = require('../../lib/redis-service');
 
 function *showBookings() {
-  /*
   if (!(yield redis.shouldProcess('bookings-in-last-day', (new Date()).getDay(), 90 * 1000))) {
     return;
   }
-  */
   // This queries for all cars and their bookings from the last 24 hours
   let carsToCheck = yield Car.find({
     include: [
@@ -117,11 +115,6 @@ module.exports = function*() {
   // This gets the seconds until the cars are to be marked unavailable
   let secondsUntilTime = Math.abs(moment().diff(timeToCheck, 'seconds'));
   let timerObj = {value: secondsUntilTime, type: 'seconds'};
-  try {
-    yield showBookings();
-  } catch(ex) {
-    console.log(ex);
-  }
 
   scheduler.add('bookings-in-last-day', {
     timer: timerObj,
