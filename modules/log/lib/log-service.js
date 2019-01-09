@@ -296,15 +296,17 @@ module.exports = class LogService {
       // It's *probably* easier if we distribute these records by car
       bookByCar = {},
       carOdometer = {},
-      bookBy = {user: {}, fleet: {} },
-      totalDistance = {user: 0, fleet: 0},
-      totalBookings = {user: 0, fleet: 0},
+      bookBy = {},
+      totalDistance = {booking:0, odometer:0},
+      totalBookings = 0,
       start = {year:0, month:1, day:1},
       excludeMap = {},
       includeMap = {},
       allExcludedBookings,
       excludedBookingsQuery = '',
       includedBookingsQuery = '',
+      carsWithBookings = 0,
+      details = {},
       allCars = yield Car.find({
          include: [
            {
@@ -321,6 +323,14 @@ module.exports = class LogService {
 
     if(duration_parts.length > 1) {
       duration = duration_parts[1];
+      // the person only used an underscore (probably)
+      // instead of a hyphen (likely) so we will just
+      // ignore this, back up and then replace the _
+      // with a -
+      if(duration.match(/^\d*$/) && !duration.match(/\-/)) {
+        year_month = year_month.replace(/_/, '-');
+        duration = false;
+      }
     } 
     let parts = year_month.split('-');
     start.year = parseInt(parts[0], 10);
@@ -529,33 +539,17 @@ module.exports = class LogService {
       }
       bookByCar[id].push(row);
 
-      totalBookings[userType] ++;
-      if( ! (userId in bookBy[userType]) ) {
-        bookBy[userType][userId] = [];
+      totalBookings ++;
+      if( ! (userId in bookBy) ) {
+        bookBy[userId] = [];
       }
-      bookBy[userType][userId].push(row);
+      bookBy[userId].push(row);
 
       if(row.details.length > 1) {
-        totalDistance[userType] += Math.abs(row.details[0].mileage - row.details[1].mileage);
+        totalDistance.booking += Math.abs(row.details[0].mileage - row.details[1].mileage);
       }
     });
 
-    for(var car in carOdometer) {
-      if(carOdometer[car][0] === carOdometer[car][1]) {
-        delete carOdometer[car];
-        delete bookByCar[car];
-      }
-    }
-
-    let odometerReading = _.values(carOdometer).reduce((accumulator, row) => {
-        return Math.abs(row[1] - row[0]) + accumulator;
-      }, 0);
-
-    totalDistance.odometer = odometerReading;
-    totalDistance.fleetDerived = odometerReading - totalDistance.user;
-
-    let carsWithBookings = 0;
-    let details = {};
     for(var id in carOdometer) {
       details[id] = {
         start: carOdometer[id][0],
@@ -563,7 +557,14 @@ module.exports = class LogService {
         bookings: bookByCar[id].length
       }
       details[id].distance = details[id].end - details[id].start;
-      details[id].average = details[id].distance / details[id].bookings;
+      if(details[id].distance < 40 || !details[id].distance) {
+        delete details[id];
+        delete carOdometer[id];
+        delete bookByCar[id];
+        continue;
+      }
+      totalDistance.odometer += details[id].distance;
+      details[id].average = details[id].distance / Math.max(1,details[id].bookings);
       if(details[id].bookings) {
         carsWithBookings++;
       }
@@ -572,10 +573,9 @@ module.exports = class LogService {
     return {
       period: duration_parts[0],
       duration: duration,
-      activeCars: Object.keys(bookByCar),
       activeCarsWithBookings: carsWithBookings,
       activeCarCount: Object.keys(bookByCar).length,
-      userCount:  Object.keys(bookBy.user).length,
+      userCount: Object.keys(bookBy).length,
       numberOfRides: totalBookings,
       details: details,
       distance: totalDistance
