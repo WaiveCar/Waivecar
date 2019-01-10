@@ -46,7 +46,7 @@ module.exports = class OrderService extends Service {
     if (
       !opts.overrideAdminCheck && 
       // if we aren't an admin, this may be ok
-      !_user.hasAccess('admin') && (
+      (_user && !_user.hasAccess('admin')) && (
         // we have to be modifying ourselves
         // and we are only allowed to clear our balance
         user.id !== _user.id ||
