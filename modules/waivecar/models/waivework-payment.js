@@ -50,7 +50,7 @@ Bento.Register.Model('WaiveworkPayment', 'sequelize', function(
       this.belongsTo(Booking, {as: 'booking', foreignKey: 'bookingId'});
       this.belongsTo(BookingPayment, {
         as: 'bookingPayment',
-        foreignKey: 'bookingPayementId',
+        foreignKey: 'bookingPaymentId',
       });
     },
   ];
