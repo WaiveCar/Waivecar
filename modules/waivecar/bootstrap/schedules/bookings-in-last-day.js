@@ -100,7 +100,7 @@ module.exports = function*() {
   // This is the time that cars are to be checked for bookings in the last 24 hours
   // If it is after 10:00PM, a day will be added to the time to update the cars
   let timeToCheck =
-    currentHour < 22
+    currentHour < 10
       ? moment()
           .tz('America/Los_Angeles')
           .hours(10)
