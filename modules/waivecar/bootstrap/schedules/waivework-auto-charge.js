@@ -12,6 +12,10 @@ scheduler.process('waivework-auto-charge', function*(job) {
     where: {
       date: {$gt: today.format('YYYY-MM-DD')},
     },
+    include: [{
+      model: 'Booking',
+      as: 'booking',
+    }]
   });
   console.log('todays payments: ', todaysPayments);
 });
