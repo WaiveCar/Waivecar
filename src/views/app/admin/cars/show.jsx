@@ -446,6 +446,8 @@ class CarsShowView extends React.Component {
         return;
       } 
     }
+    this.service.executeCommand(car, 'repair', opts);
+    /*
     if (car.booking) {
       snackbar.notify({
         type    : 'danger',
@@ -460,7 +462,7 @@ class CarsShowView extends React.Component {
       });
     } else {
       this.service.executeCommand(car, 'repair', opts);
-    }
+    }*/
   }
 
   renderUserSearch(car) {
