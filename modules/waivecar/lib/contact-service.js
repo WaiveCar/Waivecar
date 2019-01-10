@@ -224,7 +224,9 @@ module.exports = {
       ]) {
         let [regex, todo, suppress] = row;
 
+        console.log('testing', regex,todo,suppress);
         if (command.match(regex)) {
+          console.log('...matched');
           sendToSupport = !suppress;
           guessed = true;
           command = todo;
