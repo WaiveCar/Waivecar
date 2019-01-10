@@ -81,7 +81,6 @@ class CarsShowView extends React.Component {
       if (err) {
         console.log(err);
       }
-      console.log('model: ', model);
       model.reverse();
       this.setState({
         damage : model
@@ -213,14 +212,21 @@ class CarsShowView extends React.Component {
                   </div>
                 </div>
               </div>
-            </div>) : (
+            </div>) : 
             <div>
-              <h4 className="text-center">
-                {moment(this.state.latestBooking.details[1].createdAt).format('HH:mm MMMM Do')}. <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
-              </h4>
+              { 
+                this.state.latestBooking && this.state.latestBooking.details[1] ? 
+                  <h4 className="text-center">
+                    {moment(this.state.latestBooking.details[1].createdAt).format('HH:mm MMMM Do')}. <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
+                  </h4>
+                  :
+                  <h4 className="text-center">
+                    No info
+                  </h4>
+              }
               No Parking Image
             </div>
-          )}
+          }
         </div>
       </div>
     );
@@ -398,6 +404,10 @@ class CarsShowView extends React.Component {
                     <span className="pull-right">{ car.boardVoltage }</span>
                     CloudBoxx Voltage
                   </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isDoorOpen) }</span>
+                    Door Open
+                  </li>
                 </ul>
               </div>
             </div>
@@ -552,7 +562,6 @@ class CarsShowView extends React.Component {
         ref : 5,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
-        disabled : car.inRepair,
         onChange : this.toggleAvailable.bind(this, car)
       },
       {
