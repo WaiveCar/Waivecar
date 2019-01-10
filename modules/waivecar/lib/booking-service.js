@@ -410,7 +410,9 @@ module.exports = class BookingService extends Service {
     }
 
     let timeToCarStr = '';
+    let trouble = 'If you have trouble, reply "start ride" when next to the WaiveCar.';
     if(isRush) {
+      trouble = `If the car doesn't start, reply "access" to unlock the immobilizer.`;
       timeToCarStr = "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM.";
     } else if(autoExtend) {
       timeToCarStr = "You've opted for automatic reservation extensions.";
@@ -423,7 +425,7 @@ module.exports = class BookingService extends Service {
 
     let msg = [
       `${car.license}'s yours!${carpoolWarning}`,
-      'If you have trouble, reply "start ride" when next to the WaiveCar.', 
+      trouble,
       (currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''),
       timeToCarStr,
       'Thanks!'
@@ -1104,6 +1106,13 @@ module.exports = class BookingService extends Service {
     }
 
     return isAdmin;
+  }
+
+  static *blurrySign() {
+    let email = `Your photograph of the parking sign for your recent booking with ... was either blurry or otherwise illegible.  Every photo you take is reviewed by our staff to help you avoid very expensive fines from the City from unfortunate events such as towing during anti-gridlock hours (over $400!!) and parking tickets (over $60!).  In this example, instead of getting the WaiveCar towed, good photographs allow us to retrieve it for a far small fraction of the cost (there is a modest fee schedule for rescuing WaiveCars if you're a persistent perilous parker)
+
+      So please, in the interest of saving you money, try to take clear legible photos of parking signs. Thanks`
+
   }
 
   // A *very cheap* check to see if the ending spot it legal.
