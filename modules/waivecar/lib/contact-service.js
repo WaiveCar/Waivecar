@@ -102,11 +102,6 @@ module.exports = {
     command = command.toLowerCase();
     let argCmd = command.match(/^(una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
 
-    // This is a level text
-    if(command.match(/we have received your pickup request/)) {
-      return true;
-    }
-
     if(argCmd) {
 
       let license = argCmd[2].replace(/\s/g, '');
@@ -204,17 +199,18 @@ module.exports = {
         // sometimes we get messages with both "card" and "account" so
         // we pass those up.
         [/ card /, false],
-        [/start ride/, 'start'],
+        [/start ride/, 'start', true],
+        [/^end ride/, 'end', true],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         // one character commands
-        [/^l$/, 'lock'],
-        [/^u$/, 'unlock'],
-        [/^[ca]$/, 'abort'],
-        [/^f$/, 'finish'],
-        [/^s$/, 'start'],
+        [/^l$/, 'lock', true],
+        [/^u$/, 'unlock', true],
+        [/^[ca]$/, 'abort', true],
+        [/^f$/, 'finish', true],
+        [/^s$/, 'start', true],
 
-        [/^lock/, 'lock'],
+        [/^lock/, 'lock', true],
         [/ lock(ing|) /, 'lock'],
 
         // these were carefully tested over 30,000 historical text messages
@@ -226,10 +222,10 @@ module.exports = {
         [/(end|finish|stop) (waive|(my |the |)(rental|ride))/,'finish'],
         [/^end(\s\w+|)$/,'finish']
       ]) {
-        let [regex, todo] = row;
+        let [regex, todo, suppress] = row;
 
         if (command.match(regex)) {
-          sendToSupport = true;
+          sendToSupport = !suppress;
           guessed = true;
           command = todo;
           break;
@@ -511,6 +507,11 @@ module.exports = {
     let who = user ? user.link() : '_unknown_';
     let ts = moment.tz(moment.utc(), "America/Los_Angeles").format('YYYY/MM/DD HH:mm:ss');
     fs.appendFile('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`, function(){});
+
+    // This is a level text
+    if(!user && smstext.match(/we have received your pickup request. iPark - 34/)) {
+      return true;
+    }
 
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.
