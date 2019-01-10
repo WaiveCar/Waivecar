@@ -11,10 +11,16 @@ module.exports = class Faq extends Component {
           <p>Yes, 2 hours free, for a car, then half the price of an e-scooter every hour after.</p>
           <h2 id="signing-up">Signing up</h2>
           <h3 id="what-do-i-need-to-sign-up">What do I need to sign up?</h3>
-          <p>All you need to sign up with Waive is a smart phone, credit card, a valid driver’s license, and a good driving record. Simply download the app from your app store!</p>
+          <p>All you need to sign up with Waive is a smart phone, credit card, a valid driver’s license, and a good driving record. You can download the app from your app store or sign up through our website.</p>
           <aside>
           Are you a power user? We have many programs and features not explained in this faq. Find out more by reading through our blog at medium.com/<span class="citation" data-cites="waive">@waive</span>. Want to look later? Search “medium waive” in your search engine of choice.
           </aside>
+          <h3 id="does-it-cost-any-money-to-sign-up">Does it cost any money to sign up?</h3>
+          <p>Nope! We promise there really are no catches. We’re that magical.</p>
+          <h3 id="why-do-i-need-a-credit-card-to-sign-up-if-its-free">Why do I need a credit card to sign up if it’s free?</h3>
+          <p>We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!</p>
+          <h3 id="how-old-do-i-need-to-be-to-drive-waivecar">How old do I need to be to drive WaiveCar?</h3>
+          <p>You need to be 21 to drive with WaiveCar.</p>
           <h4 id="whats-a-good-driving-record">What’s a good driving record?</h4>
           <p>To us, a good driving record means one without any:</p>
           <ul>
@@ -24,21 +30,13 @@ module.exports = class Faq extends Component {
           <li>Any similar negligent or reckless acts</li>
           <li>Accidents</li>
           </ul>
-          <h3 id="does-it-cost-any-money-to-sign-up">Does it cost any money to sign up?</h3>
-          <p>Nope! We promise there really are no catches. We’re that magical.</p>
-          <h3 id="why-do-i-need-a-credit-card-to-sign-up-if-its-free">Why do I need a credit card to sign up if it’s free?</h3>
-          <p>We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!</p>
-          <h3 id="how-old-do-i-need-to-be-to-drive-waivecar">How old do I need to be to drive WaiveCar?</h3>
-          <p>You need to be 21 to drive with WaiveCar.</p>
-          <h3 id="can-i-use-my-ipadtablet-to-use-waivecar">Can I use my iPad/tablet to use WaiveCar?</h3>
-          <p>No. Unfortunately we require a cell phone so that a phone number can be attached to the account as well as GPS services.</p>
           <h3 id="is-insurance-included">Is insurance included?</h3>
-          <p>Yep! Insurance with a $1,000 deductible is included in the signup! The information is in the app!</p>
+          <p>Insurance with a $1,000 deductible is included in the signup! The information is in the app!</p>
           <h3 id="can-i-use-an-out-of-state-drivers-license-to-drive-with-waivecar">Can I use an out of state drivers license to drive with WaiveCar?</h3>
-          <p>Yep! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.</p>
+          <p>Yes! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.</p>
           <h3 id="can-i-use-an-out-of-country-drivers-license">Can I use an out of country drivers license?</h3>
           <p>Yep! However you will need to contact your country’s DMV equivalent to obtain a driving record to email to us at support@waive.car (It must be translated into English)</p>
-          <h3 id="can-i-use-a-temporary-drivers-license">Can I use a temporary drivers license?</h3>
+          <h3 id="can-i-use-a-temporary-drivers-license">Can I use a temporary driver’s license?</h3>
           <p>Unfortunately you will need a permanent license to drive with WaiveCar.</p>
           <h3 id="how-long-does-the-signup-take">How long does the signup take?</h3>
           <p>It’s very quick! Should only take about 15 minutes for the signup and the background check to complete. If the background check seems to be taking longer, please contact us.</p>
@@ -47,10 +45,13 @@ module.exports = class Faq extends Component {
           <p>Our cars are available 24 hours and the customer service line is open from 9am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. </p>
           <h3 id="how-do-i-book-a-waivecar">How do I book a WaiveCar?</h3>
           <p>Log onto the app and find the closest available WaiveCar to you. You then have 15 minutes to get to the car before the reservation times out.</p>
+          <aside>
+          There’s two other ways to book WaiveCars: Through a simple website and through text. All the details are over on our medium site.
+          </aside>
           <h3 id="where-can-i-get-a-waivecar">Where can I get a WaiveCar?</h3>
-          <p>Right now our cars are dispersed between Marina Del Rey and Hollywood, check our map in our app for more details.</p>
+          <p>Right now our cars are dispersed between Marina Del Rey and Hollywood, check the map in our app for more details.</p>
           <h3 id="how-long-do-i-have-to-get-to-a-waivecar">How long do I have to get to a WaiveCar?</h3>
-          <p>You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.</p>
+          <p>You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 and $.30/min thereafter until you get to the vehicle.</p>
           <p>Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn’t being used. But don’t worry, we send out a message beforehand and you’ll have plenty of time to contact us if we’ve made a mistake.</p>
           <aside>
           Members 55+ automatically get an extra 10 free minutes (25 minutes total) to get to their WaiveCar. This program is available for anyone who needs assistance. Read more info at our blog.
@@ -98,10 +99,9 @@ module.exports = class Faq extends Component {
           <p>If you get a ticket, you have 7 days to pay it. If you don’t pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box. You can also, if you’d like, take a photo of it during the end or beginning of your ride in the “issues” section so we can address it ASAP.</p>
           <h2 id="ending-your-ride">Ending Your Ride</h2>
           <h3 id="where-can-i-park-when-im-done">Where can I park when I’m done?</h3>
-          <p>If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica excluding metered parking. Outside of Santa Monica 12 hours of free parking is needed. Please note, if the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).</p>
-          <p>However, after 10pm, parking must be valid until 10:00 AM.</p>
+          <p>If the battery is over 25 miles charged, you can park anywhere in the “green zone” on the map. Just follow the parking rules that are displayed when you attempt to end your ride. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).</p>
           <h3 id="where-can-i-not-park">Where can I <strong>NOT</strong> park?</h3>
-          <p>Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in our operating area! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours(in SM) and 12 hours (Outside of SM).</p>
+          <p>Since we’re a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at noocost or fee and also not takie up spaces set aside for private businesses. So this means no parking garages, permit-only spots, or any business parking lot.</p>
           <aside>
           We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.
           </aside>
@@ -110,15 +110,14 @@ module.exports = class Faq extends Component {
           <li>Street parking restricted by signs such as during street sweeping hours</li>
           <li>Private lots (Whole Foods, Ralphs, etc.)</li>
           <li>Private driveways &amp; Permit-only zones unless WaiveParked</li>
-          <li>Indoor public lots with less than 3 hours free parking</li>
           <li>Upside down and engulfed in flames</li>
           </ul>
           <h3 id="how-do-i-end-my-ride">How do I end my ride?</h3>
-          <p>First make sure that you are parked in an accurate spot (see above). Turn off the car, grab your belongings, and exit the car. Select “End Ride” from the app and input the appropriate information. If you haven’t received a confirmation text please contact us.</p>
+          <p>First make sure that you are parked in an accurate spot (see above), turn off the car, grab your belongings, and exit the car. Select “End Ride” from the app and input the appropriate information. If you don’t receive a confirmation text please contact us.</p>
           <h3 id="do-i-need-to-clean-the-car-when-im-done">Do I need to clean the car when I’m done?</h3>
-          <p>Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!</p>
+          <p>Our cars get used by many people each day before we see them again so yes, please be courteous and leave the car at least as clean as you found it. If you leave a mess, there could be a cleaning fee!</p>
           <h3 id="do-i-need-to-charge-the-car-before-i-end-my-ride">Do I need to charge the car before I end my ride?</h3>
-          <p>Nope! Follow the rules above. If the car is under 25 miles charged, simply return it to 2102 Pico in Santa Monica.</p>
+          <p>This isn’t necessary but it is very helpful to us. We have a partnership where you can charge even better than free, we actually credit you towards future rides. If the car is under 25 miles charged, either charge it or return it to 2102 Pico in Santa Monica.</p>
           <aside>
           The gates at our lot never close and WaiveCars can be returned at any hour at any charge there. Please tidely park the car so others can access the lot.
           </aside>
@@ -156,7 +155,6 @@ module.exports = class Faq extends Component {
           <li>Street parking restricted by signs such as during street sweeping hours</li>
           <li>Private lots (Whole Foods, Ralphs, etc.)</li>
           <li>Private driveways &amp; Permit-only zones unless WaiveParked</li>
-          <li>Indoor public lots with less than 3 hours Free Parking</li>
           </ul>
           </div>
         </div>

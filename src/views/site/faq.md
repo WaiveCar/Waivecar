@@ -5,9 +5,18 @@ Yes, 2 hours free, for a car, then half the price of an e-scooter every hour aft
 
 ## Signing up
 ### What do I need to sign up?
-All you need to sign up with Waive is a smart phone, credit card, a valid driver's license, and a good driving record. Simply download the app from your app store!
+All you need to sign up with Waive is a smart phone, credit card, a valid driver's license, and a good driving record. You can download the app from your app store or sign up through our website.
 
 <aside>Are you a power user? We have many programs and features not explained in this faq. Find out more by reading through our blog at medium.com/@waive. Want to look later? Search "medium waive" in your search engine of choice.</aside>
+
+### Does it cost any money to sign up?
+Nope! We promise there really are no catches. We're that magical.
+
+### Why do I need a credit card to sign up if it's free?
+We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
+
+### How old do I need to be to drive WaiveCar?
+You need to be 21 to drive with WaiveCar.
 
 #### What's a good driving record?
 
@@ -19,30 +28,19 @@ To us, a good driving record means one without any:
 * Any similar negligent or reckless acts
 * Accidents
 
-### Does it cost any money to sign up?
-Nope! We promise there really are no catches. We're that magical.
-
-### Why do I need a credit card to sign up if it's free?
-We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
-
-### How old do I need to be to drive WaiveCar?
-You need to be 21 to drive with WaiveCar.
-
-### Can I use my iPad/tablet to use WaiveCar?
-No. Unfortunately we require a cell phone so that a phone number can be attached to the account as well as GPS services.
-
 ### Is insurance included?
-Yep! Insurance with a $1,000 deductible is included in the signup! The information is in the app!
+Insurance with a $1,000 deductible is included in the signup! The information is in the app!
 
 ### Can I use an out of state drivers license to drive with WaiveCar?
 
-Yep! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.
+Yes! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.
 
 ### Can I use an out of country drivers license?
 
 Yep! However you will need to contact your country's DMV equivalent to obtain a driving record to email to us at support@waive.car (It must be translated into English)
 
-### Can I use a temporary drivers license?
+### Can I use a temporary driver's license?
+
 Unfortunately you will need a permanent license to drive with WaiveCar.
 
 ### How long does the signup take?
@@ -58,13 +56,15 @@ Our cars are available 24 hours and the customer service line is open from 9am-1
 ### How do I book a WaiveCar?
 Log onto the app and find the closest available WaiveCar to you. You then have 15 minutes to get to the car before the reservation times out.
 
+<aside>There's two other ways to book WaiveCars: Through a simple website and through text. All the details are over on our medium site.</aside>
+
 ### Where can I get a WaiveCar?
 
-Right now our cars are dispersed between Marina Del Rey and Hollywood, check our map in our app for more details. 
+Right now our cars are dispersed between Marina Del Rey and Hollywood, check the map in our app for more details. 
 
 ### How long do I have to get to a WaiveCar?
 
-You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.
+You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 and $.30/min thereafter until you get to the vehicle.
 
 Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used. But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.
 
@@ -131,12 +131,11 @@ If you get a ticket, you have 7 days to pay it. If you don't pay it within that 
 
 ### Where can I park when I'm done?
 
-If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica excluding metered parking. Outside of Santa Monica 12 hours of free parking is needed. Please note, if the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).
-
-However, after 10pm, parking must be valid until 10:00 AM.
+If the battery is over 25 miles charged, you can park anywhere in the "green zone" on the map. Just follow the parking rules that are displayed when you attempt to end your ride. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).
 
 ### Where can I **NOT** park?
-Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in our operating area! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours(in SM) and 12 hours (Outside of SM).
+
+Since we're a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at noocost or fee and also not takie up spaces set aside for private businesses.  So this means no parking garages, permit-only spots, or any business parking lot. 
 
 <aside>We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.</aside>
 
@@ -145,17 +144,16 @@ Restricted parking includes:
 * Street parking restricted by signs such as during street sweeping hours
 * Private lots (Whole Foods, Ralphs, etc.)
 * Private driveways & Permit-only zones unless WaiveParked
-* Indoor public lots with less than 3 hours free parking
 * Upside down and engulfed in flames
 
 ### How do I end my ride?
-First make sure that you are parked in an accurate spot (see above). Turn off the car, grab your belongings, and exit the car. Select "End Ride" from the app and input the appropriate information. If you haven't received a confirmation text please contact us.
+First make sure that you are parked in an accurate spot (see above), turn off the car, grab your belongings, and exit the car. Select "End Ride" from the app and input the appropriate information. If you don't receive a confirmation text please contact us.
 
 ### Do I need to clean the car when I'm done?
-Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!
+Our cars get used by many people each day before we see them again so yes, please be courteous and leave the car at least as clean as you found it.  If you leave a mess, there could be a cleaning fee!
 
 ### Do I need to charge the car before I end my ride?
-Nope! Follow the rules above. If the car is under 25 miles charged, simply return it to 2102 Pico in Santa Monica.
+This isn't necessary but it is very helpful to us. We have a partnership where you can charge even better than free, we actually credit you towards future rides. If the car is under 25 miles charged, either charge it or return it to 2102 Pico in Santa Monica.
 
 <aside>The gates at our lot never close and WaiveCars can be returned at any hour at any charge there. Please tidely park the car so others can access the lot.</aside>
 
@@ -195,5 +193,4 @@ Restricted parking includes:
 * Street parking restricted by signs such as during street sweeping hours
 * Private lots (Whole Foods, Ralphs, etc.)
 * Private driveways & Permit-only zones unless WaiveParked
-* Indoor public lots with less than 3 hours Free Parking
 
