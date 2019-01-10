@@ -200,7 +200,7 @@ module.exports = {
         // we pass those up.
         [/ card /, false],
         [/start ride/, 'start', true],
-        [/^end ride/, 'end', true],
+        [/^end ride/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         // one character commands
