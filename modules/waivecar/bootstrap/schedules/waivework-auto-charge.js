@@ -1,10 +1,11 @@
 let scheduler = Bento.provider('queue').scheduler;
-let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let OrderService = Bento.module('shop/lib/order-service');
 let BookingPayment = Bento.model('BookingPayment');
+let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let moment = require('moment');
 
 scheduler.process('waivework-auto-charge', function*(job) {
+  console.log('auto charge job running');
   let today = moment();
   //if ([1, 8, 15, 22].includes(today.date())) {
   // The next line needs to be removed later
@@ -21,18 +22,30 @@ scheduler.process('waivework-auto-charge', function*(job) {
       },
     ],
   });
-  for (let payment of todaysPayments) {
+  for (let oldPayment of todaysPayments) {
     let data = {
-      userId: payment.booking.userId,
-      amount: payment.amount,
+      userId: oldPayment.booking.userId,
+      amount: oldPayment.amount,
     };
     let shopOrder = (yield OrderService.quickCharge(data)).order;
     let bookingPayment = new BookingPayment({
-      bookingId: payment.booking.id,
+      bookingId: oldPayment.booking.id,
       orderId: shopOrder.id,
     });
     yield bookingPayment.save();
     console.log('bookingPayment: ', bookingPayment);
+    let newPayment = new WaiveworkPayment({
+      bookingId: oldPayment.booking.id,
+      date: moment().add(7, 'days'),
+      bookingPaymentId: null,
+      amount: shopOrder.amount,
+    });
+    yield newPayment.save();
+    console.log('new payment: ', newPayment);
+    yield oldPayment.update({
+      bookingPaymentId: bookingPayment.id,
+    });
+    console.log('old payment should be updated: ', oldPayment);
   }
   //}
 });
