@@ -487,10 +487,8 @@ module.exports = {
 
   // payload is an array of lat/lng
   *query(payload) {
-    const util = require('util')
-
     let resAll = [];
-    let threshold = 0.0012;
+    let threshold = 0.001;
 
     var start = new Date();
     for(let row of payload.qstr) {
@@ -498,7 +496,7 @@ module.exports = {
       row.longitude = parseFloat(row.longitude);
       if(!isNaN(row.latitude) && !isNaN(row.longitude)) {
         let qstr = [
-          `select address, pd.path, pd.created_at, abs(latitude - ${row.latitude}) + abs(longitude - ${row.longitude}) as dist`,
+          `select address, pd.path, pd.created_at, latitude, longitude, abs(latitude - ${row.latitude}) + abs(longitude - ${row.longitude}) as dist`,
           'from booking_details bd join parking_details pd on bd.id = pd.booking_id',
           'where bd.type = "end" and pd.created_at > date_sub(current_timestamp, interval 20 month) and path is not null',
           `having dist < ${threshold}`,
