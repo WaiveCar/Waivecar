@@ -16,9 +16,9 @@ Nope! We promise there really are no catches. We're that magical.
 We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
 
 ### How old do I need to be to drive WaiveCar?
-You need to be 21 to drive with WaiveCar.
+You need to be 21+ to drive with WaiveCar.
 
-#### What's a good driving record?
+### What's a good driving record?
 
 To us, a good driving record means one without any:
 
@@ -31,11 +31,11 @@ To us, a good driving record means one without any:
 ### Is insurance included?
 Insurance with a $1,000 deductible is included in the signup! The information is in the app!
 
-### Can I use an out of state drivers license to drive with WaiveCar?
+### Can I use an out of state driver's license to drive with WaiveCar?
 
 Yes! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.
 
-### Can I use an out of country drivers license?
+### Can I use an out of country driver's license?
 
 Yep! However you will need to contact your country's DMV equivalent to obtain a driving record to email to us at support@waive.car (It must be translated into English)
 
@@ -135,7 +135,7 @@ If the battery is over 25 miles charged, you can park anywhere in the "green zon
 
 ### Where can I **NOT** park?
 
-Since we're a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at noocost or fee and also not takie up spaces set aside for private businesses.  So this means no parking garages, permit-only spots, or any business parking lot. 
+Since we're a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at no cost or fee and also not takie up spaces set aside for private businesses.  So this means no parking garages, permit-only spots, or any business parking lot. 
 
 <aside>We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.</aside>
 

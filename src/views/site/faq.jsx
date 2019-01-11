@@ -20,8 +20,8 @@ module.exports = class Faq extends Component {
           <h3 id="why-do-i-need-a-credit-card-to-sign-up-if-its-free">Why do I need a credit card to sign up if it’s free?</h3>
           <p>We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!</p>
           <h3 id="how-old-do-i-need-to-be-to-drive-waivecar">How old do I need to be to drive WaiveCar?</h3>
-          <p>You need to be 21 to drive with WaiveCar.</p>
-          <h4 id="whats-a-good-driving-record">What’s a good driving record?</h4>
+          <p>You need to be 21+ to drive with WaiveCar.</p>
+          <h3 id="whats-a-good-driving-record">What’s a good driving record?</h3>
           <p>To us, a good driving record means one without any:</p>
           <ul>
           <li>DUIs</li>
@@ -32,9 +32,9 @@ module.exports = class Faq extends Component {
           </ul>
           <h3 id="is-insurance-included">Is insurance included?</h3>
           <p>Insurance with a $1,000 deductible is included in the signup! The information is in the app!</p>
-          <h3 id="can-i-use-an-out-of-state-drivers-license-to-drive-with-waivecar">Can I use an out of state drivers license to drive with WaiveCar?</h3>
+          <h3 id="can-i-use-an-out-of-state-drivers-license-to-drive-with-waivecar">Can I use an out of state driver’s license to drive with WaiveCar?</h3>
           <p>Yes! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.</p>
-          <h3 id="can-i-use-an-out-of-country-drivers-license">Can I use an out of country drivers license?</h3>
+          <h3 id="can-i-use-an-out-of-country-drivers-license">Can I use an out of country driver’s license?</h3>
           <p>Yep! However you will need to contact your country’s DMV equivalent to obtain a driving record to email to us at support@waive.car (It must be translated into English)</p>
           <h3 id="can-i-use-a-temporary-drivers-license">Can I use a temporary driver’s license?</h3>
           <p>Unfortunately you will need a permanent license to drive with WaiveCar.</p>
@@ -101,7 +101,7 @@ module.exports = class Faq extends Component {
           <h3 id="where-can-i-park-when-im-done">Where can I park when I’m done?</h3>
           <p>If the battery is over 25 miles charged, you can park anywhere in the “green zone” on the map. Just follow the parking rules that are displayed when you attempt to end your ride. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).</p>
           <h3 id="where-can-i-not-park">Where can I <strong>NOT</strong> park?</h3>
-          <p>Since we’re a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at noocost or fee and also not takie up spaces set aside for private businesses. So this means no parking garages, permit-only spots, or any business parking lot.</p>
+          <p>Since we’re a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at no cost or fee and also not takie up spaces set aside for private businesses. So this means no parking garages, permit-only spots, or any business parking lot.</p>
           <aside>
           We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.
           </aside>
