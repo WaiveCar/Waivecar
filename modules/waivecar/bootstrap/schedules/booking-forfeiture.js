@@ -14,6 +14,10 @@ scheduler.process('booking-forfeiture', function *(job) {
   let user = yield UserService.get(job.data.userId);
   let car = yield Car.findById(booking.carId);
 
+  if(booking.isFlagged('cancelforfeit')) {
+    return;
+  }
+
   // see https://github.com/WaiveCar/Waivecar/issues/816
   // Make sure server received updates from cars during the forfeit window
   let timeSinceCarUpdated = moment().diff(car.updatedAt, 'minutes');
