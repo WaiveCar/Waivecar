@@ -451,6 +451,15 @@ module.exports = class BookingService extends Service {
       bookingPaymentId: null,
       amount: weeklyAmount,
     }); 
+    yield notify.slack(
+      {
+        text: `${user.link()} to be charged $${(
+          oldPayment.amount / 100
+        ).toFixed(2)} for as the initial payment for
+        their Waivework Rental`,
+      },
+      {channel: '#waivework-charges'},
+    );
     yield waiveworkPayment.save();
   }
 
