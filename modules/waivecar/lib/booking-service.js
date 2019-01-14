@@ -393,16 +393,13 @@ module.exports = class BookingService extends Service {
     yield redis.doneWithIt(lockKeys);
 
     if (data.isWaivework) {
-      try {
-      yield this.handleWaivework(booking, data, _user);
-      } catch(e) {
-        console.log('error: ', e);
-      }
+      yield this.handleWaivework(booking, data, _user, driver);
+      yield booking.addFlag('Waivework');
     }
     return booking;
   }
 
-  static *handleWaivework(booking, data, _user) {
+  static *handleWaivework(booking, data, _user, driver) {
     // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
     // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
     // be charged a prorated amount for the amount of time before that date
@@ -456,7 +453,7 @@ module.exports = class BookingService extends Service {
     }); 
     yield notify.slack(
       {
-        text: `${user.link()} to be charged $${(
+        text: `${driver.link()} to be charged $${(
           oldPayment.amount / 100
         ).toFixed(2)} for as the initial payment for
         their Waivework Rental`,
