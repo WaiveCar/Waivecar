@@ -1,8 +1,10 @@
 let redis = require('../../lib/redis-service');
+let notify = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
 let OrderService = Bento.module('shop/lib/order-service');
 let BookingPayment = Bento.model('BookingPayment');
 let WaiveworkPayment = Bento.model('WaiveworkPayment');
+let User = Bento.model('User');
 let moment = require('moment');
 
 scheduler.process('waivework-auto-charge', function*(job) {
@@ -32,6 +34,8 @@ scheduler.process('waivework-auto-charge', function*(job) {
         userId: oldPayment.booking.userId,
         amount: oldPayment.amount,
       };
+      let user = yield User.findById(oldPayment.booking.userId);
+      console.log('user entry', user);
       let shopOrder = (yield OrderService.quickCharge(data)).order;
       let bookingPayment = new BookingPayment({
         bookingId: oldPayment.booking.id,
@@ -50,6 +54,12 @@ scheduler.process('waivework-auto-charge', function*(job) {
       yield oldPayment.update({
         bookingPaymentId: bookingPayment.id,
       });
+      yield notify.slack(
+        {
+          text: ``,
+        },
+        {channel: '#waivework-charges'},
+      );
       console.log('old payment should be updated: ', oldPayment);
     }
   }
