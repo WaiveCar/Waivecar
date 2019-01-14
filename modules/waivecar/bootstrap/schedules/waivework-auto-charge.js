@@ -39,6 +39,9 @@ scheduler.process('waivework-auto-charge', function*(job) {
       let user = yield User.findById(oldPayment.booking.userId);
       console.log('user entry', user);
       let shopOrder = (yield OrderService.quickCharge(data)).order;
+      // The line below should be removed later once we are done watching to see if the payment process works reliably
+      // Currently, the user will just be charged $0.
+      data.amount = 0;
       let bookingPayment = new BookingPayment({
         bookingId: oldPayment.booking.id,
         orderId: shopOrder.id,

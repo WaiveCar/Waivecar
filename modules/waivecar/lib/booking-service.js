@@ -438,6 +438,9 @@ module.exports = class BookingService extends Service {
     data.description = 'Initial Payment For WaiveWork';
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
+    // The line below should be removed later once we are done watching to see if the payment process works reliably
+    // Currently, the user will just be charged $0.
+    data.amount = 0;
     let workCharge = (yield OrderService.quickCharge(data, _user)).order;
     let bookingPayment = new BookingPayment({
       bookingId: booking.id,
