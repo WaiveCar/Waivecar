@@ -33,6 +33,8 @@ scheduler.process('waivework-auto-charge', function*(job) {
       let data = {
         userId: oldPayment.booking.userId,
         amount: oldPayment.amount,
+        source: 'Waivework auto charge',
+        description: 'Weekly charge for waivework',
       };
       let user = yield User.findById(oldPayment.booking.userId);
       console.log('user entry', user);
@@ -56,7 +58,9 @@ scheduler.process('waivework-auto-charge', function*(job) {
       });
       yield notify.slack(
         {
-          text: ``,
+          text: `${user.link()} to be charged $${(
+            oldPayment.amount / 100
+          ).toFixed(2)} for their Waivework Rental`,
         },
         {channel: '#waivework-charges'},
       );
