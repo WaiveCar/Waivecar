@@ -71,11 +71,10 @@ scheduler.process('waivework-auto-charge', function*(job) {
 });
 
 module.exports = function*() {
-  let testTimer = {value: 20, type: 'seconds'};
   let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-auto-charge', {
     init: true,
     repeat: true,
-    timer: testTimer,
+    timer,
   });
 };
