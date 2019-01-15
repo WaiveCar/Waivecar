@@ -65,8 +65,6 @@ scheduler.process('waivework-auto-charge', function*(job) {
           },
           {channel: '#waivework-charges'},
         );
-        console.log('old payment, should be updated: ', oldPayment);
-        console.log('new payment: ', newPayment);
       }
     }
   }
