@@ -1397,6 +1397,7 @@ module.exports = class BookingService extends Service {
         },
         {channel: '#waivework-charges'},
       );
+      // TODO: Possibly make it refund a prorated amount to the user here?
     }
 
     return {
