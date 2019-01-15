@@ -107,7 +107,7 @@ var checkBooking = co.wrap(function *(booking) {
         }
       } else if (!booking.isFlagged('first-sync') && !booking.isFlagged('rush')) {
         // When a Waivwork user is booked into a car, we don't want their booking to autoforfeit
-        if (!user.isWaivework) {
+        if (!booking.isFlagged('Waivework')) {
           yield booking.setForfeitureTimers(user, config.waivecar.booking.timers);
         }
         // we don't want to send off anything to the user

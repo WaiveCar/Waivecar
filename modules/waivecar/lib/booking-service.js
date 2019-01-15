@@ -454,7 +454,7 @@ module.exports = class BookingService extends Service {
     yield notify.slack(
       {
         text: `${driver.link()} to be charged $${(
-          oldPayment.amount / 100
+          proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
         their Waivework Rental`,
       },
@@ -1380,6 +1380,22 @@ module.exports = class BookingService extends Service {
     car.relay('update');
     yield this.relay('update', booking, _user);
     yield redis.doneWithIt(lockKeys);
+
+    if (booking.isFlagged('Waivework')) {
+      let waiveworkPayment = yield WaiveworkPayment.findOne({
+        where: {
+          bookingId: booking.id,
+          bookingPaymentId: null,
+        }
+      });
+      yield waiveworkPayment.delete();
+      yield notify.slack(
+        {
+          text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
+        },
+        {channel: '#waivework-charges'},
+      );
+    }
 
     return {
       isCarReachable : isCarReachable
