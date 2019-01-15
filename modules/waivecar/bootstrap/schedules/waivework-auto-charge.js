@@ -13,6 +13,7 @@ scheduler.process('waivework-auto-charge', function*(job) {
   //if ([1, 8, 15, 22].includes(today.date())) {
   // The next line needs to be removed later
   console.log('today: ', today);
+  today = today.add(7, 'days');
   let todaysPayments = yield WaiveworkPayment.find({
     where: {
       date: {$lt: today.add(1, 'days').format('YYYY-MM-DD')},
