@@ -1388,7 +1388,9 @@ module.exports = class BookingService extends Service {
           bookingPaymentId: null,
         }
       });
-      yield waiveworkPayment.delete();
+      if (waiveworkPayment) {
+        yield waiveworkPayment.delete();
+      }
       yield notify.slack(
         {
           text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
