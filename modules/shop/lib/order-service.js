@@ -62,7 +62,7 @@ module.exports = class OrderService extends Service {
     data.currency = data.currency || 'usd';
     this.verifyCurrency(data.currency);
 
-    if(data.amount === 0) {
+    if(data.amount === 0 && !data.waivework) {
       data.description = "Clearing outstanding balance";
     }
 
@@ -106,7 +106,9 @@ module.exports = class OrderService extends Service {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.name() }`;
-        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        if (!data.waivework) {
+          yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        }
       }
 
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and

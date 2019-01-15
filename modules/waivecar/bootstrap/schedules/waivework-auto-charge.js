@@ -41,6 +41,7 @@ scheduler.process('waivework-auto-charge', function*(job) {
         // The line below should be removed later once we are done watching to see if the payment process works reliably
         // Currently, the user will just be charged $0.
         data.amount = 0;
+        data.waivework = true;
         let bookingPayment = new BookingPayment({
           bookingId: oldPayment.booking.id,
           orderId: shopOrder.id,
@@ -64,7 +65,8 @@ scheduler.process('waivework-auto-charge', function*(job) {
           },
           {channel: '#waivework-charges'},
         );
-        console.log('old payment should be updated: ', oldPayment);
+        console.log('old payment, should be updated: ', oldPayment);
+        console.log('new payment: ', newPayment);
       }
     }
   }

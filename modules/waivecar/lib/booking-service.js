@@ -433,6 +433,7 @@ module.exports = class BookingService extends Service {
     // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
     data.description = 'Initial Payment For WaiveWork';
+    data.waivework = true;
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
     // The line below should be removed later once we are done watching to see if the payment process works reliably
