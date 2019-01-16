@@ -16,6 +16,7 @@ class WaiveWorkDetails extends Component {
       yesterday: 0,
       carSearch: '',
       searchResults: [],
+      carHistory: [],
       perWeek: null,
     };
   }
@@ -38,6 +39,7 @@ class WaiveWorkDetails extends Component {
           });
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
+          console.log('bookings: ', bookings);
           this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
             api.get(
               `/cars/${bookings[0].car.id}/history?start=${
@@ -51,6 +53,9 @@ class WaiveWorkDetails extends Component {
                   });
                 }
                 console.log('car history: ', history);
+                this.setState({carHistory: history}, () =>
+                  console.log('carHistory: ', this.state.carHistory),
+                );
               },
             );
           });
@@ -120,10 +125,27 @@ class WaiveWorkDetails extends Component {
       yesterday,
       searchResults,
       perWeek,
+      carHistory,
     } = this.state;
     //console.log('booking: ', currentWaiveWorkBooking);
     // TODO: Add conversion from km to miles
     console.log('booking: ', currentWaiveWorkBooking);
+    console.log('history: ', carHistory);
+    if (currentWaiveWorkBooking) {
+      totalMiles = (
+        currentWaiveWorkBooking.car.totalMileage -
+        currentWaiveWorkBooking.details[0].mileage
+      ).toFixed(2);
+      let totalDays =
+        moment()
+          .utc()
+          .diff(moment(currentWaiveWorkBooking.createdAt), 'days') + 1;
+      let dayFraction =
+        moment()
+          .utc()
+          .hour() / 24;
+      totalDays += dayFraction;
+    }
     return (
       <div className="box">
         <h3>
@@ -153,25 +175,33 @@ class WaiveWorkDetails extends Component {
                   currentWaiveWorkBooking.details[0].mileage
                 ).toFixed(2)}
               </div>
-              <div style={{textAlign: 'center'}}>
-                Average Miles Per Day:
-                <table style={{width: '100%'}}>
-                  <tbody>
-                    <tr>
-                      <th>All Time</th>
-                      <th>Last Month</th>
-                      <th>Last Week</th>
-                      <th>Yesterday</th>
-                    </tr>
-                    <tr>
-                      <td>{allTime}</td>
-                      <td>{lastMonth}</td>
-                      <td>{lastWeek}</td>
-                      <td>{yesterday}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {carHistory.length && (
+                <div style={{textAlign: 'center'}}>
+                  Average Miles Per Day:
+                  <table style={{width: '100%'}}>
+                    <tbody>
+                      <tr>
+                        <th>All Time</th>
+                        <th>Last Month</th>
+                        <th>Last Week</th>
+                        <th>Yesterday</th>
+                      </tr>
+                      <tr>
+                        <td>
+                          {(
+                            (Number(carHistory[carHistory.length - 1].data) -
+                              Number(carHistory[0].data)) /
+                            carHistory.length
+                          ).toFixed(2)}
+                        </td>
+                        <td>{lastMonth}</td>
+                        <td>{lastWeek}</td>
+                        <td>{yesterday}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
               <div>
                 Price Per Week: <input type="number" />
               </div>
