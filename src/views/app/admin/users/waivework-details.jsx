@@ -169,7 +169,7 @@ class WaiveWorkDetails extends Component {
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[0].data)) /
                             carHistory.length *
-                            0.62
+                            0.621371
                           ).toFixed(2)}
                         </td>
                         <td>
@@ -177,7 +177,7 @@ class WaiveWorkDetails extends Component {
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 31].data)) /
                             30 *
-                            0.62
+                            0.621371
                           ).toFixed(2)}
                         </td>
                         <td>
@@ -185,14 +185,14 @@ class WaiveWorkDetails extends Component {
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 8].data)) /
                             7 *
-                            0.62
+                            0.621371
                           ).toFixed(2)}
                         </td>
                         <td>
                           {(
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 2].data)) *
-                            0.62
+                            0.621371
                           ).toFixed(2)}
                         </td>
                       </tr>
