@@ -496,9 +496,9 @@ module.exports = {
       row.longitude = parseFloat(row.longitude);
       if(!isNaN(row.latitude) && !isNaN(row.longitude)) {
         let qstr = [
-          `select address, pd.path, pd.created_at, latitude, longitude, abs(latitude - ${row.latitude}) + abs(longitude - ${row.longitude}) as dist`,
+          `select bd.id, address as addr, pd.path, pd.created_at, latitude as lat, longitude as lng, abs(latitude - ${row.latitude}) + abs(longitude - ${row.longitude}) as dist`,
           'from booking_details bd join parking_details pd on bd.id = pd.booking_id',
-          'where bd.type = "end" and pd.created_at > date_sub(current_timestamp, interval 20 month) and path is not null',
+          'where bd.type = "end" and pd.created_at > date_sub(current_timestamp, interval 22 month) and path is not null',
           `having dist < ${threshold}`,
           'order by dist asc limit 5'
         ].join(' ');
