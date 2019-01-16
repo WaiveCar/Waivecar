@@ -129,23 +129,6 @@ class WaiveWorkDetails extends Component {
     } = this.state;
     //console.log('booking: ', currentWaiveWorkBooking);
     // TODO: Add conversion from km to miles
-    console.log('booking: ', currentWaiveWorkBooking);
-    console.log('history: ', carHistory);
-    if (currentWaiveWorkBooking) {
-      totalMiles = (
-        currentWaiveWorkBooking.car.totalMileage -
-        currentWaiveWorkBooking.details[0].mileage
-      ).toFixed(2);
-      let totalDays =
-        moment()
-          .utc()
-          .diff(moment(currentWaiveWorkBooking.createdAt), 'days') + 1;
-      let dayFraction =
-        moment()
-          .utc()
-          .hour() / 24;
-      totalDays += dayFraction;
-    }
     return (
       <div className="box">
         <h3>
@@ -182,7 +165,7 @@ class WaiveWorkDetails extends Component {
                     <tbody>
                       <tr>
                         <th>All Time</th>
-                        <th>Last Month</th>
+                        <th>Last 30 Days</th>
                         <th>Last Week</th>
                         <th>Yesterday</th>
                       </tr>
@@ -194,9 +177,26 @@ class WaiveWorkDetails extends Component {
                             carHistory.length
                           ).toFixed(2)}
                         </td>
-                        <td>{lastMonth}</td>
-                        <td>{lastWeek}</td>
-                        <td>{yesterday}</td>
+                        <td>
+                          {(
+                            (Number(carHistory[carHistory.length - 1].data) -
+                              Number(carHistory[carHistory.length - 31].data)) /
+                            30
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {(
+                            (Number(carHistory[carHistory.length - 1].data) -
+                              Number(carHistory[carHistory.length - 8].data)) /
+                            7
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {
+                            (Number(carHistory[carHistory.length - 1].data) -
+                              Number(carHistory[carHistory.length - 2].data))
+                          .toFixed(2)}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
