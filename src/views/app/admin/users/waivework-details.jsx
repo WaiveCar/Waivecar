@@ -39,7 +39,6 @@ class WaiveWorkDetails extends Component {
           });
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
-          console.log('bookings: ', bookings);
           this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
             api.get(
               `/cars/${bookings[0].car.id}/history?start=${
@@ -52,10 +51,7 @@ class WaiveWorkDetails extends Component {
                     message: err.message,
                   });
                 }
-                console.log('car history: ', history);
-                this.setState({carHistory: history}, () =>
-                  console.log('carHistory: ', this.state.carHistory),
-                );
+                this.setState({carHistory: history});
               },
             );
           });
@@ -127,8 +123,6 @@ class WaiveWorkDetails extends Component {
       perWeek,
       carHistory,
     } = this.state;
-    //console.log('booking: ', currentWaiveWorkBooking);
-    // TODO: Add conversion from km to miles
     return (
       <div className="box">
         <h3>
@@ -174,28 +168,32 @@ class WaiveWorkDetails extends Component {
                           {(
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[0].data)) /
-                            carHistory.length
+                            carHistory.length *
+                            0.62
                           ).toFixed(2)}
                         </td>
                         <td>
                           {(
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 31].data)) /
-                            30
+                            30 *
+                            0.62
                           ).toFixed(2)}
                         </td>
                         <td>
                           {(
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 8].data)) /
-                            7
+                            7 *
+                            0.62
                           ).toFixed(2)}
                         </td>
                         <td>
-                          {
+                          {(
                             (Number(carHistory[carHistory.length - 1].data) -
-                              Number(carHistory[carHistory.length - 2].data))
-                          .toFixed(2)}
+                              Number(carHistory[carHistory.length - 2].data)) *
+                            0.62
+                          ).toFixed(2)}
                         </td>
                       </tr>
                     </tbody>
