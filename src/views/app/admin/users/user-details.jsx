@@ -45,7 +45,6 @@ module.exports = class UserDetails extends React.Component {
             message : err.message
           });
         }
-        console.log('user: ', user);
         this.setState({currentUser: user});
         this.users.store(user);
       });

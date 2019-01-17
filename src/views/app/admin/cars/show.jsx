@@ -81,7 +81,6 @@ class CarsShowView extends React.Component {
       if (err) {
         console.log(err);
       }
-      console.log('model: ', model);
       model.reverse();
       this.setState({
         damage : model

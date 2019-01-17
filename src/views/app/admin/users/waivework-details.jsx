@@ -10,10 +10,6 @@ class WaiveWorkDetails extends Component {
     super(props);
     this.state = {
       currentWaiveWorkBooking: null,
-      allTime: 0,
-      lastMonth: 0,
-      lastWeek: 0,
-      yesterday: 0,
       carSearch: '',
       searchResults: [],
       carHistory: [],
@@ -123,6 +119,7 @@ class WaiveWorkDetails extends Component {
       perWeek,
       carHistory,
     } = this.state;
+    carHistory && console.log('history: ', carHistory);
     return (
       <div className="box">
         <h3>
@@ -144,12 +141,11 @@ class WaiveWorkDetails extends Component {
                 Start Date:{' '}
                 {moment(currentWaiveWorkBooking.createdAt).format('MM/DD/YYYY')}
               </div>
-              <div>Next Billing Date:</div>
               <div>
                 Total Miles Driven:{' '}
                 {(
-                  currentWaiveWorkBooking.car.totalMileage -
-                  currentWaiveWorkBooking.details[0].mileage
+                  (currentWaiveWorkBooking.car.totalMileage -
+                  currentWaiveWorkBooking.details[0].mileage) * 0.621371
                 ).toFixed(2)}
               </div>
               {carHistory.length && (
@@ -165,35 +161,35 @@ class WaiveWorkDetails extends Component {
                       </tr>
                       <tr>
                         <td>
-                          {(
+                          {carHistory.length ? (
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[0].data)) /
                             carHistory.length *
                             0.621371
-                          ).toFixed(2)}
+                          ).toFixed(2) : 'Ride not yet over 1 day'}
                         </td>
                         <td>
-                          {(
+                          {carHistory[carHistory.length - 31] ? (
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 31].data)) /
                             30 *
                             0.621371
-                          ).toFixed(2)}
+                          ).toFixed(2) : 'Ride not yet over 30 days'}
                         </td>
                         <td>
-                          {(
+                          {carHistory[carHistory.length - 8] ? (
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 8].data)) /
                             7 *
                             0.621371
-                          ).toFixed(2)}
+                          ).toFixed(2) : 'Ride not yet over 1 week'}
                         </td>
                         <td>
-                          {(
+                          {carHistory.length ? (
                             (Number(carHistory[carHistory.length - 1].data) -
                               Number(carHistory[carHistory.length - 2].data)) *
                             0.621371
-                          ).toFixed(2)}
+                          ).toFixed(2): 'Ride not yet over 1 day'}
                         </td>
                       </tr>
                     </tbody>
