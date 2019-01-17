@@ -199,10 +199,10 @@ class WaiveWorkDetails extends Component {
               <div>
                 Price Per Week: <input type="number" />
               </div>
-              <div className="text-center">
+              <div className="text-center" style={{'marginTop': '1em'}}>
                 <div className="btn-group" role="group">
                   <button type="button" className="btn btn-primary">
-                    Update
+                    Update Price
                   </button>
                 </div>
               </div>
