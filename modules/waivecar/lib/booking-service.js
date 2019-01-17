@@ -1316,6 +1316,38 @@ module.exports = class BookingService extends Service {
       yield parking.save();
     }
 
+    //
+    // Slack Alerts: Scamming by booking without moving #468
+    //
+    // If a user ends a ride, and the booking is longer than 10 minutes, but they have driven 0 miles, send an alert to the "User Alerts" Channel.
+    // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
+    // (People do this to 'hold' the car for a while).
+    //
+    // One car, Waive17 had a bug where it wasn't reporting the odometer increasing. This caused a false positive report here. So we've added
+    // a second check, to see if the car's GPS from the start of the ride and the end of the ride are dramatically different from each other.
+    // 
+    if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
+      yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
+      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
+      }, { channel : '#user-alerts' });
+    }
+
+    //
+    // We make sure that we push forward the state of the booking BEFORE charging the user
+    // because sometimes this code can still do re-entry somehow.  We want to err on NOT
+    // charging the user and ending the booking as opposed to charging and then saying that 
+    // things didn't work ... 
+    //
+    let message = yield this.updateState('ended', _user, user);
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
+    }, { channel : '#reservations' });
+    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
+
+    // ### Relay Update
+
+    car.relay('update');
+    yield this.relay('update', booking, _user);
+
     // -------------------------------
     //
     // CHARGING THE USERS
@@ -1352,35 +1384,10 @@ module.exports = class BookingService extends Service {
       yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > freeTime) {
-      yield notify.slack({ text : `:umbrella:Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
-    //
-    // Slack Alerts: Scamming by booking without moving #468
-    //
-    // If a user ends a ride, and the booking is longer than 10 minutes, but they have driven 0 miles, send an alert to the "User Alerts" Channel.
-    // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
-    // (People do this to 'hold' the car for a while).
-    //
-    // One car, Waive17 had a bug where it wasn't reporting the odometer increasing. This caused a false positive report here. So we've added
-    // a second check, to see if the car's GPS from the start of the ride and the end of the ride are dramatically different from each other.
-    // 
-    if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
-      yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn:${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
-      }, { channel : '#user-alerts' });
-    }
-
-    let message = yield this.updateState('ended', _user, user);
-    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
-    }, { channel : '#reservations' });
-    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
-
-    // ### Relay Update
-
-    car.relay('update');
-    yield this.relay('update', booking, _user);
     yield redis.doneWithIt(lockKeys);
 
     return {
