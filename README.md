@@ -8,7 +8,7 @@ You need nvm in order to run this. We are using node 4.2.6
     $ nvm install v4.2.6
     $ sudo mkdir /var/log/outgoing /var/log/invers
     $ sudo chmod 0777 /var/log/outgoing /var/log/invers
-    $ sudo apt install mysql-server redis-server mongodb-server git nginx
+    $ sudo apt install mysql-server redis-server git nginx
      
     $ mysql -uroot
     > create database waivecar_development
