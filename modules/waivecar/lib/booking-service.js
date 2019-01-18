@@ -2347,6 +2347,13 @@ module.exports = class BookingService extends Service {
   }
 
   static *updateWaiveworkPayment(bookingId, payload) {
-    return bookingId;
+    let nextPayment = yield WaiveworkPayment.findOne({
+      where: {
+        bookingId,
+        bookingPaymentId: null,
+      }
+    });
+    yield nextPayment.update({amount: payload.amount});
+    return nextPayment;
   }
 };
