@@ -578,9 +578,17 @@ module.exports = class BookingService extends Service {
       }
     }
     if (query.includeWaiveworkPayment) {
-      console.log('query: ', query.includePaymentAmount);
+      // The booking that the waivework payment is attached to must first be JSONified 
+      // so that properties may be added to it
+      bookings[0] = bookings[0].toJSON();
+      bookings[0].waiveworkPayment = (yield WaiveworkPayment.findOne({
+        where: {
+          bookingId: bookings[0].id,
+        },
+        order: [[ 'created_at', 'desc' ]],
+        limit: 1,
+      })).toJSON(); 
     }
-
     return bookings;
   }
 
