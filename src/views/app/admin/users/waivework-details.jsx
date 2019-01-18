@@ -119,7 +119,7 @@ class WaiveWorkDetails extends Component {
     let {currentWaiveWorkBooking, perWeek} = this.state;
     api.put(
       `/waiveworkPayment/${currentWaiveWorkBooking.id}`,
-      {amount: perWeek},
+      {amount: perWeek * 100},
       (err, response) => {
         if (err) {
           return snackbar.notify({
