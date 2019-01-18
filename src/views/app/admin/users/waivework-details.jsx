@@ -115,6 +115,26 @@ class WaiveWorkDetails extends Component {
     });
   }
 
+  updatePayment() {
+    let {currentWaiveWorkBooking, perWeek} = this.state;
+    api.put(
+      `/waiveworkPayment/${currentWaiveWorkBooking.id}`,
+      {amount: perWeek},
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Error updating payment: ${err.message}`,
+          });
+        }
+        return snackbar.notify({
+          type: 'success',
+          message: 'Waivework payment amount updated',
+        });
+      },
+    );
+  }
+
   render() {
     let {
       currentWaiveWorkBooking,
@@ -231,7 +251,10 @@ class WaiveWorkDetails extends Component {
               </div>
               <div className="text-center" style={{marginTop: '1em'}}>
                 <div className="btn-group" role="group">
-                  <button type="button" className="btn btn-primary">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => this.updatePayment()}>
                     Update Price
                   </button>
                 </div>
