@@ -1,13 +1,46 @@
 let redis = require('../../lib/redis-service');
 let notify = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
+let Booking = Bento.model('Booking');
+let User = Bento.model('User');
 let OrderService = Bento.module('shop/lib/order-service');
 let BookingPayment = Bento.model('BookingPayment');
 let WaiveworkPayment = Bento.model('WaiveworkPayment');
-let User = Bento.model('User');
+let CarHistory = Bento.model('CarHistory');
 let moment = require('moment');
 
 scheduler.process('waivework-auto-charge', function*(job) {
+  let currentWaiveworkBookings = (yield Booking.find({
+    where: {
+      status: 'started',
+    },
+  })).filter(each => each.isFlagged('Waivework'));
+  for (let booking of currentWaiveworkBookings) {
+    let history = yield CarHistory.find({
+      where: {
+        carId: booking.carId,
+        createdAt: {$gt: booking.createdAt},
+      },
+    });
+    if (history.length) {
+      let averagePerDay =
+        (Number(history[history.length - 1].data) - Number(history[0].data)) /
+        history.length *
+        0.621371;
+      if (averagePerDay < 100) {
+        let user = yield User.findById(booking.userId);
+        yield notify.slack(
+          {
+            text: `Uh Oh! ${user.link()} is not driving 100 miles per day. Their current average mileage is ${Math.floor(
+              averagePerDay,
+            )} per day.`,
+          },
+          {channel: '#waivework-charges'},
+        );
+      }
+    }
+  }
+
   let today = moment();
   if ([1, 8, 15, 22].includes(today.date())) {
     let todaysPayments = yield WaiveworkPayment.find({
