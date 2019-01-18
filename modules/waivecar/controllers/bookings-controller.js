@@ -163,6 +163,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return  yield booking.userContribution(id, this.auth.user);
   };
 
+  controller.updateWaiveworkPayment = function(bookingId) {
+    return yield booking.updateWaiveworkPayment(bookingId, this.payload);
+  }
+
   return controller;
 
 });

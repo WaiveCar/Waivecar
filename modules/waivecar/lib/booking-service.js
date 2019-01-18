@@ -2345,4 +2345,8 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
   }
+
+  static *updateWaiveworkPayment(bookingId, payload) {
+    return bookingId;
+  }
 };
