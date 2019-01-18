@@ -40,9 +40,9 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
-let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
-let BookingLocation= Bento.model('BookingLocation');
+let BookingLocation = Bento.model('BookingLocation');
+let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
 let locationCache = false;
@@ -577,6 +577,9 @@ module.exports = class BookingService extends Service {
         bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
       }
     }
+    if (query.includeWaiveworkPayment) {
+      console.log('query: ', query.includePaymentAmount);
+    }
 
     return bookings;
   }
@@ -679,6 +682,7 @@ module.exports = class BookingService extends Service {
         }
       });
     }
+
     return booking;
   }
 

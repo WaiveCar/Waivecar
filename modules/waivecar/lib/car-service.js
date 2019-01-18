@@ -209,7 +209,6 @@ module.exports = {
   },
 
   *history(id, query) {
-    console.log('query: ', query);
     let queryObj = {
       where: {
         carId: id,
