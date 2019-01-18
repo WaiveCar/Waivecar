@@ -1108,12 +1108,72 @@ module.exports = class BookingService extends Service {
     return isAdmin;
   }
 
-  static *blurrySign() {
-    let email = `Your photograph of the parking sign for your recent booking with ... was either blurry or otherwise illegible.  Every photo you take is reviewed by our staff to help you avoid very expensive fines from the City from unfortunate events such as towing during anti-gridlock hours (over $400!!) and parking tickets (over $60!).  In this example, instead of getting the WaiveCar towed, good photographs allow us to retrieve it for a far small fraction of the cost (there is a modest fee schedule for rescuing WaiveCars if you're a persistent perilous parker)
+  static *getBUC(opts) {
+    var booking = opts.bookingId ? (yield Bookings.findById(opts.bookingId)) : false;
+    var user    = opts.userId    ? (yield User.findById(opts.userId))        : false;
+    var car     = opts.carId     ? (yield Car.findById(opts.carId))          : false;
 
-      So please, in the interest of saving you money, try to take clear legible photos of parking signs. Thanks`
+    // now we'll have at least 1 of them which is enough
+    // to determine the booking, which is where we get
+    // all the rest.
+    if(!booking) {
+      if(car) {
+        booking = yield car.getBooking(-1);
+      } else if(user) {
+        booking = yield user.getBooking(-1);
+      }
+    }
 
+    if(!user) {
+      user = yield User.findById(booking.userId);
+    }
+    if(!car) {
+      car = yield Car.findById(booking.carId);
+    }
+
+    return [booking, user, car];
   }
+
+  static *signIssue(type, opts, _user) {
+    let [booking, user, car] = yield this.getBUC(opts);
+    let path;
+    let detailList = yield ParkingDetails.find({ where: { bookingId: booking.id } });
+
+    for(let detail of detailList) {
+      // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
+      yield detail.update({['is' + type[0].toUpperCase() + type.slice(1)]: true});
+      path = path || detail.path;
+    }
+
+    yield user.incrFlag(type, 1);
+    yield booking.addFlag(type);
+   
+    opts.template = {
+      notsign: {
+        verb: "something not a sign",
+        header: 'No parking sign',
+        reason: 'not a photo of a sign or an intersection showing no sign'
+      },
+      wrong: {
+        verb: "the wrong sign",
+        header: 'Incorrect Parking Sign',
+        reason: 'inaccurate'
+      },
+      blurry: {
+        verb: "an unreadiable sign",
+        header: 'Illegible parking sign',
+        reason: 'either blurry or hard to read',
+        tip: "To take better photos, try to not use the phones's flash, disable HDR mode if on, and try to zoom in on the parking sign"
+      }
+    }[type];
+       
+    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template[verb] }` }, { channel : '#rental-alerts' });
+
+    opts.template.car = car.license;
+    opts.template.name = user.name(); 
+    opts.template.image = path;
+  }
+    
 
   // A *very cheap* check to see if the ending spot it legal.
   static *canEndHere(id, _user, query, payload) {
@@ -1135,7 +1195,7 @@ module.exports = class BookingService extends Service {
   }
 
   // Ends the ride by calculating costs and setting the booking into pending payment state.
-  static *end(id, _user, query, payload) {
+  static * end(id, _user, query, payload) {
     let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
 
     let booking = yield this.getBooking(id);
@@ -1143,6 +1203,12 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     let isAdmin = _user.isAdmin();
     let warnings = [];
+
+    function *bail(err) {
+      let endAttempts = yield booking.incrFlag('end');
+      yield redis.doneWithIt(lockKeys);
+      throw err;
+    }
 
     // BUGBUG: We are using the user tagging and not the car tagging
     // for level accounts
@@ -1157,12 +1223,11 @@ module.exports = class BookingService extends Service {
       if(['ended', 'completed'].indexOf(booking.status) !== -1) {
         return true;
       }
-      yield redis.doneWithIt(lockKeys);
-      throw error.parse({
+      yield bail(error.parse({
         _status : booking.status,
         code    : `BOOKING_REQUEST_INVALID`,
         message : 'An error happened, please try again'
-      }, 400);
+      }, 400));
     }
 
     var isCarReachable = true;
@@ -1183,11 +1248,10 @@ module.exports = class BookingService extends Service {
         if (isAdmin) {
           warnings.push('the ignition is on');
         } else {
-          yield redis.doneWithIt(lockKeys);
-          throw error.parse({
+          yield bail(error.parse({
             code    : `BOOKING_REQUEST_INVALID`,
             message : `You must turn off the engine and remove any chargers before ending your booking.`
-          }, 400);
+          }, 400));
         }
       }
     }
@@ -1227,11 +1291,10 @@ module.exports = class BookingService extends Service {
     */
 
     if (isAdmin && warnings.length && !query.force) {
-      yield redis.doneWithIt(lockKeys);
-      throw error.parse({
+      yield bail(error.parse({
         code    : `BOOKING_END`,
         message : `The booking can't be ended because ${ warnings.join(' and ')}.`
-      }, 400);
+      }, 400));
     }
 
     // This is a timer to check the car some time period after they are ended
@@ -1265,19 +1328,20 @@ module.exports = class BookingService extends Service {
     yield booking.end();
     if (!isCarReachable) {
       yield booking.flag("pending-end");
-      yield notify.slack({ text : `Pending end of booking. ${ Bento.config.web.uri }/bookings/${ id }`}, { channel : '#adminended' });
+      yield notify.slack({ text : `Pending end of booking. ${ booking.link() }`}, { channel : '#adminended' });
     }
 
     let deltas = yield this.getDeltas(booking);
+    // interpretation of the time.
 
     // Parking restrictions:
     let parkingSlack;
     if (payload && payload.data && payload.data.type) {
       if (end.isZone && payload.data.streetHours < end.parkingTime) {
-        throw error.parse({
+        yield bail(error.parse({
           code    : 'NOT_ENOUGH_PARKING_TIME',
           message : 'Your parking is not valid for a long enough time.'
-        }, 400);
+        }, 400));
       }
       let parkingText = '';
       payload.data.bookingId = id;
@@ -1459,6 +1523,13 @@ module.exports = class BookingService extends Service {
     }
 
     var isAdmin = _user.hasAccess('admin');
+
+    function *bail(err) {
+      let endAttempts = yield booking.incrFlag('complete');
+      yield redis.doneWithIt(lockKeys);
+      throw err;
+    }
+
     try {
       let relations = {
         include : [
@@ -1477,13 +1548,17 @@ module.exports = class BookingService extends Service {
       this.hasAccess(user, _user);
 
       if (booking.status !== 'ended') {
-        yield this.end(id, _user, query, payload);
+        try {
+          yield this.end(id, _user, query, payload);
+        } catch (ex) {
+          yield bail(ex);
+        }
+        booking = yield this.getBooking(id, relations);
         if (booking.status !== 'ended') {
-          yield redis.doneWithIt(lockKeys);
-          throw {
+          yield bail({
             code    : `BOOKING_REQUEST_INVALID`,
             message : `You cannot complete a booking which has not yet ended.`
-          };
+          });
         }
       }
 
@@ -1501,8 +1576,7 @@ module.exports = class BookingService extends Service {
         }
         res = yield this.finalCheckFail(_user, car, query);
         if(res) {
-          yield redis.doneWithIt(lockKeys);
-          throw res;
+          yield bail(res);
         }
       }
 
@@ -1554,8 +1628,7 @@ module.exports = class BookingService extends Service {
 
     } catch(ex) {
       if (!(query && query.force) || !booking || !car || !user) {
-        yield redis.doneWithIt(lockKeys);
-        throw ex;
+        yield bail(ex);
       }
     }
     try { 
@@ -1570,8 +1643,7 @@ module.exports = class BookingService extends Service {
       if(ex.code === 'TAG_WARNING') {
         errorAtEnd = ex;
       } else if (!(query && query.force) || !booking || !car || !user) {
-        yield redis.doneWithIt(lockKeys);
-        throw ex;
+        yield bail(ex);
       }
     }
 
