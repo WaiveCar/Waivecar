@@ -316,6 +316,9 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       }    
     },
 
+    *flag(what, value=1) {
+      return 0;
+    },
 
     isAdmin() {
       return this.hasAccess('admin');
