@@ -26,6 +26,7 @@ class WaiveWorkDetails extends Component {
         details: true,
         status: 'started,reserved',
         limit: 1,
+        includeWaiveworkPayment: true,
       },
       (err, bookings) => {
         if (err) {
@@ -35,22 +36,28 @@ class WaiveWorkDetails extends Component {
           });
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
-          this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
-            api.get(
-              `/cars/${bookings[0].car.id}/history?start=${
-                bookings[0].createdAt
-              }`,
-              (err, history) => {
-                if (err) {
-                  return snackbar.notify({
-                    type: 'danger',
-                    message: err.message,
-                  });
-                }
-                this.setState({carHistory: history});
-              },
-            );
-          });
+          this.setState(
+            {
+              perWeek: (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
+              currentWaiveWorkBooking: bookings[0],
+            },
+            () => {
+              api.get(
+                `/cars/${bookings[0].car.id}/history?start=${
+                  bookings[0].createdAt
+                }`,
+                (err, history) => {
+                  if (err) {
+                    return snackbar.notify({
+                      type: 'danger',
+                      message: err.message,
+                    });
+                  }
+                  this.setState({carHistory: history});
+                },
+              );
+            },
+          );
         }
       },
     );
@@ -111,15 +118,10 @@ class WaiveWorkDetails extends Component {
   render() {
     let {
       currentWaiveWorkBooking,
-      allTime,
-      lastMonth,
-      lastWeek,
-      yesterday,
       searchResults,
       perWeek,
       carHistory,
     } = this.state;
-    carHistory && console.log('history: ', carHistory);
     return (
       <div className="box">
         <h3>
@@ -145,7 +147,8 @@ class WaiveWorkDetails extends Component {
                 Total Miles Driven:{' '}
                 {(
                   (currentWaiveWorkBooking.car.totalMileage -
-                  currentWaiveWorkBooking.details[0].mileage) * 0.621371
+                    currentWaiveWorkBooking.details[0].mileage) *
+                  0.621371
                 ).toFixed(2)}
               </div>
               {carHistory.length && (
@@ -161,35 +164,57 @@ class WaiveWorkDetails extends Component {
                       </tr>
                       <tr>
                         <td>
-                          {carHistory.length ? (
-                            (Number(carHistory[carHistory.length - 1].data) -
-                              Number(carHistory[0].data)) /
-                            carHistory.length *
-                            0.621371
-                          ).toFixed(2) : 'Ride not yet over 1 day'}
+                          {carHistory.length
+                            ? (
+                                (Number(
+                                  carHistory[carHistory.length - 1].data,
+                                ) -
+                                  Number(carHistory[0].data)) /
+                                carHistory.length *
+                                0.621371
+                              ).toFixed(2)
+                            : 'Ride not yet over 1 day'}
                         </td>
                         <td>
-                          {carHistory[carHistory.length - 31] ? (
-                            (Number(carHistory[carHistory.length - 1].data) -
-                              Number(carHistory[carHistory.length - 31].data)) /
-                            30 *
-                            0.621371
-                          ).toFixed(2) : 'Ride not yet over 30 days'}
+                          {carHistory[carHistory.length - 31]
+                            ? (
+                                (Number(
+                                  carHistory[carHistory.length - 1].data,
+                                ) -
+                                  Number(
+                                    carHistory[carHistory.length - 31].data,
+                                  )) /
+                                30 *
+                                0.621371
+                              ).toFixed(2)
+                            : 'Ride not yet over 30 days'}
                         </td>
                         <td>
-                          {carHistory[carHistory.length - 8] ? (
-                            (Number(carHistory[carHistory.length - 1].data) -
-                              Number(carHistory[carHistory.length - 8].data)) /
-                            7 *
-                            0.621371
-                          ).toFixed(2) : 'Ride not yet over 1 week'}
+                          {carHistory[carHistory.length - 8]
+                            ? (
+                                (Number(
+                                  carHistory[carHistory.length - 1].data,
+                                ) -
+                                  Number(
+                                    carHistory[carHistory.length - 8].data,
+                                  )) /
+                                7 *
+                                0.621371
+                              ).toFixed(2)
+                            : 'Ride not yet over 1 week'}
                         </td>
                         <td>
-                          {carHistory.length ? (
-                            (Number(carHistory[carHistory.length - 1].data) -
-                              Number(carHistory[carHistory.length - 2].data)) *
-                            0.621371
-                          ).toFixed(2): 'Ride not yet over 1 day'}
+                          {carHistory.length
+                            ? (
+                                (Number(
+                                  carHistory[carHistory.length - 1].data,
+                                ) -
+                                  Number(
+                                    carHistory[carHistory.length - 2].data,
+                                  )) *
+                                0.621371
+                              ).toFixed(2)
+                            : 'Ride not yet over 1 day'}
                         </td>
                       </tr>
                     </tbody>
@@ -197,9 +222,14 @@ class WaiveWorkDetails extends Component {
                 </div>
               )}
               <div>
-                Price Per Week: <input type="number" />
+                Price Per Week:{' '}
+                <input
+                  type="number"
+                  value={perWeek}
+                  onChange={e => this.setState({perWeek: e.target.value})}
+                />
               </div>
-              <div className="text-center" style={{'marginTop': '1em'}}>
+              <div className="text-center" style={{marginTop: '1em'}}>
                 <div className="btn-group" role="group">
                   <button type="button" className="btn btn-primary">
                     Update Price
