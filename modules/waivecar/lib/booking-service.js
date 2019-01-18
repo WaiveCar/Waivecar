@@ -587,7 +587,10 @@ module.exports = class BookingService extends Service {
         },
         order: [[ 'created_at', 'desc' ]],
         limit: 1,
-      })).toJSON(); 
+      }));
+      if (bookings[0].waiveworkPayment) {
+        bookings[0].waiveworkPayment = bookings[0].waiveworkPayment.toJSON();
+      }
     }
     return bookings;
   }
