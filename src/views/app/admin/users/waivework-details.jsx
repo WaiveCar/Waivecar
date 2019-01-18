@@ -137,6 +137,10 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  end() {
+    console.log('ending here');
+  }
+
   render() {
     let {
       currentWaiveWorkBooking,
@@ -260,6 +264,12 @@ class WaiveWorkDetails extends Component {
                         className="btn btn-primary"
                         onClick={() => this.updatePayment()}>
                         Update Price
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => this.end()}>
+                        End Waivework Booking
                       </button>
                     </div>
                   </div>
