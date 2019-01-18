@@ -38,7 +38,9 @@ class WaiveWorkDetails extends Component {
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
           this.setState(
             {
-              perWeek: (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
+              perWeek:
+                bookings[0].waiveworkPayment &&
+                (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
               currentWaiveWorkBooking: bookings[0],
             },
             () => {
@@ -241,24 +243,33 @@ class WaiveWorkDetails extends Component {
                   </table>
                 </div>
               )}
-              <div>
-                Price Per Week:{' '}
-                <input
-                  type="number"
-                  value={perWeek}
-                  onChange={e => this.setState({perWeek: e.target.value})}
-                />
-              </div>
-              <div className="text-center" style={{marginTop: '1em'}}>
-                <div className="btn-group" role="group">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => this.updatePayment()}>
-                    Update Price
-                  </button>
+              {currentWaiveWorkBooking.waiveworkPayment ? (
+                <div>
+                  <div>
+                    Price Per Week:{' '}
+                    <input
+                      type="number"
+                      value={perWeek}
+                      onChange={e => this.setState({perWeek: e.target.value})}
+                    />
+                  </div>
+                  <div className="text-center" style={{marginTop: '1em'}}>
+                    <div className="btn-group" role="group">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => this.updatePayment()}>
+                        Update Price
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div>
+                  Automatic payment not currently setup for this WaiveWork
+                  Booking
+                </div>
+              )}
             </div>
           ) : (
             <div>
