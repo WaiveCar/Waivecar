@@ -454,7 +454,7 @@ module.exports = class BookingService extends Service {
     }); 
     yield notify.slack(
       {
-        text: `${driver.link()} to be charged $${(
+        text: `:fleur_de_lis: ${driver.link()} to be charged $${(
           proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
         their Waivework Rental`,

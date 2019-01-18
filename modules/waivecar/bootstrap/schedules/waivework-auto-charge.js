@@ -31,7 +31,7 @@ scheduler.process('waivework-auto-charge', function*(job) {
         let user = yield User.findById(booking.userId);
         yield notify.slack(
           {
-            text: `Uh Oh! ${user.link()} is not driving 100 miles per day. Their current average mileage is ${Math.floor(
+            text: `:scream_cat: Uh Oh! ${user.link()} is not driving 100 miles per day. Their current average mileage is ${Math.floor(
               averagePerDay,
             )} per day.`,
           },
@@ -92,9 +92,9 @@ scheduler.process('waivework-auto-charge', function*(job) {
         });
         yield notify.slack(
           {
-            text: `${user.link()} to be charged $${(
+            text: `:watch: ${user.link()} to be charged $${(
               oldPayment.amount / 100
-            ).toFixed(2)} for their Waivework Rental`,
+            ).toFixed(2)} today for their Waivework Rental`,
           },
           {channel: '#waivework-charges'},
         );
