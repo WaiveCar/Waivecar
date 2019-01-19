@@ -14,6 +14,7 @@ class WaiveWorkDetails extends Component {
       searchResults: [],
       carHistory: [],
       perWeek: null,
+      ended: false,
     };
   }
 
@@ -101,9 +102,7 @@ class WaiveWorkDetails extends Component {
           message: err.message,
         });
       }
-      this.setState({currentWaiveworkBooking: booking}, () =>
-        console.log(this.state),
-      );
+      this.setState({currentWaiveworkBooking: booking});
     });
   }
 
@@ -141,10 +140,15 @@ class WaiveWorkDetails extends Component {
           if (err) {
             return snackbar.notify({
               type: 'danger',
-              message: `Error updating payment: ${err.message}`,
+              message: `Error completing action: ${err.message}`,
             });
           }
-          console.log('response to booking action: ', response);
+          if (response.isCarReachable) {
+            this.setState({ended: true});
+          }
+          if (response.status === 'success') {
+            this.setState({currentWaiveworkBooking: null, ended: false});
+          }
         },
       );
     }
@@ -157,6 +161,7 @@ class WaiveWorkDetails extends Component {
       perWeek,
       carHistory,
       carSearchWord,
+      ended,
     } = this.state;
     return (
       <div className="box">
@@ -282,16 +287,9 @@ class WaiveWorkDetails extends Component {
                         type="button"
                         className="btn btn-primary"
                         onClick={() =>
-                          this.bookingAction(
-                            currentWaiveworkBooking.status === 'ended'
-                              ? 'complete'
-                              : 'end',
-                          )
+                          this.bookingAction(ended ? 'complete' : 'end')
                         }>
-                        {currentWaiveworkBooking.status === 'ended'
-                          ? 'Complete'
-                          : 'End'}{' '}
-                        Waivework Booking
+                        {ended ? 'Complete' : 'End'} Waivework Booking
                       </button>
                     </div>
                   </div>
