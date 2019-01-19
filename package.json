@@ -49,6 +49,7 @@
     "mysql": "2.9.0",
     "node-fs": "0.1.7",
     "nodemailer": "1.8.0",
+    "nodemailer-mailgun-transport": "^1.4.0",
     "nodemailer-mandrill-transport": "0.3.0",
     "pluralize": "1.2.1",
     "point-in-polygon": "^1.0.0",
