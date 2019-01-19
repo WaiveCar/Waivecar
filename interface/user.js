@@ -316,8 +316,36 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       }    
     },
 
-    *flag(what, value=1) {
-      return 0;
+    *getFlag(what, fullRow = false) {
+      let UserValues = Bento.model('UserValues');
+      let existingRow = yield UserValues.findOne({where: {userId: this.id, key: what}});
+      return existingRow ? (fullRow ? existingRow : existingRow.value) : null;
+    },
+
+    *incrFlag(what, value=1) {
+      let existingRow = yield this.getFlag(what, true);
+
+      if(!existingRow) {
+        let model = new UserValues({
+          userId: this.id,
+          key: what,
+          value: value
+        });
+        yield model.save();
+        return value;
+      }
+
+      let newValue = existingRow.value + value;
+      if(isNaN(newValue)) {
+        newValue = existingRow.value || value || 0;
+      }
+
+      yield existingRow.update({
+        ttl: existingRow.ttl + 1,
+        value: newValue
+      });
+
+      return newValue; 
     },
 
     isAdmin() {
