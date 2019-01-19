@@ -147,7 +147,11 @@ class WaiveWorkDetails extends Component {
             this.setState({ended: true});
           }
           if (response.status === 'success') {
-            this.setState({currentWaiveworkBooking: null, ended: false});
+            this.setState({
+              currentWaiveworkBooking: null,
+              ended: false,
+              perWeek: null,
+            });
           }
         },
       );
