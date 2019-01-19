@@ -9,8 +9,8 @@ class WaiveWorkDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentWaiveWorkBooking: null,
-      carSearch: '',
+      currentWaiveworkBooking: null,
+      carSearchWord: '',
       searchResults: [],
       carHistory: [],
       perWeek: null,
@@ -24,7 +24,7 @@ class WaiveWorkDetails extends Component {
         userId: this.props.user.id,
         order: 'id,DESC',
         details: true,
-        status: 'started,reserved',
+        status: 'started,reserved,ended',
         limit: 1,
         includeWaiveworkPayment: true,
       },
@@ -41,7 +41,7 @@ class WaiveWorkDetails extends Component {
               perWeek:
                 bookings[0].waiveworkPayment &&
                 (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
-              currentWaiveWorkBooking: bookings[0],
+              currentWaiveworkBooking: bookings[0],
             },
             () => {
               api.get(
@@ -66,15 +66,18 @@ class WaiveWorkDetails extends Component {
   }
 
   carSearch() {
-    api.get(`/cars/search/?search=${this.state.carSearch}`, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      this.setState({searchResults: response});
-    });
+    api.get(
+      `/cars/search/?search=${this.state.carSearchWord}`,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({searchResults: response});
+      },
+    );
   }
 
   book(carId) {
@@ -98,29 +101,16 @@ class WaiveWorkDetails extends Component {
           message: err.message,
         });
       }
-      api.get(`/bookings/${booking.id}`, (err, bookingWithDetails) => {
-        if (err) {
-          return snackbar.notify({
-            type: 'danger',
-            message: err.message,
-          });
-        }
-        this.setState({currentWaiveWorkBooking: bookingWithDetails}, () => {
-          return snackbar.notify({
-            type: 'success',
-            message: `User booked into ${
-              bookingWithDetails.car.license
-            } for WaiveWork`,
-          });
-        });
-      });
+      this.setState({currentWaiveworkBooking: booking}, () =>
+        console.log(this.state),
+      );
     });
   }
 
   updatePayment() {
-    let {currentWaiveWorkBooking, perWeek} = this.state;
+    let {currentWaiveworkBooking, perWeek} = this.state;
     api.put(
-      `/waiveworkPayment/${currentWaiveWorkBooking.id}`,
+      `/waiveworkPayment/${currentWaiveworkBooking.id}`,
       {amount: perWeek * 100},
       (err, response) => {
         if (err) {
@@ -137,16 +127,36 @@ class WaiveWorkDetails extends Component {
     );
   }
 
-  end() {
-    console.log('ending here');
+  bookingAction(action) {
+    let {currentWaiveworkBooking} = this.state;
+    if (
+      confirm(
+        'Are you sure you want to end this waivework booking? Automatic Billing will be stopped.',
+      )
+    ) {
+      api.put(
+        `/bookings/${currentWaiveworkBooking.id}/${action}`,
+        {},
+        (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: `Error updating payment: ${err.message}`,
+            });
+          }
+          console.log('response to booking action: ', response);
+        },
+      );
+    }
   }
 
   render() {
     let {
-      currentWaiveWorkBooking,
+      currentWaiveworkBooking,
       searchResults,
       perWeek,
       carHistory,
+      carSearchWord,
     } = this.state;
     return (
       <div className="box">
@@ -155,28 +165,30 @@ class WaiveWorkDetails extends Component {
           <small>Setup User's WaiveWork Billing</small>
         </h3>
         <div className="box-content">
-          {this.state.currentWaiveWorkBooking ? (
+          {currentWaiveworkBooking ? (
             <div>
               Current WaiveWork Booking:{' '}
-              <Link to={`/bookings/${currentWaiveWorkBooking.id}`}>
-                {currentWaiveWorkBooking.id}
+              <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
+                {currentWaiveworkBooking.id}
               </Link>{' '}
               in{' '}
-              <Link to={`/cars/${currentWaiveWorkBooking.car.id}`}>
-                {currentWaiveWorkBooking.car.license}
+              <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
+                {currentWaiveworkBooking.car.license}
               </Link>
               <div>
                 Start Date:{' '}
-                {moment(currentWaiveWorkBooking.createdAt).format('MM/DD/YYYY')}
+                {moment(currentWaiveworkBooking.createdAt).format('MM/DD/YYYY')}
               </div>
-              <div>
-                Total Miles Driven:{' '}
-                {(
-                  (currentWaiveWorkBooking.car.totalMileage -
-                    currentWaiveWorkBooking.details[0].mileage) *
-                  0.621371
-                ).toFixed(2)}
-              </div>
+              {carHistory.length && (
+                <div>
+                  Total Miles Driven:{' '}
+                  {(
+                    (Number(carHistory[carHistory.length - 1].data) -
+                      Number(carHistory[0].data)) *
+                    0.621371
+                  ).toFixed(2)}
+                </div>
+              )}
               {carHistory.length && (
                 <div style={{textAlign: 'center'}}>
                   Average Miles Per Day:
@@ -247,7 +259,8 @@ class WaiveWorkDetails extends Component {
                   </table>
                 </div>
               )}
-              {currentWaiveWorkBooking.waiveworkPayment ? (
+              {currentWaiveworkBooking.waiveworkPayment ||
+              currentWaiveworkBooking.status === 'ended' ? (
                 <div>
                   <div>
                     Price Per Week:{' '}
@@ -268,16 +281,24 @@ class WaiveWorkDetails extends Component {
                       <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={() => this.end()}>
-                        End Waivework Booking
+                        onClick={() =>
+                          this.bookingAction(
+                            currentWaiveworkBooking.status === 'ended'
+                              ? 'complete'
+                              : 'end',
+                          )
+                        }>
+                        {currentWaiveworkBooking.status === 'ended'
+                          ? 'Complete'
+                          : 'End'}{' '}
+                        Waivework Booking
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div>
-                  Automatic payment not currently setup for this WaiveWork
-                  Booking
+                  Automatic payment not yet setup for this WaiveWork Booking
                 </div>
               )}
             </div>
@@ -286,8 +307,8 @@ class WaiveWorkDetails extends Component {
               Not currently booked into a WaiveWork vehicle
               <div className="row" style={{marginTop: '4px'}}>
                 <input
-                  onChange={e => this.setState({carSearch: e.target.value})}
-                  value={this.state.carSearch}
+                  onChange={e => this.setState({carSearchWord: e.target.value})}
+                  value={carSearchWord}
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}
                   className="col-xs-6"
                   placeholder="Car Number"
