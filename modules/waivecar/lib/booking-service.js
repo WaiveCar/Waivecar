@@ -393,9 +393,13 @@ module.exports = class BookingService extends Service {
     yield redis.doneWithIt(lockKeys);
 
     if (data.isWaivework) {
-      yield this.handleWaivework(booking, data, _user, driver);
       yield booking.addFlag('Waivework');
+      let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
+      booking = booking.toJSON();
+      booking.car = car;
+      booking.waiveworkPayment = waiveworkPayment;
     }
+    console.log('should have payment', booking)
     return booking;
   }
 
@@ -462,6 +466,7 @@ module.exports = class BookingService extends Service {
       {channel: '#waivework-charges'},
     );
     yield waiveworkPayment.save();
+    return waiveworkPayment.toJSON();
   }
 
   /*
@@ -577,7 +582,7 @@ module.exports = class BookingService extends Service {
         bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
       }
     }
-    if (query.includeWaiveworkPayment) {
+    if (bookings[0] && query.includeWaiveworkPayment) {
       // The booking that the waivework payment is attached to must first be JSONified 
       // so that properties may be added to it
       bookings[0] = bookings[0].toJSON();
