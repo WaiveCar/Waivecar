@@ -12,16 +12,7 @@ module.exports = class Email {
   constructor() {
     this.config    = Bento.config.email;
     this.templates = path.join(Bento.ROOT_PATH, this.config.templateFolder);
-    switch (this.config.transportName) {
-      case 'mandrill': {
-        this.transporter = nodemailer.createTransport(mandrillTransport(this.config.transport));
-        break;
-      }
-      default: {
-        this.transporter = null;
-        break;
-      }
-    }
+    this.transporter = nodemailer.createTransport(mandrillTransport(this.config.transport));
   }
 
   *renderTemplate(templateName, context) {
