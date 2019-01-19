@@ -399,7 +399,6 @@ module.exports = class BookingService extends Service {
       booking.car = car;
       booking.waiveworkPayment = waiveworkPayment;
     }
-    console.log('should have payment', booking)
     return booking;
   }
 
@@ -466,7 +465,7 @@ module.exports = class BookingService extends Service {
       {channel: '#waivework-charges'},
     );
     yield waiveworkPayment.save();
-    return waiveworkPayment.toJSON();
+    return waiveworkPayment;
   }
 
   /*
