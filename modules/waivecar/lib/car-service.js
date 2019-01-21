@@ -168,6 +168,8 @@ module.exports = {
     }
 
     if(query.type === 'parking') {
+      let BookingService = require('./booking-service');
+
       opts.where = {
         inRepair: false,
         adminOnly: false,
@@ -202,6 +204,11 @@ module.exports = {
       }];
 
       cars = yield Car._schema.findAll(opts);
+      /*
+      for(let car of cars) {
+        car.zone = yield BookingService.getZone(car);
+      }
+      */
     } else {
       cars = yield Car.find(opts);
 
@@ -514,6 +521,25 @@ module.exports = {
 
     return car;
   },
+
+  // Here's where we report any kind of infraction we wish ...
+  *report(id, what, _user) {
+    let car = yield Car.findById(id);
+    let bookingList = yield car.getPreviousBookings(3);
+    let factor = 3;
+    let weight = 1.00;
+
+    // We make the complainer as a complainer of such things
+    yield _user.incrFlag(['report', what].join(':'), weight);
+
+    // We don't know who did this so we just do a backoff from a factor
+    for (let booking of bookingList) {
+      let driver = yield booking.getUser();
+      yield driver.incrFlag(what, weight);
+      weight /= factor;
+    }
+  },
+
 
   // If the car has no booking and a user languishing around, we should be able
   // to kick them out
@@ -1111,7 +1137,6 @@ module.exports = {
     }
     let bookingService = require('./booking-service');
 
-    console.log(car, car.bookingId,  car.userId);
     yield bookingService.end(car.bookingId, _user, {}, {}); 
     yield bookingService.complete(car.bookingId, _user, {}, {}); 
 
