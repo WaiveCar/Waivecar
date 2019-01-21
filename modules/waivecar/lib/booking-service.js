@@ -40,7 +40,8 @@ let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
-let BookingLocation= Bento.model('BookingLocation');
+let BookingLocation = Bento.model('BookingLocation');
+let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
 let locationCache = false;
@@ -181,7 +182,7 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        if(driver.hasAccess('admin')) {
+        if(driver.hasAccess('admin') || _user.isWaivework) {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
         } else {
@@ -238,7 +239,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    if(!_user.hasAccess('admin')) {
+    if(!_user.hasAccess('admin') && !_user.isWaivework) {
       try {
         yield this.offerWaiveRush(driver, car, data.opts);
       } catch(ex) {
@@ -251,7 +252,7 @@ module.exports = class BookingService extends Service {
 
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
-    if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
+    if (!(isRush || driver.isWaivework || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       try {
         rebookOrder = yield this.rebookCheck(driver, car, data.opts);
       } catch(ex) {
@@ -260,7 +261,7 @@ module.exports = class BookingService extends Service {
     }
     t("rebook-check");
 
-    if(!driver.isWaiveWork) {
+    if(!driver.isWaivework) {
       let hoardRes = yield this.lookForHoarding(driver, car);
       if(hoardRes[0] >= 0.5) {
         yield UserLog.addUserEvent(driver, 'HOARD', hoardRes[0].toFixed(3) );
@@ -453,7 +454,81 @@ module.exports = class BookingService extends Service {
     t("booking-done");
 
     yield redis.doneWithIt(lockKeys);
+
+    if (data.isWaivework) {
+      yield booking.addFlag('Waivework');
+      let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
+      booking = booking.toJSON();
+      booking.car = car;
+      booking.waiveworkPayment = waiveworkPayment;
+    }
     return booking;
+  }
+
+  static *handleWaivework(booking, data, _user, driver) {
+    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
+    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
+    // be charged a prorated amount for the amount of time before that date
+    yield this.ready(booking.id, _user);
+    let today = moment()
+    let currentDay = today.date();
+    let nextDate;
+    switch(true) {
+      case currentDay === 1:
+        nextDate = 1;
+        break;
+      case currentDay <= 8:
+        nextDate = 8;
+        break;
+      case currentDay <= 15:
+        nextDate = 15;
+        break;
+      case currentDay <= 22:
+        nextDate = 22;
+        break;
+      default: 
+        nextDate = 1;
+        break;
+    }
+    let prorating = (nextDate - currentDay) / 7;
+    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1)); 
+    if (prorating === 0) {
+      nextDate += 7;
+    }
+    // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
+    // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
+    data.source = 'WaiveWork Intial Payment';
+    data.description = 'Initial Payment For WaiveWork';
+    data.waivework = true;
+    let weeklyAmount = data.amount;
+    data.amount = proratedChargeAmount;
+    // The line below should be removed later once we are done watching to see if the payment process works reliably
+    // Currently, the user will just be charged $0. And is just overwriting the actual amount to be charged.
+    data.amount = 0;
+    let workCharge = (yield OrderService.quickCharge(data, _user)).order;
+    let bookingPayment = new BookingPayment({
+      bookingId: booking.id,
+      orderId: workCharge.id,
+    });
+    yield bookingPayment.save();
+
+    let waiveworkPayment = new WaiveworkPayment({
+      bookingId: booking.id,
+      date: moment().add(nextDate - currentDay, 'days'),
+      bookingPaymentId: null,
+      amount: weeklyAmount,
+    }); 
+    yield notify.slack(
+      {
+        text: `:fleur_de_lis: ${driver.link()} to be charged $${(
+          proratedChargeAmount / 100
+        ).toFixed(2)} for as the initial payment for
+        their Waivework Rental`,
+      },
+      {channel: '#waivework-charges'},
+    );
+    yield waiveworkPayment.save();
+    return waiveworkPayment;
   }
 
   /*
@@ -569,7 +644,21 @@ module.exports = class BookingService extends Service {
         bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
       }
     }
-
+    if (bookings[0] && query.includeWaiveworkPayment) {
+      // The booking that the waivework payment is attached to must first be JSONified 
+      // so that properties may be added to it
+      bookings[0] = bookings[0].toJSON();
+      bookings[0].waiveworkPayment = (yield WaiveworkPayment.findOne({
+        where: {
+          bookingId: bookings[0].id,
+        },
+        order: [[ 'created_at', 'desc' ]],
+        limit: 1,
+      }));
+      if (bookings[0].waiveworkPayment) {
+        bookings[0].waiveworkPayment = bookings[0].waiveworkPayment.toJSON();
+      }
+    }
     return bookings;
   }
 
@@ -671,6 +760,7 @@ module.exports = class BookingService extends Service {
         }
       });
     }
+
     return booking;
   }
 
@@ -1389,6 +1479,25 @@ module.exports = class BookingService extends Service {
     }
 
     yield redis.doneWithIt(lockKeys);
+
+    if (booking.isFlagged('Waivework')) {
+      let waiveworkPayment = yield WaiveworkPayment.findOne({
+        where: {
+          bookingId: booking.id,
+          bookingPaymentId: null,
+        }
+      });
+      if (waiveworkPayment) {
+        yield waiveworkPayment.delete();
+      }
+      yield notify.slack(
+        {
+          text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      // TODO: Possibly make it refund a prorated amount to the user here?
+    }
 
     return {
       isCarReachable : isCarReachable
@@ -2322,5 +2431,16 @@ module.exports = class BookingService extends Service {
           }]
       }, 400);
     }
+  }
+
+  static *updateWaiveworkPayment(bookingId, payload) {
+    let nextPayment = yield WaiveworkPayment.findOne({
+      where: {
+        bookingId,
+        bookingPaymentId: null,
+      }
+    });
+    yield nextPayment.update({amount: payload.amount});
+    return nextPayment;
   }
 };

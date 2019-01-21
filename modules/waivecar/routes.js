@@ -26,6 +26,7 @@ Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@upda
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
 Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
+Route.put('/waiveworkPayment/:bookingId', [ 'isAuthenticated', 'BookingsController@updateWaiveworkPayment' ]);
 
 // ### Patches
 
@@ -50,10 +51,12 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
+Route.get('/cars/search',       [ 'isAuthenticated', 'CarsController@search' ]);
 Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);
 Route.put('/magic/:command',    [ 'isAuthenticated', 'isAdmin', 'CarsController@magic' ]);
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);
 Route.get('/cars/:id/notes',    [ 'isAuthenticated', 'NotesController@getCarNotes' ]);
+Route.get('/cars/:id/history',  [ 'isAuthenticated', 'CarsController@history' ]);
 Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);
 Route.get('/cars/:id/bookings', [ 'isAuthenticated', 'CarsController@bookings' ]);
 Route.get('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);

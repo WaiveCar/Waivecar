@@ -48,7 +48,7 @@ module.exports = class OrderService extends Service {
     if (
       !opts.overrideAdminCheck && 
       // if we aren't an admin, this may be ok
-      !_user.hasAccess('admin') && (
+      (_user && !_user.hasAccess('admin')) && (
         // we have to be modifying ourselves
         // and we are only allowed to clear our balance
         user.id !== _user.id ||
@@ -65,7 +65,7 @@ module.exports = class OrderService extends Service {
     //data.currency || 'usd';
     //this.verifyCurrency(data.currency);
 
-    if(data.amount === 0) {
+    if(data.amount === 0 && !data.waivework) {
       data.description = "Clearing outstanding balance";
     }
 
@@ -120,7 +120,9 @@ module.exports = class OrderService extends Service {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.name() }`;
-        yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
+        if (!data.waivework) {
+          yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
+        }
       }
 
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and
