@@ -9,7 +9,9 @@ let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
 let moment = require('moment');
 
-scheduler.process('waivework-auto-charge', function*(job) {
+scheduler.process('waivework-billing', function*(job) {
+  // The first section of this process checks all of the current waivework bookings to make
+  // sure the cars are being driven 100 miles a day. If they are not, a notification is sent to slack
   let currentWaiveworkBookings = (yield Booking.find({
     where: {
       status: 'started',
@@ -23,6 +25,8 @@ scheduler.process('waivework-auto-charge', function*(job) {
       },
     });
     if (history.length) {
+      // Because the mileage is stored once per day, the average mileage per day may be found by
+      // dividing the miles since the beginning of the booking by the number of days in the car history
       let averagePerDay =
         (Number(history[history.length - 1].data) - Number(history[0].data)) /
         history.length *
@@ -42,7 +46,12 @@ scheduler.process('waivework-auto-charge', function*(job) {
   }
 
   let today = moment();
+  // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(today.date())) {
+    // The unpiad WaiveworkPayments that are created on the previous billing date
+    // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
+    // works by making the charge that was scheduled on the previous billing date and 
+    // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
         date: {
@@ -71,8 +80,9 @@ scheduler.process('waivework-auto-charge', function*(job) {
         };
         let user = yield User.findById(oldPayment.booking.userId);
         let shopOrder = (yield OrderService.quickCharge(data)).order;
-        // The line below should be removed later once we are done watching to see if the payment process works reliably
-        // Currently, the user will just be charged $0.
+        // The line below should be removed later once we are done watching to see if the payment process 
+        // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
+        // is necessary for the scheduling of the new charge.
         data.amount = 0;
         data.waivework = true;
         let bookingPayment = new BookingPayment({
@@ -90,6 +100,8 @@ scheduler.process('waivework-auto-charge', function*(job) {
         yield oldPayment.update({
           bookingPaymentId: bookingPayment.id,
         });
+        // For now, this Slack notification should indicate to Frank when to charge the users manually during
+          // the testing period for this process
         yield notify.slack(
           {
             text: `:watch: ${user.link()} to be charged $${(
@@ -105,7 +117,7 @@ scheduler.process('waivework-auto-charge', function*(job) {
 
 module.exports = function*() {
   let timer = {value: 24, type: 'hours'};
-  scheduler.add('waivework-auto-charge', {
+  scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
     timer,
