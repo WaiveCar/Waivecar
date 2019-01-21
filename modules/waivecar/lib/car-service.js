@@ -77,6 +77,7 @@ module.exports = {
   *index(query, _user) {
     var hour = moment().tz('America/Los_Angeles').format('H');
     var isAdmin = _user && _user.hasAccess('admin');
+    var cars;
 
     var opts = {
       include: [{
