@@ -161,58 +161,67 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return (isLevel ? 180 : 120) + 5;
     },
 
+    *getUser() {
+      let User = Bento.model('User');
+      return yield User.findById(this.userId);
+    },
+
     link() {
       return `<${ apiConfig.uri }/bookings/${ this.id }|Booking ${ this.id }>`;
     },
 
-    getFlags() {
-      return this.flags ? JSON.parse(this.flags) : [];
+    getFlagObject() {
+      if(!this.flags || typeof(this.flags) === 'string') {
+        this.flags = this.flags ? JSON.parse(this.flags) : {};
+      }
+
+      if(Array.isArray(this.flags)) {
+        let tmp = {};
+        for(let key of this.flags) {
+          tmp[key] = 1;
+        }
+        this.flags = tmp;
+      }
+
+      return this.flags;
     },
 
     isFlagged(what) {
-      return this.getFlags().indexOf(what) !== -1;
-    },
-
-    *swapFlag(outFlag, inFlag) {
-      var newFlagList = this.getFlags().filter(function(flag) {
-        return flag !== outFlag;
-      });
-      newFlagList.push(inFlag);
-
-      yield this.update({
-        flags: JSON.stringify(newFlagList)
-      });
-
-      return newFlagList;
+      return what in this.getFlagObject();
     },
 
     *unFlag(what) {
       if(this.isFlagged(what)) {
-        var newFlagList = this.getFlags().filter(function(flag) {
-          return flag !== what;
-        });
-
-        yield this.update({
-          flags: JSON.stringify(newFlagList)
-        });
+        delete this.flags[what];
+        yield this.update({ flags: JSON.stringify(this.flags) });
       }
-      return newFlagList;
+      return this.flags;
     },
 
-    *addFlag(what) {
-      return yield this.flag(what);
+    *addFlag(what, value) {
+      return yield this.flag(what, value);
     },
 
-    *flag(what) {
+    *incrFlag(what, amount=1) {
       if(!this.isFlagged(what)) {
-        var flagList = this.getFlags();
-        flagList.push(what);
-
-        yield this.update({
-          flags: JSON.stringify(flagList)
-        });
+        return yield this.flag(what, amount);
+      } else {
+        this.flags[what] += amount;
+        yield this.update({ flags: JSON.stringify(this.flags) });
       }
-      return flagList;
+      return this.flags[what];
+    },
+
+    *getFlag(what) {
+      return yield(this.incrFlag(what, 0));
+    },
+
+    *flag(what, value = 1) {
+      if(!this.isFlagged(what)) {
+        this.flags[what] = value;
+        yield this.update({ flags: JSON.stringify(this.flags) });
+      }
+      return this.flags;
     },
 
     *cancel() {
