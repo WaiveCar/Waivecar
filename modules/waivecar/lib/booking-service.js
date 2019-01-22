@@ -1250,7 +1250,7 @@ module.exports = class BookingService extends Service {
         reason: 'inaccurate'
       },
       blurry: {
-        verb: "an unreadiable sign",
+        verb: "an unreadable sign",
         header: 'Illegible parking sign',
         reason: 'either blurry or hard to read',
         tip: "To take better photos, try to not use the phones's flash, disable HDR mode if on, and try to zoom in on the parking sign"
