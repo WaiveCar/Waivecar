@@ -1199,7 +1199,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *getBUC(opts) {
-    var booking = opts.bookingId ? (yield Bookings.findById(opts.bookingId)) : false;
+    var booking = opts.bookingId ? (yield Booking.findById(opts.bookingId)) : false;
     var user    = opts.userId    ? (yield User.findById(opts.userId))        : false;
     var car     = opts.carId     ? (yield Car.findById(opts.carId))          : false;
 
@@ -1225,6 +1225,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *signIssue(type, opts, _user) {
+    console.log(opts);
     let [booking, user, car] = yield this.getBUC(opts);
     let path;
     let detailList = yield ParkingDetails.find({ where: { bookingId: booking.id } });
@@ -1257,9 +1258,10 @@ module.exports = class BookingService extends Service {
       }
     }[type];
        
-    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template[verb] }` }, { channel : '#rental-alerts' });
+    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb }` }, { channel : '#rental-alerts' });
 
     try {
+      let email = new Email();
       yield email.send({
         to       : user.email,
         from     : emailConfig.sender,
@@ -1274,7 +1276,7 @@ module.exports = class BookingService extends Service {
         }
       });
     } catch(err) {
-      log.warn('email error: ', err);
+      console.log(err);
     }; 
   }
     
