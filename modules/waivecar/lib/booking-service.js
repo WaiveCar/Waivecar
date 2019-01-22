@@ -1310,7 +1310,7 @@ module.exports = class BookingService extends Service {
     let warnings = [];
 
     function *bail(err) {
-      let endAttempts = yield booking.incrFlag('end');
+      //let endAttempts = yield booking.incrFlag('end');
       yield redis.doneWithIt(lockKeys);
       throw err;
     }
@@ -1649,7 +1649,7 @@ module.exports = class BookingService extends Service {
     var isAdmin = _user.hasAccess('admin');
 
     function *bail(err) {
-      let endAttempts = yield booking.incrFlag('complete');
+      //let endAttempts = yield booking.incrFlag('complete');
       yield redis.doneWithIt(lockKeys);
       throw err;
     }
