@@ -448,9 +448,7 @@ module.exports = class UserDetails extends React.Component {
                   </div>
 
                 </div>
-                <div className="form-group row">
-                  { this.tagList() }
-                </div>
+                { this.tagList() }
                 <div className="form-group row">
                   <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                   <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
