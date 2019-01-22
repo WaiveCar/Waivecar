@@ -46,7 +46,7 @@ export default class UserParking extends ParkingActions {
     return (
       <div className="box parking-box">
         <h3>
-          <span>Parking Spaces:</span>
+          <span>Parking Spaces</span>
           <small>Manage parking spaces</small>
         </h3>
         <div className="box-content">

@@ -65,6 +65,7 @@ module.exports = class BookingsView extends React.Component {
       // and the page stops functioning.  To work around this, since 
       // the user doesn't change we store it OOB of the booking variable
       this.setState({
+        booking: booking,
         details: booking.details,
         payments: booking.payments,
         user: booking.user,
@@ -98,11 +99,15 @@ module.exports = class BookingsView extends React.Component {
     });
   }
 
-  /**
-   * Sends a booking update action to the api.
-   * @param  {String} action cancel|end|complete|close
-   * @return {Void}
-   */
+  cite(list) {
+    let [word, type] = list;
+    if(confirm("Are you sure you want to cite the user for a " + word + " sign?")) {
+      api.put(`/parking/cite/${ type }`, { booking: this.state.booking.id }, (err, model) => {
+        console.log(err, model);
+      });
+    }
+  }
+
   update(action, force) {
     this.setState({
       isActing : true
@@ -283,6 +288,24 @@ module.exports = class BookingsView extends React.Component {
     );
   }
 
+  renderCiteUser() {
+    return <div className="row">
+      {
+        [
+          [ 'Blurry','blurry' ],
+          [ 'Wrong','wrong' ],
+          [ 'Not a Sign', 'notsign' ]
+        ].map(row => 
+          <div className="col-xs-4">
+            <button 
+              onClick={ this.cite.bind(this, row) } 
+              className={ "btn " + (this.state.booking.flags[row[1]] ? "disabled" : "")}>{ row[0] }</button>
+          </div>
+        )
+      }
+      </div>
+  }
+
   render() {
     if (this.state.error) {
       return (
@@ -377,6 +400,7 @@ module.exports = class BookingsView extends React.Component {
                     </div>
                   </div>
                 </div>
+                { this.renderCiteUser() }
               </div>
             </div>
           </div>
