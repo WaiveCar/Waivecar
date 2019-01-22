@@ -23,9 +23,9 @@ let hooks       = Bento.Hooks;
 
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
+let CarHistory = Bento.model('CarHistory');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
-let ParkingDetails = Bento.model('ParkingDetails');
 let GroupCar  = Bento.model('GroupCar');
 const util = require('util')
 
@@ -77,7 +77,7 @@ module.exports = {
   *index(query, _user) {
     var hour = moment().tz('America/Los_Angeles').format('H');
     var isAdmin = _user && _user.hasAccess('admin');
-    let cars;
+    var cars;
 
     var opts = {
       include: [{
@@ -168,6 +168,8 @@ module.exports = {
     }
 
     if(query.type === 'parking') {
+      let BookingService = require('./booking-service');
+
       opts.where = {
         inRepair: false,
         adminOnly: false,
@@ -202,36 +204,43 @@ module.exports = {
       }];
 
       cars = yield Car._schema.findAll(opts);
+      /*
+      for(let car of cars) {
+        car.zone = yield BookingService.getZone(car);
+      }
+      */
     } else {
       cars = yield Car.find(opts);
 
       // console.log(util.inspect(opts, false, null));
+    }
 
-      if(_user) {
-        let available = 0;
-        cars.forEach(function(car) {
-          car.license = car.license || '';
+    // console.log(util.inspect(opts, false, null));
 
-          // we want a single reference for this number
-          // and not have it be computed in various places
-          car.range = car.milesAvailable(); 
+    if(_user) {
+      let available = 0;
+      cars.forEach(function(car) {
+        car.license = car.license || '';
 
-          available += car.isAvailable;
+        // we want a single reference for this number
+        // and not have it be computed in various places
+        car.range = car.milesAvailable(); 
 
-          // We toggle the car to be "available" for the admin so
-          // that it will show up on the list of cars. This helps
-          // fleet pick up low cars at night from the app in an 
-          // easy way.
-          car.isReallyAvailable = car.isAvailable;
-          if(isAdmin) {
-            car.isAvailable = true;
-          }
+        available += car.isAvailable;
 
-          legacyWorkAround(car);
-        });
+        // We toggle the car to be "available" for the admin so
+        // that it will show up on the list of cars. This helps
+        // fleet pick up low cars at night from the app in an 
+        // easy way.
+        car.isReallyAvailable = car.isAvailable;
+        if(isAdmin) {
+          car.isAvailable = true;
+        }
 
-        fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
-      }
+        legacyWorkAround(car);
+      });
+
+      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
     }
 
     return cars;
@@ -244,6 +253,17 @@ module.exports = {
       carsOutOfService: count,
       percentOutOfService: (count / allCars.length) * 100,
     };
+  },
+
+  *history(id, query) {
+    let queryObj = {
+      where: {
+        carId: id,
+      }
+    };
+    queryObj.where.createdAt = query.start ? {$gte: query.start} : null;
+    let history = yield CarHistory.find(queryObj);
+    return history;
   },
 
   joinCarsWithBookings(cars, bookings) {
@@ -514,6 +534,25 @@ module.exports = {
 
     return car;
   },
+
+  // Here's where we report any kind of infraction we wish ...
+  *report(id, what, _user) {
+    let car = yield Car.findById(id);
+    let bookingList = yield car.getPreviousBookings(3);
+    let factor = 3;
+    let weight = 1.00;
+
+    // We make the complainer as a complainer of such things
+    yield _user.incrFlag(['report', what].join(':'), weight);
+
+    // We don't know who did this so we just do a backoff from a factor
+    for (let booking of bookingList) {
+      let driver = yield booking.getUser();
+      yield driver.incrFlag(what, weight);
+      weight /= factor;
+    }
+  },
+
 
   // If the car has no booking and a user languishing around, we should be able
   // to kick them out
@@ -1037,11 +1076,11 @@ module.exports = {
 
   *lockCar(id, _user, car, opts) {
     if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
+    /*
     let res = yield this.executeCommand(id, 'central_lock', 'lock', _user, car, opts);
 
     let bookingService = require('./booking-service');
     car = car || (yield Car.findById(id));
-    /*
     let isInSantaMonica = yield bookingService.getZone(car, 'Santa Monica');
     if(isInSantaMonica) {
       let actionService = require('./action-service');
@@ -1055,6 +1094,7 @@ module.exports = {
       }
     }
     */
+    return yield this.executeCommand(id, 'central_lock', 'lock', _user, car, opts);
   },
 
   *openDoor(id, _user){
@@ -1111,7 +1151,6 @@ module.exports = {
     }
     let bookingService = require('./booking-service');
 
-    console.log(car, car.bookingId,  car.userId);
     yield bookingService.end(car.bookingId, _user, {}, {}); 
     yield bookingService.complete(car.bookingId, _user, {}, {}); 
 
@@ -1429,5 +1468,16 @@ module.exports = {
       }
       throw err;
     }
+  },
+
+  *search(query) {
+    let cars = yield Car.find({
+      where: {
+        license: {
+          $and: [{$like: 'work%'}, {$like: `%${query.search}`}]
+        }
+      }
+    });
+    return cars;
   }
 };
