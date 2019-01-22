@@ -1225,7 +1225,6 @@ module.exports = class BookingService extends Service {
   }
 
   static *signIssue(type, opts, _user) {
-    console.log(opts);
     let [booking, user, car] = yield this.getBUC(opts);
     let path;
     let detailList = yield ParkingDetails.find({ where: { bookingId: booking.id } });
