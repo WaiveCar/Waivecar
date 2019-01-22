@@ -300,9 +300,10 @@ module.exports = class BookingsView extends React.Component {
         [
           [ 'Blurry','blurry' ],
           [ 'Wrong','wrong' ],
-          [ 'Not a Sign', 'notsign' ]
+          [ 'Not Sign', 'notsign' ]
+          [ 'Broke Rules', 'terms' ]
         ].map(row => 
-          <div className="col-xs-4">
+          <div className="col-xs-3">
             <button 
               onClick={ this.cite.bind(this, row) } 
               className={ "btn " + (this.state.booking.flags[row[1]] ? "disabled btn-link" : "primary")}>{ row[0] }</button>
