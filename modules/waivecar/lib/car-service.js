@@ -209,6 +209,7 @@ module.exports = {
         car.zone = yield BookingService.getZone(car);
       }
       */
+      return cars;
     } else {
       cars = yield Car.find(opts);
 
