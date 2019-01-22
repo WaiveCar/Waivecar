@@ -74,8 +74,11 @@ Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController
 
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
-// ### User Parking
+// User Parking
 Route.post('/parkingQuery', [ 'ParkingController@parkingQuery' ]);
+Route.post('/parking/cite/:adjective', [ 'BookingsController@signIssue' ]);
+
+// WaiveParking
 Route.get('/parking', ['isAuthenticated', 'ParkingController@index' ]);
 Route.post('/parking', [ 'isAuthenticated', 'ParkingController@create' ]);
 Route.get('/parking/:id', ['isAuthenticated', 'ParkingController@show' ]);

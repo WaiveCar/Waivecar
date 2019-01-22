@@ -60,11 +60,6 @@ module.exports = [
     price       : 599
   },
   {
-    name        : 'Valet',
-    description : 'Rental returned to valet',
-    price       : 0
-  },
-  {
     name        : 'Miscellaneous',
     description : '',
     price       : 0

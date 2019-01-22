@@ -111,6 +111,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.getParkingDetails(id);
   };
 
+  controller.signIssue = function *(adjective) {
+    return yield booking.signIssue(adjective, this.payload, this.auth.user);
+  }
+
   /**
    * Initiates the booking and starts the ride.
    * @param  {Number} id
@@ -143,6 +147,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
   controller.extendForFree = function *(id, time) {
     return yield booking.extendForFree(id, this.auth.user, time);
   };
+
   /**
    * Updates all the details missing their addresses.
    * @yield {[type]} [description]

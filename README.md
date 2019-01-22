@@ -1,11 +1,11 @@
 ## Installation
 
-You need nvm in order to run this. We are using node 4.2.6
+You need nvm in order to run this. 
 
-    $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 
+    $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash 
     # Follow the instructions and put the lines into ~/.profile and start a new terminal
 
-    $ nvm install v4.2.6
+    $ nvm install v8.11.3
     $ sudo mkdir /var/log/outgoing /var/log/invers
     $ sudo chmod 0777 /var/log/outgoing /var/log/invers
     $ sudo apt install mysql-server redis-server git nginx
@@ -18,12 +18,16 @@ You need nvm in order to run this. We are using node 4.2.6
 
     # Add 127.0.0.1 datastore to /etc/hosts 
     $ echo 127.0.0.1 datastore |& sudo tee -a /etc/hosts
+    $ sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup
+    $ sudo cp nginx.conf /etc/nginx
     $ sudo service nginx restart
 
-The nginx.conf is in the root directory, you can copy it over to
+## Running
 
-  /etc/nginx
+There's 2 (yes 2) processes that need to run, I usually use tmux but you can use whatever you want
 
+    $ ./run.sh
+    $ ./run-socket.sh ( not *really* required but things are _less_ broken with this)
 
 ## Notes:
 

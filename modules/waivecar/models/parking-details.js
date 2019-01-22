@@ -4,39 +4,24 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
 
   model.table = 'parking_details';
 
+  model.sequelizeOptionMap = {
+    updatedAt: false,
+    deletedAt: false,
+    paranoid: false
+  };
+
   model.schema = {
 
     bookingDetailId : {
       type       : Sequelize.INTEGER
     },
 
-    type : {
-      type      : Sequelize.ENUM('lot', 'street', 'user-parking'),
-      allowNull : false
-    },
-
-      
     streetSignImage : {
       type       : Sequelize.STRING,
       references : {
         model : 'files',
         key   : 'id'
       }
-    },
-
-    streetHours : {
-      type         : Sequelize.INTEGER,
-      defaultValue : 0
-    },
-
-    streetMinutes : {
-      type         : Sequelize.INTEGER,
-      defaultValue : 0
-    },
-
-    streetOvernightRest : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
     },
 
     bookingId : {
@@ -46,6 +31,22 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     path : {
       type       : Sequelize.STRING
     },
+
+    isBlurry : {
+      type       : Sequelize.BOOLEAN
+    },
+    isNotsign : {
+      type       : Sequelize.BOOLEAN
+    },
+    isWrong : {
+      type       : Sequelize.BOOLEAN
+    },
+    userInput : {
+      type       : Sequelize.STRING(255),
+    },
+    expiresAt : {
+      type      : Sequelize.DATE
+    }
   };
 
   return model;

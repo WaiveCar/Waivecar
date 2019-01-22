@@ -268,18 +268,21 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     //
     getBooking: function *(offset = 0, opts = {}) {
       let searchSet = ['started', 'reserved', 'ended', 'completed', 'closed'];
+      let verb = 'limit' in opts ? 'find' : 'findOne';
+      // the sign on the offset is mearly a convention.
       offset = Math.abs(offset);
 
-      if(offset === 0) {
-        if(this.bookingId) {
-          return yield Booking.findById(this.bookingId);
-        }
-      } else {
+      if('limit' in opts || offset !== 0) {
         searchSet = ['ended', 'completed', 'closed'];
-        offset -= 1;
+        offset = Math.max(offset - 1, 0);
+      } else if(this.bookingId) {
+        // This means we do not want a limit (as in multiple
+        // bookings) and we specified 0, which means that
+        // we could be getting our current booking by id
+        return yield Booking.findById(this.bookingId);
       }
 
-      return yield Booking.findOne(Object.assign(opts, { 
+      return yield Booking[verb](Object.assign(opts, { 
         where : { 
           carId : this.id,
           status : {
@@ -289,6 +292,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         order: [['created_at', 'DESC']],
         offset: offset,
       }));
+    },
+
+    getPreviousBookings: function *(count=0) {
+      return yield this.getBooking(0, {limit: count});
     },
 
     getCurrentBooking: function *() {
@@ -522,6 +529,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   };
 
   model.attributes = [
+    'zone',
     'plateNumberWork',
     'statuscolumn',
     'isReallyAvailable',
