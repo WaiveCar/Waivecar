@@ -161,14 +161,55 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return (isLevel ? 180 : 120) + 5;
     },
 
+    link() {
+      return `<${ apiConfig.uri }/bookings/${ this.id }|Booking ${ this.id }>`;
+    },
+
     *getUser() {
       let User = Bento.model('User');
       return yield User.findById(this.userId);
     },
 
-    link() {
-      return `<${ apiConfig.uri }/bookings/${ this.id }|Booking ${ this.id }>`;
+    // old array flag system
+    getFlags() {
+      return this.flags ? JSON.parse(this.flags) : [];
     },
+
+    isFlagged(what) {
+      return this.getFlags().indexOf(what) !== -1;
+    },
+
+    *unFlag(what) {
+      if(this.isFlagged(what)) {
+        var newFlagList = this.getFlags().filter(function(flag) {
+          return flag !== what;
+        });
+
+        yield this.update({
+          flags: JSON.stringify(newFlagList)
+        });
+      }
+      return newFlagList;
+    },
+
+    *addFlag(what) {
+      return yield this.flag(what);
+    },
+
+    *flag(what) {
+      if(!this.isFlagged(what)) {
+        var flagList = this.getFlags();
+        flagList.push(what);
+
+        yield this.update({
+          flags: JSON.stringify(flagList)
+        });
+      }
+      return flagList;
+    },
+
+    // new object flag
+    
 
     getFlagObject() {
       if(!this.flags || typeof(this.flags) === 'string') {
@@ -186,6 +227,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.flags;
     },
 
+    /*
     isFlagged(what) {
       return what in this.getFlagObject();
     },
@@ -202,6 +244,14 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return yield this.flag(what, value);
     },
 
+    *flag(what, value = 1) {
+      if(!this.isFlagged(what)) {
+        this.flags[what] = value;
+        yield this.update({ flags: JSON.stringify(this.flags) });
+      }
+      return this.flags;
+    },
+    */
     *incrFlag(what, amount=1) {
       if(!this.isFlagged(what)) {
         return yield this.flag(what, amount);
@@ -214,14 +264,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     *getFlag(what) {
       return yield(this.incrFlag(what, 0));
-    },
-
-    *flag(what, value = 1) {
-      if(!this.isFlagged(what)) {
-        this.flags[what] = value;
-        yield this.update({ flags: JSON.stringify(this.flags) });
-      }
-      return this.flags;
     },
 
     *cancel() {
