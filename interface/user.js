@@ -326,6 +326,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       let existingRow = yield this.getFlag(what, true);
 
       if(!existingRow) {
+        let UserValues = Bento.model('UserValues');
         let model = new UserValues({
           userId: this.id,
           key: what,
