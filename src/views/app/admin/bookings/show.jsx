@@ -101,8 +101,14 @@ module.exports = class BookingsView extends React.Component {
 
   cite(list) {
     let [word, type] = list;
+    if(this.state.booking.flags[type]) {
+      return;
+    }
     if(confirm("Are you sure you want to cite the user for a " + word + " sign?")) {
-      api.put(`/parking/cite/${ type }`, { booking: this.state.booking.id }, (err, model) => {
+      api.post(`/parking/cite/${ type }`, { 
+        carId: this.state.car.id,
+        userId: this.state.user.id,
+        bookingId: this.state.booking.id }, (err, model) => {
         console.log(err, model);
       });
     }
@@ -299,7 +305,7 @@ module.exports = class BookingsView extends React.Component {
           <div className="col-xs-4">
             <button 
               onClick={ this.cite.bind(this, row) } 
-              className={ "btn " + (this.state.booking.flags[row[1]] ? "disabled" : "")}>{ row[0] }</button>
+              className={ "btn " + (this.state.booking.flags[row[1]] ? "disabled btn-link" : "primary")}>{ row[0] }</button>
           </div>
         )
       }
@@ -334,7 +340,11 @@ module.exports = class BookingsView extends React.Component {
     }
     if(_.isString(booking.flags)) {
       let flags = {};
-      JSON.parse(booking.flags).forEach(which => { flags[which] = 1 });
+      try {
+        JSON.parse(booking.flags).forEach(which => { flags[which] = 1 });
+      } catch(ex) {
+        booking.flags = JSON.parse(booking.flags);
+      }
       booking.flags = flags;
     } else if(_.isNull(booking.flags)){
       booking.flags = {};
