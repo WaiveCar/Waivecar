@@ -1259,9 +1259,23 @@ module.exports = class BookingService extends Service {
        
     yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template[verb] }` }, { channel : '#rental-alerts' });
 
-    opts.template.car = car.license;
-    opts.template.name = user.name(); 
-    opts.template.image = path;
+    try {
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : opts.template.header,
+        template : 'sign',
+        context  : {
+          path,
+          name   : user.name(),
+          car    : car.license,
+          reason : opts.template.reason,
+          tip    : opts.template.tip || ""
+        }
+      });
+    } catch(err) {
+      log.warn('email error: ', err);
+    }; 
   }
     
 
