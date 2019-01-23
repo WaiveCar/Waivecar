@@ -2444,7 +2444,9 @@ module.exports = class BookingService extends Service {
     let rebookOrder;
     let baseline = 0;
 
-    if (minutesLapsed < minTime) {
+    // If we warned the person that they need to move the car (by marking the previous
+    // booking as "lawless") then we completely skip the rebook check.
+    if (minutesLapsed < minTime && !booking.isFlagged('lawless')) {
       if(opts.buyNow) {
         if (booking.isFlagged('charge')) {
           yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
