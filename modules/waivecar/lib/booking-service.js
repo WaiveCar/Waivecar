@@ -1249,6 +1249,10 @@ module.exports = class BookingService extends Service {
         header: 'Incorrect Parking Sign',
         reason: 'inaccurate'
       },
+      terms: {
+        header: 'Parking ticket avoided',
+        template: 'parking-violation',
+      },
       blurry: {
         verb: "an unreadable sign",
         header: 'Illegible parking sign',
@@ -1265,7 +1269,7 @@ module.exports = class BookingService extends Service {
         to       : user.email,
         from     : emailConfig.sender,
         subject  : opts.template.header,
-        template : 'sign',
+        template : opts.template.template || 'sign',
         context  : {
           path,
           name   : user.name(),
@@ -2291,6 +2295,7 @@ module.exports = class BookingService extends Service {
           });
           decline = {
             title: 'No thanks. Regular booking please.',
+            hotkey: `Normal ${ car.license }`,
             priority: 'ignore',
             action: {verb:'post', url:'bookings', params:normalBooking},
             internal: ['booking-service','create', normalBooking]
@@ -2428,13 +2433,9 @@ module.exports = class BookingService extends Service {
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
     let minutesStarted = moment().diff(booking.createdAt, 'minutes');
-    let minTime = 25;
+    let minTime = 29;
     let rebookOrder;
     let baseline = 0;
-
-    if(booking.status === 'cancelled') {
-      minTime += 5;
-    }
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
