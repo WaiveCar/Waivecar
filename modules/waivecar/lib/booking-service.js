@@ -1229,6 +1229,11 @@ module.exports = class BookingService extends Service {
     let path;
     let detailList = yield ParkingDetails.find({ where: { bookingId: booking.id } });
 
+    if(booking.isFlagged(type)) {
+      // we aren't going to double flag
+      return true;
+    }
+
     if(type !== 'lawless') {
       for(let detail of detailList) {
         // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
