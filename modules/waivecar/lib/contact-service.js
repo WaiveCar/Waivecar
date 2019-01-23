@@ -100,7 +100,7 @@ module.exports = {
 
     // we try the complex book command first.
     command = command.toLowerCase();
-    let argCmd = command.match(/^(una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
+    let argCmd = command.match(/^(normal|una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
 
     if(argCmd) {
 
@@ -138,6 +138,14 @@ module.exports = {
               carId: requestedCar.id,
               opts: {
                 rush: true
+              }
+            }, user);
+          } else if(argCmd[1] === 'normal') {
+            let res = yield booking.create({
+              userId: user.id,
+              carId: requestedCar.id,
+              opts: {
+                skipRush: true
               }
             }, user);
           } else if(['book','b'].includes(argCmd[1])) {
@@ -206,7 +214,6 @@ module.exports = {
         // one character commands
         [/^l$/, 'lock', true],
         [/^u$/, 'unlock', true],
-        [/^[ca]$/, 'abort', true],
         [/^f$/, 'finish', true],
         [/^s$/, 'start', true],
 
