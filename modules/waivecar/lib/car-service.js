@@ -1211,7 +1211,7 @@ module.exports = {
       // doesn't happen. (see #1373)
       //
     } else if(immobilized || !car.currentBooking) {
-      yield notify.tellChris(`${ _user.name() } ${ _user.id } tried to unimmobilize ${ car.license }`);
+      //yield notify.tellChris(`${ _user.name() } ${ _user.id } tried to unimmobilize ${ car.license }`);
       return false;
     }
       
