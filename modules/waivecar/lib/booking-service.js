@@ -1258,6 +1258,7 @@ module.exports = class BookingService extends Service {
         verb: 'a parking terms violation',
         header: 'Parking ticket avoided',
         template: 'parking-violation',
+        sms: `We believe you parked ${ car.license } in a way that doesn't follows the rules. You can rebook for free and move the vehicle. Otherwise we'll try to move it to avoid a ticket (there may be a fee for this, please see your email for details). Reply "book ${ car.license }" to rebook it now for free.` 
       },
       blurry: {
         verb: "an unreadable sign",
@@ -1270,6 +1271,9 @@ module.exports = class BookingService extends Service {
     yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb } (offense #${ citeCount })` }, { channel : '#rental-alerts' });
 
     try {
+      if(opts.template.sms) {
+        yield notify.sendTextMessage(user, opts.template.sms);
+      }
       let email = new Email();
       yield email.send({
         to       : user.email,
