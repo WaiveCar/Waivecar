@@ -59,7 +59,7 @@ module.exports = class Faqcsula extends Component {
           <p>Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes in the convenience of giving you a free car NOW! Get it while it’s hot!</p>
           <h3 id="can-i-book-multiple-cars-a-day">Can I book multiple cars a day?</h3>
           <p>Yep! And even better, you will get the free 2 hours for EVERY ride!</p>
-          <p>However, there is a 25 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a fee.</p>
+          <p>However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a fee.</p>
           <h3 id="does-the-free-2-hours-start-when-i-reserve-a-car-or-when-i-start-the-ride">Does the free 2 hours start when I reserve a car or when I start the ride?</h3>
           <p>When you start the ride! Enjoy your leisurely walk!</p>
           <h3 id="is-the-free-2-hours-only-when-im-driving-the-car">Is the free 2 hours only when I’m driving the car?</h3>

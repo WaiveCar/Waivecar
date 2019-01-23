@@ -70,7 +70,7 @@ Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes 
 ### Can I book multiple cars a day?
 Yep! And even better, you will get the free 2 hours for EVERY ride!
 
-However, there is a 25 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a fee.
+However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a fee.
 
 ### Does the free 2 hours start when I reserve a car or when I start the ride?
 When you start the ride! Enjoy your leisurely walk!
