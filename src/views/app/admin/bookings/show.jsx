@@ -300,7 +300,7 @@ module.exports = class BookingsView extends React.Component {
         [
           [ 'Blurry','blurry' ],
           [ 'Wrong','wrong' ],
-          [ 'Not Sign', 'notsign' ]
+          [ 'Not Sign', 'notsign' ],
           [ 'Broke Rules', 'terms' ]
         ].map(row => 
           <div className="col-xs-3">
