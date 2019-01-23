@@ -1229,13 +1229,15 @@ module.exports = class BookingService extends Service {
     let path;
     let detailList = yield ParkingDetails.find({ where: { bookingId: booking.id } });
 
-    for(let detail of detailList) {
-      // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
-      yield detail.update({['is' + type[0].toUpperCase() + type.slice(1)]: true});
-      path = path || detail.path;
+    if(type !== 'lawless') {
+      for(let detail of detailList) {
+        // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
+        yield detail.update({['is' + type[0].toUpperCase() + type.slice(1)]: true});
+        path = path || detail.path;
+      }
     }
 
-    yield user.incrFlag(type, 1);
+    let citeCount = yield user.incrFlag(type, 1);
     yield booking.addFlag(type);
    
     opts.template = {
@@ -1249,7 +1251,7 @@ module.exports = class BookingService extends Service {
         header: 'Incorrect Parking Sign',
         reason: 'inaccurate'
       },
-      terms: {
+      lawless: {
         header: 'Parking ticket avoided',
         template: 'parking-violation',
       },
@@ -1261,7 +1263,7 @@ module.exports = class BookingService extends Service {
       }
     }[type];
        
-    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb }` }, { channel : '#rental-alerts' });
+    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb } (offense #${ citeCount })` }, { channel : '#rental-alerts' });
 
     try {
       let email = new Email();
@@ -1272,6 +1274,7 @@ module.exports = class BookingService extends Service {
         template : opts.template.template || 'sign',
         context  : {
           path,
+          citeCount,
           name   : user.name(),
           car    : car.license,
           reason : opts.template.reason,
