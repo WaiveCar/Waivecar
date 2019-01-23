@@ -1257,6 +1257,7 @@ module.exports = class BookingService extends Service {
         reason: 'inaccurate'
       },
       lawless: {
+        verb: 'a parking terms violation',
         header: 'Parking ticket avoided',
         template: 'parking-violation',
       },
