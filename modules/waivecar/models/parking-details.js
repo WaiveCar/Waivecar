@@ -41,6 +41,9 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     isWrong : {
       type       : Sequelize.BOOLEAN
     },
+    isLawless : {
+      type       : Sequelize.BOOLEAN
+    },
     userInput : {
       type       : Sequelize.STRING(255),
     },

@@ -1234,12 +1234,10 @@ module.exports = class BookingService extends Service {
       return true;
     }
 
-    if(type !== 'lawless') {
-      for(let detail of detailList) {
-        // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
-        yield detail.update({['is' + type[0].toUpperCase() + type.slice(1)]: true});
-        path = path || detail.path;
-      }
+    for(let detail of detailList) {
+      // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
+      yield detail.update({['is' + type[0].toUpperCase() + type.slice(1)]: true});
+      path = path || detail.path;
     }
 
     let citeCount = yield user.incrFlag(type, 1);
