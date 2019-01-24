@@ -11,32 +11,34 @@
       <div class="header">{{ride.dateHeader}}<span class="line"></span></div>
         <div class="body">
           Booking #{{ride.id}} in {{ride.car.license}}
-          <div class="start">
-            <div>
-              Start Time:
+          <div class="info-holder">
+            <div class="info-item">
+              <div>
+                Start Time:
+              </div>
+              <div>
+                {{ride.startTime}}
+              </div>
+              <div>
+                Start Location: 
+              </div>
+              <div>
+                {{ride.ride.start.address ? ride.ride.start.address : "Address Not Found"}}
+              </div>
             </div>
-            <div>
-              {{ride.startTime}}
-            </div>
-            <div>
-              Start Location: 
-            </div>
-            <div>
-              {{ride.ride.start.address ? ride.ride.start.address : "Address Not Found"}}
-            </div>
-          </div>
-          <div class="end">
-            <div>
-              End Time:
-            </div>
-            <div>
-              {{ride.endTime}}
-            </div>
-            <div>
-              End Location: 
-            </div>
-            <div>
-              {{ride.ride.end.address ? ride.ride.end.address : "Address Not Found"}}
+            <div class="info-item">
+              <div>
+                End Time:
+              </div>
+              <div>
+                {{ride.endTime}}
+              </div>
+              <div>
+                End Location: 
+              </div>
+              <div>
+                {{ride.ride.end.address ? ride.ride.end.address : "Address Not Found"}}
+              </div>
             </div>
           </div>
         </div>
