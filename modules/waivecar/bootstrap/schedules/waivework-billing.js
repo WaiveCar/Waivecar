@@ -31,7 +31,7 @@ scheduler.process('waivework-billing', function*(job) {
         (Number(history[history.length - 1].data) - Number(history[0].data)) /
         history.length *
         0.621371;
-      if (averagePerDay < 100) {
+      if (averagePerDay < 100 && redis.shouldProcess('waivework-mileage-check', booking.carId, 90 * 1000)) {
         let user = yield User.findById(booking.userId);
         yield notify.slack(
           {
