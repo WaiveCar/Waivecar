@@ -14,13 +14,13 @@
             Start Time:
             {{ride.startTime}}
             Start Address: 
-            {{ride.ride.start.address}}
+            {{ride.ride.start.address ? ride.ride.start.address : "Address Not Found"}}
           </div>
           <div class="end">
             End Time:
             {{ride.endTime}}
             End Address: 
-            {{ride.ride.end.address}}
+            {{ride.ride.end.address ? ride.ride.end.address : "Address Not Found"}}
           </div>
         </div>
       <div class="footer">
