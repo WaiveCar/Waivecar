@@ -9,7 +9,20 @@
   <ion-content scroll="true" class="has-header ion-content--center dark-bg">
     <div class="ride-block" ng-repeat="ride in rides" ng-show="ride.carId">
       <div class="header">{{ride.dateHeader}}<span class="line"></span></div>
-      <div class="body"><google-map id="map" route="ride.route" noscroll="true" static="true"></google-map></div>
+        <div class="body">
+          <div class="start">
+            Start Time:
+            {{ride.startTime}}
+            Start Address: 
+            {{ride.ride.start.address}}
+          </div>
+          <div class="end">
+            End Time:
+            {{ride.endTime}}
+            End Address: 
+            {{ride.ride.end.address}}
+          </div>
+        </div>
       <div class="footer">
         <div class="hour pull-left">{{ride.hourFooter}}</div>
         <div class="price pull-right">{{ride.ride.fee}}</div>

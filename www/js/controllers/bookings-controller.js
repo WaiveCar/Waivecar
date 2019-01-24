@@ -24,6 +24,7 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
       $scope.getPastRides($scope.offset, function(data){
         $scope.rides = data;
         $scope.offset++;
+        console.log('rides: ', data);
       });
     };
 
@@ -67,6 +68,8 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
           };
 
           item.hourFooter = moment(ride.start.createdAt).format('LT') + ' - ' + moment(ride.end.createdAt).format('LT');
+          item.startTime = moment(ride.start.createdAt).format('LT');
+          item.endTime = moment(ride.end.createdAt).format('LT');
           if(ride.fee) {
             ride.fee = '$' + ride.fee.toFixed(2);
           } else {
