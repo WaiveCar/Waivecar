@@ -1268,7 +1268,7 @@ module.exports = class BookingService extends Service {
       }
     }[type];
        
-    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb } (offense #${ citeCount })` }, { channel : '#rental-alerts' });
+    yield notify.slack({ text : `:camera_with_flash: ${ _user.name() } is citing ${ user.link() } for ${ opts.template.verb } (offense #${ citeCount }, ${ booking.link() })` }, { channel : '#rental-alerts' });
 
     try {
       if(opts.template.sms) {
