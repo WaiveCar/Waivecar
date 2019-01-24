@@ -587,7 +587,7 @@ module.exports = {
       } else {
         throw error.parse({
           code    : 'CAR_IN_BOOKING',
-          message : 'Cars can\'t be made available while they are in a current booking.',
+          message : `Cars can't be made available while they are in a booking (${model.bookingId}).`,
         }, 400);
       }
     } else {
