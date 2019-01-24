@@ -67,6 +67,8 @@ module.exports = class Logs extends React.Component {
       UNLOCK: 'unlocked',
       LOCK_CAR: 'locked',
       LOCK: 'locked',
+      INSTABOOK: 'instabooked',
+      INSTAEND: 'instaended',
       IMMOBILIZE_CAR: 'immobilized',
       IMMOBILIZE: 'immobilized',
       UNIMMOBILIZE_CAR: 'unimmobilized',
@@ -101,6 +103,8 @@ module.exports = class Logs extends React.Component {
       case 'UNIMMOBILIZE':
       case 'REPAIR_START':
       case 'REPAIR_END':
+      case 'INSTABOOK':
+      case 'INSTAEND':
       case 'RETRIEVE':
         return (
           <div>
