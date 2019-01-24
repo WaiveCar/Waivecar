@@ -47,7 +47,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var mapOptions;
 
     if (this.useCordova()) {
-      console.log('%c using useCordova()', 'color: red; background: black; font-size: 20px;');
       // reference: https://developers.google.com/maps/documentation/android-api/controls
       mapOptions = {
         mapType: plugin.google.maps.MapTypeId.ROADMAP,
@@ -73,7 +72,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
       return plugin.google.maps.Map.getMap(mapElement, mapOptions)
     } else {
-      console.log('%c not using useCordova', 'color: red; background: black; font-size: 20px');
       mapOptions = {
         streetViewControl: false,
         mapTypeControl: false,
