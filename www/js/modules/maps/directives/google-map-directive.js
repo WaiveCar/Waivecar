@@ -42,10 +42,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
-    //console.log(mapElement, center, noscroll);
     // reference: https://developers.google.com/maps/documentation/android-api/controls
 
-    console.log('%c not using useCordova', 'color: red; background: black; font-size: 20px;');
     var mapOptions = {
       streetViewControl: false,
       mapTypeControl: false,
@@ -64,7 +62,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     if(noscroll) {
       mapOptions.gestureHandling = 'cooperative';
     }
-
     return new google.maps.Map(mapElement, mapOptions);
   };
 
