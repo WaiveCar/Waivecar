@@ -94,7 +94,7 @@ module.exports = class OrderService extends Service {
       if(data.amount > 0) {
         yield UserLog.addUserEvent(user, 'FEE', order.id, `$${(data.amount/100).toFixed(2)} ${data.description}`);
       } else {
-        yield UserLog.addUserEvent(user, 'CREDIT', order.id, `$${(data.amount/100).toFixed(2)} ${data.description}`);
+        // yield UserLog.addUserEvent(user, 'CREDIT', order.id, `$${(data.amount/100).toFixed(2)} ${data.description}`);
       }
     } catch (ex) {
       log.info(`Couldn't log the user event for an order!`);

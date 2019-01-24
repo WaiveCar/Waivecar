@@ -2454,7 +2454,7 @@ module.exports = class BookingService extends Service {
       if(opts.buyNow) {
         if (booking.isFlagged('charge')) {
           yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
-          yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `${car.link()} ${ minutesStarted }`);
+          //yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `${car.link()} ${ minutesStarted }`);
         }
 
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
