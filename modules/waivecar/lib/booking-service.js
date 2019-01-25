@@ -851,7 +851,7 @@ module.exports = class BookingService extends Service {
     if (_user) this.hasAccess(user, _user);
 
     if(booking.status !== 'reserved') {
-      err = "You can only extend your time if you haven't started the ride.";
+      err = "You've already started the ride! Reply with 'unlock' if you are trying to unlock to the WaiveCar.";
     }
     if(booking.isFlagged('extended')) {
       err = "Booking reservation has already been extended.";
