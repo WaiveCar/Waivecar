@@ -64,9 +64,6 @@ module.exports = {
     return res;
   },
 
-  tryToParseDate(str) {
-  },
-
   *attemptSingleAction(user, command, opts) {
     // alias commands are blank.
     var success = true;
@@ -106,6 +103,7 @@ module.exports = {
 
     // we try the complex book command first.
     command = command.toLowerCase();
+    let commandOrig = command;
     let argCmd = command.match(/^(normal|una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
 
     if(argCmd) {
@@ -217,7 +215,7 @@ module.exports = {
         [/retreive/, 'retrieve'],
         [/reebok/, 'rebook'],
         [/start [tr]ide/, 'start', true],
-        [/^end [tr]ide/, 'finish', true],
+        [/^(end|finish).{0,23}$/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         // one character commands
@@ -465,20 +463,33 @@ module.exports = {
     let response;
     if (command === 'finish' || command === 'complete') {
       command = 'finish';
-      try {
-        yield booking.end(id, user);
-      } catch(ex) {
+      // We're going to try to get the date/time string from request regarding the parking meter
+      // and then put it as free-form text with a "parking sign".
+      // This is a broad sweeping human matching system
+      var hasDate = commandOrig.match(/([\d:]*\s*(a|p).?m|today|no|sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g);
+      // Now we make sure we have something there that somewhat satisfies our requirements.
+      if(!hasDate || hasDate.length > 4) {
+        // otherwise we need to give them instructions because they are being lame.
         success = false;
-        response = yield this.returnError(user, ex, command);
-      }
-      try {
-        yield booking.complete(id, user);
-      } catch(ex) {
-        success = false;
-        response = yield this.returnError(user, ex, command);
-      }
-      if(success && Math.random() < 0.2) {
-        yield notify.sendTextMessage(user, "Ending your ride over text comes with greater liability! Use the app or https://basic.waivecar.com next time to protect yourself.")
+        yield notify.sendTextMessage(user, 'Error! To end over text, please specify the day and time the car needs to move. Ex: For street sweeping Friday at 3PM, send "Finish Friday 3PM". You can also send "Finish no sign" if there is no sign.');
+      } else {
+
+        try {
+          yield booking.end(id, user, {}, {
+            data: {
+              userInput: hasDate.join(' ')
+            }
+          });
+        } catch(ex) {
+          success = false;
+          response = yield this.returnError(user, ex, command);
+        }
+        try {
+          yield booking.complete(id, user);
+        } catch(ex) {
+          success = false;
+          response = yield this.returnError(user, ex, command);
+        }
       }
     }
 

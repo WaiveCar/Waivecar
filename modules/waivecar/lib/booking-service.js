@@ -1456,17 +1456,20 @@ module.exports = class BookingService extends Service {
 
     // Parking restrictions:
     let parkingSlack;
-    if (payload && payload.data && payload.data.type) {
-      if (end.isZone && payload.data.streetHours < end.parkingTime) {
-        yield bail(error.parse({
-          code    : 'NOT_ENOUGH_PARKING_TIME',
-          message : 'Your parking is not valid for a long enough time.'
-        }, 400));
-      }
+    if (payload && payload.data) {
       let parkingText = '';
+      if (payload.data.streetHours) {
+        if (end.isZone && payload.data.streetHours < end.parkingTime) {
+          yield bail(error.parse({
+            code    : 'NOT_ENOUGH_PARKING_TIME',
+            message : 'Your parking is not valid for a long enough time.'
+          }, 400));
+        }
+        parkingText += `Parked on street for ${ payload.data.streetHours }hr.`;
+      } else if(payload.data.userInput) {
+        parkingText += `Parking valid until ${payload.data.userInput}.`;
+      }
       payload.data.bookingId = id;
-
-      parkingText += `Parked on street for ${ payload.data.streetHours }hr.  `;
 
       let message = yield this.updateState('ended', _user, user);
 
