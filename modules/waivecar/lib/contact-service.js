@@ -470,7 +470,6 @@ module.exports = {
       // Now we make sure we have something there that somewhat satisfies our requirements.
       if(!hasDate || hasDate.length > 4) {
         // otherwise we need to give them instructions because they are being lame.
-        success = false;
         yield notify.sendTextMessage(user, 'Error! To end over text, please specify the day and time the car needs to move. Ex: For street sweeping Friday at 3PM, send "Finish Friday 3PM". You can also send "Finish no sign" if there is no sign.');
       } else {
 
