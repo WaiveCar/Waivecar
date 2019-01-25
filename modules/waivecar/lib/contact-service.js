@@ -85,6 +85,8 @@ module.exports = {
       access: null,
       complete: null,
       notify: null,
+      retrieve: "Retrieve something from a waivecar",
+      secure: "Secure a car after a retrieval",
       rebook: "Rebook the same WaiveCar (possibly for a fee)",
       start: "Start your ride",
       finish: "Finish your ride",
@@ -207,6 +209,8 @@ module.exports = {
         // sometimes we get messages with both "card" and "account" so
         // we pass those up.
         [/ card /, false],
+        // silly mispeller
+        [/retreive/, 'retrieve'],
         [/start ride/, 'start', true],
         [/^end ride/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
@@ -365,7 +369,7 @@ module.exports = {
     }
 
     if(!currentBooking) {
-      if (['unlock','lock','rebook'].includes(command)) {
+      if (['retrieve','secure','unlock','lock','rebook'].includes(command)) {
         previousBooking = yield Booking.findOne({ 
           where : { 
             status : {
@@ -426,12 +430,12 @@ module.exports = {
         // attempt to inverse the functionality ...
         //
         if(
-            (command === 'unlock' || (command === 'lock' && !previousBooking.isFlagged('retrieveStart'))) && 
+            (command === 'retrieve' || (command === 'secure' && !previousBooking.isFlagged('retrieveStart'))) && 
             new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
           yield previousBooking.flag('retrieveStart');
           yield notify.slack({ text : `:rowboat: The scatterbrained ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
           yield cars.unlockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});
-          yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'lock' to secure the vehicle when finished.`); 
+          yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'secure' to secure the vehicle when finished.`); 
           return true;
         }
         // We give them a longer amount of time to secure the car since it doesn't open up a new hole.

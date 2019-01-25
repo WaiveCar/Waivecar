@@ -1325,7 +1325,7 @@ module.exports = class BookingService extends Service {
     let warnings = [];
 
     function *bail(err) {
-      //let endAttempts = yield booking.incrFlag('end');
+      yield booking.flag('try-end');
       yield redis.doneWithIt(lockKeys);
       throw err;
     }
@@ -1664,7 +1664,7 @@ module.exports = class BookingService extends Service {
     var isAdmin = _user.hasAccess('admin');
 
     function *bail(err) {
-      //let endAttempts = yield booking.incrFlag('complete');
+      yield booking.flag('try-end');
       yield redis.doneWithIt(lockKeys);
       throw err;
     }
@@ -1837,7 +1837,7 @@ module.exports = class BookingService extends Service {
       Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
     ].join(" ") + ")";
 
-    yield notify.sendTextMessage(user, `You're done! Reply "rebook" to rebook for $${rebookCost}. Forget something? Reply "unlock" to get it in the next 5min.`);
+    yield notify.sendTextMessage(user, `You're done! Reply "rebook" to rebook for $${rebookCost}. Forget something? Reply "retrieve" to get it in the next 5min.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ stats } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
