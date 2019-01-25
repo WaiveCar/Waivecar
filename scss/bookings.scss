@@ -363,6 +363,10 @@
     }
     .body{
       height: 110px;
+      .title {
+        margin: 10px 0;
+        font-size: 20px;
+      }
       .info-holder {
         display: flex;
         flex-direction: row;
@@ -370,6 +374,7 @@
       }
       .info-item {
         text-align: left;  
+        width: 43%;
       }
     }
     .hour, .price{
