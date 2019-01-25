@@ -64,6 +64,9 @@ module.exports = {
     return res;
   },
 
+  tryToParseDate(str) {
+  },
+
   *attemptSingleAction(user, command, opts) {
     // alias commands are blank.
     var success = true;
@@ -212,8 +215,9 @@ module.exports = {
         [/ card /, false],
         // silly mispeller
         [/retreive/, 'retrieve'],
-        [/start ride/, 'start', true],
-        [/^end ride/, 'finish', true],
+        [/reebok/, 'rebook'],
+        [/start [tr]ide/, 'start', true],
+        [/^end [tr]ide/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         // one character commands
@@ -222,8 +226,8 @@ module.exports = {
         [/^f$/, 'finish', true],
         [/^s$/, 'start', true],
 
-        [/^lock/, 'lock', true],
-        [/ lock(ing|) /, 'lock'],
+        [/^l[oi]ck/, 'lock', true],
+        [/ l[oi]ck(ing|) /, 'lock'],
 
         // these were carefully tested over 30,000 historical text messages
         [/(is|does|wo|will|ca).{0,3}n(o|'|)t start/, 'access'],
