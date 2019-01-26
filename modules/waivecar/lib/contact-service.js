@@ -215,10 +215,10 @@ module.exports = {
         // silly mispeller
         [/retreive/, 'retrieve'],
         [/reebok/, 'rebook'],
-        [/start [tr]ide/, 'start', true],
-        [/^(end|finish).{0,27}$/, 'finish', true],
+        [/start [tr]id/, 'start', true],
+        [/^"?(end|finish).{0,27}$/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
-        [/^unlock/, 'unlock'],
+        [/^unlo/, 'unlock'],
         // one character commands
         [/^l$/, 'lock', true],
         [magicEnd, 'finish', true],
@@ -400,7 +400,10 @@ module.exports = {
           try {
             yield booking.create({
               userId: user.id,
-              carId: previousBooking.carId
+              carId: previousBooking.carId,
+              opts: {
+                skipRush: true
+              }
             }, user);
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for free.` );
             return true;
@@ -416,6 +419,9 @@ module.exports = {
           try {
             // we aren't going to automatically rush from a rebook ... that's nonsense.
             delete params.opts.rush;
+
+            // in fact we are just going to blow right past it
+            params.opts.skipRush = true;
 
             yield booking.create(params, user);
             yield slack('and the computer rebooked');
