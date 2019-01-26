@@ -471,22 +471,33 @@ module.exports = {
     let response;
     if (command === 'finish' || command === 'complete') {
       command = 'finish';
+
+      //
+      // We can just try to end the booking if we aren't in 
+      // a zone it will fail - no need to ask for any time
+      //             V
+      let zone = yield booking.getZone(car);
+      let bypass = !zone || ['homebase','hub'].includes(zone.type);
+      //                          ^ 
+      // If we are at a homebase or hub then we don't need the
+      // magic end string and we can just end the ride without it
+      //
+
       // We're going to try to get the date/time string from request regarding the parking meter
       // and then put it as free-form text with a "parking sign".
-      // This is a broad sweeping human matching system
-      var hasDate = commandOrig.match(magicEnd);
-      // Now we make sure we have something there that somewhat satisfies our requirements.
-      if(!hasDate || hasDate.length > 4) {
-        // otherwise we need to give them instructions because they are being lame.
-        yield notify.sendTextMessage(user, 'Error! To end over text, please specify the day and time the car needs to move. Ex: For street sweeping Friday at 3PM, send "Finish Friday 3PM". You can also send "Finish no sign" if there is no sign.');
-      } else {
+      // This is a broad sweeping human matching system 
+      let hasDate = commandOrig.match(magicEnd);
+      let opts = {};
 
+      if(!bypass && (!hasDate || hasDate.length > 4)) {
+        // otherwise we need to give them instructions because they are being lame.
+        yield notify.sendTextMessage(user, `Error! To end via text, please specify when the WaiveCar needs to move. Ex: For street sweeping Friday at 3PM, send "End Friday 3PM". Send "End No Sign" if there's no sign.`);
+      } else {
+        if(hasDate) {
+          opts.data = { userInput: hasDate.join(' ') };
+        }
         try {
-          yield booking.end(id, user, {}, {
-            data: {
-              userInput: hasDate.join(' ')
-            }
-          });
+          yield booking.end(id, user, {}, opts);
         } catch(ex) {
           success = false;
           response = yield this.returnError(user, ex, command);
