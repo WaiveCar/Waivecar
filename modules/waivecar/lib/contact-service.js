@@ -478,6 +478,7 @@ module.exports = {
       // a zone it will fail - no need to ask for any time
       //             V
       let zone = yield booking.getZone(car);
+      console.log(zone);
       let bypass = !zone || ['homebase','hub'].includes(zone.type);
       //                          ^ 
       // If we are at a homebase or hub then we don't need the
