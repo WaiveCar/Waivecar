@@ -165,6 +165,11 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return `<${ apiConfig.uri }/bookings/${ this.id }|Booking ${ this.id }>`;
     },
 
+    *getCar() {
+      let Car = Bento.model('Car');
+      return yield Car.findById(this.carId);
+    },
+
     *getUser() {
       let User = Bento.model('User');
       return yield User.findById(this.userId);
