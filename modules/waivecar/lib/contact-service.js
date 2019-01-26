@@ -472,6 +472,7 @@ module.exports = {
     if (command === 'finish' || command === 'complete') {
       command = 'finish';
 
+      let car = yield currentBooking.getCar();
       //
       // We can just try to end the booking if we aren't in 
       // a zone it will fail - no need to ask for any time
@@ -491,7 +492,7 @@ module.exports = {
 
       if(!bypass && (!hasDate || hasDate.length > 4)) {
         // otherwise we need to give them instructions because they are being lame.
-        yield notify.sendTextMessage(user, `Error! To end via text, please specify when the WaiveCar needs to move. Ex: For street sweeping Friday at 3PM, send "End Friday 3PM". Send "End No Sign" if there's no sign.`);
+        yield notify.sendTextMessage(user, `Error! To end via text, please specify when ${ car.license } needs to move. Ex: For street sweeping Friday at 3PM, send "End Friday 3PM". Send "End No Sign" if there's no sign.`);
       } else {
         if(hasDate) {
           opts.data = { userInput: hasDate.join(' ') };
