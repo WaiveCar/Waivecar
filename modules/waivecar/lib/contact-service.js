@@ -69,6 +69,7 @@ module.exports = {
     var success = true;
     let sendToSupport = false;
     let guessed = false;
+    let magicEnd = /([\d:]*\s*(a|p).?m|\d*hour|\d*hr|today|no|sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g;
     let documentation = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Ex:\n  book 14",
@@ -215,13 +216,14 @@ module.exports = {
         [/retreive/, 'retrieve'],
         [/reebok/, 'rebook'],
         [/start [tr]ide/, 'start', true],
-        [/^(end|finish).{0,23}$/, 'finish', true],
+        [/^(end|finish).{0,27}$/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         // one character commands
         [/^l$/, 'lock', true],
+        [magicEnd, 'finish', true],
         [/^u$/, 'unlock', true],
-        [/^f$/, 'finish', true],
+        [/^(f|f .{0,27})$/, 'finish', true],
         [/^s$/, 'start', true],
 
         [/^l[oi]ck/, 'lock', true],
@@ -442,7 +444,7 @@ module.exports = {
           return true;
         }
         // We give them a longer amount of time to secure the car since it doesn't open up a new hole.
-        if(command === 'lock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 18) {
+        if((command === 'lock' || command === 'secure') && new Date() - previousBooking.getEndTime() < 1000 * 60 * 18) {
           yield previousBooking.flag('retrieveEnd');
           yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
           yield cars.lockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});                                                                 
@@ -466,7 +468,7 @@ module.exports = {
       // We're going to try to get the date/time string from request regarding the parking meter
       // and then put it as free-form text with a "parking sign".
       // This is a broad sweeping human matching system
-      var hasDate = commandOrig.match(/([\d:]*\s*(a|p).?m|today|no|sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g);
+      var hasDate = commandOrig.match(magicEnd);
       // Now we make sure we have something there that somewhat satisfies our requirements.
       if(!hasDate || hasDate.length > 4) {
         // otherwise we need to give them instructions because they are being lame.
