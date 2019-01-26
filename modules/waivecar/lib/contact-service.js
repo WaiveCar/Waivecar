@@ -473,13 +473,12 @@ module.exports = {
       command = 'finish';
 
       let car = yield currentBooking.getCar();
-      //
-      // We can just try to end the booking if we aren't in 
-      // a zone it will fail - no need to ask for any time
-      //             V
-      let zone = yield booking.getZone(car);
-      console.log(zone);
-      let bypass = !zone || ['homebase','hub'].includes(zone.type);
+
+                      //
+                      // We can just try to end the booking if we aren't in 
+                      // a zone it will fail - no need to ask for any time
+                      //                                 V
+      let bypass = (yield booking.isAtHub(car)) || !(yield booking.getZone(car));
       //                          ^ 
       // If we are at a homebase or hub then we don't need the
       // magic end string and we can just end the ride without it
