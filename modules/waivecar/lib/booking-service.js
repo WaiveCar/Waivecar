@@ -154,7 +154,11 @@ module.exports = class BookingService extends Service {
       // Otherwise we check to see if the driver can drive. This
       // means that if an admin is booking a driver who is not
       // themselves, this code is still run.
-      yield this.hasBookingAccess(driver);
+      try {
+        yield this.hasBookingAccess(driver);
+      } catch(err) {
+        yield bail(err);
+      } 
     }
     t("has access");
 
