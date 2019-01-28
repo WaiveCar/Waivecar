@@ -10,7 +10,7 @@
         The photos on the left are examples.<br/>
         Tap the camera icon to add your versions.</p>
       </div>
-      <div ng-if="ctrl.geocodeLoaded && !ctrl.isHub && !ctrl.isWaivePark" class="parking-details parking-section">
+      <div ng-if="!ctrl.isHub && !ctrl.isWaivePark" class="parking-details parking-section">
         <h4>Parking</h4>
         <div class="resume-ride">
           <p><small><b>{{ ctrl.minhours }}</b> or more hours are required. Enter "24" if it's over a day.
@@ -102,8 +102,8 @@
           </div>
         </div>
       </div>
-      <div class="padding-top padding-bottom" ng-if="ctrl.geocodeLoaded">
-        <button ng-click="ctrl.submit()" class="button button-balanced button-block">{{ ctrl.okText }}</button>
+      <div class="padding-top padding-bottom">
+        <button ng-click="ctrl.submit()" class="button button-balanced button-block">{{ ctrl.okText || 'Finish'}}</button>
       </div>
       <div class="continue" ng-click="ctrl.goToEndRide()">
         Continue...
