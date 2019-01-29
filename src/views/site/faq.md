@@ -135,7 +135,7 @@ If the battery is over 25 miles charged, you can park anywhere in the "green zon
 
 ### Where can I **NOT** park?
 
-Since we're a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at no cost or fee and also not takie up spaces set aside for private businesses.  So this means no parking garages, permit-only spots, or any business parking lot. 
+Since we're a public car sharing service, and a responsible member of the community, we need to make sure that cars are not only publicly accessible to others, but also can be retrieved at no cost or fee. We also do not want take up spaces set aside for private businesses.  So this means no parking garages, permit-only spots, or any business parking lot. 
 
 <aside>We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.</aside>
 
@@ -153,7 +153,9 @@ First make sure that you are parked in an accurate spot (see above), turn off th
 Our cars get used by many people each day before we see them again so yes, please be courteous and leave the car at least as clean as you found it.  If you leave a mess, there could be a cleaning fee!
 
 ### Do I need to charge the car before I end my ride?
-This isn't necessary but it is very helpful to us. We have a partnership where you can charge even better than free, we actually credit you towards future rides. If the car is under 25 miles charged, either charge it or return it to 2102 Pico in Santa Monica.
+This isn't necessary but it is very helpful to us. We have a partnership where if you can charge the vehicle, it's even better than free; we actually credit you towards future rides! We credit you for ending a ride with more miles than when you picked it up at no matter how you charge it. In our app there's icons on the map during a booking that correspond to charging stations.  There's a help system in the app that describes exactly how this is done. 
+
+If the car is under 25 miles charged, either charge it or return it to 2102 Pico in Santa Monica.
 
 <aside>The gates at our lot never close and WaiveCars can be returned at any hour at any charge there. Please tidely park the car so others can access the lot.</aside>
 
