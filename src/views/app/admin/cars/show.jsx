@@ -208,7 +208,7 @@ class CarsShowView extends React.Component {
               </h4>
                 <div className="image-center-container">
                   <div className="col-md-6 gallery-image">
-                    <img src={`${API_URI}/file/${parkingDetails.streetSignImage}`} />
+                    { parkingDetails.streetSignImage && <img src={`${API_URI}/file/${parkingDetails.streetSignImage}`} /> }
                   </div>
                 </div>
               </div>

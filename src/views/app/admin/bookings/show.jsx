@@ -294,19 +294,19 @@ module.exports = class BookingsView extends React.Component {
     );
   }
 
-  renderCiteUser() {
+  renderCiteUser(details) {
     return <div className="row">
       {
         [
-          [ 'Blurry','blurry' ],
-          [ 'Wrong','wrong' ],
-          [ 'Not Sign', 'notsign' ],
-          [ 'Broke Rules', 'lawless' ]
+          [ 'Blurry','blurry', details.path ],
+          [ 'Wrong','wrong', details.path ],
+          [ 'Not Sign', 'notsign', details.path ],
+          [ 'Broke Rules', 'lawless', true ]
         ].map(row => 
           <div className="col-xs-3" key={ row[0] }>
             <button 
               onClick={ this.cite.bind(this, row) } 
-              className={ "btn " + (this.state.booking.flags[row[1]] ? "disabled btn-link" : "primary")}>{ row[0] }</button>
+              className={ "btn " + ((!row[2] || this.state.booking.flags[row[1]]) ? "disabled btn-link" : "primary")}>{ row[0] }</button>
           </div>
         )
       }
@@ -402,16 +402,21 @@ module.exports = class BookingsView extends React.Component {
             <div className="box-content">
               <div>
                 <div className="row">
-                <h4 className="text-center">
-                  {moment(parkingDetails.createdAt).format('HH:mm MMMM Do')} (Claimed: {parkingDetails.streetHours} hours) <a href={`/bookings/${this.props.params.id}`}>Booking Details</a>
+                <h4 className='parking-details'>
+                  <em>Parked:</em> {moment(parkingDetails.createdAt).format('HH:mm dddd')}<br/>
+                  <em>Move by:</em> { parkingDetails.userInput ? parkingDetails.userInput :
+                    <span>
+                      {(parkingDetails.expireHour + 100).toString().slice(1)}:00 {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][parkingDetails.expireDay]} 
+                    </span>
+                  }
                 </h4>
                   <div className="image-center-container">
                     <div className="col-md-6 gallery-image">
-                      <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                    {parkingDetails.path && <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} /> }
                     </div>
                   </div>
                 </div>
-                { this.renderCiteUser() }
+                { this.renderCiteUser(parkingDetails) }
               </div>
             </div>
           </div>
