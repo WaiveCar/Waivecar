@@ -47,8 +47,11 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     userInput : {
       type       : Sequelize.STRING(255),
     },
-    expiresAt : {
-      type      : Sequelize.DATE
+    expireDay : {
+      type       : Sequelize.INTEGER
+    },
+    expireHour : {
+      type       : Sequelize.FLOAT
     }
   };
 
