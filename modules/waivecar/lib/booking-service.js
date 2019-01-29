@@ -1268,7 +1268,7 @@ module.exports = class BookingService extends Service {
         verb: "an unreadable sign",
         header: 'Illegible parking sign',
         reason: 'either blurry or hard to read',
-        tip: "To take better photos, try to not use the phones's flash, disable HDR mode if on, and try to zoom in on the parking sign"
+        tip: "To take better photos, try to not use the phones's flash, disable HDR mode if on, and try to both move closer and zoom in on the parking sign"
       }
     }[type];
        
