@@ -731,7 +731,7 @@ module.exports = {
       obj.distance = geolib.getDistance({longitude: long, latitude: lat}, row);
       return obj;
     });
-    let radius = 50;
+    let radius = 80;
     let nearest = [];
 
     for(; radius < 1000; radius+=20 ) {
