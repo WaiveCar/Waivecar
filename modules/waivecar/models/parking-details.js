@@ -52,6 +52,10 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     },
     expireHour : {
       type       : Sequelize.FLOAT
+    },
+    // storing the old style
+    streetHours : {
+      type       : Sequelize.INTEGER
     }
   };
 
