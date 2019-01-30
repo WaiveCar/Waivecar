@@ -530,6 +530,9 @@ module.exports = {
       } else if (command === 'lock') {
         yield cars.lockCar(currentBooking.carId, user);
       }
+      if((command === 'lock' || command === 'unlock' ) && !guessed && Math.random() < 0.10) {
+        yield notify.sendTextMessage(user, `Hey there power user, did you know there's an even faster way to lock and unlock WaiveCars? Check it out: basic.waivecar.com/fast`);
+      }
     } catch(ex) {
       console.log(ex);
       success = false;
