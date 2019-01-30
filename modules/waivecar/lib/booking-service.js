@@ -475,6 +475,7 @@ module.exports = class BookingService extends Service {
     // be charged a prorated amount for the amount of time before that date
     yield this.ready(booking.id, _user);
     let today = moment()
+    let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
     switch(true) {
@@ -494,7 +495,8 @@ module.exports = class BookingService extends Service {
         nextDate = 1;
         break;
     }
-    let prorating = (nextDate - currentDay) / 7;
+    let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
+    let prorating = ((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay) / numDays;
     let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1)); 
     if (prorating === 0) {
       nextDate += 7;
