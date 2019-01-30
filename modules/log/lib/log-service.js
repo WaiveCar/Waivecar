@@ -449,7 +449,7 @@ module.exports = class LogService {
     let dateRange = `bl.created_at > '${dtStr}' and bl.created_at < ${end}`;
     if(kind === 'parking') {
       let qstr = [
-        'select bl.created_at,bl.longitude,bl.latitude,street_hours,street_minutes,street_overnight_rest,concat("https://s3.amazonaws.com/waivecar-prod/",path) as image',
+        'select bl.created_at,bl.longitude,bl.latitude,street_hours,concat("https://s3.amazonaws.com/waivecar-prod/",path) as image',
         'from parking_details pd join booking_details bl on bl.booking_id = pd.booking_id',
         `where ${excludedBookingsQuery} bl.type = 'end' and`,
         dateRange,
