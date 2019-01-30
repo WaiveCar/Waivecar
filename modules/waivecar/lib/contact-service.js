@@ -242,7 +242,7 @@ module.exports = {
 
         if (command.match(regex)) {
           sendToSupport = !suppress;
-          if(!(sendToSupport && command.length > 40)) {
+          if(!(sendToSupport && command.length > 33)) {
             guessed = true;
             command = todo;
             break;
