@@ -2411,7 +2411,7 @@ module.exports = class BookingService extends Service {
       ]
     });
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 0.4) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 0.3) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
@@ -2431,7 +2431,7 @@ module.exports = class BookingService extends Service {
           yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#rental-alerts' });
         }
         if(scam === 'SWAPPING') {
-          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may be swapping ${ car.link() } with ${ user.link() }.`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may be swapping ${ car.license } with ${ user.link() }.`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
     }
