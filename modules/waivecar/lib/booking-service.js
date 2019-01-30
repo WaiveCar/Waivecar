@@ -1469,9 +1469,14 @@ module.exports = class BookingService extends Service {
             message : 'Your parking is not valid for a long enough time.'
           }, 400));
         }
-        parkingText += `Parked on street for ${ payload.data.streetHours }hr.`;
+        parkingText += `${ payload.data.streetHours }hr.`;
       } else if(payload.data.userInput) {
-        parkingText += `Parking valid until ${payload.data.userInput}.`;
+        parkingText += `${payload.data.userInput}.`;
+      } else if(payload.expireHour !== null && payload.expireHour.length) {
+        parkingText += [
+          ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][payload.expireDay],
+          (payload.expireHour + 100).toString().slice(1) + ":00"
+        ].join('');
       }
       payload.data.bookingId = id;
 
@@ -1481,11 +1486,9 @@ module.exports = class BookingService extends Service {
         text        : `:cherries: ${ message } ${ car.info() } ${ booking.link() }`,
         attachments : [
           {
-            fallback : `Parking Details`,
             color    : '#D00000',
             fields   : [
               {
-                title : 'Parking Details',
                 value : parkingText,
                 short : false
               }
