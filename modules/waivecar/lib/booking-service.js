@@ -511,7 +511,7 @@ module.exports = class BookingService extends Service {
     // The line below should be removed later once we are done watching to see if the payment process works reliably
     // Currently, the user will just be charged $0. And is just overwriting the actual amount to be charged.
     data.amount = 0;
-    let workCharge = (yield OrderService.quickCharge(data, _user)).order;
+    let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
     let bookingPayment = new BookingPayment({
       bookingId: booking.id,
       orderId: workCharge.id,
@@ -529,7 +529,7 @@ module.exports = class BookingService extends Service {
         text: `:fleur_de_lis: ${driver.link()} to be charged $${(
           proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
-        their Waivework Rental`,
+        the first ${numDays} days of their Waivework Rental`,
       },
       {channel: '#waivework-charges'},
     );

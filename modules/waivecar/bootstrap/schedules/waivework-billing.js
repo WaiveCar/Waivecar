@@ -78,23 +78,25 @@ scheduler.process('waivework-billing', function*(job) {
           source: 'Waivework auto charge',
           description: 'Weekly charge for waivework',
         };
-        let user = yield User.findById(oldPayment.booking.userId);
-        let shopOrder = (yield OrderService.quickCharge(data)).order;
         // The line below should be removed later once we are done watching to see if the payment process 
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
         // is necessary for the scheduling of the new charge.
         data.amount = 0;
         data.waivework = true;
+        let user = yield User.findById(oldPayment.booking.userId);
+        let shopOrder = (yield OrderService.quickCharge(data, null, {nocredit: true})).order;
+
         let bookingPayment = new BookingPayment({
           bookingId: oldPayment.booking.id,
           orderId: shopOrder.id,
         });
         yield bookingPayment.save();
+
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
           date: moment().add(7, 'days'),
           bookingPaymentId: null,
-          amount: shopOrder.amount,
+          amount: oldPayment.amount,
         });
         yield newPayment.save();
         yield oldPayment.update({
