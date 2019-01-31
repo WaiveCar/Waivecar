@@ -117,6 +117,9 @@ scheduler.process('waivework-billing', function*(job) {
             },
             {channel: '#waivework-charges'},
           );
+          yield oldPayment.update({
+            bookingPaymentId: e.shopOrder.id,
+          });
         }
 
         let newPayment = new WaiveworkPayment({

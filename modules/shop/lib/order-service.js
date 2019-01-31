@@ -143,7 +143,8 @@ module.exports = class OrderService extends Service {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
         message : `The card was declined.`,
-        data    : user
+        data    : user,
+        shopOrder: order,
       };
     }
 
