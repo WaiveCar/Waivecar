@@ -1472,7 +1472,7 @@ module.exports = class BookingService extends Service {
         parkingText += `${ payload.data.streetHours }hr.`;
       } else if(payload.data.userInput) {
         parkingText += `${payload.data.userInput}.`;
-      } else if(payload.expireHour !== null && payload.expireHour.length) {
+      } else if(payload.expireHour != null && payload.expireHour.length) {
         parkingText += [
           ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][payload.expireDay],
           (payload.expireHour + 100).toString().slice(1) + ":00"
