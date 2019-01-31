@@ -511,12 +511,27 @@ module.exports = class BookingService extends Service {
     // The line below should be removed later once we are done watching to see if the payment process works reliably
     // Currently, the user will just be charged $0. And is just overwriting the actual amount to be charged.
     data.amount = 0;
-    let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
-    let bookingPayment = new BookingPayment({
-      bookingId: booking.id,
-      orderId: workCharge.id,
-    });
-    yield bookingPayment.save();
+    try {
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: workCharge.id,
+      });
+      yield bookingPayment.save();
+    } catch(e) {
+      yield notify.slack(
+        {
+          text: `:male_vampire: ${driver.link()} had a failed charge of $${(
+            oldPayment.amount / 100
+          ).toFixed(2)} for their initial Waivework Payment. ${e.message}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      throw error.parse({
+        code: 'WAIVEWORK_PAYMENT_FAILED',
+        message: e.message,
+      }, 404);
+    }
 
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
