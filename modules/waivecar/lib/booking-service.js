@@ -532,13 +532,13 @@ module.exports = class BookingService extends Service {
         message: e.message,
       }, 404);
     }
-
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().add(nextDate - currentDay, 'days'),
+      date: moment().add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'),
       bookingPaymentId: null,
       amount: weeklyAmount,
     }); 
+    yield waiveworkPayment.save();
     yield notify.slack(
       {
         text: `:fleur_de_lis: ${driver.link()} to be charged $${(
@@ -548,7 +548,6 @@ module.exports = class BookingService extends Service {
       },
       {channel: '#waivework-charges'},
     );
-    yield waiveworkPayment.save();
     return waiveworkPayment;
   }
 
