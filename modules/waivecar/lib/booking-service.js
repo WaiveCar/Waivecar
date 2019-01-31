@@ -475,6 +475,7 @@ module.exports = class BookingService extends Service {
     // be charged a prorated amount for the amount of time before that date
     yield this.ready(booking.id, _user);
     let today = moment()
+    let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
     switch(true) {
@@ -494,7 +495,8 @@ module.exports = class BookingService extends Service {
         nextDate = 1;
         break;
     }
-    let prorating = (nextDate - currentDay) / 7;
+    let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
+    let prorating = ((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay) / numDays;
     let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1)); 
     if (prorating === 0) {
       nextDate += 7;
@@ -509,29 +511,43 @@ module.exports = class BookingService extends Service {
     // The line below should be removed later once we are done watching to see if the payment process works reliably
     // Currently, the user will just be charged $0. And is just overwriting the actual amount to be charged.
     data.amount = 0;
-    let workCharge = (yield OrderService.quickCharge(data, _user)).order;
-    let bookingPayment = new BookingPayment({
-      bookingId: booking.id,
-      orderId: workCharge.id,
-    });
-    yield bookingPayment.save();
-
+    try {
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: workCharge.id,
+      });
+      yield bookingPayment.save();
+    } catch(e) {
+      yield notify.slack(
+        {
+          text: `:male_vampire: ${driver.link()} had a failed charge of $${(
+            oldPayment.amount / 100
+          ).toFixed(2)} for their initial Waivework Payment. ${e.message}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      throw error.parse({
+        code: 'WAIVEWORK_PAYMENT_FAILED',
+        message: e.message,
+      }, 404);
+    }
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().add(nextDate - currentDay, 'days'),
+      date: moment().add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'),
       bookingPaymentId: null,
       amount: weeklyAmount,
     }); 
+    yield waiveworkPayment.save();
     yield notify.slack(
       {
         text: `:fleur_de_lis: ${driver.link()} to be charged $${(
           proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
-        their Waivework Rental`,
+        the first ${numDays} days of their Waivework Rental`,
       },
       {channel: '#waivework-charges'},
     );
-    yield waiveworkPayment.save();
     return waiveworkPayment;
   }
 

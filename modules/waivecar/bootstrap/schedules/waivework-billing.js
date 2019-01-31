@@ -31,7 +31,14 @@ scheduler.process('waivework-billing', function*(job) {
         (Number(history[history.length - 1].data) - Number(history[0].data)) /
         history.length *
         0.621371;
-      if (averagePerDay < 100 && (yield redis.shouldProcess('waivework-mileage-check', booking.carId, 90 * 1000))) {
+      if (
+        averagePerDay < 100 &&
+        (yield redis.shouldProcess(
+          'waivework-mileage-check',
+          booking.carId,
+          90 * 1000,
+        ))
+      ) {
         let user = yield User.findById(booking.userId);
         yield notify.slack(
           {
@@ -50,7 +57,7 @@ scheduler.process('waivework-billing', function*(job) {
   if ([1, 8, 15, 22].includes(today.date())) {
     // The unpiad WaiveworkPayments that are created on the previous billing date
     // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
-    // works by making the charge that was scheduled on the previous billing date and 
+    // works by making the charge that was scheduled on the previous billing date and
     // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -70,7 +77,11 @@ scheduler.process('waivework-billing', function*(job) {
     });
     for (let oldPayment of todaysPayments) {
       if (
-        yield redis.shouldProcess('waivework-auto-charge', oldPayment.id, 90 * 1000)
+        yield redis.shouldProcess(
+          'waivework-auto-charge',
+          oldPayment.id,
+          90 * 1000,
+        )
       ) {
         let data = {
           userId: oldPayment.booking.userId,
@@ -78,30 +89,48 @@ scheduler.process('waivework-billing', function*(job) {
           source: 'Waivework auto charge',
           description: 'Weekly charge for waivework',
         };
-        let user = yield User.findById(oldPayment.booking.userId);
-        let shopOrder = (yield OrderService.quickCharge(data)).order;
-        // The line below should be removed later once we are done watching to see if the payment process 
+        // The line below should be removed later once we are done watching to see if the payment process
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
         // is necessary for the scheduling of the new charge.
         data.amount = 0;
         data.waivework = true;
-        let bookingPayment = new BookingPayment({
-          bookingId: oldPayment.booking.id,
-          orderId: shopOrder.id,
-        });
-        yield bookingPayment.save();
+        let user = yield User.findById(oldPayment.booking.userId);
+        try {
+          let shopOrder = (yield OrderService.quickCharge(data, null, {
+            nocredit: true,
+          })).order;
+
+          let bookingPayment = new BookingPayment({
+            bookingId: oldPayment.booking.id,
+            orderId: shopOrder.id,
+          });
+          yield bookingPayment.save();
+          yield oldPayment.update({
+            bookingPaymentId: bookingPayment.id,
+          });
+        } catch (e) {
+          yield notify.slack(
+            {
+              text: `:male_vampire: ${user.link()} had a failed charge of $${(
+                oldPayment.amount / 100
+              ).toFixed(2)} for their Waivework Rental. ${e.message}`,
+            },
+            {channel: '#waivework-charges'},
+          );
+          yield oldPayment.update({
+            bookingPaymentId: e.shopOrder.id,
+          });
+        }
+
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
           date: moment().add(7, 'days'),
           bookingPaymentId: null,
-          amount: shopOrder.amount,
+          amount: oldPayment.amount,
         });
         yield newPayment.save();
-        yield oldPayment.update({
-          bookingPaymentId: bookingPayment.id,
-        });
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
-          // the testing period for this process
+        // the testing period for this process
         yield notify.slack(
           {
             text: `:watch: ${user.link()} to be charged $${(
