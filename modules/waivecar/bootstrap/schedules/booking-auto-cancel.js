@@ -142,6 +142,8 @@ scheduler.process('booking-auto-cancel', function *(job) {
         let driver = yield User.findById(booking.userId);
         let aid = yield driver.hasTag('aid');
 
+        yield booking.addFlag('miss');
+
         let user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save always". Rebook ${car.info()} for $5.00, reply "Rebook".`);
         yield notify.notifyAdmins(`:hourglass: The shambolic ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
