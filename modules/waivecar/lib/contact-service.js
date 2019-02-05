@@ -69,7 +69,7 @@ module.exports = {
     var success = true;
     let sendToSupport = false;
     let guessed = false;
-    let magicEnd = /([\d:]+\s*(a|p).?m|\d+\s?hour|\d+\s?hr|today|no sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g;
+    let magicEnd = /([\d:]+\s*(a|p).?m?|\d+\s?hour|\d+\s?hr|today|no sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g;
     let documentation = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Ex:\n  book 14",
