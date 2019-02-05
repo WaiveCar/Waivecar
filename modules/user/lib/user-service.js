@@ -202,7 +202,7 @@ module.exports = {
       if (query.order) {
         opts.order = [ query.order.split(',') ];
       } else {
-        opts.order = [ ['created_at', 'DESC'] ];
+        opts.order = [ ['updated_at', 'DESC'] ];
       } 
 
       return yield User.find(opts);
