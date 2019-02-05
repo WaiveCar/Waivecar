@@ -983,7 +983,7 @@ module.exports = class BookingService extends Service {
         throw error.parse({
           code    : `BOOKING_REQUEST_INVALID`,
           status  : booking.status,
-          message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
+          message : `We've had trouble starting your ride. The booking is currently '${ booking.getStatus() }'. It's probably our mistake, not yours. Please reach out to us for help.`
         }, 400);
       }
     }
