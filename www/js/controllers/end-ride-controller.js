@@ -36,8 +36,48 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       lotSpot: null,
       lotOvernightRest: false
     };
+    ctrl.dayValues = [
+      {
+        id: -2,
+        name: 'Today', 
+      },
+      {
+        id: -1,
+        name: 'Tomorrow',
+      },
+      {
+        id: 0,
+        name: 'Sunday', 
+      },
+      {
+        id: 1,
+        name: 'Monday',
+      },
+      {
+        id: 2,
+        name: 'Tuesday',
+      },
+      {
+        id: 3,
+        name: 'Wednesday',
+      },
+      {
+        id: 4,
+        name: 'Thursday',
+      },
+      {
+        id: 5,
+        name: 'Friday',
+      },
+      {
+        id: 6,
+        name: 'Saturday',
+      }
+    ];
     ctrl.street = {
       streetSignImage: null,
+      today: (new Date()).getDay(),
+      streetDay: (new Date()).getDay(),
       streetHours: null,
       streetMinutes: null,
       streetOvernightRest: false,
