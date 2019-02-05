@@ -74,10 +74,10 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         name: 'Saturday',
       }
     ];
+    ctrl.hourModifier = 'am';
     ctrl.street = {
       streetSignImage: null,
-      today: (new Date()).getDay(),
-      streetDay: (new Date()).getDay(),
+      streetDay: null,
       streetHours: null,
       streetMinutes: null,
       streetOvernightRest: false,
@@ -264,6 +264,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       var issues = [];
 
       // Force users to take pictures. See #1113
+      /*     
       if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         issues.push('Ending here requires a photo of the parking sign.');
       }
@@ -271,7 +272,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
         issues.push('Please take pictures of all sides of the vehicle before proceeding.');
       }
-
+      */
       if(issues.length) {
         return submitFailure(issues.join(' '));
       }

@@ -18,21 +18,32 @@
           </small></p>
         </div>
         <div class='parking-input'>
-          <div class="small-input">
-            <input ng-model="ctrl.street.streetDay" type="text">
             <select
               ng-model="ctrl.street.streetDay"
               ng-init="ctrl.street.streetDay = -2"
               ng-options="day.id as day.name for day in ctrl.dayValues"
             >
             </select>
-            <input ng-model="ctrl.street.streetHours" type="text">
+            <div class="small-input">    
+              <input ng-model="ctrl.street.streetHours" type="text">
+            </div>
+            <label>
+              <input type="radio" ng-model="ctrl.hourModifier" value="am">
+              AM
+            </label>
+            <label>
+              <input type="radio" ng-model="ctrl.hourModifier" value="pm">
+              PM
+            </label>
+            <label>
+              <input type="radio" ng-model="ctrl.hourModifier" value="From Now">
+              From Now
+            </label>
           </div>
           <p>
           When does the car need to move?
           How many hours until {{ctrl.car.license}} needs to move?
           </p>
-        </div>
         <div>
           <p><small>
            If there is no parking sign, take a picture of the last intersection you entered showing there's no sign.
