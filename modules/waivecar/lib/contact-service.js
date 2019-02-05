@@ -214,7 +214,7 @@ module.exports = {
         [/ card /, false],
         // silly mispeller
         [/retreive/, 'retrieve'],
-        [/reebok/, 'rebook'],
+        [/^(reebok|rebook)( \w*\s*\d*|)/, 'rebook'],
         [/start [tr]id/, 'start', true],
         [/^"?(end|finish).{0,27}$/, 'finish', true],
         [/ unlock(ing|)/, 'unlock'],
