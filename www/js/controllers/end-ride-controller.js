@@ -294,7 +294,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         for (var picture in ctrl.pictures) {
           picsToSend.push(ctrl.pictures[picture]);
         }
-
+        
         Reports.create({
           bookingId: $stateParams.id,
           description: null,
@@ -379,7 +379,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!$data.instances.locations) {
         return false;
       }
-      
       var car = $rootScope.currentLocation;
       var locations = $data.instances.locations;
       var hasRestrictions = false;
@@ -404,25 +403,27 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         }
         
       });
-      
       return hasRestrictions;
     }
 
     function goToEndRide() {
       var payload = {};
       //ZendriveService.stop();
-      ctrl.street.streetHours = 100;
-      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
+      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
         if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         payload = ctrl.street;
       }
-
+      console.log('here')
+      //remove the line below later after testing
+      $ionicLoading.hide();
+        /*
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
         return $ride.checkAndProcessActionOnBookingEnd();
       });
+      */
     }
 
     function skipToEnd() {

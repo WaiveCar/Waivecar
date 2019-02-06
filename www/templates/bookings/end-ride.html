@@ -18,6 +18,9 @@
           </small></p>
         </div>
         <div class='parking-input'>
+          <p>
+          When does the car need to move?
+          </p>
             <select
               ng-model="ctrl.street.streetDay"
               ng-init="ctrl.street.streetDay = -2"
@@ -40,14 +43,11 @@
               From Now
             </label>
           </div>
-          <p>
-          When does the car need to move?
-          How many hours until {{ctrl.car.license}} needs to move?
-          </p>
+          <label>
+            <input type="checkbox" ng-model="ctrl.overrideStreetRestrictions">
+            No Parking Sign
+          </label>
         <div>
-          <p><small>
-           If there is no parking sign, take a picture of the last intersection you entered showing there's no sign.
-          </small></p>
           <div>
             <div class="start-ride-holder">
             <img src="https://www.waivecar.com/images/cars/parking-sign.jpg" class="parking-sample-image"></img>
