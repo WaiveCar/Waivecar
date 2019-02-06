@@ -803,16 +803,18 @@ module.exports = {
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
         ) {
-          let secondHalf = '';
+          let secondHalf = '', channel = '';
           if(existingCar.userId) {
             if(!user) {
               user = yield User.findById(existingCar.userId);
             }
             secondHalf = `by ${user.link()}!`;
+            channel = '#reservations';
           } else {
             secondHalf = 'and should be made available.';
+            channel = '#rental-alerts';
           }
-          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }`, ['slack'], {channel: '#rental-alerts'});
+          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }`, ['slack'], {channel: channel});
         }
       }
 
