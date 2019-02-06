@@ -100,9 +100,9 @@ scheduler.process('booking-auto-cancel', function *(job) {
   let car = yield Car.findById(booking.carId);
 
   if (booking.status === 'reserved') {
-    if (RedisService.shouldProcess('booking-start', booking.id)) {
+    if (yield RedisService.shouldProcess('booking-start', booking.id)) {
       // If a deploy happens during a cancel timer then it will happen once for each server ...
-      if (RedisService.shouldProcess('booking-cancel', booking.id)) {
+      if (yield RedisService.shouldProcess('booking-cancel', booking.id)) {
         if (booking.isFlagged('extended') && !booking.isFlagged('ext-started')) {
           yield booking.addFlag('ext-started');
 
