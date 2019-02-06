@@ -410,19 +410,46 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       var payload = {};
       //ZendriveService.stop();
       /*eslint-disable */
-      var expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
-      console.log('nextDay', expireDay);
-      var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
-      console.log('next date: ', nextDate);
+      var expireDay, expireHour;
+      if (ctrl.hourModifier !== 'fromNow') {
+        expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
+        var streetHours = Number(ctrl.street.streetHours);
+        console.log('hourModifier', ctrl.hourModifier);
+        if (streetHours === 12 && ctrl.hourModifier === 'am') {
+          streetHours = 0;
+        }
+        console.log('streetHours: ', streetHours);
+        expireHour = ctrl.hourModifier === 'am' || streetHours === 12 ? streetHours : streetHours + 12;
+      }
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
-        if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
+        var streetHours = ctrl.street.streetHours;
+        if (ctrl.hourModifier !== 'fromNow') {
+          var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
+          nextDate.hour(expireHour);
+          console.log('nextDate', nextDate);
+          streetHours = nextDate.diff(moment(), 'hours')
+          console.log('hours different: ', streetHours);
+        }
+        if (streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         payload = ctrl.street;
       }
       console.log('here')
       //remove the line below later after testing
       $ionicLoading.hide();
+      if (ctrl.overrideStreetRestrictions) {
+        payload.nosign = true;
+      }
+      if (!ctrl.street.streetSignImage) {
+        payload.nophoto = true;
+      }
+      if (expireDay && expireHour) {
+        payload.expireDay = expireDay;
+        payload.expireHour = expireHour;
+      }
+      console.log(payload);
         /*
       payload.type = ctrl.type;
+      
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
