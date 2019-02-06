@@ -446,7 +446,7 @@ module.exports = {
             (command === 'retrieve' || (command === 'secure' && !previousBooking.isFlagged('retrieveStart'))) && 
             new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
           yield previousBooking.flag('retrieveStart');
-          yield notify.slack({ text : `:rowboat: The scatterbrained ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:rowboat: The scatterbrained ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#reservations' });
           yield cars.unlockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});
           yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'secure' to secure the vehicle when finished.`); 
           return true;
@@ -454,7 +454,7 @@ module.exports = {
         // We give them a longer amount of time to secure the car since it doesn't open up a new hole.
         if((command === 'lock' || command === 'secure') && new Date() - previousBooking.getEndTime() < 1000 * 60 * 18) {
           yield previousBooking.flag('retrieveEnd');
-          yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#reservations' });
           yield cars.lockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});                                                                 
           yield notify.sendTextMessage(user, `Thanks.`); 
           return true;
