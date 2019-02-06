@@ -412,6 +412,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       /*eslint-disable */
       var expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
       console.log('nextDay', expireDay);
+      var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
+      console.log('next date: ', nextDate);
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
         if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         payload = ctrl.street;
