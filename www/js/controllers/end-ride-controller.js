@@ -406,7 +406,10 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return hasRestrictions;
     }
 
-    function goToEndRide() {
+    function goToEndRide(byPass) {
+      if (byPass) {
+        ctrl.overrideStreetRestrictions = true;
+      }
       var payload = {};
       //ZendriveService.stop();
       /*eslint-disable */
@@ -423,6 +426,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         }
         expireHour = ctrl.hourModifier === 'am' || hours === 12 ? hours : hours + 12;
         expireMins = streetHours[1] ? Number(streetHours[1]) : 0;
+      } else {
+        var expiration = moment().add(Number(ctrl.street.streetHours), 'hours');
+        expireDay = expiration.day();
+        expireHour = expiration.hours();
+        expireMins = expiration.minutes();
       }
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
         var streetHours = ctrl.street.streetHours;
@@ -449,14 +457,16 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         delete payload.streetMinutes;
         delete payload.steetDay;
       }
-      console.log('payload', payload);
       payload.type = ctrl.type;
-      
+      console.log('payload', payload);
+      $ionicLoading.hide();
+      /*
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
         return $ride.checkAndProcessActionOnBookingEnd();
       });
+      */
     }
 
     function skipToEnd() {
