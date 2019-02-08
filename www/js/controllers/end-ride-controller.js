@@ -262,7 +262,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     function submit() {
       var issues = [];
-
       // Force users to take pictures. See #1113
       if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         issues.push('Ending here requires a photo of the parking sign.');
@@ -418,6 +417,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         }
         var streetHours = ctrl.street.streetHours;
         var splitHours = streetHours.split(':');
+        if ((Number(splitHours[0]) > 12 && ctrl.hourModifier !== 'fromNow') || (splitHours[1] && Number(splitHours[1]) > 59)) {
+          return submitFailure('The time you have entered is invalid');
+        }
         if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
           expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
           var hours = Number(splitHours[0]);
