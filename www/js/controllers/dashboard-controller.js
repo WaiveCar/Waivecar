@@ -400,6 +400,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
+        console.log('endlocation: ', endLocation);
         // The part within the conditional is what happens when someone is ending their ride in user parking.
         if ($data.reservedParking !== null) {
           return confirmParking(carId, bookingId, attempt, function(){

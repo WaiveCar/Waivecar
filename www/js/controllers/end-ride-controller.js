@@ -414,34 +414,33 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       //ZendriveService.stop();
       /*eslint-disable */
       var expireDay, expireHour, expireMins;
-      if (!ctrl.street.streetHours && !ctrl.overrideStreetRestrictions) {
+      if (!ctrl.street.streetHours && !ctrl.overrideStreetRestrictions && !ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
         return submitFailure('Please enter the expiration time for your parking or select that there is no restriction if there is none.');
-      }
-      if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
-        expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
-        var streetHours = ctrl.street.streetHours.split(':');
-        var hours = Number(streetHours[0]);
-        if (hours === 12 && ctrl.hourModifier === 'am') {
-          hours = 0;
-        }
-        expireHour = ctrl.hourModifier === 'am' || hours === 12 ? hours : hours + 12;
-        expireMins = streetHours[1] ? Number(streetHours[1]) : 0;
-      } else {
-        var expiration = moment().add(Number(ctrl.street.streetHours), 'hours');
-        expireDay = expiration.day();
-        expireHour = expiration.hours();
-        expireMins = expiration.minutes();
       }
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
         var streetHours = ctrl.street.streetHours;
-        if (ctrl.hourModifier !== 'fromNow') {
+        var splitHours = streetHours.split(':');
+        if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
+          expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
+          var hours = Number(splitHours[0]);
+          if (hours === 12 && ctrl.hourModifier === 'am') {
+            hours = 0;
+          }
+          expireHour = ctrl.hourModifier === 'am' || hours === 12 ? hours : hours + 12;
+          expireMins = splitHours[1] ? Number(splitHours[1]) : 0;
           var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
           nextDate.hour(expireHour);
           nextDate.minute(expireMins);
           streetHours = nextDate.diff(moment(), 'hours')
+        } else {
+          var expiration = moment().add(Number(splitHours[0]), 'hours').add(Number(splitHours[1]), 'minutes');
+          expireDay = expiration.day();
+          expireHour = expiration.hours();
+          expireMins = expiration.minutes();
+          streetHours = expiration.diff(moment(), 'hours');
         }
         if (streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-        payload = ctrl.street;
+        payload = Object.assign({}, ctrl.street);
       }
       if (ctrl.overrideStreetRestrictions) {
         payload.nosign = true;
@@ -449,16 +448,15 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!ctrl.street.streetSignImage) {
         payload.nophoto = true;
       }
-      if (expireDay && expireHour) {
-        payload.expireHour = expireHour;
-        payload.expireDay = expireDay;
-        payload.expireMins = expireMins;
-        delete payload.streetHours;
-        delete payload.streetMinutes;
-        delete payload.steetDay;
-      }
+      payload.expireHour = expireHour;
+      payload.expireDay = expireDay;
+      payload.expireMins = expireMins;
+      delete payload.streetHours;
+      delete payload.streetMinutes;
+      delete payload.steetDay;
       payload.type = ctrl.type;
       console.log('payload', payload);
+      //Remove line below when done
       $ionicLoading.hide();
       /*
       $ride.setParkingDetails(payload);
