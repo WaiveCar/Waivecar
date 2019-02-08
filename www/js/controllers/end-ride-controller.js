@@ -264,7 +264,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       var issues = [];
 
       // Force users to take pictures. See #1113
-      /*     
       if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         issues.push('Ending here requires a photo of the parking sign.');
       }
@@ -272,7 +271,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
         issues.push('Please take pictures of all sides of the vehicle before proceeding.');
       }
-      */
       if(issues.length) {
         return submitFailure(issues.join(' '));
       }
@@ -414,10 +412,10 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       //ZendriveService.stop();
       /*eslint-disable */
       var expireDay, expireHour, expireMins;
-      if (!ctrl.street.streetHours && !ctrl.overrideStreetRestrictions && !ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
-        return submitFailure('Please enter the expiration time for your parking or select that there is no restriction if there is none.');
-      }
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
+        if (!ctrl.street.streetHours) {
+          return submitFailure('Please enter the expiration time for your parking or select that there is no restriction if there is none.');
+        }
         var streetHours = ctrl.street.streetHours;
         var splitHours = streetHours.split(':');
         if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
@@ -455,16 +453,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       delete payload.streetMinutes;
       delete payload.steetDay;
       payload.type = ctrl.type;
-      console.log('payload', payload);
-      //Remove line below when done
-      $ionicLoading.hide();
-      /*
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
         return $ride.checkAndProcessActionOnBookingEnd();
       });
-      */
     }
 
     function skipToEnd() {
