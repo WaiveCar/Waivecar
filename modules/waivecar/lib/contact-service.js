@@ -236,6 +236,7 @@ module.exports = {
         [/(immobilize|not starting)/, 'access'],
         [/^start (waive|my ride|ride)/,'start'],
         [/(end|finish|stop) (waive|(my |the |)(rental|ride))/,'finish'],
+        [/^(ride end\w*|stop \d+)$/,'finish'],
         [/^end(\s\w+|)$/,'finish']
       ]) {
         let [regex, todo, suppress] = row;
