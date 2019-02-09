@@ -21,32 +21,36 @@
           <p>
           When does the car need to move?
           </p>
-            <select
-              ng-model="ctrl.street.streetDay"
-              ng-init="ctrl.street.streetDay = -2"
-              ng-options="day.id as day.name for day in ctrl.dayValues"
-            >
-            </select>
-            <div class="small-input">    
-              <input ng-model="ctrl.street.streetHours" type="text" placeholder="ex: 3:00">
+            <div class="flex-holder">
+              <select
+                ng-model="ctrl.street.streetDay"
+                ng-init="ctrl.street.streetDay = -2"
+                ng-options="day.id as day.name for day in ctrl.dayValues"
+              >
+              </select>
+              <div class="parking-hours">    
+                <input ng-model="ctrl.street.streetHours" type="text" placeholder="ex: 3:00">
+              </div>
+              <label class="parking-radio">
+                <input type="radio" ng-model="ctrl.hourModifier" value="am">
+                AM
+              </label>
+              <label class="parking-radio">
+                <input type="radio" ng-model="ctrl.hourModifier" value="pm">
+                PM
+              </label>
+              <label class="parking-radio">
+                <input type="radio" ng-model="ctrl.hourModifier" value="fromNow">
+                Hours From Now
+              </label>
             </div>
-            <label>
-              <input type="radio" ng-model="ctrl.hourModifier" value="am">
-              AM
-            </label>
-            <label>
-              <input type="radio" ng-model="ctrl.hourModifier" value="pm">
-              PM
-            </label>
-            <label>
-              <input type="radio" ng-model="ctrl.hourModifier" value="fromNow">
-              Hours From Now
+          </div>
+          <div class="parking-checkbox">
+            <label class="parking-checkbox">
+              <input type="checkbox" ng-model="ctrl.overrideStreetRestrictions">
+              No Parking Restriction
             </label>
           </div>
-          <label>
-            <input type="checkbox" ng-model="ctrl.overrideStreetRestrictions">
-            No Parking Restriction
-          </label>
         <div>
           <div>
             <div class="start-ride-holder">

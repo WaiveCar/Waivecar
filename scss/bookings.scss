@@ -403,6 +403,10 @@
   background-size: 100%;
 }
 
+.parking-checkbox {
+  margin-bottom: 1em!important;
+}
+
 .parking-section {
   margin: 18px 0;
   p {
@@ -426,8 +430,25 @@
     margin-top: 8px;
   }
   .parking-input {
-    margin: 20px 12px 15px 0;
+    margin: 20px 0;
     div, p {
+    }
+    .flex-holder {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .parking-hours {
+      width: 70px;
+      display: inline-block;
+      input {
+        width: 100%;
+        border-radius: 6px;
+        text-align: center;
+      }
+    }
+    .parking-radio {
+      margin-top: 0.5em;
     }
     p {
       text-align: right;
