@@ -1487,7 +1487,7 @@ module.exports = class BookingService extends Service {
         }
         parkingText += `${ payload.data.streetHours }hr.`;
       } else if(payload.data.userInput) {
-        parkingText += `${payload.data.userInput}.`;
+        parkingText += `${payload.data.userInput}`;
       } else if(payload.expireHour != null && payload.expireHour.length) {
         parkingText += [
           ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][payload.expireDay],
@@ -1499,8 +1499,11 @@ module.exports = class BookingService extends Service {
       let message = yield this.updateState('ended', _user, user);
 
       parkingSlack = {
-        text        : `:cherries: ${ message } ${ car.info() } ${ booking.link() }`,
-        attachments : [
+        text        : `:cherries: ${ message } ${ car.info() } ${ booking.link() }`
+      ];
+
+      if(parkingText) {
+        parkingSlack.attachments = [
           {
             color    : '#D00000',
             fields   : [
@@ -1510,11 +1513,14 @@ module.exports = class BookingService extends Service {
               }
             ]
           }
-        ]
-      };
+        ];
+      }
 
       if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
         payload.data.path = payload.data.streetSignImage.path;
+        if(!parkingSlack.attachments) {
+          parkingSlack.attachments = [];
+        }
         parkingSlack.attachments.push({
           fallback  : 'Parking image',
           color     : '#D00000',
