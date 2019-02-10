@@ -1500,7 +1500,7 @@ module.exports = class BookingService extends Service {
 
       parkingSlack = {
         text        : `:cherries: ${ message } ${ car.info() } ${ booking.link() }`
-      ];
+      };
 
       if(parkingText) {
         parkingSlack.attachments = [
