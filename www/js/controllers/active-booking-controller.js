@@ -200,8 +200,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // It takes a few seconds for the extension to go through since it
     // calls stripe and does a charge so we fake it until we make it. 
     ctrl.isExtended = true;
-    var oldEnd = $data.active.bookings.reservationEnd;
-    $data.active.bookings.reservationEnd = null;
 
     $data.resources.bookings.extend({
       howmuch: howmuch,
@@ -209,7 +207,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }).$promise
       .then(function() { })
       .catch(function(err) {
-        $data.active.bookings.reservationEnd = oldEnd;
         ctrl.isExtended = false;
         showFailure('Unable to extend', 'There was a problem extending your reservation');
       });
