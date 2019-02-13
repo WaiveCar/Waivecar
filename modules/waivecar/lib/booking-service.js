@@ -812,9 +812,11 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
     let err     = false;
-
     let amount  = 100;
     let time    = 10;
+    if (opts.addToAutoExtend) {
+      yield user.addTag('extend')
+    }
 
     if(opts.howmuch == -1) {
       amount = -1;
