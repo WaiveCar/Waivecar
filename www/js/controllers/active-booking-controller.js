@@ -201,7 +201,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // calls stripe and does a charge so we fake it until we make it. 
     ctrl.isExtended = true;
     var oldEnd = $data.active.bookings.reservationEnd;
-    $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd).add(howmuch, 'm');
+    $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd);
 
     $data.resources.bookings.extend({
       howmuch: howmuch,
@@ -218,46 +218,24 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   this.extendBooking = function extendBooking() {
     var modal;
 
-    var extendedExpire = {
-      0: 'by ' + moment(expired).format('h:mm A'),
-      10: 'to ' + moment(expired).add(10, 'm').format('h:mm A'),
-      20: 'to ' + moment(expired).add(20, 'm').format('h:mm A')
-    };
-
-    if(extendedExpire['10'].search(/Invalid/i) !== -1) {
-      extendedExpire = {
-        0: 'on time',
-        10: '10 minutes',
-        20: '20 minutes'
-      };
-    }
-
     $modal('result', {
       title: 'Extend Reservation',
       message: 'Extend your reservation for more time to get to your WaiveCar.' + [
-        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time!</p>"
+        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time! Extending your reservation costs $1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car.</p>"
       ].join(' '),
       icon: 'waivecar-mark',
       actions: [
       { 
         className: 'button-balanced',
-        text: 'Extend ' +  extendedExpire['20'] + ' for $4.20',
+        text: 'Yes. Please extend my reservation!',
         handler: function () {
           modal.remove();
-          ctrl.extendAction(20);
-        }
-      }, 
-      {
-        className: 'button-dark',
-        text: 'Extend ' +  extendedExpire['10'] + ' for $1.00',
-        handler: function () {
-          modal.remove();
-          ctrl.extendAction(10);
+          ctrl.extendAction(-1);
         }
       }, 
       {
         className: 'button-link button-small',
-        text: "I'll make it " + extendedExpire['0'] + ". No thanks!",
+        text: "I'll make it " + moment(expired).format('h:mm A') + ". No thanks!",
         handler: function () {
           modal.remove();
       }}]
