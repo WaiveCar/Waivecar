@@ -49,9 +49,6 @@
         <label class="item item-input" ng-if="userCreateCtrl.havePromo">
           <input type="text" name="promoCode" ng-model="userCreateCtrl.user.promoCode" ng-if="userCreateCtrl.havePromo" required placeholder="Promo Code" >
         </label>
-        <label class="item item-input" ng-if="userCreateCtrl.havePromo">
-          <input type="text" name="account" ng-model="userCreateCtrl.user.account" ng-if="userCreateCtrl.havePromo" required placeholder="Unit/Account Number" >
-        </label>
 
         <ion-checkbox ng-model="userCreateCtrl.inLA" ng-change="userCreateCtrl.inLocationChanged('la')">I'm in Los Angeles</ion-checkbox>
         <ion-checkbox ng-model="userCreateCtrl.inNotLA" ng-change="userCreateCtrl.inLocationChanged('notla')">I'm somewhere else</ion-checkbox>

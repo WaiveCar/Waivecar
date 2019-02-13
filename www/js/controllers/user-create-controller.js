@@ -85,7 +85,6 @@ function UserCreateController($injector){
       nextPage = 'sunny-santa-monica';
     } else if(this.havePromo) {
       opts.promoCode = this.user.promoCode;
-      opts.account = this.user.account;
     }
 
     this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
