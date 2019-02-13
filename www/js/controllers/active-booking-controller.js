@@ -201,7 +201,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // calls stripe and does a charge so we fake it until we make it. 
     ctrl.isExtended = true;
     var oldEnd = $data.active.bookings.reservationEnd;
-    $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd);
+    $data.active.bookings.reservationEnd = null;
 
     $data.resources.bookings.extend({
       howmuch: howmuch,
