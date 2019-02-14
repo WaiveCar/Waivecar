@@ -196,15 +196,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
-  this.extendAction = function (howmuch) {
+  this.extendAction = function (howmuch, extendAlways) {
     // It takes a few seconds for the extension to go through since it
     // calls stripe and does a charge so we fake it until we make it. 
     ctrl.isExtended = true;
-
-    $data.resources.bookings.extend({
+    var body = {
       howmuch: howmuch,
-      id: $ride.state.booking.id
-    }).$promise
+      id: $ride.state.booking.id,
+    }
+    if (extendAlways) {
+      body.addToAutoExtend = true;
+    }
+    $data.resources.bookings.extend(body).$promise
       .then(function() { })
       .catch(function(err) {
         ctrl.isExtended = false;
@@ -221,13 +224,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time! Extending your reservation costs $1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car.</p>"
       ].join(' '),
       icon: 'waivecar-mark',
+      hasExtend: true,
+      extendAlways: false,
       actions: [
       { 
         className: 'button-balanced',
         text: 'Yes. Please extend my reservation!',
-        handler: function () {
+        handler: function (extendAlways) {
           modal.remove();
-          ctrl.extendAction(-1);
+          ctrl.extendAction(-1, extendAlways);
         }
       }, 
       {
