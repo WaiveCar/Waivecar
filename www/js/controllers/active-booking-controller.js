@@ -26,6 +26,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var _locationWatch;
   var ctrl = this;
   var expired;
+  ctrl.hasAutoExtend = $data.me.hasTag('extend') === 1;
   // 0.019 essentially maps to "100 imperial feet" - about
   // the length of a suburban home + property.
   // ^^ Actually this is wayyy too far, let's make it 0.013
