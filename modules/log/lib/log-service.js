@@ -272,8 +272,14 @@ module.exports = class LogService {
 
   // year_month should be in the format of
   // YYYY-MM
+  //
   // You can also have a duration, such as:
   // YYYY-MM_1+month
+  //
+  // Also (2019-02) you can do the string "all" for everything since
+  // January 1, 2015 ( the company started on January 1, 2016 with 
+  // some early test runs in november, dec 2015 )
+  //
   static *report(year_month, kind, query) {
     // There's a circular dependency here. Make sure you know what you're doing
     // before you 'refactor' this to the top.
@@ -317,37 +323,44 @@ module.exports = class LogService {
       });
 
 
+    let dtStr = false;
+    let end = false;
+
     // we allow for custom duration
-    let duration_parts = year_month.split('_');
-    let duration = false;
+    if(year_month === 'all') {
+      dtStr = `2015-01-01 00:00:00`;
+      end = 'current_timestamp';
+    } else {
+      let duration = false;
+      let duration_parts = year_month.split('_');
 
-    if(duration_parts.length > 1) {
-      duration = duration_parts[1];
-      // the person only used an underscore (probably)
-      // instead of a hyphen (likely) so we will just
-      // ignore this, back up and then replace the _
-      // with a -
-      if(duration.match(/^\d*$/) && !duration.match(/\-/)) {
-        year_month = year_month.replace(/_/, '-');
-        duration = false;
+      if(duration_parts.length > 1) {
+        duration = duration_parts[1];
+        // the person only used an underscore (probably)
+        // instead of a hyphen (likely) so we will just
+        // ignore this, back up and then replace the _
+        // with a -
+        if(duration.match(/^\d*$/) && !duration.match(/\-/)) {
+          year_month = year_month.replace(/_/, '-');
+          duration = false;
+        }
+      } 
+      let parts = year_month.split('-');
+      start.year = parseInt(parts[0], 10);
+
+      if(parts.length > 1) {
+        duration = duration || '1 month';
+        start.month = parseInt(parts[1], 10);
+
+        if(parts.length > 2) {
+          duration = duration || '1 week';
+          start.day = parseInt(parts[2], 10);
+        }
       }
-    } 
-    let parts = year_month.split('-');
-    start.year = parseInt(parts[0], 10);
-
-    if(parts.length > 1) {
-      duration = duration || '1 month';
-      start.month = parseInt(parts[1], 10);
-
-      if(parts.length > 2) {
-        duration = duration || '1 week';
-        start.day = parseInt(parts[2], 10);
-      }
+      duration = duration || '1 year';
+      dtStr = `${start.year}-${start.month}-${start.day} 00:00:00`;
+      end = `DATE_ADD("${dtStr}", interval ${duration})`;
     }
-    duration = duration || '1 year';
-
-    let dtStr = `${start.year}-${start.month}-${start.day} 00:00:00`;
-    let end = `DATE_ADD("${dtStr}", interval ${duration})`;
 
     //
     // This is where we determine what cars we are looking at. As far as the query goes,
