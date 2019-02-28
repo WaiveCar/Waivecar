@@ -236,7 +236,7 @@ module.exports = {
         }
         yield user.addTag('la');
 
-      } else if (promo === 'csula-student' || promo === 'csula-staff' || promo.match(/^csu/)) {
+      } else if (promo === 'csula-student' || promo === 'csula-staff' || promo.match(/^cal/)) {
         res.csula = 'yes';
         res.fastTrack = 'yes';
         delete res.inside;
