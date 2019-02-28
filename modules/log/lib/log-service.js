@@ -325,11 +325,13 @@ module.exports = class LogService {
 
     let dtStr = false;
     let end = false;
+    let period = false;
 
     // we allow for custom duration
     if(year_month === 'all') {
       dtStr = `2015-01-01 00:00:00`;
       end = 'current_timestamp';
+      period = 'all';
     } else {
       let duration = false;
       let duration_parts = year_month.split('_');
@@ -360,6 +362,7 @@ module.exports = class LogService {
       duration = duration || '1 year';
       dtStr = `${start.year}-${start.month}-${start.day} 00:00:00`;
       end = `DATE_ADD("${dtStr}", interval ${duration})`;
+      period = duration_parts[0];
     }
 
     //
@@ -584,7 +587,7 @@ module.exports = class LogService {
     }
 
     return {
-      period: duration_parts[0],
+      period: period,
       duration: duration,
       activeCarsWithBookings: carsWithBookings,
       activeCarCount: Object.keys(bookByCar).length,
