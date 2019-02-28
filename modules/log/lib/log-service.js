@@ -326,14 +326,14 @@ module.exports = class LogService {
     let dtStr = false;
     let end = false;
     let period = false;
+    let duration = false;
 
     // we allow for custom duration
     if(year_month === 'all') {
       dtStr = `2015-01-01 00:00:00`;
       end = 'current_timestamp';
-      period = 'all';
+      period = duration = 'all';
     } else {
-      let duration = false;
       let duration_parts = year_month.split('_');
 
       if(duration_parts.length > 1) {
