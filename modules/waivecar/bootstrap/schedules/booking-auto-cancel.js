@@ -98,6 +98,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
   }
 
   let car = yield Car.findById(booking.carId);
+  let user, driver;
 
   if (booking.status === 'reserved') {
     if (yield RedisService.shouldProcess('booking-start', booking.id)) {
@@ -139,18 +140,20 @@ scheduler.process('booking-auto-cancel', function *(job) {
         // we derive the amount of time we gave them and assume it's divisible by 5 ... hopefully we are right.
         let timeWindow = Math.round((new Date() - booking.createdAt) / (5*60*1000)) * 5;
 
-        let driver = yield User.findById(booking.userId);
+        driver = yield User.findById(booking.userId);
         let aid = yield driver.hasTag('aid');
 
         yield booking.addFlag('miss');
 
-        let user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save always". Rebook ${car.info()} for $5.00, reply "Rebook".`);
+        user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save always". Rebook ${car.info()} for $5.00, reply "Rebook".`);
         yield notify.notifyAdmins(`:hourglass: The shambolic ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
         // log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
       }
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      let who = driver ? driver.link() : "The user";
+        
+      yield notify.notifyAdmins(`:timer_clock: ${ who } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
