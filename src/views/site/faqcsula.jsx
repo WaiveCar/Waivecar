@@ -29,7 +29,7 @@ module.exports = class Faqcsula extends Component {
           <h3 id="why-do-i-need-a-credit-card-to-sign-up-if-its-free">Why do I need a credit card to sign up if it’s free?</h3>
           <p>We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!</p>
           <h3 id="how-old-do-i-need-to-be-to-drive-waivecar">How old do I need to be to drive WaiveCar?</h3>
-          <p>You need to be 18+ to use WaiveCar CSULA and 21+ to user WaiveCar Electric (on LA’s West side).</p>
+          <p>You need to be 18+ to use WaiveCar CalStateLA and 21+ to user WaiveCar Electric (on LA’s West side).</p>
           <h3 id="can-i-use-my-ipadtablet-to-use-waivecar">Can I use my iPad/tablet to use WaiveCar?</h3>
           <p>No. Unfortunately we require a mobile phone so that a phone number can be attached to the account as well as GPS services.</p>
           <h3 id="is-insurance-included">Is insurance included?</h3>
@@ -48,7 +48,7 @@ module.exports = class Faqcsula extends Component {
           <h3 id="how-do-i-book-a-waivecar">How do I book a WaiveCar?</h3>
           <p>Log onto the app and find the closest available WaiveCar to you. You then have 15 minutes to get to the car before the reservation times out.</p>
           <h3 id="where-can-i-get-a-waivecar">Where can I get a WaiveCar?</h3>
-          <p>We have WaiveCars parked in designated spots throughout the CSULA campus.</p>
+          <p>We have WaiveCars parked in designated spots throughout the CalStateLA campus.</p>
           <h3 id="how-long-do-i-have-to-get-to-a-waivecar">How long do I have to get to a WaiveCar?</h3>
           <p>You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.</p>
           <p>Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn’t being used. But don’t worry, we send out a message beforehand and you’ll have plenty of time to contact us if we’ve made a mistake.</p>

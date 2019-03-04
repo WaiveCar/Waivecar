@@ -26,7 +26,7 @@ Nope! We promise there really are no catches. We're that magical.
 We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
 
 ### How old do I need to be to drive WaiveCar?
-You need to be 18+ to use WaiveCar CSULA and 21+ to user WaiveCar Electric (on LA's West side).
+You need to be 18+ to use WaiveCar CalStateLA and 21+ to user WaiveCar Electric (on LA's West side).
 
 ### Can I use my iPad/tablet to use WaiveCar?
 No. Unfortunately we require a mobile phone so that a phone number can be attached to the account as well as GPS services.
@@ -54,7 +54,7 @@ Our cars are available from 5am - 1am and the customer service line is open from
 Log onto the app and find the closest available WaiveCar to you. You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
-We have WaiveCars parked in designated spots throughout the CSULA campus. 
+We have WaiveCars parked in designated spots throughout the CalStateLA campus. 
 
 ### How long do I have to get to a WaiveCar?
 You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.
