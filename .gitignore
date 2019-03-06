@@ -88,3 +88,4 @@ package-lock.json
 *.swp
 .last-deploy
 .deploy-history
+tools/tikd-sheet-1.csv
