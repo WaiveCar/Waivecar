@@ -5,16 +5,16 @@ mysql_connection = mysql.connect(database='waivecar_development', user='waivecar
 import time
 
 start = time.time()
-with open('./tikd-sheet.csv', 'r') as f:
+with open('./tikd-sheet-1.csv', 'r') as f:
     reader = csv.reader(f)
     rows = list(reader)
     for i in range(1, len(rows)):
         row = rows[i]
-        if not len(row[19]):
-            issue_time = row[13]
+        if not len(row[22]):
+            issue_time = row[19]
             issue_time = re.sub('\.', ':', issue_time)
-            issue_date = row[15]
-            plate_number = row[17]
+            issue_date = row[18]
+            plate_number = row[5]
             date_time = dateparser.parse(issue_time + ' ' + issue_date)
             local = pytz.timezone('America/Los_Angeles')
             naive = datetime.datetime.strptime(str(date_time), '%Y-%m-%d %H:%M:%S')
@@ -25,7 +25,6 @@ with open('./tikd-sheet.csv', 'r') as f:
                 cursor.execute('''
                 select
                   booking.booking_id,
-                  user.id,
                   user.stripe_id,
                   user.number,
                   user.email,
@@ -86,7 +85,7 @@ with open('./tikd-sheet.csv', 'r') as f:
             item = cursor.fetchone()
 
             if not item:
-                row[20] = 'plate number not found'
+                row[22] = 'plate number not found'
                 print('row not found: ', row, '\n This is probably due to the plate number being missing or wrong in the database')
                 continue
             cursor.execute('select created_at, type from booking_details where booking_id = {} and type="end"'.format(item[0]))
@@ -102,12 +101,12 @@ with open('./tikd-sheet.csv', 'r') as f:
                     user_responsibility = False
             if user_responsibility:
                 for i in range(len(item)):
-                    row[19 + i] = item[i]
+                    row[22 + i] = item[i]
             else:
-                row[19] = 'waivecar ticket'
+                row[22] = 'waivecar ticket'
 
 
-    with open('./tikd-result.csv', 'w') as output:
+    with open('./tikd-result-1.csv', 'w') as output:
         writer = csv.writer(output, lineterminator='\n')
         writer.writerows(rows)
 
