@@ -36,8 +36,48 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       lotSpot: null,
       lotOvernightRest: false
     };
+    ctrl.dayValues = [
+      {
+        id: -2,
+        name: 'Today', 
+      },
+      {
+        id: -1,
+        name: 'Tomorrow',
+      },
+      {
+        id: 0,
+        name: 'Sunday', 
+      },
+      {
+        id: 1,
+        name: 'Monday',
+      },
+      {
+        id: 2,
+        name: 'Tuesday',
+      },
+      {
+        id: 3,
+        name: 'Wednesday',
+      },
+      {
+        id: 4,
+        name: 'Thursday',
+      },
+      {
+        id: 5,
+        name: 'Friday',
+      },
+      {
+        id: 6,
+        name: 'Saturday',
+      }
+    ];
+    ctrl.hourModifier = 'am';
     ctrl.street = {
       streetSignImage: null,
+      streetDay: null,
       streetHours: null,
       streetMinutes: null,
       streetOvernightRest: false,
@@ -222,7 +262,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     function submit() {
       var issues = [];
-
       // Force users to take pictures. See #1113
       if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         issues.push('Ending here requires a photo of the parking sign.');
@@ -231,7 +270,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
         issues.push('Please take pictures of all sides of the vehicle before proceeding.');
       }
-
       if(issues.length) {
         return submitFailure(issues.join(' '));
       }
@@ -253,7 +291,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         for (var picture in ctrl.pictures) {
           picsToSend.push(ctrl.pictures[picture]);
         }
-
+        
         Reports.create({
           bookingId: $stateParams.id,
           description: null,
@@ -338,7 +376,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!$data.instances.locations) {
         return false;
       }
-      
       var car = $rootScope.currentLocation;
       var locations = $data.instances.locations;
       var hasRestrictions = false;
@@ -363,19 +400,60 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         }
         
       });
-      
       return hasRestrictions;
     }
 
-    function goToEndRide() {
+    function goToEndRide(byPass) {
+      if (byPass) {
+        ctrl.overrideStreetRestrictions = true;
+      }
       var payload = {};
       //ZendriveService.stop();
-      ctrl.street.streetHours = 100;
-      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
-        if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-        payload = ctrl.street;
+      /*eslint-disable */
+      var expireDay, expireHour, expireMins;
+      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
+        if (!ctrl.street.streetHours) {
+          return submitFailure('Please enter the expiration time for your parking or select that there is no restriction if there is none.');
+        }
+        var streetHours = ctrl.street.streetHours;
+        var splitHours = streetHours.split(':');
+        if ((Number(splitHours[0]) > 12 && ctrl.hourModifier !== 'fromNow') || (splitHours[1] && Number(splitHours[1]) > 59)) {
+          return submitFailure('The time you have entered is invalid');
+        }
+        if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
+          expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
+          var hours = Number(splitHours[0]);
+          if (hours === 12 && ctrl.hourModifier === 'am') {
+            hours = 0;
+          }
+          expireHour = ctrl.hourModifier === 'am' || hours === 12 ? hours : hours + 12;
+          expireMins = splitHours[1] ? Number(splitHours[1]) : 0;
+          var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
+          nextDate.hour(expireHour);
+          nextDate.minute(expireMins);
+          streetHours = nextDate.diff(moment(), 'hours')
+        } else {
+          var expiration = moment().add(Number(splitHours[0]), 'hours').add(Number(splitHours[1]), 'minutes');
+          expireDay = expiration.day();
+          expireHour = expiration.hours();
+          expireMins = expiration.minutes();
+          streetHours = expiration.diff(moment(), 'hours');
+        }
+        if (streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
+        payload = Object.assign({}, ctrl.street);
       }
-
+      if (ctrl.overrideStreetRestrictions) {
+        payload.nosign = true;
+      }
+      if (!ctrl.street.streetSignImage) {
+        payload.nophoto = true;
+      }
+      payload.expireHour = expireHour;
+      payload.expireDay = expireDay;
+      payload.expireMins = expireMins;
+      delete payload.streetHours;
+      delete payload.streetMinutes;
+      delete payload.steetDay;
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
