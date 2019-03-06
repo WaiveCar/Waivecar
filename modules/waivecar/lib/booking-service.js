@@ -21,7 +21,7 @@ let UserLog      = require('../../log/lib/log-service');
 let LogService   = require('./log-service');
 let Tikd         = require('./tikd-service');
 let Actions      = LogService.getActions();
-let moment       = require('moment');
+let moment       = require('moment-timezone');
 let redis        = require('./redis-service');
 let uuid         = require('uuid');
 let _            = require('lodash');
@@ -474,14 +474,11 @@ module.exports = class BookingService extends Service {
     // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
     // be charged a prorated amount for the amount of time before that date
     yield this.ready(booking.id, _user);
-    let today = moment()
+    let today = moment().tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
     switch(true) {
-      case currentDay === 1:
-        nextDate = 1;
-        break;
       case currentDay <= 8:
         nextDate = 8;
         break;
@@ -491,13 +488,14 @@ module.exports = class BookingService extends Service {
       case currentDay <= 22:
         nextDate = 22;
         break;
-      default: 
+      default:
         nextDate = 1;
         break;
     }
     let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
-    let prorating = ((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay) / numDays;
-    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1)); 
+    let daysLeft = (nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay;
+    let prorating = daysLeft / numDays;
+    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1));
     if (prorating === 0) {
       nextDate += 7;
     }
@@ -537,18 +535,18 @@ module.exports = class BookingService extends Service {
       date: moment().add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'),
       bookingPaymentId: null,
       amount: weeklyAmount,
-    }); 
+    });
     yield waiveworkPayment.save();
     yield notify.slack(
       {
         text: `:fleur_de_lis: ${driver.link()} to be charged $${(
           proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
-        the first ${numDays} days of their Waivework Rental`,
+        the first ${daysLeft !== 1 ? daysLeft : numDays} days of their Waivework Rental`,
       },
       {channel: '#waivework-charges'},
     );
-    return waiveworkPayment;
+    return waiveworkPayment; 
   }
 
   /*
