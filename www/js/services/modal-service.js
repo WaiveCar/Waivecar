@@ -12,9 +12,14 @@ function ModalFactory ($rootScope, $ionicModal, $sce) {
         initialData.icon = '/img/' + initialData.icon + '.svg';
       }
     }
+
     angular.extend(scope, initialData);
     if (scope.message) {
       scope.message = $sce.trustAsHtml(scope.message);
+    }
+
+    scope.toggleCheck = function() {
+      scope.extendAlways = !scope.extendAlways;
     }
 
     return $ionicModal.fromTemplateUrl(template, {

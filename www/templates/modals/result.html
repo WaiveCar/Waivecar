@@ -6,11 +6,17 @@
         <p class="text-uppercase modal-title">{{title}}</p>
         <p ng-bind-html="message"></p>
       </div>
+      <div ng-if="hasExtend"> 
+        <label>
+          <input type="checkbox" ng-change="toggleCheck()" ng-model="extendAlways">
+          Do this every time
+        </label>
+      </div>
       <div class="modal-actions" ng-if="::actions">
         <button
           class="button button-block"
           ng-repeat="action in actions"
-          ng-click="action.handler()"
+          ng-click="action.handler(extendAlways)"
           ng-class="action.className">
           {{action.text}}
         </button>

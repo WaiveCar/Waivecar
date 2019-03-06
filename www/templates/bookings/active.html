@@ -20,11 +20,12 @@
     <div class="info-footer big-info-footer">
       <div class="has-footer-information">
         <div class="row pull-right vcenter reservation-extension">
-          <div class="text-left reservation-text" ng-show="ctrl.timeLeft">
+          <div ng-if="!ctrl.isExtended && !ctrl.hasAutoExtend" class="text-left reservation-text" ng-show="ctrl.timeLeft">
             Reserved until <strong>{{ ctrl.timeLeft }}</strong>.
           </div>
-          <button ng-if="!ctrl.isExtended" type="button" class="button button-small button-balanced" ng-click="ctrl.extendBooking()"><img ng-src='img/clock.svg'>Extend</button>
-          <button ng-if="ctrl.isExtended" type="button" class="button button-small" >extended</button>
+          <button ng-if="!ctrl.isExtended && !ctrl.hasAutoExtend" type="button" class="button button-small button-balanced" ng-click="ctrl.extendBooking()"><img ng-src='img/clock.svg'>Extend</button>
+          <button ng-if="ctrl.isExtended && !ctrl.hasAutoExtend" type="button" class="button button-small" >extended</button>
+          <button ng-if="ctrl.hasAutoExtend" type="button" class="button button-small">Autoextended</button>
           <button type="button" class="button button-link button-small button-blue" ng-click="ctrl.getDirections()"><i class="fa fa-location-arrow" aria-hidden="true"></i> Navigate</button>
         </div>
         <div class="row" style="height: 100%;">

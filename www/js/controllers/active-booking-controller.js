@@ -26,6 +26,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var _locationWatch;
   var ctrl = this;
   var expired;
+  ctrl.hasAutoExtend = $data.me.hasTag('extend') === 1;
   // 0.019 essentially maps to "100 imperial feet" - about
   // the length of a suburban home + property.
   // ^^ Actually this is wayyy too far, let's make it 0.013
@@ -196,20 +197,20 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
-  this.extendAction = function (howmuch) {
+  this.extendAction = function (howmuch, extendAlways) {
     // It takes a few seconds for the extension to go through since it
     // calls stripe and does a charge so we fake it until we make it. 
     ctrl.isExtended = true;
-    var oldEnd = $data.active.bookings.reservationEnd;
-    $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd).add(howmuch, 'm');
-
-    $data.resources.bookings.extend({
+    var body = {
       howmuch: howmuch,
-      id: $ride.state.booking.id
-    }).$promise
+      id: $ride.state.booking.id,
+    }
+    if (extendAlways) {
+      body.addToAutoExtend = true;
+    }
+    $data.resources.bookings.extend(body).$promise
       .then(function() { })
       .catch(function(err) {
-        $data.active.bookings.reservationEnd = oldEnd;
         ctrl.isExtended = false;
         showFailure('Unable to extend', 'There was a problem extending your reservation');
       });
@@ -218,46 +219,26 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   this.extendBooking = function extendBooking() {
     var modal;
 
-    var extendedExpire = {
-      0: 'by ' + moment(expired).format('h:mm A'),
-      10: 'to ' + moment(expired).add(10, 'm').format('h:mm A'),
-      20: 'to ' + moment(expired).add(20, 'm').format('h:mm A')
-    };
-
-    if(extendedExpire['10'].search(/Invalid/i) !== -1) {
-      extendedExpire = {
-        0: 'on time',
-        10: '10 minutes',
-        20: '20 minutes'
-      };
-    }
-
     $modal('result', {
       title: 'Extend Reservation',
       message: 'Extend your reservation for more time to get to your WaiveCar.' + [
-        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time!</p>"
+        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time! Extending your reservation costs $1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car.</p>"
       ].join(' '),
       icon: 'waivecar-mark',
+      hasExtend: true,
+      extendAlways: false,
       actions: [
       { 
         className: 'button-balanced',
-        text: 'Extend ' +  extendedExpire['20'] + ' for $4.20',
-        handler: function () {
+        text: 'Yes. Please extend my reservation!',
+        handler: function (extendAlways) {
           modal.remove();
-          ctrl.extendAction(20);
-        }
-      }, 
-      {
-        className: 'button-dark',
-        text: 'Extend ' +  extendedExpire['10'] + ' for $1.00',
-        handler: function () {
-          modal.remove();
-          ctrl.extendAction(10);
+          ctrl.extendAction(-1, extendAlways);
         }
       }, 
       {
         className: 'button-link button-small',
-        text: "I'll make it " + extendedExpire['0'] + ". No thanks!",
+        text: "I'll make it " + moment(expired).format('h:mm A') + ". No thanks!",
         handler: function () {
           modal.remove();
       }}]

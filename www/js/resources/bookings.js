@@ -31,7 +31,8 @@ module.exports = angular.module('app').factory('Bookings', [
         url: $utils.getCustomRoute('bookings/:id/extend?howmuch=:howmuch'),
         params: {
           id: '@id',
-          howmuch: '@howmuch'
+          howmuch: '@howmuch',
+          addToAutoExtend: '@addToAutoExtend'
         }
       },
       ready: {
