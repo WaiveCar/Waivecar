@@ -64,11 +64,6 @@
   //     color: $dark;
   //   }
   // }
-}
-
-.map-container {
-  height: 100%;
-  width: 100%;
   &.has-info-footer {
     // height: (100-$infoFooterHeight)*1%
     height: (100 - $infoFooterHeight) * 1%;
@@ -84,5 +79,8 @@
     &.has-info-subheader {
       height: (100 - $bigInfoFooterHeight - $smallSubHeaderSize) * 1%
     }
+  }
+  &.two-rows {
+    height: 82%;
   }
 }
