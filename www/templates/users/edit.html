@@ -11,6 +11,9 @@
       <h3 ng-if="canBook">You can rent WaiveCars!</h3>
       <h3 ng-if="!canBook && !hasFailed">You can not rent WaiveCars yet. <span ng-if='isPending'>We are processing your application.</span><span ng-if='!isPending'>Tap to complete the highlighted steps below.</span></h3>
       <h3 ng-if="hasFailed">You <b>can not currently</b> rent WaiveCars. Please <a href="tel:+18559248355">contact us</a> for more information.</h3>
+      <div ng-if="user.credit || user.credit === 0" style="margin-top:-.5rem">
+        Current credit: ${{(user.credit / 100).toFixed(2)}}
+      </div>
 
       <div class="padding-top padding-bottom btn-group">
         <button class="button button-balanced button-block" ui-sref="users-edit-general" ng-if="!user.phone"><b>1</b>Add General Info</button>
