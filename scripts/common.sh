@@ -1,5 +1,6 @@
 #!/bin/bash
 APP=com.waivecardrive.app
+#NODE_VERSION=`cat ../.nvm_version`
 NODE_VERSION=v6.11.4
 
 # see https://forum.ionicframework.com/t/generating-and-apk-file-error/143354
@@ -52,6 +53,7 @@ nvmcheck() {
   if [ "$version" != $NODE_VERSION ]; then
     . "$HOME/.nvm/nvm.sh"
     nvm use $NODE_VERSION
+    echo "Using $NODE_VERSION"
     if [ ! $? ]; then
       echo "Can't find nvm node version $NODE_VERSION"
       exit 1
@@ -146,6 +148,8 @@ nuke() {
   cordova platform remove android
   cordova platform list
   cordova plugin list
+  rm -r $DIR/plugins/cordova*
+
   echo "Waiting for entry to rebuild"
   read
   cordova platform add android@7.1.0
