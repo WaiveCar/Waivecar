@@ -6,10 +6,10 @@
         <p class="text-uppercase modal-title">{{title}}</p>
         <p ng-bind-html="message"></p>
       </div>
-      <div ng-if="hasExtend"> 
-        <label>
-          <input type="checkbox" ng-change="toggleCheck()" ng-model="extendAlways">
-          Do this every time
+      <div ng-if="hasExtend" style="margin-bottom:1.5rem;opacity: 0.8"> 
+        <label for="always" >
+          <input name="always" style="vertical-align: text-bottom" type="checkbox" ng-change="toggleCheck()" ng-model="extendAlways">
+          Always extend my reservation 
         </label>
       </div>
       <div class="modal-actions" ng-if="::actions">

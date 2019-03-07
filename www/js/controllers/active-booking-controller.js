@@ -221,8 +221,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
     $modal('result', {
       title: 'Extend Reservation',
-      message: 'Extend your reservation for more time to get to your WaiveCar.' + [
-        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time! Extending your reservation costs $1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car.</p>"
+      message:  [
+        "First 10 extra minutes are $1.00.<br>"+
+        "Then each extra minute is $0.30.",
       ].join(' '),
       icon: 'waivecar-mark',
       hasExtend: true,
@@ -230,15 +231,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       actions: [
       { 
         className: 'button-balanced',
-        text: 'Yes. Please extend my reservation!',
+        text: 'Extend my reservation',
         handler: function (extendAlways) {
           modal.remove();
           ctrl.extendAction(-1, extendAlways);
         }
       }, 
       {
-        className: 'button-link button-small',
-        text: "I'll make it " + moment(expired).format('h:mm A') + ". No thanks!",
+        className: 'button-dark',
+        text: "No, I'll make it by " + moment(expired).format('h:mm A'),
         handler: function () {
           modal.remove();
       }}]

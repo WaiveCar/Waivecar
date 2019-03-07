@@ -10,6 +10,9 @@
         The photos on the left are examples.<br/>
         Tap the camera icon to add your versions.</p>
       </div>
+      <div ng-if="!ctrl.geocodeLoaded" class="parking-details parking-section">
+        <h4>Looking up parking rules</h4>
+      </div>
       <div ng-if="ctrl.geocodeLoaded && !ctrl.isHub && !ctrl.isWaivePark" class="parking-details parking-section">
         <h4>Parking</h4>
         <div class="resume-ride">
@@ -19,9 +22,15 @@
         </div>
         <div class='parking-input'>
           <p>
-          When does the car need to move?
+            <small>
+              <span class="lighter">
+              If there's no sign, leave the input empty and take a photo of the intersection showing no sign is posted.
+              </span>
+            When does the car need to move?
+            </small>
           </p>
-            <div class="flex-holder">
+          <div class="input-holder">
+            <div class="time-holder">
               <select
                 ng-model="ctrl.street.streetDay"
                 ng-init="ctrl.street.streetDay = -2"
@@ -31,26 +40,23 @@
               <div class="parking-hours">    
                 <input ng-model="ctrl.street.streetHours" type="text" placeholder="ex: 3:00">
               </div>
-              <label class="parking-radio">
-                <input type="radio" ng-model="ctrl.hourModifier" value="am">
-                AM
-              </label>
-              <label class="parking-radio">
-                <input type="radio" ng-model="ctrl.hourModifier" value="pm">
-                PM
-              </label>
-              <label class="parking-radio">
-                <input type="radio" ng-model="ctrl.hourModifier" value="fromNow">
-                Hours From Now
-              </label>
             </div>
-          </div>
-          <div class="parking-checkbox">
-            <label class="parking-checkbox">
-              <input type="checkbox" ng-model="ctrl.overrideStreetRestrictions">
-              No Parking Restriction
+            <label class="parking-radio">
+              <input type="radio" ng-model="ctrl.hourModifier" value="am">
+              AM
             </label>
+            <label class="parking-radio">
+              <input type="radio" ng-model="ctrl.hourModifier" value="pm">
+              PM
+            </label>
+            <!--
+            <label class="parking-radio">
+              <input type="radio" ng-model="ctrl.hourModifier" value="fromNow">
+              Hours 
+            </label>
+            -->
           </div>
+        </div>
         <div>
           <div>
             <div class="start-ride-holder">

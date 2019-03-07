@@ -430,29 +430,57 @@
     margin-top: 8px;
   }
   .parking-input {
-    margin: 20px 0;
+    margin: 0 0 1.5rem;
     div, p {
+    }
+    input[type="checkbox"],
+    input[type="radio"] {
+      vertical-align: text-bottom;
+    }
+    .no-restrict {
+      text-align: left;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    .input-holder {
+      text-align: left;
     }
     .flex-holder {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
     }
+    .lighter {
+      color: #aaa;
+      display: block;
+      margin-bottom: 1rem;
+    }
     .parking-hours {
       width: 70px;
       display: inline-block;
       input {
         width: 100%;
-        border-radius: 6px;
+        border-radius: 0 6px 6px 0;
         text-align: center;
       }
     }
+    .time-holder {
+      font-size: 0;
+      display: inline-block;
+    }
+    select {
+      background: black;
+      color: white;
+      height: 2.1rem;
+      padding-left: 0.5rem;
+      border-radius: 6px 0 0 6px;
+    }
     .parking-radio {
       margin-top: 0.5em;
+      padding: 0 0.5rem;
     }
     p {
-      text-align: right;
-      max-width: 80%;
+      text-align: left;
       margin-right: 12px;
     }
   }
