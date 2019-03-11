@@ -1,0 +1,29 @@
+<div class="header">
+  <img src="https://s3.amazonaws.com/waivecar-assets/email-logo.png">
+</div>
+<div class="main"><h3>Hello Dennis,</h3>
+  <p>
+    Here is a new signup that we have received for Waivework. Could you please get a quote for us for this potential user?
+    Their information is as follows: 
+  </p>
+  <p>
+    Name: {{firstName}} {{lastName}}<br>
+    For rideShare: {{rideshare}}<br>
+    License Number: {{licenseNumber}}<br>
+    License State: {{licenseState}}<br>
+    Birthday: {{birthDate}}<br>
+    Expiration: {{expiration}}<br>
+    Address: <br>
+    {{address1}}<br>
+    {{#if address2}}
+      {{address2}}<br>
+    {{/if}}
+    {{city}}, {{state}} {{zip}}<br>
+    Email: {{email}}<br>
+    Phone: {{phone}}<br>
+  </p>
+  <p>
+    Thanks,<br>
+    Waive
+  </p>
+</div>
