@@ -77,7 +77,6 @@ module.exports = {
   },
 
   *add(payload, _user) {
-    console.log('signup payload: ', payload);
     // This is toooottally unauthenticated and anyone can type in any email
     // address so we can't leak information such as someone's location. So
     // we carefully construct what we're returning to the user and only
@@ -136,13 +135,11 @@ module.exports = {
 
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
-    console.log('record: ', record);
 
     // If a legacy user which never appeared in the waitlist is trying to rejoin
     // we should be able to find them as well.
     if (!record) {
       user = yield User.findOne(searchOpts);
-      console.log('user: ', user);
     }
     if (record || user) {
       // They've signed up before, that's chill. 
@@ -185,7 +182,7 @@ module.exports = {
       yield record.save();
       if(data['accountType'] == 'waivework') {
         data = {...payload, ...data};
-        data.rideshare = payload.rideshare === 'true';
+        data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         try {
