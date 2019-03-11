@@ -10,6 +10,7 @@ let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
+let moment        = require('moment');
 let OrderService = require('../../shop/lib/order-service.js');
 
 
@@ -76,6 +77,7 @@ module.exports = {
   },
 
   *add(payload, _user) {
+    console.log('signup payload: ', payload);
     // This is toooottally unauthenticated and anyone can type in any email
     // address so we can't leak information such as someone's location. So
     // we carefully construct what we're returning to the user and only
@@ -134,11 +136,13 @@ module.exports = {
 
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
+    console.log('record: ', record);
 
     // If a legacy user which never appeared in the waitlist is trying to rejoin
     // we should be able to find them as well.
     if (!record) {
       user = yield User.findOne(searchOpts);
+      console.log('user: ', user);
     }
     if (record || user) {
       // They've signed up before, that's chill. 
@@ -153,7 +157,7 @@ module.exports = {
       // just send out emails and not create duplicate records
       if (user) {
         yield this.letInByRecord(user, _user);
-
+        
         // we set a magical custom flag
         
         // FIELD
@@ -180,15 +184,20 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data['accountType'] == 'waivework') {
+        data = {...payload, ...data};
+        data.rideshare = payload.rideshare === 'true';
+        data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
+        data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         try {
           let email = new Email();
           yield email.send({
-            to       : 'frank@waive.car',
+            to       : 'dennis.mata.t7h8@statefarm.com',
+            cc       : 'frank@waive.car',
             from     : config.email.sender,
-            subject  : `WaiveWork signup ${data['firstName']} ${data['lastName']}`,
-            template : 'blank',
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveCar`,
+            template : 'waivework-signup',
             context  : {
-              payload: data
+              ...data
             }
           });
         } catch(ex) {
