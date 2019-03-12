@@ -145,7 +145,8 @@ scheduler.process('booking-auto-cancel', function *(job) {
 
         yield booking.addFlag('miss');
 
-        user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save always". Rebook ${car.info()} for $5.00, reply "Rebook".`);
+        let rebookDetails = yield BookingService.rebookCheck(driver, car, {computeOnly: true});
+        user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save always". Rebook ${car.info()} for $${rebookDetails.fee.toFixed(2)}, reply "Rebook".`);
         yield notify.notifyAdmins(`:hourglass: The shambolic ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
         // log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
