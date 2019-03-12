@@ -407,6 +407,7 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
+    console.log('recordList in letInByRecord', recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -415,13 +416,19 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
+      waivework: "Welcome to the Waivework program. If you have received this email, it means you have been approved!",
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
+    }
+    if (recordList[0].accountType === 'waivework') {
+      opts.intro = 'waivework'
+      
     }
 
     opts.intro = opts.intro || 'waitlist';
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
+      params.isWaivework = true;
     }
     params.intro = introMap[opts.intro];
 
@@ -536,6 +543,7 @@ module.exports = {
   },
 
   *letIn(payload, _user) {
+    console.log('payload for letin', payload);
     // This is "clever" because we want a round-robin fashion.
     // So the sql that we want is essentially:
     //
@@ -556,6 +564,7 @@ module.exports = {
     let recordList = [];
     if('idList' in payload) {
       recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
+      console.log('recordlist above', recordList);
     } else {
       let letInCount = parseInt(payload.amount, 10);
 
@@ -572,6 +581,7 @@ module.exports = {
           ],
           limit: letInCount
         });
+        console.log('recordlist below', recordList);
       } else {
         log.warn(`0 people requested to be let in. This may be an error`);
       }
