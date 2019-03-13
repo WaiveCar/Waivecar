@@ -17,6 +17,12 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 #### Android
 
+  Versions:
+
+    Cordova - 6.5.0
+    Android - 7.1.0
+    Node - 6.11.4
+
 Here's the install notes:
 
   $ npm install ionic@1.7 cordova@6.5 gulp -g
