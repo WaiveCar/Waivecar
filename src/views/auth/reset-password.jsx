@@ -207,6 +207,7 @@ class ResetPasswordView extends React.Component {
               </a>
             </p>
         }
+        {this.state.iswork && <div className="message-success">You are now ready to start driving for Waivework</div>}
         { !this.state.isnew && 
             <div className="token-request">
               <Link to="/login" className="r-btn btn-login">Go login</Link>
@@ -220,7 +221,7 @@ class ResetPasswordView extends React.Component {
     return (
       <div className="login">
         <div className="title">
-          { config.app.name }&nbsp;
+          Waive&nbsp;
           <span className="title-site">{ this.state.verb } Password</span>
         </div>
         {
