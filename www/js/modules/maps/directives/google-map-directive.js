@@ -44,30 +44,55 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
     //console.log(mapElement, center, noscroll);
     // reference: https://developers.google.com/maps/documentation/android-api/controls
+    var mapOptions;
 
-    var mapOptions = {
-      mapType: plugin.google.maps.MapTypeId.ROADMAP,
-      controls: {
-        compass: false,
-        mapToolbar: false,
-        myLocationButton: false,
-        indoorPicker: false,
-        zoom: false
-      },
-      camera : {
-        target: this.mapToNativeLatLong(center),
-        zoom: 14
-      },
-      preferences: {
-        zoom: {
-          minZoom: 10,
-          maxZoom: 18
+    if (this.useCordova()) {
+      // reference: https://developers.google.com/maps/documentation/android-api/controls
+      mapOptions = {
+        mapType: plugin.google.maps.MapTypeId.ROADMAP,
+        controls: {
+          compass: false,
+          mapToolbar: false,
+          myLocationButton: false,
+          indoorPicker: false,
+          zoom: false
         },
-        building: false
-      }
-    };
+        camera : {
+          target: this.mapToNativeLatLong(center),
+          zoom: 14
+        },
+        preferences: {
+          zoom: {
+            minZoom: 10,
+            maxZoom: 18
+          },
+          building: false
+        }
+      };
 
-    return plugin.google.maps.Map.getMap(mapElement, mapOptions)
+      return plugin.google.maps.Map.getMap(mapElement, mapOptions)
+    } else {
+      mapOptions = {
+        streetViewControl: false,
+        mapTypeControl: false,
+        zoom: 14,
+        fullscreenControl: false,
+        center: this.mapToGoogleLatLong(center),
+        zoomControl: false
+      };
+
+      if (this.staticMap) {
+        mapOptions.draggable = false;
+        mapOptions.scrollwheel = false;
+        mapOptions.disableDoubleClickZoom = true;
+      }
+
+      if(noscroll) {
+        mapOptions.gestureHandling = 'cooperative';
+      }
+
+      return new google.maps.Map(mapElement, mapOptions);
+    }
   };
 
 

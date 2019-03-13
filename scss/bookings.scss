@@ -361,7 +361,20 @@
       height: 1px;
     }
     .body{
-      height: 200px;
+      height: 110px;
+      .title {
+        margin: 10px 0;
+        font-size: 20px;
+      }
+      .info-holder {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+      .info-item {
+        text-align: left;  
+        width: 43%;
+      }
     }
     .hour, .price{
       padding: 9px 13px;

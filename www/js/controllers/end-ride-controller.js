@@ -95,7 +95,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
     ctrl.appPics = false;
     ctrl.car = $data.active.cars;
-    ctrl.model = ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
+    ctrl.model = ctrl.car && ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
 
     // Attach methods
     ctrl.setType = setType;
@@ -103,7 +103,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
     ctrl.toggle = toggle;
-    ctrl.minhours = 3;
+    ctrl.minhours = 12;
     ctrl.loadBooking = loadBooking;
     ctrl.loadCar = loadCar;
     ctrl.init = init;
