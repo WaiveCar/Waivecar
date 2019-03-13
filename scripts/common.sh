@@ -2,9 +2,14 @@
 APP=com.waivecardrive.app
 #NODE_VERSION=`cat ../.nvm_version`
 NODE_VERSION=v6.11.4
+export CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=https://services.gradle.org/distributions/gradle-4.8-all.zip
 
 # see https://forum.ionicframework.com/t/generating-and-apk-file-error/143354
-[ -e $HOME/proggies/android-ndk-r17c/ ] && export ANDROID_NDK_HOME=$HOME/proggies/android-ndk-r17c/
+if [ -z "$ANDROID_NDK_HOME" ]; then
+  if [ -e $HOME/proggies/android-ndk-r19c/ ]; then
+    export ANDROID_NDK_HOME=$HOME/proggies/android-ndk-r19c/
+  fi
+fi
 
 if [ "`uname -s`" = 'Darwin' ]; then
   cp='cp -p'
@@ -110,7 +115,7 @@ build() {
 
   nvmcheck
   prebuild
-  baseBuild="$DBG cordova build android --debug -- --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace"
+  baseBuild="$DBG cordova build android --debug -- --gradleArg=--warning-mode=none --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace"
   if [ -n "$ORG_GRADLE_PROJECT_cdvCompileSdkVersion" ]; then
     echo "Injecting $ORG_GRADLE_PROJECT_cdvCompileSdkVersion"
     $baseBuild
