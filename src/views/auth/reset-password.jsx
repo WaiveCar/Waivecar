@@ -12,6 +12,7 @@ class ResetPasswordView extends React.Component {
     super(...args);
 
     this.state = {
+      iswork: this.props.location.query.iswork,
       isnew: this.props.location.query.isnew,
       hash: this.props.location.query.hash
     };
@@ -191,12 +192,12 @@ class ResetPasswordView extends React.Component {
     return (
       <div>
         <div className="message-success">
-          { this.state.isnew ?
+          { this.state.isnew && !this.state.iswork?
               "Welcome to WaiveCar! The next step is to download the app and setup your account." :
               "Your password was successfully reset."
           }
         </div>
-        { this.state.isnew && 
+        { this.state.isnew && !this.state.iswork && 
             <p>
               <a href="https://itunes.apple.com/us/app/waivecar/id1051144802?ls=1&mt=8">
                 <img style={{ width: '50%', padding: '0 2%' }} src="https://lb.waivecar.com/images/site/btn-app-store.svg" />
