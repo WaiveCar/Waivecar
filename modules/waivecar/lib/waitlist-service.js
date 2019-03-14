@@ -407,6 +407,7 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
+    console.log('opts: ', opts)
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -582,7 +583,7 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user);
+      let userList = yield this.letInByRecord(recordList, _user, {weeklyAmount: payload.weeklyAmount});
       for(var ix = 0; ix < userList.length; ix++) {
         yield userList[ix].addTag('la');
       }
