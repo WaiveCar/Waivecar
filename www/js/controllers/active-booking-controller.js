@@ -131,40 +131,47 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
-  var timer_ix = 0;
-  var timer = $interval(function() {
-    timer_ix++;
-    if (expired) {
-      // When the booking is extended, the end time needs to be pulled
-      // down from the booking
-      expired = moment($data.active.bookings.reservationEnd);
-      if($data.active.bookings) {
-        if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
-          // A perhaps bad idea on my part (cjm) ... I swap out
-          // the word 'extension' for 'extended' when the extended
-          // time happens ... as a boolean.  That's also the
-          // test case to see if it was extended at all.  So
-          // we are doing 2 things in one place - bad idea.
-          ctrl.isExtended = true;
+  if($data.active.bookings.flags.includes("rush")) {
+    $data.fetch('bookings').then(function(bookingList) {
+      $state.go('dashboard', { id: $ride.state.booking.id });
+    });
+  } else {
+
+    var timer_ix = 0;
+    var timer = $interval(function() {
+      timer_ix++;
+      if (expired) {
+        // When the booking is extended, the end time needs to be pulled
+        // down from the booking
+        expired = moment($data.active.bookings.reservationEnd);
+        if($data.active.bookings) {
+          if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
+            // A perhaps bad idea on my part (cjm) ... I swap out
+            // the word 'extension' for 'extended' when the extended
+            // time happens ... as a boolean.  That's also the
+            // test case to see if it was extended at all.  So
+            // we are doing 2 things in one place - bad idea.
+            ctrl.isExtended = true;
+          }
+        }
+        // if we are in the future then the answer is 0.
+        if (moment().diff(expired) > 0) {
+          if(timer_ix % 12 == 0) {
+            $data.fetch('bookings').then(function(bookingList) {
+              if(bookingList[0].status === 'cancelled') {
+                $interval.cancel(timer);
+                showExpired();
+              }
+            });
+          }
+        } else {
+          ctrl.timeLeft = moment(expired).format('h:mm A');
+          return ctrl.timeLeft;
         }
       }
-      // if we are in the future then the answer is 0.
-      if (moment().diff(expired) > 0) {
-        if(timer_ix % 12 == 0) {
-          $data.fetch('bookings').then(function(bookingList) {
-            if(bookingList[0].status === 'cancelled') {
-              $interval.cancel(timer);
-              showExpired();
-            }
-          });
-        }
-      } else {
-        ctrl.timeLeft = moment(expired).format('h:mm A');
-        return ctrl.timeLeft;
-      }
-    }
-    return null;
-  }, 1000);
+      return null;
+    }, 1000);
+  }
 
   function stopWatchingForUnlock() {
     if (_locationWatch != null) {
@@ -426,10 +433,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       },
       {
         className: 'button-small button-link',
-        text: 'Cancel Your Booking',
+        text: 'Cancel My Booking',
         handler: function () {
+          modalMap.unlock.hide();
           _unlockModal = false;
-          modal.hide();
           ctrl.showCancel();
         }
       }]
