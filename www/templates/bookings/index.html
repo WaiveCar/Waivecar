@@ -16,11 +16,8 @@
           <div class="info-holder">
             <div class="info-item">
               <div>
-                Start Time:
+                Start:
                 {{ride.startTime}}
-              </div>
-              <div>
-                Start Location: 
               </div>
               <div>
                 {{ride.ride.start.address ? ride.ride.start.address : "Address Not Found"}}
@@ -28,11 +25,8 @@
             </div>
             <div class="info-item">
               <div>
-                End Time:
+                End:
                 {{ride.endTime}}
-              </div>
-              <div>
-                End Location: 
               </div>
               <div>
                 {{ride.ride.end.address ? ride.ride.end.address : "Address Not Found"}}
@@ -41,8 +35,11 @@
           </div>
         </div>
       <div class="footer">
-        <div class="hour pull-left">{{ride.end.mileage - ride.start.mileage}} miles</div>
-        <div class="price pull-right">{{ride.ride.fee}}</div>
+        <div class="hour pull-left">{{((ride.ride.end.mileage - ride.ride.start.mileage) * 0.621371).toFixed(2)}} miles</div>
+        <div class="price pull-right">
+          {{ride.durationString}} 
+          <span class="tag" ng-repeat="key in ride.ride.flags">{{ key }}</span>
+          {{ride.ride.fee}}</div>
         <div class="clearfix"></div>
       </div>
     </div>

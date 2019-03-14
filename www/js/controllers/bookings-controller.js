@@ -70,12 +70,6 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
           item.hourFooter = moment(ride.start.createdAt).format('LT') + ' - ' + moment(ride.end.createdAt).format('LT');
           item.startTime = moment(ride.start.createdAt).format('LT');
           item.endTime = moment(ride.end.createdAt).format('LT');
-          if(ride.fee) {
-            ride.fee = '$' + ride.fee.toFixed(2);
-          } else {
-            ride.fee = 'FREE';
-          }
-
           var duration = moment.duration(moment((ride.end || {}).createdAt).diff(moment((ride.start || {}).createdAt)));
           ride.duration = {
             raw: duration,
@@ -83,6 +77,27 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             minutes: duration.minutes(),
             seconds: duration.seconds()
           };
+
+          ride.flags = []; 
+          var flagList = JSON.parse(item.flags);
+          ['rush', 'extended', 'charge', 'rebook'].forEach(function(what) {
+            if(flagList.includes(what)) {
+              ride.flags.push(what);
+            }
+          });
+
+          item.durationString = [
+            duration.days() > 0 ? duration.days() + "d " : "",
+            duration.hours() > 0 ? duration.hours() + "h " : "",
+            duration.minutes() + "m"
+          ].join('');
+
+          if(ride.fee) {
+            ride.fee = '$' + ride.fee.toFixed(2);
+          } else {
+            ride.fee = 'FREE';
+          }
+
 
           if(isFailed) {
             className.push('failed-row');
