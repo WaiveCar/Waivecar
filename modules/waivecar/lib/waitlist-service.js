@@ -416,7 +416,7 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: "Welcome to the Waivework program. If you have received this email, it means you have been approved!",
+      waivework: `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.weeklyAmount} a month.`,
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
@@ -484,6 +484,12 @@ module.exports = {
           // in good faith, going through the entire process again,
           // presuming that they didn't receive or lost the previous. 
           log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
+          if (params.isWaivework) {
+            throw error.parse({
+              code    : 'Already signed up',
+              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+            }, 400);
+          }
           yield record.update({userId: userRecord.id});
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
@@ -498,7 +504,7 @@ module.exports = {
           if (params.isWaivework) {
             throw error.parse({
               code    : 'Already signed up',
-              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+              message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
             }, 400);
           }
           continue;
