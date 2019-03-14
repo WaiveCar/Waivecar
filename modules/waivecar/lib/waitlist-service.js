@@ -407,7 +407,6 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
-    console.log('recordList in letInByRecord', recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -422,13 +421,12 @@ module.exports = {
     }
     if (recordList[0].accountType === 'waivework') {
       opts.intro = 'waivework'
-      
+      params.isWaivework = true;
     }
 
     opts.intro = opts.intro || 'waitlist';
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
-      params.isWaivework = true;
     }
     params.intro = introMap[opts.intro];
 
@@ -517,7 +515,8 @@ module.exports = {
       } else {
         // otherwise we need to have a password assignment
         let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
-        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`;
+        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes${params.isWaivework && '&iswork=yes'}`;
+        context.isWaivework = params.isWaivework;
       }
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
@@ -543,7 +542,6 @@ module.exports = {
   },
 
   *letIn(payload, _user) {
-    console.log('payload for letin', payload);
     // This is "clever" because we want a round-robin fashion.
     // So the sql that we want is essentially:
     //
@@ -564,7 +562,6 @@ module.exports = {
     let recordList = [];
     if('idList' in payload) {
       recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
-      console.log('recordlist above', recordList);
     } else {
       let letInCount = parseInt(payload.amount, 10);
 
@@ -581,7 +578,6 @@ module.exports = {
           ],
           limit: letInCount
         });
-        console.log('recordlist below', recordList);
       } else {
         log.warn(`0 people requested to be let in. This may be an error`);
       }
