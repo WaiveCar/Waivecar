@@ -58,14 +58,14 @@ class TableIndex extends React.Component {
     });
   }
 
-  letinbyid(id, weeklyAmount) {
-    if (!weeklyAmount) {
+  letinbyid(id, perWeek) {
+    if (!perWeek) {
       return snackbar.notify({
         type    : 'danger',
         message : 'Please enter a weekly amount',
       });
     }
-    this.letinreal({idList: [id], weeklyAmount});
+    this.letinreal({idList: [id], perWeek});
   }
 
   letin() {
@@ -193,9 +193,9 @@ class TableIndex extends React.Component {
                 </button>
               </span>
               <div>
-                Weekly Amount: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({weeklyAmount: e.target.value})}/>
+                Weekly Amount: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.weeklyAmount) 
+                  () => this.letinbyid(userSelected.id, this.state.perWeek) 
                 }> Let In </a>
               </div>
             </div> : ''
