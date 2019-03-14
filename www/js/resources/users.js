@@ -33,6 +33,15 @@ module.exports = angular.module('app').factory('Users', [
         },
         transformRequest: transformRequest
       },
+      tags: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('users/tags/:verb/:tag'),
+        params: {
+          verb: '@verb',
+          tag: '@tag'
+        }
+      },        
+
       login: {
         method: 'POST',
         url: $utils.getCustomRoute('auth/login')
