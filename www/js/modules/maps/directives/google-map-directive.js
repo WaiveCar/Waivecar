@@ -178,6 +178,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }, true),
         $scope.$watch('map.route', function (value) {
           if (value && value.destiny) {
+            // console.log("route here", value, value.start, value.destiny);
             ctrl.drawRoute(value.start, value.destiny, value.intermediatePoints, value.fitBoundsByRoute);
           }
         }, true)
@@ -582,6 +583,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
     var ctrl = this;
 
+      /*
     if(!intermediatePoints) {
       RouteService.getGRoute(ctrl.mapToGoogleLatLong(start), ctrl.mapToGoogleLatLong(destiny), function(response) {
         ctrl.directionsRenderer.setDirections(response);
@@ -589,6 +591,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     } else {
       ctrl.drawCarPath(start, destiny, intermediatePoints);
     }
+      */
 
     ctrl.drawRouteMarkers( {
       latitude: start.latitude,
