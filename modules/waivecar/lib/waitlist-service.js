@@ -415,7 +415,7 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following billing day. Your initial payment will be due when you pick up the car. If you have any questions, please don't hesitate to email Frank by clicking <a href="mailto:frank@waive.car">here</a>.`,
+      waivework: `Welcome to the Waivework program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following billing day. Your initial payment will be due when you pick up the car. If you have any questions, please don't hesitate to email Frank by clicking <a href="mailto:frank@waive.car">here</a>.`,
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
@@ -605,7 +605,7 @@ module.exports = {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following billing day. Your initial payment will be due when you pick up the car. If you have any questions, please don't hesitate to email Frank by clicking <a href="mailto:frank@waive.car">here</a>.`
+    context.intro = `Welcome to the Waivework program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following billing day. Your initial payment will be due when you pick up the car. If you have any questions, please don't hesitate to email Frank by clicking <a href="mailto:frank@waive.car">here</a>.`
     try {
       emailOpts = {
         to       : opts.email,
