@@ -495,6 +495,12 @@ module.exports = {
           }
         } else {
           log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
+          if (params.isWaivework) {
+            throw error.parse({
+              code    : 'Already signed up',
+              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+            }, 400);
+          }
           continue;
         }
       }
