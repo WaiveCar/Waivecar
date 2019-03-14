@@ -207,7 +207,12 @@ class ResetPasswordView extends React.Component {
               </a>
             </p>
         }
-        {this.state.iswork && <div className="message-success">You are now ready to start driving for Waivework</div>}
+        {this.state.iswork && 
+            <div className="message-success">
+              You are now ready to start driving for Waivework. To schedule your pickup appointment click{' '} 
+              <a href="https://calendly.com/waivework/30min" target="_blank">here</a>.
+            </div>
+        }
         { !this.state.isnew && 
             <div className="token-request">
               <Link to="/login" className="r-btn btn-login">Go login</Link>
