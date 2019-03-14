@@ -53,7 +53,7 @@ class TableIndex extends React.Component {
           message : err.message
         });
       } else {
-        //location.reload();
+        location.reload();
       }
     });
   }
