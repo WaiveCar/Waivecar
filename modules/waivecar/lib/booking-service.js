@@ -2330,6 +2330,7 @@ module.exports = class BookingService extends Service {
         opts.fee = opts.fee || 5;
         decline.title = `No thanks. Rebook for $${opts.fee}.00`;
         decline.priority = 'ignore';
+        decline.theme = 'dark';
       } else {
 
         // After $generalRental, cars can be booked for free always.
