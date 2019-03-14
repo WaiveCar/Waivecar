@@ -814,6 +814,8 @@ module.exports = class BookingService extends Service {
     let time    = 10;
     if (opts.addToAutoExtend) {
       yield user.addTag('extend')
+      yield notify.notifyAdmins(`:rose: The munificent ${ user.link() } added themselves to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car). Reply \"No save\" to undo this.");
     }
 
     if(opts.howmuch == -1) {
@@ -874,7 +876,10 @@ module.exports = class BookingService extends Service {
       err = "You've already started the ride! Reply with 'unlock' if you are trying to unlock to the WaiveCar.";
     }
     if(booking.isFlagged('extended')) {
-      err = "Booking reservation has already been extended.";
+      // Fuck it, we just return true to avoid showing a cryptic error.
+      // Besides, this is what the user wants anyways.
+      return true;
+      // err = "Booking reservation has already been extended.";
     }
 
     if(!err) {
