@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-path=/tmp/carreq
+path=$HOME/tmp/carreq
 year_month=$1
 scope=$2
 
