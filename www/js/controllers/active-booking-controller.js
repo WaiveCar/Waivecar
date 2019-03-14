@@ -21,12 +21,19 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $settings = $injector.get('$settings');
   var $ionicLoading = $injector.get('$ionicLoading');
+  var $auth = $injector.get('$auth');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
   var _locationWatch;
   var ctrl = this;
   var expired;
-  ctrl.hasAutoExtend = $data.me.hasTag('extend') === 1;
+
+  if($data.me.hasTag) {
+    ctrl.hasAutoExtend = $data.me.hasTag('extend') === 1;
+  } else {
+    ctrl.hasAutoExtend = false;
+  }
+
   // 0.019 essentially maps to "100 imperial feet" - about
   // the length of a suburban home + property.
   // ^^ Actually this is wayyy too far, let's make it 0.013
@@ -170,11 +177,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (_locationWatch && _locationWatch.isActive()) {
       return;
     }
+    LocationService.getCurrentLocation().then(function(loc) {
+      ctrl.route = {
+        destiny: $data.active.cars,
+        fitBoundsByRoute: true,
+        start: loc
+      };
+    });
 
     _locationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
-      if (!callCount) {
+      if(!callCount && !ctrl.route) {
         ctrl.route = {
-          destiny: $data.active.cars
+          destiny: $data.active.cars,
         };
       }
       ctrl.route.start = currentLocation;
@@ -207,11 +221,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
     if (extendAlways) {
       body.addToAutoExtend = true;
+      ctrl.hasAutoExtend = true;
     }
     $data.resources.bookings.extend(body).$promise
-      .then(function() { })
+      .then(function() { 
+        $auth.reload();
+      })
       .catch(function(err) {
         ctrl.isExtended = false;
+        ctrl.hasAutoExtend = false;
         showFailure('Unable to extend', 'There was a problem extending your reservation');
       });
   }
@@ -250,6 +268,49 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       modal.show();
     });
   };
+
+  this.autoExtendRemove = function() {
+    var modal;
+
+    $modal('result', {
+      title: 'Remove Auto-extend?',
+      message: 'Would you like to disable auto-extend for future bookings?',
+      icon: 'x-icon',
+      actions: [{
+        className: 'button-assertive',
+        text: "Yes, I'll manually extend",
+        handler: function () {
+          modal.remove();
+          $ionicLoading.show({
+            template: '<div class="circle-loader"><span>Loading</span></div>'
+          });
+          $data.resources.users.tags({verb: 'del', tag: 'extend'}).$promise
+          .then(function(){
+            $ionicLoading.hide();
+            ctrl.hasAutoExtend = false;
+            $auth.reload();
+            $message.success('Auto-extension on future bookings has been turned off');
+          })
+          .catch(function(err) {
+            console.log(err);
+            $ionicLoading.hide();
+            $message.error('An error happened. Please try again or contact us for help');
+          });
+        }
+      }, {
+        className: 'button-dark',
+        text: 'Keep it on',
+        handler: function () {
+          $message.success('Auto-extension will continue.');
+          modal.remove();
+        }
+      }]
+    }).then(function (_modal) {
+      modalMap.autoextendRemove = _modal;
+      modal = _modal;
+      modal.show();
+    });
+  }
 
   this.showCancel = function() {
     var modal;
@@ -400,7 +461,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         unlocking = false;
 
         if ($data.me.hasTag('level')) {
-          console.log('car is level');
           $state.go('dashboard', { id: id });
         } else {
           $state.go('start-ride', { id: id });
