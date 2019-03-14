@@ -73,18 +73,25 @@ class WaiveWorkDetails extends Component {
       user,
       perWeek,
     };
-    api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
+    if (perWeek) {
+      api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        snackbar.notify({
+          type: 'success',
+          message: 'Email successfully sent',
         });
-      }
-      snackbar.notify({
-        type: 'success',
-        message: 'email successfully sent',
       });
-    });
+    } else {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Please enter a daily amount.',
+      });
+    }
   }
 
   carSearch() {
