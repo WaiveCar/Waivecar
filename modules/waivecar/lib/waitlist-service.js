@@ -415,7 +415,7 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.weeklyAmount} a month.`,
+      waivework: `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a month.`,
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
@@ -594,7 +594,7 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user, {weeklyAmount: payload.weeklyAmount});
+      let userList = yield this.letInByRecord(recordList, _user, {perWeek: payload.perWeek});
       for(var ix = 0; ix < userList.length; ix++) {
         yield userList[ix].addTag('la');
       }
@@ -603,7 +603,9 @@ module.exports = {
 
   *sendWaiveWorkEmail(opts) {
     let email = new Email(), emailOpts = {};
-    let context = {...opts};
+    let context = {...opts, isWaivework: true};
+    context.name = `${opts.user.firstName} ${opts.user.lastName}`;
+    context.intro = `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a month.`,
     try {
       emailOpts = {
         to       : opts.email,
