@@ -9,7 +9,8 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
   '$state',
   '$auth',
   '$data',
-  function ($scope, $state, $auth, $data) {
+  '$injector',
+  function ($scope, $state, $auth, $data, $injector) {
 
     $scope.init = function () {
       if (!$auth.isAuthenticated()) {
@@ -67,9 +68,11 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             id: item.id
           };
 
+          ride.startAddress = ride.start.address ? ride.start.address.split(/,/) : [''];
+          ride.endAddress = ride.end.address ? ride.end.address.split(/,/) : [''];
           item.hourFooter = moment(ride.start.createdAt).format('LT') + ' - ' + moment(ride.end.createdAt).format('LT');
-          item.startTime = moment(ride.start.createdAt).format('LT');
-          item.endTime = moment(ride.end.createdAt).format('LT');
+          item.startTime = moment(ride.start.createdAt).format('ddd LT');
+          item.endTime = moment(ride.end.createdAt).format('ddd LT');
           var duration = moment.duration(moment((ride.end || {}).createdAt).diff(moment((ride.start || {}).createdAt)));
           ride.duration = {
             raw: duration,

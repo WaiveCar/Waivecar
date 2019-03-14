@@ -347,6 +347,7 @@
 
 .past-rides-content{
   .ride-block{
+
     .tag {
       padding: 0.15rem 0.4rem;
       color: #BBEDBB;
@@ -370,10 +371,22 @@
     .body{
       height: 110px;
       .title {
-        margin: 10px 0;
-        font-size: 20px;
+        text-align: left;
+        margin: 1rem 0.75rem 0.65rem;
+        font-size: 1.4rem;
+      }
+      small {
+        color: #889488;
+        font-size: 1rem;
+        margin-left: 0.5rem;
       }
       .info-holder {
+        small {
+          display: block;
+          margin-left: 0;
+          font-size: 0.8rem;
+          line-height: 1rem;
+        }
         display: flex;
         flex-direction: row;
         justify-content: space-around;
