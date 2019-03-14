@@ -131,7 +131,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
-  if($data.active.bookings.flags.includes("rush")) {
+  if($data.active.bookings 
+      && $data.active.bookings.flags 
+      && $data.active.bookings.flags.includes
+      && $data.active.bookings.flags.includes("rush")) {
     $data.fetch('bookings').then(function(bookingList) {
       $state.go('dashboard', { id: $ride.state.booking.id });
     });
