@@ -407,7 +407,6 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
-    console.log('opts: ', opts)
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -600,6 +599,22 @@ module.exports = {
         yield userList[ix].addTag('la');
       }
     }
-  }
+  },
 
+  *sendWaiveWorkEmail(opts) {
+    let email = new Email(), emailOpts = {};
+    let context = {...opts};
+    try {
+      emailOpts = {
+        to       : opts.email,
+        from     : config.email.sender,
+        subject  : 'Welcome to WaiveWork',
+        template : 'letin-email',
+        context  : context,
+      };
+      yield email.send(emailOpts);
+    } catch(err) {
+      log.warn('Failed to deliver notification email: ', emailOpts, err);      
+    }
+  }
 };
