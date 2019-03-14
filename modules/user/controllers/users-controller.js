@@ -51,7 +51,9 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.delete(id, this.query, this.auth.user);
   };
 
-  // ### Token Services
+  controller.tag = function *(verb, tag) {
+    return yield service.tagModify(verb, tag, this.auth.user);
+  }
 
   /**
    * Verifies a user token.

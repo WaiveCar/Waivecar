@@ -372,6 +372,22 @@ module.exports = {
   *notifyEnd() {
   },
 
+  *tagModify(verb, tag, _user) {
+    if(['extend'].includes(tag)) {
+      if(verb === 'add') {
+        yield _user.addTag(tag);
+        yield notify.notifyAdmins(`:rose: The munificent ${ _user.link() } added themselves to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+        yield notify.sendTextMessage(_user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car). Reply \"No save\" to undo this.");
+      }
+      if(verb === 'del') {
+        yield _user.delTag(tag);
+        yield notify.notifyAdmins(`:wilted_flower: The miserly ${ _user.link() } removed themselves from auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+        yield notify.sendTextMessage(_user, "Sorry things didn't work out. Auto-extend is canceled. Reply \"Save always\" to extend automatically again. We welcome you to reach out to us to help improve the experience.");
+      }
+    }
+    // Let's leave this end-point intentionally ambiguous
+  },
+
   *update(id, payload, _user) {
     let user = yield this.get(id, _user);
 

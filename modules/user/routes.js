@@ -2,14 +2,11 @@
 
 let config = Bento.config.user;
 
-// ### Unique Routes
-
 Route.get('/users/me',             'UsersController@me');
+Route.put('/users/tags/:verb/:tag','UsersController@tag');
 Route.put('/reset-password',       'UsersController@passwordReset');
 Route.pst('/reset-password/token', 'UsersController@passwordToken');
 Route.put('/set-password-admin/:id',   [ 'isAuthenticated', 'isAdmin', 'UsersController@passwordSetAdmin']);
-
-// ### User Resource
 
 Route.resource('users', 'UsersController', {
   params : config.params ? config.params : null
