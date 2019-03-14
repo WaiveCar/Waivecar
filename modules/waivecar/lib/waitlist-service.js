@@ -605,13 +605,13 @@ module.exports = {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a month.`,
+    context.intro = `Welcome to the Waivework program. If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a month.`;
     try {
       emailOpts = {
         to       : opts.email,
         from     : config.email.sender,
         subject  : 'Welcome to WaiveWork',
-        template : 'letin-email',
+        template : 'letin-email-nopass',
         context  : context,
       };
       yield email.send(emailOpts);
