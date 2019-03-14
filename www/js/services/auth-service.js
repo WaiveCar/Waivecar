@@ -29,7 +29,6 @@ function AuthService ($rootScope, $session, $data, $injector) {
         $session.set('me', me).save();
         this.me = $data.me = prepareMe();
       }.bind(this));
-
   };
 
   this.facebookAuth = function facebookAuth () {
