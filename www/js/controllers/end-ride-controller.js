@@ -36,44 +36,28 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       lotSpot: null,
       lotOvernightRest: false
     };
-    ctrl.dayValues = [
-      {
-        id: -2,
-        name: 'Today', 
-      },
-      {
-        id: -1,
-        name: 'Tomorrow',
-      },
-      {
-        id: 0,
-        name: 'Sunday', 
-      },
-      {
-        id: 1,
-        name: 'Monday',
-      },
-      {
-        id: 2,
-        name: 'Tuesday',
-      },
-      {
-        id: 3,
-        name: 'Wednesday',
-      },
-      {
-        id: 4,
-        name: 'Thursday',
-      },
-      {
-        id: 5,
-        name: 'Friday',
-      },
-      {
-        id: 6,
-        name: 'Saturday',
-      }
-    ];
+    var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var today = (new Date()).getDay();
+    ctrl.today = today;
+    var myweek = week.concat(week).slice(today + 2, today + 2 + 6);
+    myweek[5] += " (next)";
+    myweek.unshift('Today', 'Tomorrow');
+
+    ctrl.dayValues = myweek.map(function(row) {
+      today %= 7;
+      return { id: today++, name: row };
+    });
+    //
+    // this is because angular is fucking stupid. html select says the value of options can be duplicates
+    // but angular has a huge honking bug in its overdesigned piece of shit code so it bludgeons the values
+    // in a hash and makes things unselectable ... fuck angular and fuck the bozos who made it. html is
+    // my templating language for html ... it's already a fucking UX templating language give me a fucking
+    // break.
+    //
+    // this will be undone later on through an abs call.
+    //
+    ctrl.dayValues[7].id *= -1;
+
     ctrl.hourModifier = 'am';
     ctrl.street = {
       streetSignImage: null,
@@ -412,15 +396,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       /*eslint-disable */
       var expireDay, expireHour, expireMins;
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
-        if (!ctrl.street.streetHours) {
-          return submitFailure('Please enter the expiration time for your parking or select that there is no restriction if there is none.');
-        }
-        var streetHours = ctrl.street.streetHours;
-        var splitHours = streetHours.split(':');
-        if ((Number(splitHours[0]) > 12 && ctrl.hourModifier !== 'fromNow') || (splitHours[1] && Number(splitHours[1]) > 59)) {
+        var streetHours = parseInt(ctrl.street.streetHours.split(/:/)[0], 10);
+        if (streetHours > 24) {
           return submitFailure('The time you have entered is invalid');
         }
-        if (ctrl.hourModifier !== 'fromNow' && !ctrl.overrideStreetRestrictions) {
+        if (!ctrl.overrideStreetRestrictions) {
           expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
           var hours = Number(splitHours[0]);
           if (hours === 12 && ctrl.hourModifier === 'am') {
