@@ -3,7 +3,7 @@
 </div>
 <div class="main"><h3>Hi {{ name }}.</h3>
   <p>
-    {{ intro }}
+    {{{ intro }}}
   </p>
   {{#unless isWaivework}}
     <p>Remember, to drive with Waive you'll need:
@@ -18,7 +18,7 @@
   </p>
 
   <p>
-    <a href={{ passwordlink }}><b>Click here to set up your password</b></a>. 
+    <a href={{ passwordlink }}><b>Click here to set up your password</b></a>.{{if isWaivework}} After setting your password, you will be able to schedule a pickup appointment.{{/if}}
   </p>
 
   <p>
