@@ -150,7 +150,7 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.processEndRide = function() {
       if ($data.active.bookings && $data.active.bookings.status === 'ended') {
         $state.go('cars', null, {location: 'replace'});
-        return null;
+        return $q.when(true);
       }
 
       checkForLockHandle = $interval(function() {
