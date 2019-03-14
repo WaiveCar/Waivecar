@@ -288,11 +288,11 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
           .then(function(){
             $ionicLoading.hide();
             ctrl.hasAutoExtend = false;
+            ctrl.isExtended = true;
             $auth.reload();
             $message.success('Auto-extension on future bookings has been turned off');
           })
           .catch(function(err) {
-            console.log(err);
             $ionicLoading.hide();
             $message.error('An error happened. Please try again or contact us for help');
           });
