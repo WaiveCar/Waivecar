@@ -123,6 +123,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       ctrl.helpContainer.style.display = 'none';
       ctrl.helpLink.style.display = 'block';
     });
+    $elem.find('.legacy')[0].addEventListener('click', function() {
+      window.open('https://basic.waivecar.com', '_system');
+    });
 
 
     // this is used for compatibility purposes.
@@ -558,6 +561,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.drawCarPath = function drawCarPath(start, destiny, points) {
+    /*
     var ctrl = this;
     if(!ctrl.map) {
       return;
@@ -578,6 +582,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     });
 
     ctrl.mapFitBounds(points);
+    */
   }
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
@@ -761,6 +766,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
             '</div>',
             '<a class="close">&#x2716;</a>',
           '</div>',
+        '</div>',
+        '<div class="legacy">',
+          'Glitches? Try <a>basic.waivecar.com</a>',
         '</div>',
       '</div>'
     ].join(''),

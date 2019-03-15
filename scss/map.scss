@@ -3,6 +3,19 @@
   height: 100%;
   text-align:left;
 
+  .legacy {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8rem;
+    line-height: 0.9rem;
+    background: rgba(232, 229, 201, 0.8);
+    color: black;
+    padding: 0.15rem 0.35rem;
+    a {
+      color: #008;
+    }
+  }
   .help-wrap {
     margin-top: 0.4rem;
     margin-left: 0.4rem;
