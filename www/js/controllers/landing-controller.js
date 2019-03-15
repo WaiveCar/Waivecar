@@ -5,6 +5,10 @@ var angular = require('angular');
 function LandingController ($injector) {
   var $ionicActionSheet = $injector.get('$ionicActionSheet');
 
+  this.openBasic = function () {
+    window.open('https://basic.waivecar.com', '_system'); 
+  }
+
   this.changeEnv = function () {
     var envs = ['prod', 'staging'];
     var currentEnv = localStorage.env || 'prod';

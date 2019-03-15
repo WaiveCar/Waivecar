@@ -1,4 +1,13 @@
 .auth {
+  .notice {
+    background: rgba(232, 229, 201, 0.75);
+    padding: 0.5rem;
+    text-align: left;
+    color: black;
+    a {
+      color: #008;
+    }
+  }
   &.auth-index ion-content {
     background: url('../img/bg.jpg') no-repeat center center;
     background-size: cover;
