@@ -32,8 +32,8 @@
           <div class="input-holder">
             <div class="time-holder">
               <select
-                ng-model="ctrl.street.streetDay"
-                ng-init="ctrl.street.streetDay = ctrl.today"
+                ng-model="ctrl.street.expireDay"
+                ng-init="ctrl.street.expireDay = ctrl.today"
                 ng-options="day.id as day.name for day in ctrl.dayValues"
               >
               </select>
@@ -133,9 +133,6 @@
       </div>
       <div class="padding-top padding-bottom">
         <button ng-click="ctrl.submit()" class="button button-balanced button-block">{{ ctrl.okText || 'Finish'}}</button>
-      </div>
-      <div class="continue" ng-click="ctrl.goToEndRide(true)">
-        Continue...
       </div>
     </div>
   </ion-content>
