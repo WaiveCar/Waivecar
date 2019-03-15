@@ -83,11 +83,13 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
 
           ride.flags = []; 
           var flagList = JSON.parse(item.flags);
-          ['rush', 'extended', 'charge', 'rebook'].forEach(function(what) {
-            if(flagList.includes(what)) {
-              ride.flags.push(what);
-            }
-          });
+          if(flagList && flagList.includes) {
+            ['rush', 'extended', 'charge', 'rebook'].forEach(function(what) {
+              if(flagList.includes(what)) {
+                ride.flags.push(what);
+              }
+            });
+          }
 
           item.durationString = [
             duration.days() > 0 ? duration.days() + "d " : "",
