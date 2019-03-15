@@ -21,8 +21,6 @@ module.exports = angular.module('Maps', ['ngCordova'])
 
 require('./directives/locate-me-directive');
 require('./directives/google-map-directive');
-require('./directives/route-distance-directive');
-require('./directives/route-duration-directive');
 
 require('./services/real-reach-service');
 require('./services/route-service');
