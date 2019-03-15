@@ -357,7 +357,20 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRide(carId, bookingId, attempt) {
-    var isLevel = Boolean($data.me.hasTag('level'));
+    // somehow data.me can get equal to the string "users". I've searched the 
+    // code-base in many ways and I don't know how this can occur. We could try
+    // to make sure we have it here, but honestly level is about to end as of this
+    // writing so we can just take the chances and reduce it to false if this bug
+    // seems to occur.  I'm afraid it's probably causing other problems as well.
+    var isLevel;
+    if('hasTag' in $data.me) {
+      isLevel = Boolean($data.me.hasTag('level'));
+    } else {
+      // otherwise we just try to pull it from the auth again and
+      // then do an asynchronous reload to do it right for later
+      $data.me = $auth.me;
+      $auth.reload();
+    }
 
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
