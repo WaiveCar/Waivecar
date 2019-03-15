@@ -43,56 +43,31 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
     //console.log(mapElement, center, noscroll);
+
     // reference: https://developers.google.com/maps/documentation/android-api/controls
-    var mapOptions;
-
-    if (this.useCordova()) {
-      // reference: https://developers.google.com/maps/documentation/android-api/controls
-      mapOptions = {
-        mapType: plugin.google.maps.MapTypeId.ROADMAP,
-        controls: {
-          compass: false,
-          mapToolbar: false,
-          myLocationButton: false,
-          indoorPicker: false,
-          zoom: false
+    var mapOptions = {
+      mapType: plugin.google.maps.MapTypeId.ROADMAP,
+      controls: {
+        compass: false,
+        mapToolbar: false,
+        myLocationButton: false,
+        indoorPicker: false,
+        zoom: false
+      },
+      camera : {
+        target: this.mapToNativeLatLong(center),
+        zoom: 14
+      },
+      preferences: {
+        zoom: {
+          minZoom: 10,
+          maxZoom: 18
         },
-        camera : {
-          target: this.mapToNativeLatLong(center),
-          zoom: 14
-        },
-        preferences: {
-          zoom: {
-            minZoom: 10,
-            maxZoom: 18
-          },
-          building: false
-        }
-      };
-
-      return plugin.google.maps.Map.getMap(mapElement, mapOptions)
-    } else {
-      mapOptions = {
-        streetViewControl: false,
-        mapTypeControl: false,
-        zoom: 14,
-        fullscreenControl: false,
-        center: this.mapToGoogleLatLong(center),
-        zoomControl: false
-      };
-
-      if (this.staticMap) {
-        mapOptions.draggable = false;
-        mapOptions.scrollwheel = false;
-        mapOptions.disableDoubleClickZoom = true;
+        building: false
       }
+    };
 
-      if(noscroll) {
-        mapOptions.gestureHandling = 'cooperative';
-      }
-
-      return new google.maps.Map(mapElement, mapOptions);
-    }
+    return plugin.google.maps.Map.getMap(mapElement, mapOptions)
   };
 
 
@@ -112,6 +87,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     // console.log($rootScope, ctrl, center, attrs, $elem, $scope, ctrl.currentLocation,  $data.homebase);
 
     ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
+    $window.mm = ctrl.map;
 
     ctrl.helpContainer = $elem.find('.help')[0];
     ctrl.helpLink = $elem.find('.help-link')[0];
@@ -149,9 +125,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }
       });
 
+      /*
       if ('route' in attrs) {
         ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
       }
+      */
 
       var lastLocation = [0, 0];
       var watchers = [
@@ -588,16 +566,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
     var ctrl = this;
 
-      /*
-    if(!intermediatePoints) {
-      RouteService.getGRoute(ctrl.mapToGoogleLatLong(start), ctrl.mapToGoogleLatLong(destiny), function(response) {
-        ctrl.directionsRenderer.setDirections(response);
-      });
-    } else {
-      ctrl.drawCarPath(start, destiny, intermediatePoints);
-    }
-      */
-
     ctrl.drawRouteMarkers( {
       latitude: start.latitude,
       longitude:  start.longitude,
@@ -708,51 +676,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
     }
   };
-
-  function createNativeDirectionsRenderer(map) {
-
-    var impl = {
-      polyline: null,
-    };
-
-    function getPolylinePointsFromDirections(directions) {
-      var route = directions.routes[0].legs[0];
-      var steps = route.steps;
-
-      var points = [];
-
-      for (var i = 0; i < steps.length; ++i) {
-        var step = steps[i];
-
-        points.push({ lat: step.start_point.lat(), lng:step.start_point.lng()});
-        if (i === steps.length - 1) {
-          points.push({ lat: step.end_point.lat(), lng:step.end_point.lng()});
-        }
-      }
-
-
-      return points;
-    }
-
-    return {
-      setDirections : function(directions) {
-
-        map.addPolyline({
-          'points': getPolylinePointsFromDirections(directions),
-          'color' : '#55aaFF',
-          'width': 10,
-          'geodesic': true
-        }, function(polyline) {
-          if(impl.polyline) {
-            impl.polyline.remove();
-          }
-
-          impl.polyline = polyline;
-
-        });
-      }
-    }
-  }
 
   return {
     restrict: 'E',
