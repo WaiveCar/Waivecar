@@ -21,7 +21,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $ionicLoading = $injector.get('$ionicLoading');
   var $session = $injector.get('$session');
   var GeofencingService = $injector.get('GeofencingService');
-  //var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
   var ChargersService = $injector.get('ChargersService');
   //var homebase = $injector.get('homebase');
@@ -86,12 +85,11 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
 
     ctrl.locations = $data.instances.locations;
-    /*
     if ($data.active.cars) {
-      //  type: "locked-car",
+      $data.active.cars.type = 'locked-car';
       ctrl.locations.push($data.active.cars);
     }
-    */
+    console.log(ctrl.locations, ctrl.fitMapBoundsByMarkers);
 
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
       if (!callCount) {
@@ -186,7 +184,6 @@ function DashboardController ($scope, $rootScope, $injector) {
         console.log("can't find car.");
       });
     }, 1000);
-    //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
 
   }.bind(this));
 
@@ -333,28 +330,11 @@ function DashboardController ($scope, $rootScope, $injector) {
 
   function showZonePrompt(locZone, onOkayCallback) {
     var zoneModal;
-    var days = [
-      'ALL', 'MON', 'TUE', 'WED',
-      'THU', 'FRI', 'SAT', 'SUN'
-    ];
-    var restrictions;
-
-    if(locZone.restrictions) {
-      restrictions = locZone.restrictions.map(function (x) {
-        var from = x[0];
-        var to = x[1];
-        return {
-          from: days[x[0].day] +  moment(new Date(0, 0, 0, from.hour, from.minute)).format(' hh:mmA'),
-          to:   days[x[1].day] + moment(new Date(0, 0, 0, to.hour, to.minute)).format(' hh:mmA')
-        };
-      })
-    }
 
     $modal('zone', {
       title: 'Zone description',
       zoneName: locZone.name,
       description: locZone.description,
-      restrictions: restrictions,
       actions: [{
         text: "Ok, I'm responsible for these rules",
         className: 'button-dark',

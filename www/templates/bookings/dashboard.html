@@ -32,12 +32,6 @@
     <div class="info-header-item">
       <button type="button" class="button button-small" ng-disabled="ctrl.ending" ng-click="ctrl.endRide(data.cars.id, data.bookings.id)">End Ride</button>
     </div>
-    <!--
-    <div class="info-header-item">
-      <ng-include src="'/img/clock-grey-icon.svg'" class='icon'></ng-include>
-      {{ ctrl.timeLeft }}
-    </div>
-    -->
     <div class="info-header-item item-right">
       <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
       about {{ ctrl.range() }}mi.

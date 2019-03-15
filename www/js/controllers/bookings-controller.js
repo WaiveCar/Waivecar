@@ -64,7 +64,6 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             fee: item.payments.reduce(function(value, payment){
               return value + (payment.amount - payment.refunded);
             }, 0) / 100,
-            locations: item.carPath,
             id: item.id
           };
 
@@ -97,12 +96,7 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             duration.minutes() + "m"
           ].join('');
 
-          if(ride.fee) {
-            ride.fee = '$' + ride.fee.toFixed(2);
-          } else {
-            ride.fee = 'FREE';
-          }
-
+          ride.fee = '$' + ride.fee.toFixed(2);
 
           if(isFailed) {
             className.push('failed-row');
