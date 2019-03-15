@@ -504,7 +504,7 @@ module.exports = {
       } else {
         // otherwise we need to have a password assignment
         let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
-        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`;
+        context.passwordlink = `https://lb.waivecar.com/reset-password?hash=${res.token.hash}&isnew=yes`;
       }
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
