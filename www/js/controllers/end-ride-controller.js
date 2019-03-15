@@ -233,11 +233,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     function parkingSignCheck() {
       var payload = Object.assign({}, ctrl.street);
       /*
-     229           'nosign' => $nosign,
-     230           'nophoto' => $nophoto,
-     231           'expireHour' => $hour,
-     232           'expireDay' => $day,
-     233           'streetSignImage' => $parking[0]
+               'nosign' => $nosign,
+               'nophoto' => $nophoto,
+               'expireHour' => $hour,
+               'expireDay' => $day,
+               'streetSignImage' => $parking[0]
       */
 
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
