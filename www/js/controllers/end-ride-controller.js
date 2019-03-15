@@ -27,15 +27,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     ctrl.service = $ride;
     ctrl.type = 'street';
-    ctrl.lot = {
-      lotFreePeriod: false,
-      lotFreeHours: null,
-      lotHours: null,
-      lotMinutes: null,
-      lotLevel: null,
-      lotSpot: null,
-      lotOvernightRest: false
-    };
     var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var today = (new Date()).getDay();
     ctrl.today = today;
@@ -78,7 +69,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       right: null,
       other: null
     }
-    ctrl.appPics = false;
     ctrl.car = $data.active.cars;
     ctrl.model = ctrl.car && ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
 
@@ -112,7 +102,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         .then(function(booking) {
           ctrl.booking = booking;
           $ride.setBooking(booking.id);
-          //ZendriveService.stop(booking.id);
 
           var start = _.find(booking.details, { type: 'start' });
           var end = _.find(booking.details, { type: 'end' });
@@ -224,9 +213,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
             ctrl.pictures[type] = result;
             ctrl.pictures[type].type = type;
           }
-          if (ctrl.street.streetSignImage && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
-            ctrl.allPics = true;
-          }
         }
       })
       .catch(function (err) {
@@ -254,7 +240,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
      233           'streetSignImage' => $parking[0]
       */
 
-      console.log(ctrl);
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
 
         if(!ctrl.street.streetHours) {
@@ -267,7 +252,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           payload.nosign = true;
         } else {
           var hours = parseInt(ctrl.street.streetHours.split(/:/)[0], 10);
-          if (hours > 24) {
+          if (isNaN(hours) || hours > 24) {
             return [false, submitFailure('The time you have entered is invalid')];
           }
           payload.expireHour = {am: 0, pm: 12}[ctrl.hourModifier] + hours % 12;
@@ -286,21 +271,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
 
     function submit() {
-      /*
-      var issues = [];
-      // Force users to take pictures. See #1113
-      if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
-        issues.push('Ending here requires a photo of the parking sign.');
-      }
-
-      if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
-        issues.push('Please take pictures of all sides of the vehicle before proceeding.');
-      }
-      if(issues.length) {
-        return submitFailure(issues.join(' '));
-      }
-      */
-
       var res = parkingSignCheck();
 
       if(!res[0]) {
@@ -399,8 +369,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     function pictureWarn() {
       warn(
-        "Pictures make sure you won't get blamed for what happens once you walk away from the car and protects you against things the next driver may do.",
-        { text: "I'll take the pictures!" },
+        "Photos make sure you won't get blamed for what happens once you walk away from the car and protects you against things the next driver may do.",
+        { text: "I'll take photos!" },
         { text: "I accept responsibility",
           cb: function() {
             ctrl.noPictureWarned = true;
