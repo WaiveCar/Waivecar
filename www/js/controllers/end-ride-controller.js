@@ -68,7 +68,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     };
 
     ctrl.isWaivePark = false;
-    ctrl.overrideStreetRestrictions = false;
+    ctrl.brokenPhone = false;
+    ctrl.noPictureWarned = false;
 
     ctrl.pictures = {
       front: null,
@@ -91,8 +92,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.loadBooking = loadBooking;
     ctrl.loadCar = loadCar;
     ctrl.init = init;
-    ctrl.skipToEnd = skipToEnd;
-    ctrl.goToEndRide = goToEndRide;
 
     ctrl.init();
 
@@ -171,7 +170,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           } else {
             ctrl.minhours = 12;
           }
-          ctrl.zone = $stateParams.zone.name ? ' for' +  $stateParams.zone.name : null;
+          //ctrl.zone = $stateParams.zone.name ? ' for' +  $stateParams.zone.name : null;
           $ride.state.parkingLocation.addressLine1 = location.display_name;
           ctrl.address = location.address;
           var addr = ctrl.address;
@@ -244,7 +243,50 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       });
     }
 
+
+    function parkingSignCheck() {
+      var payload = Object.assign({}, ctrl.street);
+      /*
+     229           'nosign' => $nosign,
+     230           'nophoto' => $nophoto,
+     231           'expireHour' => $hour,
+     232           'expireDay' => $day,
+     233           'streetSignImage' => $parking[0]
+      */
+
+      console.log(ctrl);
+      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
+
+        if(!ctrl.street.streetHours) {
+          if(ctrl.brokenPhone) {
+            payload.nophoto = true;
+          } else if(!ctrl.street.streetSignImage) {
+            return [false, noSignCheck()];
+          }
+
+          payload.nosign = true;
+        } else {
+          var hours = parseInt(ctrl.street.streetHours.split(/:/)[0], 10);
+          if (hours > 24) {
+            return [false, submitFailure('The time you have entered is invalid')];
+          }
+          payload.expireHour = {am: 0, pm: 12}[ctrl.hourModifier] + hours % 12;
+        }
+      }
+
+      payload.type = ctrl.type;
+      return [true, payload];
+    }
+
+    function submitParkingSign(payload) {
+      $ride.setParkingDetails(payload);
+      return $ride.processEndRide().then(function () {
+        return $ride.checkAndProcessActionOnBookingEnd();
+      });
+    }
+
     function submit() {
+      /*
       var issues = [];
       // Force users to take pictures. See #1113
       if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
@@ -257,203 +299,49 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if(issues.length) {
         return submitFailure(issues.join(' '));
       }
+      */
 
-      if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
-        return parkingRestrictionFailure();
+      var res = parkingSignCheck();
+
+      if(!res[0]) {
+        return;
+      }
+
+      var picsIx = 0;
+      var picsToSend = [];
+
+      for (var picture in ctrl.pictures) {
+        if(ctrl.pictures[picture]) {
+          picsIx ++;
+        }
+        picsToSend.push(ctrl.pictures[picture]);
+      }
+
+      if(picsIx < 4 && !ctrl.noPictureWarned) {
+        return pictureWarn();
       }
 
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
+
       $data.resources.bookings.endcheck({id: ctrl.booking.id}).$promise.then(function(carCheck) {
         if(carCheck.message) {
           $ionicLoading.hide();
           return submitFailure(carCheck.message);
         }
 
-        var picsToSend = [];
-        for (var picture in ctrl.pictures) {
-          picsToSend.push(ctrl.pictures[picture]);
-        }
-        
         Reports.create({
           bookingId: $stateParams.id,
           description: null,
           files: picsToSend
         });
-        goToEndRide();
-      });
-    }
-    
-    function dayLess(date1, date2) {
-      
-      if (date1.day < date2.day) {
-        return true;
-      }
-      
-      return timeLess(date1, date2);
-    }
-    
-    function timeLess(date1, date2) {
-      if (date1.hour < date2.hour) {
-        return true;
-      }
-      
-      if (date1.hour > date2.hour) {
-        return false;
-      }
-      
-      return date1.minute <= date2.minute;
-    }
-    
-    function checkTimeRestrictions(restrictions) {
-  
-      var now = moment();
-      var current = {
-        day: now.isoWeekday(),
-        hour: now.hour(),
-        minute: now.minute()
-      };
-      
-      var restricted = false;
-      
-      restrictions.forEach(function (restriction) {
-        var begin = restriction[0];
-        var end = restriction[1];
-        
-        //ALL days case
-        if (begin.day === 0) {
-  
-          if (begin.hour <= end.hour) {
-            if (timeLess(begin,current) && timeLess(current, end)) {
-              restricted = true;
-            }
-          } else {
-            if (timeLess(begin,current) || timeLess(current, end)) {
-              restricted = true;
-            }
-          }
-          
-        } else {
-          if (begin.day <= end.day) {
-            
-            if (dayLess(begin,current) && dayLess(current, end)) {
-              restricted = true;
-            }
-          } else {
-            
-            if (dayLess(begin,current) || dayLess(current, end)) {
-              restricted = true;
-            }
-          }
-        }
-      });
-      
-      return restricted;
-    }
-    
-    function checkIsParkingRestricted() {
-      if (!$rootScope.currentLocation ) {
-        return false;
-      }
-      
-      if (!$data.instances.locations) {
-        return false;
-      }
-      var car = $rootScope.currentLocation;
-      var locations = $data.instances.locations;
-      var hasRestrictions = false;
-      
-      var threshold = 20.0; //20 meters
-  
-      var carLatLngArr = [car.longitude, car.latitude];
-      
-      locations.forEach(function (location) {
-        if (location.type !== 'parking') {
-          return;
-        }
 
-        var minDistance = Number.MAX_SAFE_INTEGER;
-        for(var i = 0; i < location.shape.length - 1; ++i) {
-          var dist = LocationService.getDistanceToParkingLine(location.shape[i], location.shape[i + 1], carLatLngArr);
-          minDistance = Math.min(minDistance, dist);
-        }
-        
-        if (checkTimeRestrictions(location.restrictions) &&  minDistance < threshold) {
-          hasRestrictions = true;
-        }
-        
-      });
-      return hasRestrictions;
-    }
-
-    function goToEndRide(byPass) {
-      if (byPass) {
-        ctrl.overrideStreetRestrictions = true;
-      }
-      var payload = {};
-      //ZendriveService.stop();
-      /*eslint-disable */
-      var expireDay, expireHour, expireMins;
-      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.overrideStreetRestrictions) {
-        var streetHours = parseInt(ctrl.street.streetHours.split(/:/)[0], 10);
-        if (streetHours > 24) {
-          return submitFailure('The time you have entered is invalid');
-        }
-        if (!ctrl.overrideStreetRestrictions) {
-          expireDay = ctrl.street.streetDay >= 0 ? ctrl.street.streetDay : (ctrl.street.streetDay === -2 ? (new Date()).getDay() : (new Date()).getDay() + 1) 
-          var hours = Number(splitHours[0]);
-          if (hours === 12 && ctrl.hourModifier === 'am') {
-            hours = 0;
-          }
-          expireHour = ctrl.hourModifier === 'am' || hours === 12 ? hours : hours + 12;
-          expireMins = splitHours[1] ? Number(splitHours[1]) : 0;
-          var nextDate = moment().day(expireDay >= (new Date()).getDay() ? expireDay : 7 + expireDay);
-          nextDate.hour(expireHour);
-          nextDate.minute(expireMins);
-          streetHours = nextDate.diff(moment(), 'hours')
-        } else {
-          var expiration = moment().add(Number(splitHours[0]), 'hours').add(Number(splitHours[1]), 'minutes');
-          expireDay = expiration.day();
-          expireHour = expiration.hours();
-          expireMins = expiration.minutes();
-          streetHours = expiration.diff(moment(), 'hours');
-        }
-        if (streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-        payload = Object.assign({}, ctrl.street);
-      }
-      if (ctrl.overrideStreetRestrictions) {
-        payload.nosign = true;
-      }
-      if (!ctrl.street.streetSignImage) {
-        payload.nophoto = true;
-      }
-      payload.expireHour = expireHour;
-      payload.expireDay = expireDay;
-      payload.expireMins = expireMins;
-      delete payload.streetHours;
-      delete payload.streetMinutes;
-      delete payload.steetDay;
-      payload.type = ctrl.type;
-      $ride.setParkingDetails(payload);
-      return $ride.processEndRide().then(function () {
+        submitParkingSign(res[1]);
         $ionicLoading.hide();
-        return $ride.checkAndProcessActionOnBookingEnd();
       });
     }
-
-    function skipToEnd() {
-      if (ctrl.street.streetSignImage || ctrl.isHub || ctrl.isWaivePark) {
-        return $ride.processEndRide().then(function () {
-          $ionicLoading.hide();
-          return $ride.checkAndProcessActionOnBookingEnd();
-        });
-      }
-      if(!ctrl.isHub && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
-        submitFailure('Ending here requires a photo of the parking sign.');
-      }
-    }
-
+    
     function submitFailure(message) {
       $ionicLoading.hide();
       var endRideModal;
@@ -476,33 +364,73 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       });
     }
   
-    function parkingRestrictionFailure() {
-      $ionicLoading.hide();
-      var endRideModal;
-    
+    function warn(title, success, failure) {
+      var modal;
       return $modal('result', {
         icon: 'x-icon',
-        title: 'Looks like there are parking restriction on this street. Please check careful.',
+        title: 'Warning',
+        message: title,
         actions: [{
-          text: 'I checked. There are no parking restrictions',
+          text: success.text,
           className: 'button-balanced',
           handler: function () {
-            ctrl.overrideStreetRestrictions = true;
-            endRideModal.remove();
+            modal.remove();
+            if(success.cb) {
+              success.cb();
+            }
           }
-        },{
-          text: 'Ok',
+        }, {
+          text: failure.text,
           className: 'button-dark',
           handler: function () {
-            endRideModal.remove();
+            modal.remove();
+            if(failure.cb) {
+              failure.cb();
+            }
           }
         }]
       })
-        .then(function (_modal) {
-          _modal.show();
-          endRideModal = _modal;
-          endRideModal.show();
-        });
+      .then(function (_modal) {
+        _modal.show();
+        modal = _modal;
+        modal.show();
+      });
+    }
+
+    function pictureWarn() {
+      warn(
+        "Pictures make sure you won't get blamed for what happens once you walk away from the car and protects you against things the next driver may do.",
+        { text: "I'll take the pictures!" },
+        { text: "I accept responsibility",
+          cb: function() {
+            ctrl.noPictureWarned = true;
+            submit();
+          }
+        }
+      );
+    }
+
+    function noSignConfirm() {
+      warn(
+        "If you misreport and get a ticket, you'll be held responsible for the ticket plus a fee.", 
+        { text: 'Go back' },
+        { text: "There is no sign",
+          cb: function() {
+            ctrl.brokenPhone = true;
+            submit();
+          }
+        }
+      );
+    }
+
+    function noSignCheck() {
+      warn(
+        "If there is no sign, please take a photo of the intersection showing there's no sign.",
+        { text: 'Go back' },
+        { text: "I can't take a photo",
+          cb: noSignConfirm
+        }
+      );
     }
   }
 ]);
