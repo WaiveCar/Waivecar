@@ -25,6 +25,9 @@ module.exports = class RideDetails extends React.Component {
     let url = `http://basic.waivecar.com/location.php`;
     let qs  = `latitude=${ lat }&longitude=${ long }`;
     //debugger;
+    data.address[i] = "";
+    data.address[i].geo = ""; 
+
     api.external(url,qs, (err,addressSite) => {
       addressSite.geo = [lat, long].join(',');
 
