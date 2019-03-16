@@ -24,8 +24,10 @@ module.exports = class RideDetails extends React.Component {
   getAddress(lat, long, data, i, lastObject) {
     let url = `http://basic.waivecar.com/location.php`;
     let qs  = `latitude=${ lat }&longitude=${ long }`;
-    debugger;
+    //debugger;
     api.external(url,qs, (err,addressSite) => {
+      addressSite.geo = [lat, long].join(',');
+
       data.address[i] = addressSite;
       if (lastObject) {
         console.log(lastObject);
@@ -39,7 +41,6 @@ module.exports = class RideDetails extends React.Component {
     return [
       Math.floor(time/3.6e6), //hours
       Math.floor(time/6e4)%60, //minutes
-      Math.floor(time/1000)%60 //seconds
     ];
   }
   componentDidMount() {
@@ -258,8 +259,8 @@ module.exports = class RideDetails extends React.Component {
             </div>
             {
               this.props.carPath && this.props.carPath[0] &&
-              <div className="box-content">
-                <strong>Car Timeline </strong><br/>
+              <div className="box-content timeline">
+                <strong>Timeline</strong><br/>
                 {//here for debugging purposes
                   /*this.state.switchStat.map((stat,i) => {
                   return (<div key = {i}>
@@ -271,46 +272,77 @@ module.exports = class RideDetails extends React.Component {
                 {this.props.carPath.map((path, i) => {
                   switch(this.state.switchStat[i]) {
                     case "started":
-                    {indexA++};
-                    return (<div key = {i}>
-                      Address: {carTimeline.address[indexA-1]}, Time: {moment(path[2]).format('h:mm:ss a')}
-                    </div>);
+                      {indexA++};
+                      return (<div key = {i}>
+                        <span className="address">
+                          <span className='time'>
+                            {moment(path[2]).format('h:mm:ss a')}
+                          </span>
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
+                        </span>
+                      </div>);
                     break;
                     case "endWDrive":
-                    {indexA++; indexT++}
-                    return (<div key = {i}>
-                      Car has been <span style={{color: 'green'}}>driving </span>
-                      for {carTimeline.time[indexT-1][0]}:{carTimeline.time[indexT-1][1]}:
-                      {carTimeline.time[indexT-1][2]}
-                      <br/> Address: {carTimeline.address[indexA-1]}, Time: {moment(path[2]).format('h:mm:ss a')}
-                    </div>);
+                      {indexA++; indexT++}
+                      return (<div key = {i}>
+                        <span className='duration'>
+                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m
+                        </span>
+                        <span>driving </span>
+                        <br/>
+                        <span className="address">
+                          <span className='time'>
+                            {moment(path[2]).format('h:mm:ss a')}
+                          </span>
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}
+                          </a>
+
+                        </span>
+                      </div>);
                     break;
                     case "endWStop":
                     {indexA++; indexT++;}
                     return (<div key = {i}>
-                      Car has been <span style = {{color: 'red'}}>still </span>
-                      for {carTimeline.time[indexT-1][0]}:{carTimeline.time[indexT-1][1]}:
-                      {carTimeline.time[indexT-1][2]}
-                      <br/> Address: {carTimeline.address[indexA-1]}, Time: {moment(path[2]).format('h:mm:ss a')}
+                        <span className='duration'>
+                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m 
+                        </span>
+                        <span>parked </span>
+                      <br/> 
+                      <span className="address">
+                        <span className='time'>
+                          {moment(path[2]).format('h:mm:ss a')}
+                        </span>
+                        <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}
+                        </a>
+                      </span>
                     </div>);
                     break;
                     case "notMoving":
-                    {indexA++; indexT++;indexT++}
-                    return (<div key = {i}>
-                      Car has been <span style={{color: 'green'}}>driving </span>
-                      for {carTimeline.time[indexT-2][0]}:{carTimeline.time[indexT-2][1]}:
-                      {carTimeline.time[indexT-2][2]}
-                      <br/> Address: {carTimeline.address[indexA-1]}, Time: {moment(carTimeline.time[indexT-1]).format('h:mm:ss a')}
-                    </div>);
+                      {indexA++; indexT++;indexT++}
+                      return (<div key = {i}>
+                          <span className='duration'>
+                            {carTimeline.time[indexT-2][0]}h {carTimeline.time[indexT-2][1]}m
+                          </span>
+                          <span>driving </span>
+                        <br/> 
+                        <span className="address">
+                          <span className='time'>
+                           {moment(carTimeline.time[indexT-1]).format('h:mm:ss a')}
+                          </span>
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
+                        </span>
+                      </div>);
                     break;
                     case "startMove":
-                    {indexT++}
-                    return (<div key = {i}>
-                      Car has been <span style = {{color: 'red'}}>still </span>
-                      for {carTimeline.time[indexT-1][0]}:{carTimeline.time[indexT-1][1]}:
-                      {carTimeline.time[indexT-1][2]}
-                    </div>);
-                    break;
+                      {indexT++}
+                      return (<div key = {i}>
+                        <span className='duration'>
+                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m
+                        </span>
+                        <span>parked </span>
+                        
+                      </div>);
+                      break;
                     default:
                     break;
                   }
