@@ -18,20 +18,17 @@ module.exports = class RideDetails extends React.Component {
       address : [],
       switchStat : [],
       time : [],
-      }
+    };
   }
 
   getAddress(lat, long, data, i, lastObject) {
-    let url = `http://basic.waivecar.com/location.php`;
+    let url = `https://basic.waivecar.com/location.php`;
     let qs  = `latitude=${ lat }&longitude=${ long }`;
     //debugger;
-    data.address[i] = "";
-    data.address[i].geo = ""; 
 
     api.external(url,qs, (err,addressSite) => {
-      addressSite.geo = [lat, long].join(',');
-
       data.address[i] = addressSite;
+
       if (lastObject) {
         console.log(lastObject);
         console.log(data.address);
@@ -41,10 +38,12 @@ module.exports = class RideDetails extends React.Component {
   }
 
   getTTime(time) {
-    return [
-      Math.floor(time/3.6e6), //hours
-      Math.floor(time/6e4)%60, //minutes
-    ];
+    var hours = Math.floor(time/3.6e6);
+    var minutes = Math.floor(time/6e4)%60 ;
+    if(minutes < 10) {
+      minutes = " " + minutes;
+    }
+    return (hours ? hours + "h " : "   ") + minutes + "m";
   }
   componentDidMount() {
     var ix = 0;
@@ -289,7 +288,7 @@ module.exports = class RideDetails extends React.Component {
                       {indexA++; indexT++}
                       return (<div key = {i}>
                         <span className='duration'>
-                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m
+                          {carTimeline.time[indexT-1]}
                         </span>
                         <span>driving </span>
                         <br/>
@@ -307,7 +306,7 @@ module.exports = class RideDetails extends React.Component {
                     {indexA++; indexT++;}
                     return (<div key = {i}>
                         <span className='duration'>
-                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m 
+                          {carTimeline.time[indexT-1]}
                         </span>
                         <span>parked </span>
                       <br/> 
@@ -324,7 +323,7 @@ module.exports = class RideDetails extends React.Component {
                       {indexA++; indexT++;indexT++}
                       return (<div key = {i}>
                           <span className='duration'>
-                            {carTimeline.time[indexT-2][0]}h {carTimeline.time[indexT-2][1]}m
+                            {carTimeline.time[indexT-2]}
                           </span>
                           <span>driving </span>
                         <br/> 
@@ -340,7 +339,7 @@ module.exports = class RideDetails extends React.Component {
                       {indexT++}
                       return (<div key = {i}>
                         <span className='duration'>
-                          {carTimeline.time[indexT-1][0]}h {carTimeline.time[indexT-1][1]}m
+                          {carTimeline.time[indexT-1]}
                         </span>
                         <span>parked </span>
                         
