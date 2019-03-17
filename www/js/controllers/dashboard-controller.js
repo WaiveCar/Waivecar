@@ -363,7 +363,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     // writing so we can just take the chances and reduce it to false if this bug
     // seems to occur.  I'm afraid it's probably causing other problems as well.
     var isLevel;
-    if('hasTag' in $data.me) {
+    if($data.me && $data.me.hasTag) {
       isLevel = Boolean($data.me.hasTag('level'));
     } else {
       // otherwise we just try to pull it from the auth again and
