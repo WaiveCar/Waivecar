@@ -89,7 +89,6 @@ function DashboardController ($scope, $rootScope, $injector) {
       $data.active.cars.type = 'locked-car';
       ctrl.locations.push($data.active.cars);
     }
-    console.log(ctrl.locations, ctrl.fitMapBoundsByMarkers);
 
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
       if (!callCount) {
@@ -112,68 +111,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     if (!(booking && booking.status === 'started')) {
       return;
     }
-
-    if($window.timeOutForRide) {
-      clearInterval($window.timeOutForRide);
-    }
-
-    // See #605. Since we are going to run the user-facing timer slightly faster than 2 hours
-    // We need to take our ratio and add it to the base, otherwise we start at 1:58:45.
-    // This math will be accounted for in the first calculation.
-    var rideStart;
-    if(booking.details) {
-      rideStart = booking.details[0].createdAt;
-    } else {
-      rideStart = booking.updatedAt;
-    }
-
-    var endTime = moment(rideStart).add(120 * (119.25 / 120), 'm');
-    var timeLeft = function () {
-      // thanks to stupid moment for being stupid...
-      var left = -moment().diff(endTime);
-      var isFreeTime = (Math.abs(left) === left);
-      //
-      // See https://github.com/clevertech/Waivecar/issues/605 ... we intentionally drift the time
-      // in the users' favor so they don't bicker over a few seconds or if their phone has clock drift
-      // they don't say "well my app said so and so!".  As their time expires, the number 'left' decreases.
-      // So we make this decrease a small amount faster so that 2 hours will elapse in 1hr 58:45 ...
-      // This means that a minute is actually 59.375 seconds
-      //
-      if (!isFreeTime) {
-        //
-        // If it's pay-time, then we go the other way, slightly speeding things up. This favors the
-        // user again because the app will report that they've driven for say, 20 minutes, when the
-        // server and actual clock time will be 13 seconds less - so this again helps prevent them
-        // from contesting a claim that the app said one thing and we charged them more.  Hopefully,
-        // in these edge cases we will always "err" in the users' favor.
-        //
-        left *= 120 / 119.25;
-      }
-
-      if(isFreeTime) {
-        this.timeLeft = 'Free until ' + endTime.format('h:mm A');
-      } else {
-        var format = "mm:ss", prepend = "";
-        left = Math.abs(left);
-
-        if(left > 60 * 60 * 1000) {
-          format = "H:" + format;
-          if(left > 24 * 60 * 60 * 1000) {
-            prepend = Math.floor(left / (24 * 60 * 60 * 1000)) + 'd ';
-          }
-        }
-
-        this.timeLeft = 'Extra: ' + prepend + moment.utc(left).format(format);
-      }
-
-      // This is because frameworks are buggy in interesting ways.
-      if(!$scope.$$phase) {
-        $scope.$apply();
-      }
-    }.bind(this);
-    timeLeft();
-    // sub 1 second because this is how these things work.
-    $window.timeOutForRide = setInterval(timeLeft, 500);
 
     // connect to the ble
     ctrl.license = $data.active.cars.license;
