@@ -18,10 +18,9 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
         var token = auth.token;
 
         var isLoginRequest = httpConfig.url === $settings.uri.auth.login;
-        var isSkobblerRequest = httpConfig.url.indexOf($settings.skobbler.key) !== -1;
         var isOpenMapRequest = /openstreetmap/.test(httpConfig.url);
 
-        if (token && !isLoginRequest && !isSkobblerRequest && !isOpenMapRequest) {
+        if (token && !isLoginRequest && !isOpenMapRequest) {
           httpConfig.headers.Authorization = token;
         }
 

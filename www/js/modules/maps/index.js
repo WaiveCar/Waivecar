@@ -11,9 +11,6 @@ module.exports = angular.module('Maps', ['ngCordova'])
     withinUnlockRadius: 'waiveCarWithinUnlockRadius',
     markersChanged: 'waiveCarMarkersChanged'
   })
-  .constant('skobblerApiCodes', {
-    sourceSameAsDestination: '680'
-  })
   .constant('transports', {
     car: 'car',
     pedestrian: 'pedestrian'

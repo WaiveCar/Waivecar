@@ -1,11 +1,9 @@
 'use strict';
 var angular = require('angular');
 var ionic = require('ionic');
-// MapsLoader is an angular provider which returns leaflet instance from 'getMap' call
-require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive($rootScope, MapsLoader, $q, $timeout, $window, LocationService, $injector) {
+function directive($rootScope, $q, $timeout, $window, LocationService, $injector) {
 
   var MOVETHRESHOLD = 0.000008;
   var $data = $injector.get('$data');
@@ -538,31 +536,6 @@ function directive($rootScope, MapsLoader, $q, $timeout, $window, LocationServic
     return $q.all(promises);
   };
 
-  MapController.prototype.drawCarPath = function drawCarPath(start, destiny, points) {
-    /*
-    var ctrl = this;
-    if(!ctrl.map) {
-      return;
-    }
-
-    if(!points || points.length === 0) {
-      points = points || [];
-      points.push(start);
-      points.push(destiny);
-    }
-    var path = points.map(ctrl.mapToLatLong.bind(this));
-
-    ctrl.map.addPolyline({
-      points: path,
-      color: '#0000FF',
-      width: 2,
-      geodesic: true
-    });
-
-    ctrl.mapFitBounds(points);
-    */
-  }
-
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
     var ctrl = this;
 
@@ -715,7 +688,6 @@ function directive($rootScope, MapsLoader, $q, $timeout, $window, LocationServic
 
 module.exports = angular.module('Maps').directive('googleMap', [
   '$rootScope',
-  'MapsLoader',
   '$q',
   '$timeout',
   '$window',

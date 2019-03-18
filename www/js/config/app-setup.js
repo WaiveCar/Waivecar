@@ -16,10 +16,7 @@ var config = [
   '$provide',
   '$injector',
   '$settingsProvider',
-  'MapsLoaderProvider',
-  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $settingsProvider, MapsLoaderProvider) {
-
-    MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
+  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $settingsProvider) {
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 
