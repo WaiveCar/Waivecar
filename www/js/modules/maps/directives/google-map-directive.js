@@ -5,7 +5,7 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService, $injector) {
+function directive($rootScope, MapsLoader, $q, $timeout, $window, LocationService, $injector) {
 
   var MOVETHRESHOLD = 0.000008;
   var $data = $injector.get('$data');
@@ -716,7 +716,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 module.exports = angular.module('Maps').directive('googleMap', [
   '$rootScope',
   'MapsLoader',
-  'RouteService',
   '$q',
   '$timeout',
   '$window',

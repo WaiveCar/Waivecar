@@ -19,8 +19,4 @@ module.exports = angular.module('Maps', ['ngCordova'])
     pedestrian: 'pedestrian'
   });
 
-require('./directives/locate-me-directive');
 require('./directives/google-map-directive');
-
-require('./services/real-reach-service');
-require('./services/route-service');
