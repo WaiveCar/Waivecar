@@ -122,7 +122,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
     }, 1000);
 
-  }.bind(this));
+  });
 
   function openPopover(item) {
     $timeout(function () {
