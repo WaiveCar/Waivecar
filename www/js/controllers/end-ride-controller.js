@@ -141,25 +141,26 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       }
       return $geocoding($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude)
         .then(function (location) {
-          if ($stateParams.zone.type === 'hub') {
-            ctrl.isHub = true;
-            ctrl.okText = "Finish";
-          } else if ($stateParams.zone.type === 'waivePark') {
-            ctrl.okText = 'Finish';
-            ctrl.isWaivePark = true;
-          } else {
-            ctrl.okText = "My parking is OK";
+          ctrl.isHub = false;
+          ctrl.okText = "My parking is OK";
+          ctrl.minhours = 12;
+          if($stateParams.zone) {
+            if ($stateParams.zone.type === 'hub') {
+              ctrl.isHub = true;
+              ctrl.okText = "Finish";
+            } else if ($stateParams.zone.type === 'waivePark') {
+              ctrl.okText = 'Finish';
+              ctrl.isWaivePark = true;
+            } 
+
+            // BUGBUG: this information should be in the database. 1235 is santa monica
+            if($stateParams.zone.id === 1235) {
+              ctrl.minhours = 3;
+            } 
           }
           // we do this so we don't get some annoying UX flash
           ctrl.geocodeLoaded = true;
 
-          // BUGBUG: this information should be in the database. 1235 is santa monica
-          if($stateParams.zone.id === 1235) {
-            ctrl.minhours = 3;
-          } else {
-            ctrl.minhours = 12;
-          }
-          //ctrl.zone = $stateParams.zone.name ? ' for' +  $stateParams.zone.name : null;
           $ride.state.parkingLocation.addressLine1 = location.display_name;
           ctrl.address = location.address;
           var addr = ctrl.address;
