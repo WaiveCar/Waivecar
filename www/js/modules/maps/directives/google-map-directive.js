@@ -8,6 +8,7 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
   var MOVETHRESHOLD = 0.000008;
   var $data = $injector.get('$data');
   var isFirst = true;
+  var start = new Date();
 
   function MapController() {
     this._addedMarkers = {
@@ -132,7 +133,7 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
       var lastLocation = [0, 0];
       var watchers = [
         $scope.$watch('map.markers', function (value) {
-          //console.log("marker update", value);
+          console.log("> marker update", value);
           if (value) {
             ctrl.updateMarkers(value);
           }
@@ -143,7 +144,7 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
             // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
             // map to update on.
             var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
-            //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
+            console.log('> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
             if (isMoved) {
               ctrl.updateLocationMarker(value);
               lastLocation = [value.latitude, value.longitude];
@@ -152,16 +153,16 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
         }, true),
         $scope.$watch('map.fitBoundsByMarkers', function (value) {
           if (value) {
+            console.log("> fitting bounds", value);
             ctrl.mapFitBounds(value);
           }
         }, true),
         $scope.$watch('map.route', function (value) {
-          if (value && value.destiny) {
-            // console.log("route here", value, value.start, value.destiny);
-            ctrl.drawRoute(value.start, value.destiny, value.intermediatePoints, value.fitBoundsByRoute);
+          if (value && value.destiny && value.start) {
+            console.log("> route here", value, value.start, value.destiny);
+            ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
           }
         }, true)
-
       ];
       $scope.$on('$destroy', function () {
         watchers.forEach(function (watcher) {
@@ -374,31 +375,29 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
     });
   };
 
-  MapController.prototype.addLocationMarker = function addLocationMarker(location) {
-    var ctrl = this;
-
-    var locationMarker = {
-      icon: 'location',
-      latitude: location.latitude,
-      longitude: location.longitude
-    };
-
-     ctrl.addMarker(locationMarker).then(function(marker) {
-       ctrl._addedMarkers.location = marker;
-     });
-  };
-
   MapController.prototype.updateLocationMarker = function updateLocationMarker(marker) {
     var ctrl = this;
 
-    if (ctrl._addedMarkers.location) {
+    if (!ctrl._addedMarkers.location) {
+      ctrl._addedMarkers.location = true;
+     
+      return ctrl.addMarker({
+        icon: 'marker',
+        latitude: marker.latitude,
+        longitude: marker.longitude
+      }).then(function(marker) {
+        ctrl._addedMarkers.location = marker;
+      });
+    }
+
+    // avoid a double entry during the type between the request to 
+    // add and the actual add.
+    if(ctrl._addedMarkers.location !== true) {
       try {
         ctrl._addedMarkers.location.update(marker);
       } catch(ex) {
         console.log(ex, marker, ctrl, ctrl._addedMarkers.location);
       }
-    } else {
-      ctrl.addLocationMarker(marker);
     }
   };
 
@@ -498,6 +497,7 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
   MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end) {
     var ctrl = this;
 
+    /*
     function onUpdateFinish() {
       ctrl.drawRouteQueue.shift();
       if (ctrl.drawRouteQueue.length > 0) {
@@ -505,9 +505,10 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
       }
     }
 
+    */
     ctrl.drawRouteQueue.push({ begin:begin, end:end});
     if (ctrl.drawRouteQueue.length === 1) {
-      ctrl.unsafeDrawRouteMarkers(begin, end).then(onUpdateFinish);
+      ctrl.unsafeDrawRouteMarkers(begin, end)//.then(onUpdateFinish);
     }
   };
 
@@ -536,7 +537,7 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
     return $q.all(promises);
   };
 
-  MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
+  MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
     var ctrl = this;
 
     ctrl.drawRouteMarkers( {
