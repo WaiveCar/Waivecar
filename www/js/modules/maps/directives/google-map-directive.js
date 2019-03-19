@@ -124,12 +124,6 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
         }
       });
 
-      /*
-      if ('route' in attrs) {
-        ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
-      }
-      */
-
       var lastLocation = [0, 0];
       var watchers = [
         $scope.$watch('map.markers', function (value) {
@@ -495,20 +489,9 @@ function directive($rootScope, $q, $timeout, $window, LocationService, $injector
   };
 
   MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end) {
-    var ctrl = this;
-
-    /*
-    function onUpdateFinish() {
-      ctrl.drawRouteQueue.shift();
-      if (ctrl.drawRouteQueue.length > 0) {
-        ctrl.unsafeDrawRouteMarkers(ctrl.drawRouteQueue[0].begin, ctrl.drawRouteQueue[0].end).then(onUpdateFinish);
-      }
-    }
-
-    */
-    ctrl.drawRouteQueue.push({ begin:begin, end:end});
-    if (ctrl.drawRouteQueue.length === 1) {
-      ctrl.unsafeDrawRouteMarkers(begin, end)//.then(onUpdateFinish);
+    this.drawRouteQueue.push({ begin:begin, end:end});
+    if (this.drawRouteQueue.length === 1) {
+      this.unsafeDrawRouteMarkers(begin, end);
     }
   };
 
