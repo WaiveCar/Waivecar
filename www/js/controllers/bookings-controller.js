@@ -115,7 +115,6 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
                 latitude: ride.end.latitude
               },
               fitBoundsByRoute: true,
-              intermediatePoints: ride.locations
             };
           }
 
