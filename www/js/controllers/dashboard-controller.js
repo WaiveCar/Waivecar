@@ -23,7 +23,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var GeofencingService = $injector.get('GeofencingService');
   var LocationService = $injector.get('LocationService');
   var ChargersService = $injector.get('ChargersService');
-  //var homebase = $injector.get('homebase');
   var $auth = $injector.get('$auth');
 
 
@@ -85,10 +84,12 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
 
     ctrl.locations = $data.instances.locations;
+    /*
     if ($data.active.cars) {
       $data.active.cars.type = 'locked-car';
       ctrl.locations.push($data.active.cars);
     }
+    */
 
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
       if (!callCount) {
@@ -115,7 +116,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     // connect to the ble
     ctrl.license = $data.active.cars.license;
 
-    // These two lines make it crash!!!!!!!!
     $timeout(function() {
       $data.resources.cars.connect({id: $data.active.cars.id}).catch(function(){
         console.log("can't find car.");
@@ -172,48 +172,6 @@ function DashboardController ($scope, $rootScope, $injector) {
      }
   }
 
-  function startCharge(chargerId) {
-    $ionicLoading.show({
-      template: '<div class="circle-loader"><span>Loading</span></div>'
-    });
-
-    $ride.startCharge($data.active.cars.id, chargerId).then(function(car) {
-      $ionicLoading.hide();
-      ctrl.closePopover();
-      $message.success("Your charge should begin shortly. Please watch the charger's screen to make sure it starts. When you're done fueling, unlock the plug and return it to its holder.");
-    })
-    .catch(function (reason) {
-      $ionicLoading.hide();
-      $message.error("Unable to start the charge. Please check the connections and try again.");
-    });
-  }
-
-  function showUnlockChargerPrompt(id, name){
-    var modal;
-    $modal('result', {
-      icon: 'waivecar-mark',
-      title: 'Station ' + name,
-      message: "Make sure the plug is fully plugged into the WaiveCar and the charging station's screen is asking for payment.",
-      actions: [{
-        text: 'Start fueling',
-        className: 'button-balanced',
-        handler: function () {
-          modal.remove();
-          startCharge(id);
-        }
-      }, {
-        text: 'Cancel',
-        className: 'button-dark',
-        handler: function () {
-          modal.remove();
-        }
-      }]
-    })
-      .then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
-  }
 
   function lockCar(id) {
     return doLock(id, true);
@@ -265,32 +223,20 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
   }
 
-  function showZonePrompt(locZone, onOkayCallback) {
-    var zoneModal;
+  function featured (items) {
+    return _(items)
+      .sortBy(function (item) {
+        if ($rootScope.currentLocation) {
+          return $distance(item);
+        }
+        return item.id;
+      })
+      .take(2)
+      .value();
+  }
 
-    $modal('zone', {
-      title: 'Zone description',
-      zoneName: locZone.name,
-      description: locZone.description,
-      actions: [{
-        text: "Ok, I'm responsible for these rules",
-        className: 'button-dark',
-        handler: function () {
-          zoneModal.remove();
-          onOkayCallback();
-        }
-      }, {
-        text: "No thanks, I'll end it elsewhere",
-        className: 'button-balanced',
-        handler: function () {
-          zoneModal.remove();
-          
-        }
-      }]
-    }).then(function (_modal) {
-      zoneModal = _modal;
-      zoneModal.show();
-    });
+  ctrl.cleanAddress = function(what) {
+    return what ? what.replace(/, [A-Z]{2} /, ' ').replace(/, USA/, '') : '';
   }
 
   function endRide(carId, bookingId, attempt) {
@@ -367,6 +313,77 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
+  function startCharge(chargerId) {
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
+    $ride.startCharge($data.active.cars.id, chargerId).then(function(car) {
+      $ionicLoading.hide();
+      ctrl.closePopover();
+      $message.success("Your charge should begin shortly. Please watch the charger's screen to make sure it starts. When you're done fueling, unlock the plug and return it to its holder.");
+    })
+    .catch(function (reason) {
+      $ionicLoading.hide();
+      $message.error("Unable to start the charge. Please check the connections and try again.");
+    });
+  }
+
+  function showUnlockChargerPrompt(id, name){
+    var modal;
+    $modal('result', {
+      icon: 'waivecar-mark',
+      title: 'Station ' + name,
+      message: "Make sure the plug is fully plugged into the WaiveCar and the charging station's screen is asking for payment.",
+      actions: [{
+        text: 'Start fueling',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+          startCharge(id);
+        }
+      }, {
+        text: 'Cancel',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    })
+      .then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+  }
+
+  function showZonePrompt(locZone, onOkayCallback) {
+    var zoneModal;
+
+    $modal('zone', {
+      title: 'Zone description',
+      zoneName: locZone.name,
+      description: locZone.description,
+      actions: [{
+        text: "Ok, I'm responsible for these rules",
+        className: 'button-dark',
+        handler: function () {
+          zoneModal.remove();
+          onOkayCallback();
+        }
+      }, {
+        text: "No thanks, I'll end it elsewhere",
+        className: 'button-balanced',
+        handler: function () {
+          zoneModal.remove();
+          
+        }
+      }]
+    }).then(function (_modal) {
+      zoneModal = _modal;
+      zoneModal.show();
+    });
+  }
+
   function levelEndRide() {
     $ionicLoading.hide();
     var modal;
@@ -398,18 +415,6 @@ function DashboardController ($scope, $rootScope, $injector) {
       modal = _modal;
       modal.show();
     });
-  }
-
-  function featured (items) {
-    return _(items)
-      .sortBy(function (item) {
-        if ($rootScope.currentLocation) {
-          return $distance(item);
-        }
-        return item.id;
-      })
-      .take(2)
-      .value();
   }
 
   function showIgnitionOnModal () {
@@ -461,10 +466,6 @@ function DashboardController ($scope, $rootScope, $injector) {
       endRideModal = _modal;
       endRideModal.show();
     });
-  }
-
-  ctrl.cleanAddress = function(what) {
-    return what ? what.replace(/, [A-Z]{2} /, ' ').replace(/, USA/, '') : '';
   }
 
   function reserveParking(parkingId) {
