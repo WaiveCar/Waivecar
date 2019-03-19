@@ -26,10 +26,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     var Reports = $injector.get('Reports');
 
     ctrl.service = $ride;
-    ctrl.type = 'street';
+
     var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var today = (new Date()).getDay();
-    ctrl.today = today;
     var myweek = week.concat(week).slice(today + 2, today + 2 + 6);
     myweek[5] += " (next)";
     myweek.unshift('Today', 'Tomorrow');
@@ -55,7 +54,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       streetDay: null,
       streetHours: null,
       streetMinutes: null,
-      streetOvernightRest: false,
     };
 
     ctrl.isWaivePark = false;
@@ -70,20 +68,20 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       other: null
     }
     ctrl.car = $data.active.cars;
+    // used for the images.
     ctrl.model = ctrl.car && ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
 
     // Attach methods
-    ctrl.setType = setType;
-    ctrl.geocode = geocode;
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
-    ctrl.toggle = toggle;
-    ctrl.minhours = 12;
     ctrl.loadBooking = loadBooking;
     ctrl.loadCar = loadCar;
     ctrl.init = init;
 
-    ctrl.init();
+    ctrl.type = 'street';
+    ctrl.minhours = 12;
+    ctrl.isHub = false;
+    ctrl.okText = "My parking is OK";
 
     function init() {
       // Wait for service to initialize
@@ -91,12 +89,13 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
         console.log('[end-ride] Service initialized: %s', isInitialized);
         if (isInitialized !== true) {
+          console.log("bailing");
           return;
         }
-        rideServiceReady();
+        console.log("geocoding");
+        //rideServiceReady();
 
-        // Kick off geocoding
-        ctrl.geocode();
+        geocode();
       });
       loadBooking($stateParams.id)
         .then(function(booking) {
@@ -115,6 +114,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           console.log('init failed: ', err);
         });
     }
+    init();
     
     function loadBooking(id) {
       return $data.resources.bookings.get({ id: id }).$promise;
@@ -124,23 +124,12 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return $data.activate('cars', id);
     }
      
-    function setType(type) {
-      ctrl.type = type;
-    }
-
-    function toggle(field) {
-      this[field] = !this[field];
-    }
-
     function geocode() {
       if (!($rootScope.currentLocation && $rootScope.currentLocation.latitude)) {
         return null;
       }
       return $geocoding($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude)
         .then(function (location) {
-          ctrl.isHub = false;
-          ctrl.okText = "My parking is OK";
-          ctrl.minhours = 12;
           if($stateParams.zone) {
             if ($stateParams.zone.type === 'hub') {
               ctrl.isHub = true;
@@ -206,13 +195,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     function parkingSignCheck() {
       var payload = Object.assign({}, ctrl.street);
-      /*
-               'nosign' => $nosign,
-               'nophoto' => $nophoto,
-               'expireHour' => $hour,
-               'expireDay' => $day,
-               'streetSignImage' => $parking[0]
-      */
 
       if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
 
