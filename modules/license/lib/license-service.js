@@ -143,7 +143,7 @@ module.exports = class LicenseService extends Service {
     // a hyphen to see if its onfido. If so we re-run it.
     //
     if (!license.linkedUserId || (license.linkedUserId && license.linkedUserId.match(/-/)) || (license.checkId && license.checkId.match(/-/))) {
-      let userLink      = yield Verification.createUserLink(user, Object.extend({}, data, license), _user);
+      let userLink      = yield Verification.createUserLink(user, Object.assign({}, data, license), _user);
       data.linkedUserId = userLink.id;
       data.status       = 'provided';
     }
