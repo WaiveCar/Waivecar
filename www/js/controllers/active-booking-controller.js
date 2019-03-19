@@ -28,7 +28,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var ctrl = this;
   var expired;
 
-  if($data.me.hasTag) {
+  if($data.me && $data.me.hasTag) {
     ctrl.hasAutoExtend = $data.me.hasTag('extend') === 1;
   } else {
     ctrl.hasAutoExtend = false;
