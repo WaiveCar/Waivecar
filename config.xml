@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget android-packageName="com.waivecardrive.app" android-versionCode="921" id="com.waivecar.app" ios-CFBundleIdentifier="com.waivecar.app" ios-CFBundleVersion="163" version="1.0.66" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-packageName="com.waivecardrive.app" android-versionCode="922" id="com.waivecar.app" ios-CFBundleIdentifier="com.waivecar.app" ios-CFBundleVersion="164" version="1.0.67" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
