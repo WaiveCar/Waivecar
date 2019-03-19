@@ -303,13 +303,17 @@ function DashboardController ($scope, $rootScope, $injector) {
         .catch(endRideFailure);
     }).catch(function(obj) {
       $ionicLoading.hide();
+      ctrl.ending = false;
       if(!attempt) {
         attempt = 1;
       }
-      console.log("Unable to end the ride, trying again shortly (" + attempt + ")");
-      $timeout(function() {
-        endRide(carId, bookingId, attempt + 1);
-      }, 500);
+
+      if(carId && bookingId) {
+        console.log("Unable to end the ride, trying again shortly (" + attempt + ")", carId, bookingId);
+        $timeout(function() {
+          endRide(carId, bookingId, attempt + 1);
+        }, 500);
+      }
     });
   }
 
