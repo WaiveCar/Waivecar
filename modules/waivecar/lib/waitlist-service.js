@@ -533,7 +533,7 @@ module.exports = {
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
       try {
-        if (opts.isWaivework) {
+        if (params.isWaivework) {
           yield userRecord.update({isWaivework: true});
         }
         emailOpts = {
