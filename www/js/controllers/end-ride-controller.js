@@ -104,10 +104,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           $ride.setBooking(booking.id);
 
           var start = _.find(booking.details, { type: 'start' });
-          var end = _.find(booking.details, { type: 'end' });
           ctrl.hours = moment().diff(moment(start.createdAt), 'hours');
-          ctrl.minutes = moment().diff(moment(start.createdAt), 'minutes');
-          ctrl.minutes = ("" + (100 + ctrl.minutes % 60)).slice(1);
 
           return loadCar(booking.carId);
         })
@@ -162,30 +159,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           ctrl.geocodeLoaded = true;
 
           $ride.state.parkingLocation.addressLine1 = location.display_name;
-          ctrl.address = location.address;
-          var addr = ctrl.address;
-          //
-          // This is an unfortunate consequence of how things are being scrolled in android
-          // see https://github.com/clevertech/Waivecar/issues/547 ... there's probably
-          // clever ways to do this in CSS which are error-prone and fragile.  So instead,
-          // because the input scroll appears to look for adjacent elements, we need to
-          // put this address in there for every instance of the ng-if clause... in order
-          // to do it 'once' (as in DRY), we do it here.
-          //
-          ctrl.address_markup = [ ];
-          if(addr.house_number || addr.road) {
-            ctrl.address_markup.push('<div>' + [addr.house_number, addr.road].join(' ').trim() + '</div>');
-          }
-          if(addr.city) {
-            addr.city += ', ';
-          } else {
-            addr.city = '';
-          }
-          ctrl.address_markup = ctrl.address_markup.concat([
-              addr.city,
-              addr.state,
-              addr.postcode
-          ]).join(' ');
         })
         .catch(function(err) {
           console.log('geocode failed: ', err);
