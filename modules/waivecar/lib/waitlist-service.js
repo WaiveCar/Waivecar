@@ -11,6 +11,7 @@ let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
 let moment        = require('moment');
+let scheduler = Bento.provider('queue').scheduler;
 let OrderService = require('../../shop/lib/order-service.js');
 
 
@@ -549,14 +550,14 @@ module.exports = {
       try {
         if (params.isWaivework) {
           yield userRecord.update({isWaivework: true});
+          scheduler.add('waivework-reminder', {
+            uid   : `waivework-reminder-${userRecord.id}`,
+            timer : {value: 8, type: 'hours'},
+            data  : {
+              userId: userRecord.id,
+            }
+          });
         }
-        scheduler.add('waivework-reminder', {
-          uid   : `waivework-reminder-${ booking.id }-${usereRecord.id}`,
-          timer : { value : 8, type  : 'hours' },
-          data  : {
-            userId: userRecord.id
-          }
-        });
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
@@ -630,6 +631,13 @@ module.exports = {
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
     context.intro = `Welcome to the WaiveWork program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our regular billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following regular billing day. Your initial payment will be due when you pick up the car. The next steps are to schedule a pickup appointment and set up your account. After you have set your password, please add a payment method to save time on the day of your appoint. Additionally, please review the terms of Waivework <a href=”http://waivecar.com/pic/waivework-agreement.pdf”>here</a>. Frank will be in touch about getting you a customized version of these terms for you to e-sign. If you have any questions, please don't hesitate to email Frank, our director of WaiveWork by clicking <a href="mailto:frank@waive.car">here</a>.`;
+    scheduler.add('waivework-reminder', {
+      uid   : `waivework-reminder-${opts.user.id}`,
+      timer : {value: 8, type: 'seconds'},
+      data  : {
+        userId: opts.user.id,
+      },
+    });
     try {
       emailOpts = {
         to       : opts.email,
@@ -639,13 +647,6 @@ module.exports = {
         context  : context,
       };
       yield email.send(emailOpts);
-      scheduler.add('waivework-reminder', {
-        uid   : `waivework-reminder-${ booking.id }-${usereRecord.id}`,
-        timer : { value : 8, type  : 'hours' },
-        data  : {
-          userId: opts.user.id
-        }
-      });
     } catch(err) {
       log.warn('Failed to deliver notification email: ', emailOpts, err);      
     }
