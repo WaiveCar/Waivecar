@@ -191,10 +191,24 @@ module.exports = {
             to       : 'dennis.mata.t7h8@statefarm.com',
             cc       : 'frank@waive.car',
             from     : config.email.sender,
-            subject  : `${data['firstName']} ${data['lastName']} - WaiveCar`,
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
             template : 'waivework-signup',
             context  : {
               ...data
+            }
+          });
+        } catch(ex) {
+          console.log("Unable to send email", ex);
+        }
+        try {
+          let email = new Email();
+          yield email.send({
+            to       : data.email,
+            from     : config.email.sender,
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+            template : 'waivework-confirmation',
+            context  : {
+              name: `${data['firstName']} ${data['lastName']}`,
             }
           });
         } catch(ex) {
