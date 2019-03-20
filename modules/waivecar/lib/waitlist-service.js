@@ -550,6 +550,13 @@ module.exports = {
         if (params.isWaivework) {
           yield userRecord.update({isWaivework: true});
         }
+        scheduler.add('waivework-reminder', {
+          uid   : `waivework-reminder-${ booking.id }-${usereRecord.id}`,
+          timer : { value : 8, type  : 'hours' },
+          data  : {
+            userId: userRecord.id
+          }
+        });
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
@@ -632,6 +639,13 @@ module.exports = {
         context  : context,
       };
       yield email.send(emailOpts);
+      scheduler.add('waivework-reminder', {
+        uid   : `waivework-reminder-${ booking.id }-${usereRecord.id}`,
+        timer : { value : 8, type  : 'hours' },
+        data  : {
+          userId: opts.user.id
+        }
+      });
     } catch(err) {
       log.warn('Failed to deliver notification email: ', emailOpts, err);      
     }
