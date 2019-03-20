@@ -228,73 +228,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     }
 
-    // obj is returned by the car and should have a long/lat
-    // first and foremost the users' gps is used.
-        /*
-    service.canEndHereCheck = function(bookingId) {
-      return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(res) {
-        console.log('hi', res);
-      }).catch(function(err) {
-        $message.error(err);
-      });
-        locations.dropoff().$promise.then(function(locationList) {
-        // We have order precendence here ...
-        var METERTOFEET = 3.28084;
-        var precedence = {
-          none: 0,
-          zone: 1,
-          hub: 2,
-          homebase: 3
-        };
-        var type = 'none';
-        var resLocation;
-
-        // If the charge isn't ok then we can only end at hubs, not zones.
-        
-        if(!service.isChargeOkay(car.id, car)) {
-          locationList = locationList.filter(function(location) { return ['hub','homebase', 'chargeStation'].indexOf(location.type) !== -1; });
-        }
-
-        for(var ix = 0; ix < locationList.length; ix++) {
-          var location = locationList[ix];
-          //
-          // There was a bug around 2017-12 (#1038) where it was presumed that the distance function
-          // returned meters but in fact it was miles. To quickly fix the issue, the radius for
-          // locations was changed to be expressed in miles ... as in it went from a number like
-          // "50" to, in this case "0.0031". This logic here is kinda about future proofing. We
-          // want to make sure that we have a coherent codebase that doesn't just convert things
-          // all over the place but we need a transitional bridge because people will be using
-          // the old version of the code when this is deployed (2018-01).
-          //
-          // So if there's a radius and it's a really small number, we'll presume this is in
-          // legacy miles and we'll just figure it out.  Eventually, probably in 2018-04 which
-          // is the future as of this writing, the old version of the app with the bug will have
-          // been replaced, likely through a forced upgrade and this extra step can be removed.
-          //
-          if(location.radius && location.radius < 0.1) {
-            location.radius *= (3 * 5280);
-          }
-          //console.log($distance.fallbackInMeters(location, car), location, location.name, precedence[location.type], precedence[type]);
-          //if(location.radius) {
-          //  console.log($distance.fallbackInMeters(location, car) * METERTOFEET, location.radius);
-          //}
-          if (precedence[location.type] > precedence[type] && (
-                location.radius && $distance.fallbackInMeters(location, car) * METERTOFEET < location.radius ||
-                location.shape && GeofencingService.insideFastCheck(car, location.shape)
-              )
-          ) {
-            //console.log("Using " + location.name);
-            resLocation = location;
-            type = location.type;
-          }
-        }
-        if (type === 'none') {
-          return false;
-        }
-        return resLocation;
-    };
-          */
-
     service.setParkingDetails = function(details) {
       service.state.parkingDetails = details;
     };
@@ -368,21 +301,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    /*
-    service.isChargeOkay = function(id, obj) {
-      // see https://github.com/WaiveCar/Waivecar/issues/828
-      // Complaints about the cars not being able to end below 25 miles
-      // Really we need to be system-wide consistent with this number.
-      return genericCheck(id, obj, function(status) {
-        console.log(status.model);
-        var stub = status.model.toLowerCase().split(' ')[0];
-        var multiplier = (stub === 'spark') ? 0.70 : 1.35;
-        return (multiplier * status.charge) > 20 || status.isCharging;
-        return true;
-      });
-    };
-    */
-
     service.lockCar = function(id) {
       return $data.resources.cars.lock({ id: id });
     };
@@ -396,15 +314,6 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.init = function(current) {
-      /*
-      if(service._init) {
-        console.log($data.resources.bookings);
-        console.log('Double entry $ride.init');
-        return;
-      }
-      service._init = true;
-      */
-
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
         if(!current) {
