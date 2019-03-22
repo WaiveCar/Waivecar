@@ -24,7 +24,7 @@ scheduler.process('waivework-reminder', function*(job) {
     text += '</ul>';
   } else {
     text +=
-      'Thanks for already having set up your account. The only remaining step to complete if you have already set up a pickup appointment is to make sure you have received and esigned the WaiveWork agreement';
+      'Thanks for already having set up your account. The only remaining step to complete if you have already set up a pickup appointment is to make sure you have received and esigned the WaiveWork agreement.';
   }
   text += '</p>';
   try {
