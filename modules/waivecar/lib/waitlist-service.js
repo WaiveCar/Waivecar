@@ -188,7 +188,7 @@ module.exports = {
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         yield record.update({
-          notes: [JSON.stringify({data, number: data.licensesNumber})],
+          notes: JSON.stringify([{data, number: data.licensesNumber}]),
         });
         try {
           let email = new Email();
