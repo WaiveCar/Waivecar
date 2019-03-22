@@ -9,7 +9,10 @@ scheduler.process('waivework-reminder', function*(job) {
   let name = `${user.firstName} ${user.lastName}`;
   let text = '<p>Thanks for signing up for WaiveWork!';
   if (!user.verifiedPhone || !user.stripeId) {
-    text += 'Before your pickup appointment please make sure to: <ul>';
+    text += ' Before your pickup appointment please make sure to: <ul>';
+    if (!user.password) {
+      text += '<li>Set up your password for your online account</li>';
+    }
     if (!user.verifiedPhone) {
       text += '<li>Verify your phone number</li>';
     }
