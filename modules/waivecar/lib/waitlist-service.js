@@ -188,7 +188,7 @@ module.exports = {
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         yield record.update({
-          notes: JSON.stringify({data, number: data.licensesNumber}),
+          notes: [JSON.stringify({data, number: data.licensesNumber})],
         });
         try {
           let email = new Email();
@@ -561,16 +561,25 @@ module.exports = {
             }
           });
           if (record.notes) {
-            // The way that I have stored user info in Waitlist not great, but should be able to copy license info to our system when they are let in
+            // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
+            // provided license info to our system when they are let in
             let userNotes = JSON.parse(record.notes).data;
-            if (userNotes.accountType && userNotes.accountType === 'waivework') {
-              try {
-                yield LicenseService.store({...userNotes, number: userNotes.licenseNumber, userId: userRecord.id, fromComputer: true});
-                console.log('after license store');
-              } catch(e) {
-                console.log('error storing license', e);
+            for (let note of userNotes) {
+              if (note.accountType && note.accountType === 'waivework') {
+                try {
+                  yield LicenseService.store({
+                    ...note, 
+                    number: note.licenseNumber, 
+                    street1: note.address1,
+                    street2: note.address2,
+                    userId: userRecord.id, 
+                    fromComputer: true,
+                  });
+                } catch(e) {
+                  console.log('error storing license', e);
+                }
               }
-            }
+            };
           }
         }
         emailOpts = {
