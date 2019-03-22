@@ -12,7 +12,8 @@ let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
 let moment        = require('moment');
 let scheduler = Bento.provider('queue').scheduler;
-let OrderService = require('../../shop/lib/order-service.js');
+let OrderService = require('../../shop/lib/order-service');
+let LicenseService = require('../../license/lib/license-service');
 
 
 let UserService = require('./user-service');
@@ -181,11 +182,14 @@ module.exports = {
 
       record = new Waitlist(data);
       yield record.save();
-      if(data['accountType'] == 'waivework') {
+      if(data.accountType == 'waivework') {
         data = {...payload, ...data};
         data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+        yield record.update({
+          notes: JSON.stringify({data, number: data.licensesNumber}),
+        });
         try {
           let email = new Email();
           yield email.send({
@@ -535,7 +539,6 @@ module.exports = {
       let context = Object.assign({}, params || {}, {
         name: fullName
       });
-
       // If a user set their password through signup then we transfer it over
       if(record.password) {
         template = 'letin-email-nopass';
@@ -552,11 +555,23 @@ module.exports = {
           yield userRecord.update({isWaivework: true});
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
-            timer : {value: 8, type: 'seconds'},
+            timer : {value: 8, type: 'hours'},
             data  : {
               userId: userRecord.id,
             }
           });
+          if (record.notes) {
+            // The way that I have stored user info in Waitlist not great, but should be able to copy license info to our system when they are let in
+            let userNotes = JSON.parse(record.notes).data;
+            if (userNotes.accountType && userNotes.accountType === 'waivework') {
+              try {
+                yield LicenseService.store({...userNotes, number: userNotes.licenseNumber, userId: userRecord.id, fromComputer: true});
+                console.log('after license store');
+              } catch(e) {
+                console.log('error storing license', e);
+              }
+            }
+          }
         }
         emailOpts = {
           to       : record.email,
@@ -633,7 +648,7 @@ module.exports = {
     context.intro = `Welcome to the WaiveWork program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our regular billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following regular billing day. Your initial payment will be due when you pick up the car. The next steps are to schedule a pickup appointment and set up your account. After you have set your password, please add a payment method to save time on the day of your appoint. Additionally, please review the terms of Waivework <a href=”http://waivecar.com/pic/waivework-agreement.pdf”>here</a>. Frank will be in touch about getting you a customized version of these terms for you to e-sign. If you have any questions, please don't hesitate to email Frank, our director of WaiveWork by clicking <a href="mailto:frank@waive.car">here</a>.`;
     scheduler.add('waivework-reminder', {
       uid   : `waivework-reminder-${opts.user.id}`,
-      timer : {value: 8, type: 'seconds'},
+      timer : {value: 8, type: 'hours'},
       data  : {
         userId: opts.user.id,
       },
