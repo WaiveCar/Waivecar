@@ -552,7 +552,7 @@ module.exports = {
           yield userRecord.update({isWaivework: true});
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
-            timer : {value: 8, type: 'hours'},
+            timer : {value: 8, type: 'seconds'},
             data  : {
               userId: userRecord.id,
             }
