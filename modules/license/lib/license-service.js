@@ -68,7 +68,6 @@ module.exports = class LicenseService extends Service {
         message : `Your date of birth appears to have some errors. Are you really ${age} years old?`
       }, 400);
     }
-
     let license = new License(data);
 
     if (license.birthDate) {
@@ -80,7 +79,6 @@ module.exports = class LicenseService extends Service {
     yield license.save();
 
     license.relay('store');
-    console.log('stored license', license);
     return license;
   }
 
