@@ -188,7 +188,7 @@ module.exports = {
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         yield record.update({
-          notes: JSON.stringify([{data, number: data.licensesNumber}]),
+          notes: JSON.stringify([{...data, number: data.licensesNumber}]),
         });
         try {
           let email = new Email();
@@ -563,7 +563,7 @@ module.exports = {
           if (record.notes) {
             // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
             // provided license info to our system when they are let in
-            let userNotes = JSON.parse(record.notes).data;
+            let userNotes = JSON.parse(record.notes);
             for (let note of userNotes) {
               if (note.accountType && note.accountType === 'waivework') {
                 try {
@@ -572,6 +572,8 @@ module.exports = {
                     number: note.licenseNumber, 
                     street1: note.address1,
                     street2: note.address2,
+                    expirationDate: moment(note.expiration).format(),
+                    birthDate: moment(note.birthDate).format(),
                     userId: userRecord.id, 
                     fromComputer: true,
                   });
