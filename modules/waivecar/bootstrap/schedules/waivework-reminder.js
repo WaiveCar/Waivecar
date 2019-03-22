@@ -8,7 +8,7 @@ scheduler.process('waivework-reminder', function*(job) {
   let user = yield User.findById(userId);
   let name = `${user.firstName} ${user.lastName}`;
   let text = '<p>Thanks for signing up for WaiveWork!';
-  if (!user.verifiedPhone || !user.stripeId) {
+  if (!user.verifiedPhone || !user.stripeId || !user.password) {
     text += ' Before your pickup appointment please make sure to: <ul>';
     if (!user.password) {
       text += '<li>Set up your password for your online account</li>';
