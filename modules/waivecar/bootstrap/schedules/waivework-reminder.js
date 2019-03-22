@@ -30,8 +30,8 @@ scheduler.process('waivework-reminder', function*(job) {
       to: user.email,
       cc: 'frank@waive.car',
       from: config.email.sender,
-      subject: `${data['firstName']} ${
-        data['lastName']
+      subject: `${user.firstName} ${
+        user.lastName
       } - Upcoming WaiveWork Pickup Appointment`,
       template: 'waivework-reminder',
       context: {
