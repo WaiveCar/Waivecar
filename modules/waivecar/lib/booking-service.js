@@ -34,6 +34,7 @@ let emailConfig = Bento.config.email;
 
 // ### Models
 let File           = Bento.model('File');
+let Report         = Bento.model('Report');
 let Order          = Bento.model('Shop/Order');
 let User           = Bento.model('User');
 let Car            = Bento.model('Car');
@@ -785,6 +786,18 @@ module.exports = class BookingService extends Service {
         where : {
           collectionId : booking.collectionId || undefined
         }
+      });
+    }
+    booking = booking.toJSON();
+    if (opts.reports) {
+      booking.reports = yield Report.find({
+        where : {
+          bookingId: booking.id,
+        }, 
+        include : [{
+          model : 'File',
+          as    : 'file'
+        }],
       });
     }
 

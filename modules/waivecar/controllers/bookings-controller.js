@@ -104,7 +104,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.show = function *(id) {
-    return yield booking.show(id, this.auth.user);
+    return yield booking.show(id, this.auth.user, this.query);
   };
 
   controller.getParkingDetails = function *(id) {
