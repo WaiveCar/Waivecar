@@ -47,6 +47,7 @@ module.exports = class RideDetails extends React.Component {
   }
   componentDidMount() {
     var ix = 0;
+    var threshold = 0.0004;
     var ival = setInterval(function(){
       var tempDriving = 0, tempStill = 0, lastLat = 0, lastLong = 0, lastTime = 0;
       if (this.props.carPath.length != 0) {
@@ -87,7 +88,7 @@ module.exports = class RideDetails extends React.Component {
             }
           }
           //If car is not moving
-          else if (Math.abs(this.props.carPath[i][0] - lastLat) < .0002 && Math.abs(this.props.carPath[i][1] - lastLong) < .0002 ) {
+          else if (Math.abs(this.props.carPath[i][0] - lastLat) < threshold && Math.abs(this.props.carPath[i][1] - lastLong) < threshold ) {
             if(tempDriving != 0) {
               data.switchStat.push('notMoving');
               data.time.push(this.getTTime(tempDriving)); //hours

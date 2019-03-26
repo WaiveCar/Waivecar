@@ -136,7 +136,7 @@ There are some modest fees in order to keep our fleet bright and shiny.
 * **Damage to the interior** Our costs to repair
 There's a few unfortunate events that can happen where we have pass the costs on to you:
 * **Public Garage Parking Fee** Cost to remove vehicle from garage + $40 parking violation
-* **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
+* **Parking Ticket** Ticket Price + $25.00 minimum handling fee (unless user pays themselves)
 * **Impounded Vehicle** Cost of impound fee + $100 recovery
 If the car is physically damaged during the rental due to things such as an accident, we will hold
 $1,000 deposit and will return it to you if the insurance determines you are not at fault.

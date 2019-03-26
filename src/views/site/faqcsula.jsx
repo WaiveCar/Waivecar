@@ -111,7 +111,7 @@ module.exports = class Faqcsula extends Component {
           <li><strong>Pet not in carrier/odor</strong> $50</li>
           <li><strong>Damage to the interior</strong> Our costs to repair There’s a few unfortunate events that can happen where we have pass the costs on to you:</li>
           <li><strong>Public Garage Parking Fee</strong> Cost to remove vehicle from garage + $40 parking violation</li>
-          <li><strong>Parking Ticket</strong> Ticket Price + $20.00 Handling fee (unless user pays themselves)</li>
+          <li><strong>Parking Ticket</strong> Ticket Price + $25.00 minimum handling fee (unless user pays themselves)</li>
           <li><strong>Impounded Vehicle</strong> Cost of impound fee + $100 recovery If the car is physically damaged during the rental due to things such as an accident, we will hold $1,000 deposit and will return it to you if the insurance determines you are not at fault.</li>
           </ul>
           </div>

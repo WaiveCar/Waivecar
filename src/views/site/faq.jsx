@@ -143,7 +143,7 @@ module.exports = class Faq extends Component {
           <ul>
           <li><strong>Public Garage Parking Fee</strong> Cost to remove vehicle from garage + $40 parking violation</li>
           <li><strong>Vehicle Recovery (inside Santa Monica)</strong> Miscellaneous Recovery Costs</li>
-          <li><strong>Parking Ticket</strong> Ticket Price + $20.00 Handling fee (unless user pays themselves)</li>
+          <li><strong>Parking Ticket</strong> Ticket Price + $25.00 minimum handling fee (unless user pays themselves)</li>
           <li><strong>Impounded Vehicle</strong> Cost of impound fee + $100 recovery</li>
           </ul>
           <aside>

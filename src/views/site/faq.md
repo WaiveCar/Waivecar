@@ -180,7 +180,7 @@ There's a few unfortunate events that can happen where we have pass the costs on
 
 * **Public Garage Parking Fee** Cost to remove vehicle from garage + $40 parking violation
 * **Vehicle Recovery (inside Santa Monica)** Miscellaneous Recovery Costs
-* **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
+* **Parking Ticket** Ticket Price + $25.00 minimum handling fee (unless user pays themselves)
 * **Impounded Vehicle** Cost of impound fee + $100 recovery
 
 <aside>The *best* way to avoid fees is to make sure the vehicle doesn't ever get too low. Remember, there's plenty of free places to charge a WaiveCar.</aside>
