@@ -28,7 +28,7 @@ module.exports = class GMap extends React.Component {
 
   // Creates a new skobbler map and adds it to the current map state.
   componentDidMount() {
-    console.log(this.props);
+    //console.log(this.props);
     this.loadMap();
   }
 

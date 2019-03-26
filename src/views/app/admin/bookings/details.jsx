@@ -30,8 +30,8 @@ module.exports = class RideDetails extends React.Component {
       data.address[i] = addressSite;
 
       if (lastObject) {
-        console.log(lastObject);
-        console.log(data.address);
+        //console.log(lastObject);
+        //console.log(data.address);
       }
       this.setState();
     });

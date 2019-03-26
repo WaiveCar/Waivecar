@@ -109,7 +109,7 @@ module.exports = class BookingsView extends React.Component {
         carId: this.state.car.id,
         userId: this.state.user.id,
         bookingId: this.state.booking.id }, (err, model) => {
-        console.log(err, model);
+        //console.log(err, model);
       });
     }
   }
@@ -205,7 +205,7 @@ module.exports = class BookingsView extends React.Component {
    * @param {Object}
    */
   renderPayments(payments) {
-    console.log('payments: ', payments)
+    //console.log('payments: ', payments)
     return (
       <BookingPayment payments={ payments }/>
     );
