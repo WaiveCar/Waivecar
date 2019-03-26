@@ -625,7 +625,7 @@ class CarsShowView extends React.Component {
                               <a className='btn btn-sm col-xs-12 col-md-6' onClick={() => this.instaEnd(car.id)}>End Booking</a>
                             </div>
                           </span> :
-                          <span>No booking. <a href="#" onClick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
+                          <span>No booking. <a href="#" onClick={ this.service.executeCommand.bind(this, car, 'kick', null)}>Kick user out</a></span>
                       }
                     </div>
                   : <div>
