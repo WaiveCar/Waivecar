@@ -779,19 +779,19 @@ module.exports = class BookingService extends Service {
         }
       });
     }
-
     booking = booking.toJSON();
-    let reports = yield Report.find({
-      where : {
-        bookingId: booking.id,
-      }, 
-      include : [{
-        model : 'File',
-        as    : 'file'
-      }],
-    });
-    booking.reports = reports;
-    console.log('booking reports: ', booking.reports);
+    if (opts.reports) {
+      booking.reports = yield Report.find({
+        where : {
+          bookingId: booking.id,
+        }, 
+        include : [{
+          model : 'File',
+          as    : 'file'
+        }],
+      });
+    }
+
     return booking;
   }
 
