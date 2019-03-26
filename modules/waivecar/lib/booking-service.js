@@ -20,6 +20,7 @@ let OrderService = Bento.module('shop/lib/order-service');
 let UserLog      = require('../../log/lib/log-service');
 let LogService   = require('./log-service');
 let Tikd         = require('./tikd-service');
+let License      = require('../../license/lib/license-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment-timezone');
 let redis        = require('./redis-service');
@@ -458,6 +459,14 @@ module.exports = class BookingService extends Service {
     t("booking-done");
 
     yield redis.doneWithIt(lockKeys);
+
+    //
+    // Ok cool, now everything is done and the user has the car. messages have been sent
+    // and the person can go get it. But wait, we are going to do one last check before
+    // they can start their ride. This is in #1510 ... we need to have their address
+    // on file before we can continue.
+    //
+    //yield this.makeSureWeHaveLicenseAddress();
 
     if (data.isWaivework) {
       yield booking.addFlag('Waivework');
@@ -1693,6 +1702,7 @@ module.exports = class BookingService extends Service {
   static *_complete(id, _user, query, payload) {
     let lockKeys = yield redis.shouldProcess('booking-complete', id);
     let errorAtEnd = false;
+    let force = query && query.force;
     let details;
     if (!lockKeys) {
       return;
@@ -1803,7 +1813,7 @@ module.exports = class BookingService extends Service {
       // ---
 
     } catch(ex) {
-      if (!(query && query.force) || !booking || !car || !user) {
+      if (!force || !booking || !car || !user) {
         yield bail(ex);
       }
     }
@@ -1818,7 +1828,7 @@ module.exports = class BookingService extends Service {
     } catch(ex) {
       if(ex.code === 'TAG_WARNING') {
         errorAtEnd = ex;
-      } else if (!(query && query.force) || !booking || !car || !user) {
+      } else if (!force || !booking || !car || !user) {
         yield bail(ex);
       }
     }
@@ -2463,6 +2473,14 @@ module.exports = class BookingService extends Service {
         }
       }
     }
+  }
+
+  static *makeSureWeHaveLicenseAddress(user) {
+    // Our oh-so clever dynamic interface for custom prompts doesn't support forms so
+    // for backwards compatibility we'll need to forward the user off to a page where
+    // they can fill this information out.
+    //
+
   }
 
   // Determines if user has booked car recently
