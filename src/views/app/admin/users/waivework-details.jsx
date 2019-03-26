@@ -66,6 +66,34 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  sendEmail() {
+    let {user} = this.props;
+    let {perWeek} = this.state;
+    let opts = {
+      user,
+      perWeek,
+    };
+    if (perWeek) {
+      api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        snackbar.notify({
+          type: 'success',
+          message: 'Email successfully sent',
+        });
+      });
+    } else {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Please enter a daily amount.',
+      });
+    }
+  }
+
   carSearch() {
     api.get(
       `/cars/search/?search=${this.state.carSearchWord}`,
@@ -321,12 +349,22 @@ class WaiveWorkDetails extends Component {
                   Find Car
                 </button>
               </div>
-              Amount Per Week:
-              <input
-                type="number"
-                value={perWeek}
-                onChange={e => this.setState({perWeek: e.target.value})}
-              />
+              <div className="row" style={{marginTop: '4px'}}>
+                Amount Per Week:
+                <input
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  type="number"
+                  value={perWeek}
+                  onChange={e => this.setState({perWeek: e.target.value})}
+                />
+              </div>
+              <div className="row" style={{marginTop: '4px'}}>
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => this.sendEmail()}>
+                  Send Email
+                </button>
+              </div>
               {searchResults &&
                 searchResults.map((item, i) => {
                   return (
