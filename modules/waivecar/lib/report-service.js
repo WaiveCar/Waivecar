@@ -59,7 +59,7 @@ module.exports = {
           if(booking) {
             let status = (booking.status !== 'started') ? booking.status : moment.utc(
                 moment().utc().diff(booking.createdAt, 'milliseconds')
-              ).format("H:mm");
+              ).format("D:H:mm");
 
             report.booked.push([
               license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location

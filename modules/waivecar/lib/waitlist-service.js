@@ -10,6 +10,7 @@ let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
+let moment        = require('moment');
 let OrderService = require('../../shop/lib/order-service.js');
 
 
@@ -153,7 +154,7 @@ module.exports = {
       // just send out emails and not create duplicate records
       if (user) {
         yield this.letInByRecord(user, _user);
-
+        
         // we set a magical custom flag
         
         // FIELD
@@ -180,15 +181,20 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data['accountType'] == 'waivework') {
+        data = {...payload, ...data};
+        data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
+        data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
+        data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         try {
           let email = new Email();
           yield email.send({
-            to       : 'frank@waive.car',
+            to       : 'dennis.mata.t7h8@statefarm.com',
+            cc       : 'frank@waive.car',
             from     : config.email.sender,
-            subject  : `WaiveWork signup ${data['firstName']} ${data['lastName']}`,
-            template : 'blank',
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveCar`,
+            template : 'waivework-signup',
             context  : {
-              payload: data
+              ...data
             }
           });
         } catch(ex) {
@@ -401,6 +407,7 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
+    console.log('recordList in letInByRecord', recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -409,13 +416,19 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
+      waivework: "Welcome to the Waivework program. If you have received this email, it means you have been approved!",
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
+    }
+    if (recordList[0].accountType === 'waivework') {
+      opts.intro = 'waivework'
+      
     }
 
     opts.intro = opts.intro || 'waitlist';
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
+      params.isWaivework = true;
     }
     params.intro = introMap[opts.intro];
 
@@ -530,6 +543,7 @@ module.exports = {
   },
 
   *letIn(payload, _user) {
+    console.log('payload for letin', payload);
     // This is "clever" because we want a round-robin fashion.
     // So the sql that we want is essentially:
     //
@@ -550,6 +564,7 @@ module.exports = {
     let recordList = [];
     if('idList' in payload) {
       recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
+      console.log('recordlist above', recordList);
     } else {
       let letInCount = parseInt(payload.amount, 10);
 
@@ -566,6 +581,7 @@ module.exports = {
           ],
           limit: letInCount
         });
+        console.log('recordlist below', recordList);
       } else {
         log.warn(`0 people requested to be let in. This may be an error`);
       }
