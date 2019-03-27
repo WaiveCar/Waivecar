@@ -1,13 +1,10 @@
 'use strict';
 
 let booking = require('../lib/booking-service');
+let Hacks   = require('../lib/diryhacks');
 let error   = Bento.Error;
 
 Bento.Register.Controller('BookingsController', function(controller) {
-
-  function buttonhack(link) {
-    return `<a href="${link}" class="button-balanced button button-block" style="margin-bottom:-57px;z-index: 1000;">Upgrade Now</a>`;
-  }
 
   function *checkVersion(obj, message){
     var payload = obj.payload;
@@ -69,11 +66,11 @@ Bento.Register.Controller('BookingsController', function(controller) {
       }
 
       if(iPhone) {
-        copy = buttonhack("itms-apps://itunes.apple.com/app/id1051144802");
+        copy = Hacks.button("itms-apps://itunes.apple.com/app/id1051144802", 'Upgrade Now');
       } else if ( version < minMarketLink) {
         copy = 'Please upgrade WaiveCar at the Google Play Store.'; 
       } else {
-        copy = buttonhack("market://details?id=com.waivecardrive.app");
+        copy = Hacks.button("market://details?id=com.waivecardrive.app", 'Upgrade Now');
       }
 
       throw error.parse({
