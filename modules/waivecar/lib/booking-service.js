@@ -552,7 +552,7 @@ module.exports = class BookingService extends Service {
         text: `:fleur_de_lis: ${driver.link()} to be charged $${(
           proratedChargeAmount / 100
         ).toFixed(2)} for as the initial payment for
-        the first ${daysLeft !== 1 ? daysLeft : numDays} days of their Waivework Rental`,
+        the first ${numDays - daysLeft > 0 ? numDays - daysLeft : daysLeft} days of their Waivework Rental`,
       },
       {channel: '#waivework-charges'},
     );
