@@ -161,7 +161,6 @@ var checkBooking = co.wrap(function *(booking) {
     // Send an alert to 'rental alerts' if a new user (less than 5 trips) has taken a car for longer than 3 hours. 
     //
     if (duration >= trigger && !booking.isFlagged('new-user-long-rental')) {
-      yield booking.flag('new-user-long-rental');
       let newUserCutoff = 5;
       booking_history = yield Booking.find({ 
         where : { userId : user.id },
@@ -169,6 +168,7 @@ var checkBooking = co.wrap(function *(booking) {
       });
 
       if(booking_history.length < newUserCutoff) {
+        yield booking.flag('new-user-long-rental');
         yield notify.notifyAdmins(`:cactus: ${ user.link() } drove ${ car.link() } ${ duration } minutes and has only rented ${ booking_history.length } times.`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
