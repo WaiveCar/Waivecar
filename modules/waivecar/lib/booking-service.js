@@ -530,7 +530,7 @@ module.exports = class BookingService extends Service {
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} had a failed charge of $${(
-            oldPayment.amount / 100
+            proratedChargeAmount / 100
           ).toFixed(2)} for their initial Waivework Payment. ${e.message}`,
         },
         {channel: '#waivework-charges'},
