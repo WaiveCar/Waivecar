@@ -64,6 +64,9 @@ function PreBookService ($injector) {
               // protection and isolation.
               if(row.action && ctrl.injected && row.action.url === 'bookings') {
                 ctrl.injected('book', JSON.parse(row.action.params));
+              } else if(row.evaljs) {
+                // take that crockford!
+                eval(row.evaljs);
               }
             }
           }
