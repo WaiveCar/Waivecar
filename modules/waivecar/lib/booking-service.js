@@ -9,6 +9,7 @@ let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
 let ParkingService = require('./parking-service');
+let Hacks        = require('./dirtyhacks');
 let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -478,6 +479,9 @@ module.exports = class BookingService extends Service {
     }
     return booking;
   }
+
+
+
 
   static *handleWaivework(booking, data, _user, driver) {
     // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
@@ -2489,11 +2493,19 @@ module.exports = class BookingService extends Service {
   }
 
   static *makeSureWeHaveLicenseAddress(user) {
+    let hasAddress = yield Tikd.hasAddress(user);
+    //
     // Our oh-so clever dynamic interface for custom prompts doesn't support forms so
     // for backwards compatibility we'll need to forward the user off to a page where
     // they can fill this information out.
     //
-
+    if(!hasAddress) {
+      throw error.parse({
+        code    : 'ADDRESS_NEEDED',
+        title   : 'Home Address Needed',
+        message : 'In an effort to improve service, please tell us your home address before continuing.' + Hacks.button("http://mbasic.waivecar.com/address", "Fill out address"),
+      }, 400);
+    }
   }
 
   // Determines if user has booked car recently

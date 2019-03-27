@@ -47,6 +47,17 @@ module.exports = {
     }
   },
 
+  *hasAddress(user, license) {
+    if(!license) {
+      license = yield License.getLicenseByUserId(user.id);
+    }
+    //
+    // Make sure the following fields are non-null and not the empty-string
+    // street2 is intentionally excluded.
+    //
+    return ['street1', 'city', 'state', 'zip'].reduce((val, row) => val && !!license[row], true);
+  },
+
   *addCarIfNeeded(car) {
     if (!(yield car.hasTag('tikd'))) {
       console.log("adding " + car.license);
