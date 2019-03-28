@@ -1,7 +1,7 @@
 'use strict';
 
 let booking = require('../lib/booking-service');
-let Hacks   = require('../lib/diryhacks');
+let Hacks   = require('../lib/dirtyhacks');
 let error   = Bento.Error;
 
 Bento.Register.Controller('BookingsController', function(controller) {
