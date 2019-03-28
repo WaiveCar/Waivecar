@@ -679,7 +679,6 @@ module.exports = class BookingService extends Service {
     if (bookings[0] && query.includeWaiveworkPayment) {
       // The booking that the waivework payment is attached to must first be JSONified 
       // so that properties may be added to it
-      bookings[0] = bookings[0].toJSON();
       bookings[0].waiveworkPayment = (yield WaiveworkPayment.findOne({
         where: {
           bookingId: bookings[0].id,
