@@ -115,8 +115,7 @@ module.exports = class LicenseService extends Service {
       return yield License.find(query);
     }
 
-    query.where.userId = _user.id;
-    return yield License.find(query);
+    return [yield _user.getLicense()];
   }
 
   static *show(id, _user) {
