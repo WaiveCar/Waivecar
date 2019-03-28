@@ -115,8 +115,7 @@ module.exports = class LicenseService extends Service {
       return yield License.find(query);
     }
 
-    query.where.userId = _user.id;
-    return yield License.find(query);
+    return [yield _user.getLicense()];
   }
 
   static *show(id, _user) {
@@ -124,6 +123,30 @@ module.exports = class LicenseService extends Service {
     let user    = yield this.getUser(license.userId);
 
     this.hasAccess(user, _user);
+
+    return license;
+  }
+
+  // normally (see below) we need to know the database license id to
+  // run the update, which is fucking stupid. We know the
+  // user and that's enough.
+  static *unspecificUpdate(data, _user) {
+    let license = yield _user.getLicense();
+    let validData = {};
+    let whiteList = ['expirationDate','birthDate','lastName','firstName','zip','state','city','street1','street2','number'];
+
+    Object.keys(data).forEach(key => {
+      if (key in whiteList) {
+        validData[key] = data[key];
+      }
+    });
+
+    yield license.update(validData);
+
+    relay.admin(resource, {
+      type : 'update',
+      data : license
+    });
 
     return license;
   }

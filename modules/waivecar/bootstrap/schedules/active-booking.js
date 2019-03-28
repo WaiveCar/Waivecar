@@ -135,10 +135,11 @@ var checkBooking = co.wrap(function *(booking) {
     // to avoid issues with latency
     //
     if (!user.isWaivework) {
-      if (duration >= (freetime - 16) && !booking.isFlagged('1hr45-warning')) {
-        yield booking.flag('1hr45-warning');
-        // yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
-      }
+      //
+      // if (duration >= (freetime - 16) && !booking.isFlagged('1hr45-warning')) {
+      //  yield booking.flag('1hr45-warning');
+      //  yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
+      // }
 
       if (duration >= 11 * 60 && !booking.isFlagged('rush') && !booking.isFlagged('11h-warning')) {
         yield booking.flag('11h-warning');
@@ -160,7 +161,6 @@ var checkBooking = co.wrap(function *(booking) {
     // Send an alert to 'rental alerts' if a new user (less than 5 trips) has taken a car for longer than 3 hours. 
     //
     if (duration >= trigger && !booking.isFlagged('new-user-long-rental')) {
-      yield booking.flag('new-user-long-rental');
       let newUserCutoff = 5;
       booking_history = yield Booking.find({ 
         where : { userId : user.id },
@@ -168,6 +168,7 @@ var checkBooking = co.wrap(function *(booking) {
       });
 
       if(booking_history.length < newUserCutoff) {
+        yield booking.flag('new-user-long-rental');
         yield notify.notifyAdmins(`:cactus: ${ user.link() } drove ${ car.link() } ${ duration } minutes and has only rented ${ booking_history.length } times.`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
