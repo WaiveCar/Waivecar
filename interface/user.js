@@ -190,11 +190,18 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    *age() {
+    *getLicense() {
       let License = Bento.model('License');
+      return yield License.findOne(
+        {where: {userId: this.id} },
+        {order: [['created_at', 'DESC']]} 
+      );
+    },
+
+    *age() {
       let moment  = require('moment');
 
-      let userLicense = yield License.findOne({where: {userId: this.id} });
+      let userLicense = yield this.getLicense();
       if(!userLicense) {
         return 0;
       } 
