@@ -194,7 +194,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       let License = Bento.model('License');
       return yield License.findOne(
         {where: {userId: this.id} },
-        {order: [['created_at', 'DESC']]} 
+        {order: [['id', 'DESC']]} 
       );
     },
 
