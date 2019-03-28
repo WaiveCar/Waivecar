@@ -175,11 +175,7 @@ module.exports = class Service {
   static *hasBookingAccess(user) {
     let missing = [];
     let after = '';
-    let license = yield License.findOne({
-      where : {
-        userId : user.id
-      }
-    });
+    let license = yield License.findOne({ where : { userId : user.id } });
 
     let card = yield user.getCard();
 
