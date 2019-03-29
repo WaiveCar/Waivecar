@@ -49,7 +49,6 @@ rules:
     no-unused-expressions: 2
     no-with: 2
     radix: 2
-    semi-spacing: [2, {before: false, after: true}]
     space-after-keywords: [0, "never"]
     space-before-blocks: 0
     space-before-function-paren: [0, "never"]
