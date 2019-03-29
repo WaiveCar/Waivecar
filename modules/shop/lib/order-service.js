@@ -118,7 +118,7 @@ module.exports = class OrderService extends Service {
         yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#reservations' });
       } else {
         charge.amount = charge.amount || 0;
-        charge = `$${ charge.amount / 100 }`;
+        charge = `$${ (charge.amount / 100).toFixed(2) }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.name() }`;
         if (!data.waivework) {
           yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
