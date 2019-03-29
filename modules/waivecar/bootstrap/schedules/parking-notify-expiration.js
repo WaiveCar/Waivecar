@@ -12,8 +12,8 @@ scheduler.process('user-liability-release', function*(job) {
   let {bookingId, userId, carId} = job.data;
 
   let car = yield Car.findById(carId);
-  let user = yield User.findById(userId);
   let booking = yield Booking.findById(bookingId);
+  let user = yield User.findById(userId);
 
   yield Tikd.removeLiability(car, booking, user);
 });
