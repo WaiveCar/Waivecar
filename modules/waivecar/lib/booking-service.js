@@ -165,11 +165,13 @@ module.exports = class BookingService extends Service {
       } 
       t("has access");
 
-      // This is in #1510 ... we need to have their address on file before we can continue.
-      try {
-        yield this.makeSureWeHaveLicenseAddress(driver, data);
-      } catch (err) {
-        yield bail(err);
+      if(!_user.hasAccess('admin')) {
+        // This is in #1510 ... we need to have their address on file before we can continue.
+        try {
+          yield this.makeSureWeHaveLicenseAddress(driver, data);
+        } catch (err) {
+          yield bail(err);
+        }
       }
       t("address check");
     }
