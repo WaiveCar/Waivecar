@@ -1,5 +1,5 @@
 import React                   from 'react';
-import { api, relay, helpers } from 'bento';
+import { dom, api, relay, helpers } from 'bento';
 import { Link }                from 'react-router';
 import BookingFees             from './fees';
 import BookingPayment          from './payment';
@@ -36,10 +36,6 @@ module.exports = class BookingsView extends React.Component {
     relay.subscribe(this, 'bookings');
   }
 
-  /**
-   * Unsubscribe from the bookings relay.
-   * @return {Void}
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'bookings');
   }
@@ -71,6 +67,9 @@ module.exports = class BookingsView extends React.Component {
         user: booking.user,
         car: booking.car
       }, () => this.loadCarPath(id));
+
+      dom.setTitle(booking.user.lastName + " " + booking.car.license.replace(/[^\d]/g, ''));
+
       this.bookings.store(booking);
     });
   }
