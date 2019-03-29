@@ -47,6 +47,26 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       type: Sequelize.TEXT,
       defaultValue: null,
     },
+    chargerLevel: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    waiveOwned: {
+      type: Sequelize.BOOLEAN,
+      default: true,
+    },
+    chargerBrand: {
+      type: Sequelize.TEXT,
+      default: null,
+    },
+    lastWorking: {
+      type: Sequelize.DATE,
+      default: null,
+    },
+    brokenAt: {
+      type: Sequelize.DATE,
+      default: null,
+    },
   };
 
   model.relations = [
