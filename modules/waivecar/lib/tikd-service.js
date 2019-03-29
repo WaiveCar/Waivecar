@@ -49,7 +49,7 @@ module.exports = {
 
   *hasAddress(user, license) {
     if(!license) {
-      license = yield License.getLicenseByUserId(user.id);
+      license = yield user.getLicense();
     }
     //
     // Make sure the following fields are non-null and not the empty-string
