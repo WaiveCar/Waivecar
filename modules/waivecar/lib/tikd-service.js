@@ -121,6 +121,9 @@ module.exports = {
           ownerInfo: {
             email: 'chris@waivecar.com'
           }
+        },
+        metaData: {
+          partnerCarId: car.license
         }
       }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
@@ -153,7 +156,14 @@ module.exports = {
         firstName : license.firstName,
         lastName : license.lastName,
         licenseNumber : license.number,
-        licenseStateIssued : license.state
+        licenseStateIssued : license.state,
+        address: {
+          street1: license.street1,
+          street2: license.street2,
+          city: license.city,
+          state: license.state,
+          zip: license.zip
+        }
       }
     }, { Accept : 'application.vnd.renters.v1+json' });
   }
