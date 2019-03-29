@@ -376,7 +376,7 @@ module.exports = {
         message.push('You do not have an active booking');
       }
       yield notify.sendTextMessage(user, message.join('. ') + '.');
-      yield notify.slack({ text : `${ user.link() } sent "${ opts.raw }" and the computer sent the account info.` }, { channel : '#app_support' });
+      yield notify.slack({ text : `${ user.link() } sent "${ opts.raw }" and the computer sent the account info.` }, { channel : '#reservations' });
       return true;
     }
 
