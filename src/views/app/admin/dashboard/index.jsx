@@ -95,18 +95,6 @@ module.exports = class DashboardIndex extends React.Component {
           </div>
         </div>
 
-        <div className="row" >
-          <div className="col-xs-12" >
-            <div className="content-component">
-              <div className="content-component">
-                <div id="content-WOEfd9a0DY" data-editable="html">
-                  <p className="text-center">To manage CloudBoxx Devices, access <a href="https://api.cloudboxx.invers.com/fleetcontrol/login" target="_blank">Fleet Control</a> using waivecar : <b>[Hfaj*+4m7S@dw0y@[s.</b></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="row">
           <div className="col-xs-12" >
             <div className="map-dynamic">
