@@ -269,7 +269,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     getBooking: function *(offset = 0, opts = {}) {
       let searchSet = ['started', 'reserved', 'ended', 'completed', 'closed'];
       let verb = 'limit' in opts ? 'find' : 'findOne';
-      // the sign on the offset is mearly a convention.
+      // the sign on the offset is merely a convention.
       offset = Math.abs(offset);
 
       if('limit' in opts || offset !== 0) {
