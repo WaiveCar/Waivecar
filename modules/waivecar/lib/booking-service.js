@@ -163,19 +163,17 @@ module.exports = class BookingService extends Service {
       } catch(err) {
         yield bail(err);
       } 
-    }
-    t("has access");
+      t("has access");
 
-    // This is in #1510 ... we need to have their address on file before we can continue.
-    //
-    /*
-    try {
-      yield this.makeSureWeHaveLicenseAddress(driver, data);
-    } catch (err) {
-      yield bail(err);
+      // This is in #1510 ... we need to have their address on file before we can continue.
+      try {
+        yield this.makeSureWeHaveLicenseAddress(driver, data);
+      } catch (err) {
+        yield bail(err);
+      }
+      t("address check");
     }
-    */
-    t("address check");
+
 
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
