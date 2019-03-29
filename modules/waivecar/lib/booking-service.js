@@ -166,6 +166,15 @@ module.exports = class BookingService extends Service {
     }
     t("has access");
 
+    // This is in #1510 ... we need to have their address on file before we can continue.
+    //
+    try {
+      yield this.makeSureWeHaveLicenseAddress(driver, data);
+    } catch (err) {
+      yield bail(err);
+    }
+    t("address check");
+
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
     if(driver.credit < -100) {
@@ -465,11 +474,7 @@ module.exports = class BookingService extends Service {
 
     //
     // Ok cool, now everything is done and the user has the car. messages have been sent
-    // and the person can go get it. But wait, we are going to do one last check before
-    // they can start their ride. This is in #1510 ... we need to have their address
-    // on file before we can continue.
-    //
-    yield this.makeSureWeHaveLicenseAddress(driver, data);
+    // and the person can go get it. 
 
     if (data.isWaivework) {
       yield booking.addFlag('Waivework');
