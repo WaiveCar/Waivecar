@@ -21,13 +21,13 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $q = $injector.get('$q');
     var $preBook = $injector.get('$preBook');
     var $ionicLoading = $injector.get('$ionicLoading');
-    //var $cordovaAppVersion = ;//$injector.get('$cordovaAppVersion');
+    var $cordovaAppVersion = $injector.get('$cordovaAppVersion');
     var IntercomService = $injector.get('IntercomService');
+    var appVersion; 
 
-    var appVersion = 1000;
-    ///$cordovaAppVersion.getVersionCode().then(function (version) {
-      //appVersion = version;
-    //});
+    $cordovaAppVersion.getVersionCode().then(function (version) {
+      appVersion = version;
+    });
 
     var ctrl = this;
     var LocationService = $injector.get('LocationService');
