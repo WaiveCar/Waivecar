@@ -4,7 +4,6 @@ let request   = require('co-request');
 let error     = Bento.Error;
 let config    = Bento.config;
 let Car       = Bento.model('Car');
-let License   = require('../../license/lib/license-service');
 let fs        = require('fs');
 let notify    = require('./notification-service');
 
