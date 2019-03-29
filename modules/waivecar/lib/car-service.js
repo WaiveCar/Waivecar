@@ -487,6 +487,34 @@ module.exports = {
   *update(id, payload, _user) {
     access.verifyAdmin(_user);
 
+    //
+    // There's a legacy bug in apps (introduced by one of the 
+    // contractors) that was fixed in early 2018 where plateNumber 
+    // would cause it to not unlock. Because of that we did a 
+    // workaround at the api level.  We could have forced an 
+    // upgrade but another one of the contractors disabled 
+    // version number reporting in january 2018 without telling 
+    // anyone so there's about 15 months of apps out there with 
+    // no version numbers so we can't even do a proper upgrade 
+    // strategy. 
+    //
+    // So we just have to wait like 24 months or so for people to
+    // upgrade their phones and download a new app before we can
+    // undo this garbage workaround
+    //
+    // I'm infinitely happy that I've taken over all the hiring 
+    // tech decisions to avoid wasting my time on having to hack
+    // the system to implement essentially nanny-level bullshit 
+    // like this because some incompetent morons don't check 
+    // their work or hold themselves responsible for stupid shit.
+    //
+    // -cjm 2019/03/29
+    //
+    if(payload && payload.plateNumberWork) {
+      payload.plateNumber = payload.plateNumberWork;
+      delete payload.plateNumberWork;
+    }
+
     // See #1077
     let includeCarGroup = {
       model : 'GroupCar',
