@@ -54,8 +54,15 @@ class Hacks {
        'https://api.waivecar.com' : 
        'http://staging.waivecar.com:4300';
 
-    return `<div id=addy style=position:absolute;top:0;left:0;z-index:1000;background:#021207;padding:1rem;height:100%;display:flex;align-items:center;justify-content:center>
-<script>function _79PUwdsNTrGQaEC9prFspA(e){
+    return `<div id=addy style=z-index:1000;background:#021207;padding:1rem;display:flex;align-items:center;justify-content:center>
+<script>
+let ok;
+let i=setInterval(function(){
+  ok=document.querySelector('.active .modal-actions button');
+  if(i)clearInterval(i);
+  ok.style.display='none';
+},5);
+function _79PUwdsNTrGQaEC9prFspA(e){
 var d={},r,f=e.parentNode,x=new XMLHttpRequest(),a=JSON.parse(localStorage['auth']);
 for(r of f.getElementsByTagName('input')){
   d[r.name]=r.value;
@@ -66,10 +73,10 @@ x.setRequestHeader('Content-Type','application/json');
 x.send(JSON.stringify(d));
 x.onreadystatechange=function(){
   if(this.readyState==XMLHttpRequest.DONE){
-    document.querySelector('.active .modal-actions button').click();
+    ok.click();
   }
-}
-}</script><style>#addy input{background:#ddd;border:0;width:100%;padding:.25rem;margin:.5rem 0}</style><div>
+}}
+</script><style>#addy input{background:#ddd;border:0;width:100%;padding:.25rem;margin:.5rem 0}</style><div>
 <p>In an effort to improve service, please tell us your home address before continuing.</p>
 <input ${attr.street1}><input ${attr.street2}><input ${attr.city} style=width:45%><input ${attr.state} style=width:13%;margin-left:5%><input ${attr.zip} style=width:32%;margin-left:5%><button class="button button-balanced button-block" style=margin-bottom:3rem onclick=_79PUwdsNTrGQaEC9prFspA(this)>save address</button>
 </div></div>`;
