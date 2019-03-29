@@ -27,7 +27,7 @@ let formFields = {
     [
       { name : 'model',        className : 'col-md-3 bento-form-input' },
       { name : 'manufacturer', className : 'col-md-3 bento-form-input' },
-      { name : 'plateNumber',  className : 'col-md-4 bento-form-input' },
+      { name : 'plateNumberWork',  className : 'col-md-4 bento-form-input' },
       { name : 'plateState',  className : 'col-md-2 bento-form-input' }
     ]
   ]),
@@ -47,7 +47,7 @@ class CarsShowView extends React.Component {
     };
     dom.setTitle('Car');
     this.service = new Service(this);
-    relay.subscribe(this, 'cars');
+    //relay.subscribe(this, 'cars');
   }
 
   handleChange = (item, value) => {
