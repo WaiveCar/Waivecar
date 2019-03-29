@@ -6,6 +6,7 @@ let config    = Bento.config;
 let Car       = Bento.model('Car');
 let License   = require('../../license/lib/license-service');
 let fs        = require('fs');
+let notify    = require('./notification-service');
 
 //
 // A pdf of the documentation can be found in ticket #1322:
@@ -77,6 +78,9 @@ module.exports = {
   },
 
   *addLiability(car, booking, user) {
+    // There are bugs I (cjm) haven't been able to find in some bookings not
+    // ending their previous liability. Ostensibly this should be a clean system
+    // as far as I can tell but there's apparently a bug in it somewhere
     if(booking.isFlagged('tikdStart')) {
       return true;
     }
@@ -127,8 +131,20 @@ module.exports = {
         }
       }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
-      console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumberWork}) state(${car.plateState})`);
-      console.log(car);
+      let missing = [];
+      if (!car.plateNumberWork) {
+        missing[] = 'license plate number';
+      }
+      if(!car.vin) {
+        missing[] = 'vin number';
+      }
+      if(!car.placeState) {
+        missing[] = 'license plate state';
+      }
+      yield notify.slack(
+        { text: `:beers: A booking with ${ car.link() } started which CANNOT be added to tikd because the following is missing: ${ missing.join(', ') }` },
+        { channel: '#rental-alerts' },
+      );
     }
   },
 
