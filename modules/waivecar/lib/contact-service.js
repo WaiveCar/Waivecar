@@ -98,6 +98,12 @@ module.exports = {
       account: "Information about your account",
     };
 
+    function *book(opts) {
+      opts.version = 'sms';
+      opts.userId = user.id;
+      return yield booking.create(opts, user);
+    }
+
     function *slack(message = '') {
       yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${message}` }, { channel : '#reservations' });
       return true;
@@ -139,26 +145,23 @@ module.exports = {
             }
           }
           if(argCmd[1] === 'rush') {
-            let res = yield booking.create({
-              userId: user.id,
+            let res = yield book({
               carId: requestedCar.id,
               opts: {
                 rush: true
               }
-            }, user);
+            });
           } else if(argCmd[1] === 'normal') {
-            let res = yield booking.create({
-              userId: user.id,
+            let res = yield book({
               carId: requestedCar.id,
               opts: {
                 skipRush: true
               }
-            }, user);
+            });
           } else if(['book','b'].includes(argCmd[1])) {
-            yield booking.create({
-              userId: user.id,
+            yield book({
               carId: requestedCar.id
-            }, user);
+            });
           } else if(['details','d'].includes(argCmd[1])) {
             yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
           }
@@ -402,13 +405,12 @@ module.exports = {
         if(command === 'rebook') {
           let params;
           try {
-            yield booking.create({
-              userId: user.id,
+            yield book({
               carId: previousBooking.carId,
               opts: {
                 skipRush: true
               }
-            }, user);
+            });
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for free.` );
             return true;
           } catch (ex) {
@@ -427,7 +429,7 @@ module.exports = {
             // in fact we are just going to blow right past it
             params.opts.skipRush = true;
 
-            yield booking.create(params, user);
+            yield book(params);
             yield slack('and the computer rebooked');
             let amount = params.opts.buyNow ? ('$' + params.opts.buyNow) : 'free';
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for ${ amount }.` );
