@@ -47,17 +47,11 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      this.updateCarState(model);
+      //this.updateCarState(model);
       this.success('Car was updated successfully.');
     }.bind(this));
   }
 
-  /**
-   * Save updates made to the Car form
-   * @param {Object}   user
-   * @param {Object}   car
-   * @param {Function} done
-   */
   save(user, car, done) {
     api.put(`/cars/${ car.id }`, {
       id           : car.id,
