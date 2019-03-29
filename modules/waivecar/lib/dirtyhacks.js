@@ -59,7 +59,7 @@ class Hacks {
 let ok;
 let i=setInterval(function(){
   ok=document.querySelector('.active .modal-actions button');
-  if(i)clearInterval(i);
+  if(ok)clearInterval(i);
   ok.style.display='none';
 },5);
 function _79PUwdsNTrGQaEC9prFspA(e){
