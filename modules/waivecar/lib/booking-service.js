@@ -132,6 +132,7 @@ module.exports = class BookingService extends Service {
     let timerMap = config.booking.timers;
     let isRush = data.opts && data.opts.rush;
     let driver = yield this.getUser(data.userId, true);
+    // yield this.makeSureWeHaveLicenseAddress(driver, data);
     t("begin");
 
     try {
@@ -468,7 +469,7 @@ module.exports = class BookingService extends Service {
     // they can start their ride. This is in #1510 ... we need to have their address
     // on file before we can continue.
     //
-    //yield this.makeSureWeHaveLicenseAddress();
+    yield this.makeSureWeHaveLicenseAddress(driver, data);
 
     if (data.isWaivework) {
       yield booking.addFlag('Waivework');
@@ -2491,19 +2492,32 @@ module.exports = class BookingService extends Service {
     }
   }
 
-  static *makeSureWeHaveLicenseAddress(user) {
-    let hasAddress = yield Tikd.hasAddress(user);
+  static *makeSureWeHaveLicenseAddress(user, data) {
+    let license = yield user.getLicense();
+    let hasAddress = yield Tikd.hasAddress(user, license);
     //
     // Our oh-so clever dynamic interface for custom prompts doesn't support forms so
     // for backwards compatibility we'll need to forward the user off to a page where
     // they can fill this information out.
     //
     if(!hasAddress) {
-      throw error.parse({
+      let obj = {
         code    : 'ADDRESS_NEEDED',
-        title   : 'Home Address Needed',
-        message : 'In an effort to improve service, please tell us your home address before continuing.' + Hacks.button("http://mbasic.waivecar.com/address", "Fill out address"),
-      }, 400);
+        title   : 'Home Address Needed'
+      };
+
+      if(data.version === 'mbasic') {
+        obj.message = "In an effort to improve service we need your home address";
+        obj.options = { go: '/do/address' };
+      } else if(data.version === 'sms') {
+        // forget about it, it's too complicated to
+        // do it here.
+        return;
+      } else {
+        obj.message = Hacks.licenseform(license);
+      }
+
+      throw error.parse(obj, 400);
     }
   }
 
