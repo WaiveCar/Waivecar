@@ -78,7 +78,7 @@ x.onreadystatechange=function(){
 }}
 </script><style>#addy input{background:#ddd;border:0;width:100%;padding:.25rem;margin:.5rem 0}</style><div>
 <p>In an effort to improve service, please tell us your home address before continuing.</p>
-<input ${attr.street1}><input ${attr.street2}><input ${attr.city} style=width:45%><input ${attr.state} style=width:13%;margin-left:5%><input ${attr.zip} style=width:32%;margin-left:5%><button class="button button-balanced button-block" style=margin-bottom:3rem onclick=_79PUwdsNTrGQaEC9prFspA(this)>save address</button>
+<input ${attr.street1}><input ${attr.street2}><input ${attr.city} style=width:45%><input ${attr.state} style=width:13%;margin-left:5%><input ${attr.zip} style=width:32%;margin-left:5%><button class="button button-balanced button-block" onclick=_79PUwdsNTrGQaEC9prFspA(this)>save address</button>
 </div></div>`;
   }
 };
