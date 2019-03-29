@@ -485,6 +485,7 @@ module.exports = {
   },
 
   *update(id, payload, _user) {
+    var ix;
     access.verifyAdmin(_user);
 
     //
@@ -531,6 +532,14 @@ module.exports = {
         }
       }, 404);
     }
+
+    let changes = [];
+    for(ix in payload) {
+      if(payload[ix] != car[ix]) {
+        changes.push(`${ix}: ${car[ix]} -> ${payload[ix]}`);
+      }
+    }
+
     let device = yield this.getDevice(car.id, _user, 'update');
 
     if (payload.tagList) {
@@ -539,14 +548,14 @@ module.exports = {
       let oldTags = yield car.getTagList(['la', 'csula', 'level', 'choice', 'waivework']);      
 
       let toRemove = _.difference(oldTags, payload.tagList);
-      for(var ix = 0; ix < toRemove.length; ix++) {
+      for(ix = 0; ix < toRemove.length; ix++) {
         yield car.untag(toRemove[ix]);
       }
 
       let AllOldTags = yield car.getTagList();
       let toAdd = _.difference(payload.tagList, AllOldTags);
 
-      for(var ix = 0; ix < toAdd.length; ix++) {
+      for(ix = 0; ix < toAdd.length; ix++) {
         yield car.addTag(toAdd[ix]);
       }
       // Notifications may need to be added for changes in groupCar
@@ -560,6 +569,14 @@ module.exports = {
         data : car.toJSON()
       });
     }
+
+    if(changes.length > 0) {
+      changes = "(" + changes.join(', ') + ")";
+    } else {
+      changes = '';
+    }
+
+    yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental-alerts'});
 
     return car;
   },
