@@ -314,8 +314,8 @@ module.exports = {
       label: 'Model',
       helpText: null,
     },
-    plateNumber: {
-      name: 'plateNumber',
+    plateNumberWork: {
+      name: 'plateNumberWork',
       component: 'input',
       type: 'text',
       required: true,
