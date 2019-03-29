@@ -138,7 +138,7 @@ module.exports = {
       if(!car.vin) {
         missing.push('vin number');
       }
-      if(!car.placeState) {
+      if(!car.plateState) {
         missing.push('license plate state');
       }
       yield notify.slack(
