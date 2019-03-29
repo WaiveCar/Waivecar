@@ -1154,8 +1154,12 @@ module.exports = {
     }
     let bookingService = require('./booking-service');
 
-    yield bookingService.end(car.bookingId, _user, {}, {}); 
-    yield bookingService.complete(car.bookingId, _user, {}, {}); 
+    try {
+      yield bookingService.end(car.bookingId, _user, {}, {}); 
+      yield bookingService.complete(car.bookingId, _user, {}, {}); 
+    } catch(ex) {
+      yield bookingService.cancel(car.bookingId, _user);
+    }
 
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
     car = yield this.updateAvailabilityAnonymous(id, true, _user);
