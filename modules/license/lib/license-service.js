@@ -136,7 +136,7 @@ module.exports = class LicenseService extends Service {
     let whiteList = ['expirationDate','birthDate','lastName','firstName','zip','state','city','street1','street2','number'];
 
     Object.keys(data).forEach(key => {
-      if (key in whiteList) {
+      if (whiteList.includes(key)) {
         validData[key] = data[key];
       }
     });
