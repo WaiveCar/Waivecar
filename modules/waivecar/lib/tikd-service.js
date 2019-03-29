@@ -149,13 +149,12 @@ module.exports = {
   },
 
   *changeLiability(state, car, booking, user) {
-    let license = yield License.getLicenseByUserId(user.id);
+    let license = yield user.getLicense();
     if(!license) {
-      console.log(`Can't find a license for ${user.name()}`);
-    }
-    license = license[0];
-    if(!license) {
-      console.log(`Can't find a license for ${user.name()}`);
+      yield notify.slack(
+        { text: `:genie: ${ user.link() } does not have a license on file. Booking ${ booking.link() } cannot be added to tikd` },
+        { channel: '#rental-alerts' },
+      );
       return;
     }
 
