@@ -45,7 +45,7 @@ class Hacks {
     ].forEach(row => {
       let [key, val] = row;
       attr[key] = [ 
-        `name=${val}`, 
+        `name=${key}`, 
         obj[key] ? `value="${obj[key]}"` : `placeholder="${val}"` 
       ].join(' ');
     });
@@ -64,17 +64,13 @@ let i=setInterval(function(){
 },5);
 function _79PUwdsNTrGQaEC9prFspA(e){
 var d={},r,f=e.parentNode,x=new XMLHttpRequest(),a=JSON.parse(localStorage['auth']);
-for(r of f.getElementsByTagName('input')){
-  d[r.name]=r.value;
-}
+for(r of f.getElementsByTagName('input'))d[r.name]=r.value;
 x.open('PUT','${server}/licenses',true);
 x.setRequestHeader('Authorization',a.token);
 x.setRequestHeader('Content-Type','application/json');
 x.send(JSON.stringify(d));
 x.onreadystatechange=function(){
-  if(this.readyState==XMLHttpRequest.DONE){
-    ok.click();
-  }
+  if(this.readyState==XMLHttpRequest.DONE)ok.click();
 }}
 </script><style>#addy input{background:#ddd;border:0;width:100%;padding:.25rem;margin:.5rem 0}</style><div>
 <p>In an effort to improve service, please tell us your home address before continuing.</p>
