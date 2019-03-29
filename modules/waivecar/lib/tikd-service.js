@@ -133,13 +133,13 @@ module.exports = {
     } else {
       let missing = [];
       if (!car.plateNumberWork) {
-        missing[] = 'license plate number';
+        missing.push('license plate number');
       }
       if(!car.vin) {
-        missing[] = 'vin number';
+        missing.push('vin number');
       }
       if(!car.placeState) {
-        missing[] = 'license plate state';
+        missing.push('license plate state');
       }
       yield notify.slack(
         { text: `:beers: A booking with ${ car.link() } started which CANNOT be added to tikd because the following is missing: ${ missing.join(', ') }` },
