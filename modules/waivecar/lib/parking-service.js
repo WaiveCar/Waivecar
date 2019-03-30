@@ -15,6 +15,7 @@ let emailConfig = Bento.config.email;
 let redis = require('./redis-service');
 let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
+let fs = require('fs');
 
 
 module.exports = {
@@ -403,6 +404,7 @@ module.exports = {
     });
     yield this.emitChanges(space, location, reservation, null, true);
     let car = yield Car.findById(carId);
+    fs.appendFile( '/var/log/outgoing/WaivePark.txt',  `${car.link()} has been parked in\n`, function(){})
     // This sends a text to the owner of a space that a car has been parked in it.
     yield notify.sendTextMessage(
       space.ownerId,

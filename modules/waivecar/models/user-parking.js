@@ -1,4 +1,5 @@
 'use strict';
+let apiConfig = Bento.config.api;
 
 Bento.Register.Model('UserParking', 'sequelize', function register(
   model,
@@ -66,6 +67,12 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
     brokenAt: {
       type: Sequelize.DATE,
       default: null,
+    },
+  };
+
+  model.methods = {
+    link: function() {
+      return `<${apiConfig.uri}/waivepark/${this.id}}|WaivePark ${this.id}>`;
     },
   };
 
