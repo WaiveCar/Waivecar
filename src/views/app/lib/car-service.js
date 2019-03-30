@@ -47,7 +47,19 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      //this.updateCarState(model);
+      //
+      // This is just the model, and not the model with relations.
+      // Sooo if you do this, you'll blow away the relation data
+      // and then cause everything to blow up. 
+      //
+      // This was here before and it's commented out and not removed
+      // to make it known that adding it in would be a bug. 
+      //
+      // Don't do it sweetie.
+      //
+      // this.updateCarState(model);
+      //
+      
       this.success('Car was updated successfully.');
     }.bind(this));
   }
