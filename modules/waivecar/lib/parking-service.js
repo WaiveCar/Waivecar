@@ -18,6 +18,16 @@ let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
 let fs = require('fs');
 
+let appendFilePromise = (path, text) => {
+  return new Promise((resolve, reject) => {
+    fs.appendFile(path, text, error => {
+      if (error) {
+        reject(error);
+      }   
+      resolve();
+    }); 
+  }); 
+};
 
 module.exports = {
   *index() {
@@ -348,7 +358,9 @@ module.exports = {
       yield location.update({
         status: 'unavailable',
       });
-
+      yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', 
+        `${user.firstName} ${user.lastName} has reserved space #${space.id} during booking #${booking.id} at ${moment().format()}\n`
+      );
       // The process below makes the parking space reservations expire after 5 minutes
       // and takes all necessary auxiliary actions.
       let timerObj = {value: 5, type: 'minutes'};
@@ -366,7 +378,7 @@ module.exports = {
       yield this.emitChanges(space, location, reservation, user);
 
       yield notify.notifyAdmins(
-        `:bellhop_bell: ${ user.link() } reserved parking spot #${space.id}`,
+        `:bellhop_bell: ${ user.link() } reserved parking spot #${space.link()} during ${booking.link()}`,
         ['slack'],
         {channel: '#reservations'},
       );
@@ -406,7 +418,12 @@ module.exports = {
     });
     yield this.emitChanges(space, location, reservation, null, true);
     let car = yield Car.findById(carId);
-    fs.appendFile( '/var/log/outgoing/WaivePark.txt', `${car.link()} has been parked in ${space.link()} at ${moment().format()}\n`, function(){})
+    yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', `${car.license} has been parked in #${space.id} at ${moment().format()}\n`);
+      yield notify.notifyAdmins(
+        `:bellhop_bell: ${ user.link() } successfully parked in #${space.link()} during ${booking.link()}`,
+        ['slack'],
+        {channel: '#reservations'},
+      );
     // This sends a text to the owner of a space that a car has been parked in it.
     yield notify.sendTextMessage(
       space.ownerId,
