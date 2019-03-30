@@ -572,11 +572,8 @@ module.exports = {
 
     if(changes.length > 0) {
       changes = "(" + changes.join(', ') + ")";
-    } else {
-      changes = '';
-    }
-
-    yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental-alerts'});
+      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental-alerts'});
+    } 
 
     return car;
   },
