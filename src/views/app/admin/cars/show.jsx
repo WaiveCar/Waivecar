@@ -77,7 +77,7 @@ class CarsShowView extends React.Component {
         carPath : model.data.data
       });
     });
-    api.get(`/reports/car/${ id }?fromDate=${moment().subtract(1, 'months').utc().format()}`, (err, model) => {
+    api.get(`/reports/car/${ id }?fromDate=${moment().subtract(3, 'months').utc().format()}`, (err, model) => {
       if (err) {
         console.log(err);
       }
