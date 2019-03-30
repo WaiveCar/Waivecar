@@ -283,6 +283,14 @@ module.exports = {
       space.ownerOccupied || space.waivecarOccupied
         ? 'unavailable'
         : 'available';
+    yield notify.notifyAdmins(
+      `:dragon: ${space.link()} is now ${newStatus}`,
+      ['slack'],
+      {channel: '#reservations'},
+    );
+    yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', 
+      `Space #${space.id} has been made ${newStatus} at ${moment().format()}\n`
+    );
     yield location.update({
       status: newStatus,
     });
@@ -420,7 +428,7 @@ module.exports = {
     let car = yield Car.findById(carId);
     yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', `${car.license} has been parked in #${space.id} at ${moment().format()}\n`);
       yield notify.notifyAdmins(
-        `:bellhop_bell: ${ user.link() } successfully parked in #${space.link()} during ${booking.link()}`,
+        `:eagle: ${ user.link() } successfully parked in #${space.link()} during ${booking.link()}`,
         ['slack'],
         {channel: '#reservations'},
       );
