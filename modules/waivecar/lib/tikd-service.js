@@ -6,6 +6,7 @@ let config    = Bento.config;
 let Car       = Bento.model('Car');
 let fs        = require('fs');
 let notify    = require('./notification-service');
+let redis     = require('./redis-service');
 
 //
 // A pdf of the documentation can be found in ticket #1322:
@@ -58,11 +59,26 @@ module.exports = {
     return ['street1', 'city', 'state', 'zip'].reduce((val, row) => val && !!license[row], true);
   },
 
+  *getFields(bookingId) {
+    let Booking     = Bento.model('Booking');
+    let User        = Bento.model('User');
+
+    let res = { };
+    res.booking = yield Booking.findById(bookingId);
+    res.user = yield User.findById(res.booking.userId);
+
+    return res;
+  },
+
   *addCarIfNeeded(car) {
     if (!(yield car.hasTag('tikd'))) {
       console.log("adding " + car.license);
       let res = yield this.changeCar('subscribe', car);
       if(res) {
+        yield notify.slack(
+          { text: `:hatching_chick: Hurrah, ${ car.link() } is now registered with tikd.` },
+          { channel: '#rental-alerts' }
+        );
         yield car.addTag('tikd');
       } else {
         console.log('failure', res);
@@ -80,6 +96,13 @@ module.exports = {
     // There are bugs I (cjm) haven't been able to find in some bookings not
     // ending their previous liability. Ostensibly this should be a clean system
     // as far as I can tell but there's apparently a bug in it somewhere
+    let hasLiability = yield redis.hget('tikd', car.license);
+
+    if(hasLiability && hasLiability !== booking.id) {
+      let oldData = yield this.getFields(hasLiability);
+      yield this.removeLiability(car, oldData.booking, oldData.user);
+    }
+
     if(booking.isFlagged('tikdStart')) {
       return true;
     }
@@ -88,6 +111,7 @@ module.exports = {
       if(!res) {
         console.log(`Can't add liability for booking ${booking.id}`);
       } else {
+        yield redis.hset('tikd', car.license, booking.id);
         yield booking.flag('tikdStart');
       }
       return res;
@@ -95,13 +119,15 @@ module.exports = {
   },
 
   *removeLiability(car, booking, user) {
-    if(booking.isFlagged('tikdEnd')) {
+    if(booking.isFlagged('tikdEnd') || !booking.isFlagged('tikdStart')) {
       return true;
     }
+
     let res = yield this.changeLiability('service-ended', car, booking, user);
     if(!res) {
       console.log(`Can't remove liability for booking ${booking.id}`);
     } else {
+      yield redis.hdel('tikd', car.license);
       yield booking.flag('tikdEnd');
     }
     return res;
