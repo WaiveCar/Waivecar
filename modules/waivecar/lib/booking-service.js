@@ -1078,11 +1078,19 @@ module.exports = class BookingService extends Service {
         yield cars.accessCar(car.id, _user, car);
       }
 
+      //
+      // This *should* be done for us now inside the tikd code by using
+      // a hash of the car.license and booking.id. We /shouldn't/ be
+      // doing it a second time here. If the implementation in the 
+      // tikd-service code isn't working, it should be fixed there.
+      //
+      /*
       let lastBooking = yield car.getBooking(-1);
       if(lastBooking) {
         let lastUser = yield User.findById(lastBooking.userId);
         yield Tikd.removeLiability(car, lastBooking, lastUser);
       }
+      */
       yield Tikd.addLiability(car, booking, _user);
 
       // yield cars.openDoor(car.id, _user);
