@@ -56,7 +56,7 @@ module.exports = class Car extends Service {
     api.put(`/cars/${ car.id }`, {
       id           : car.id,
       make         : car.make,
-      plateNumber : car.plateNumber,
+      plateNumber  : car.plateNumberWork,
       model        : car.model,
       year         : car.year,
       manufacturer : car.manufacturer,
