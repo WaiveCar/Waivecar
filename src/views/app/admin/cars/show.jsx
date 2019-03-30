@@ -252,7 +252,7 @@ class CarsShowView extends React.Component {
 
   renderCarForm(car) {
     return (
-      <div className="box hidden-xs-down">
+      <div className="box">
         <h3>Details</h3>
         <div className="box-content">
           <Form
