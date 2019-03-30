@@ -72,7 +72,7 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
 
   model.methods = {
     link: function() {
-      return `<${apiConfig.uri}/waivepark/${this.id}}|WaivePark ${this.id}>`;
+      return `<${apiConfig.uri}/waivepark/${this.id}}|WaivePark #${this.id}>`;
     },
   };
 

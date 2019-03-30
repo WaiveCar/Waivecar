@@ -6,6 +6,7 @@ let UserParking = Bento.model('UserParking');
 let ParkingReservation = Bento.model('ParkingReservation');
 let ParkingDetails = Bento.model('ParkingDetails');
 let Car = Bento.model('Car');
+let Booking = Bento.model('Booking');
 let relay = Bento.Relay;
 let log = Bento.Log
 let queue = Bento.provider('queue');
@@ -264,7 +265,6 @@ module.exports = {
     // will generally be ownerOccupied or waivecarOccupied. Availability of the space
     // based on these two properties is also toggled on the corresponding location.
     let space = yield UserParking.findById(parkingId);
-
     let updateObj = {};
     updateObj[type] = !space[type];
     yield space.update(updateObj);
@@ -311,6 +311,7 @@ module.exports = {
     let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
     let location = yield Location.findById(space.locationId);
+    let booking = yield Booking.find({where: {userId: user.id, status: 'started'}});
     // This conditional should ensure that the space does not get double booked.
     if (yield redis.shouldProcess('parking-reservation', space.id, 9 * 1000)) {
       if (space.reservationId) {
@@ -336,6 +337,7 @@ module.exports = {
       let reservation = new ParkingReservation({
         userId: user.id,
         spaceId: space.id,
+        bookingId: booking.id,
       });
       yield reservation.save();
 
@@ -404,7 +406,7 @@ module.exports = {
     });
     yield this.emitChanges(space, location, reservation, null, true);
     let car = yield Car.findById(carId);
-    fs.appendFile( '/var/log/outgoing/WaivePark.txt',  `${car.link()} has been parked in\n`, function(){})
+    fs.appendFile( '/var/log/outgoing/WaivePark.txt', `${car.link()} has been parked in ${space.link()} at ${moment().format()}\n`, function(){})
     // This sends a text to the owner of a space that a car has been parked in it.
     yield notify.sendTextMessage(
       space.ownerId,
