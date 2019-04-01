@@ -389,7 +389,7 @@ module.exports = {
       yield this.emitChanges(space, location, reservation, user);
 
       yield notify.notifyAdmins(
-        `:bellhop_bell: ${ user.link() } reserved parking spot #${space.link()} during ${booking.link()}`,
+        `:bellhop_bell: ${user.link()} reserved parking spot #${space.link()} during ${booking.link()}`,
         ['slack'],
         {channel: '#reservations'},
       );
@@ -430,11 +430,11 @@ module.exports = {
     yield this.emitChanges(space, location, reservation, null, true);
     let car = yield Car.findById(carId);
     yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', `${car.license} has been parked in #${space.id} at ${moment().format()}\n`);
-      yield notify.notifyAdmins(
-        `:eagle: ${ user.link() } successfully parked in #${space.link()} during ${booking.link()}`,
-        ['slack'],
-        {channel: '#reservations'},
-      );
+    yield notify.notifyAdmins(
+      `:eagle: ${ user.link() } successfully parked in #${space.link()} during ${booking.link()}`,
+      ['slack'],
+      {channel: '#reservations'},
+    );
     // This sends a text to the owner of a space that a car has been parked in it.
     yield notify.sendTextMessage(
       space.ownerId,
@@ -451,6 +451,7 @@ module.exports = {
     // and the car is in it. It is also used by the web app as a way of force removing
     // cars from spaces.
     let space = yield UserParking.findOne({where: {carId}});
+    let car = yield Car.findById(carId);
     if (space) {
       yield space.update({
         carId: null,
@@ -462,6 +463,12 @@ module.exports = {
           status: 'available',
         });
       }
+      yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', `${car.license} has moved from #${space.id} at ${moment().format()}\n`);
+      yield notify.notifyAdmins(
+        `:roller_coaster: ${car.license} has been moved from #${space.link()}`,
+        ['slack'],
+        {channel: '#reservations'},
+      );
       yield this.emitChanges(space, location);
       space = space.toJSON();
       space.location = location.toJSON();
@@ -510,6 +517,12 @@ module.exports = {
         400,
       );
     }
+    yield appendFilePromise( '/var/log/outgoing/WaivePark.txt', `A reservation has been cancelled at #${space.id} at ${moment().format()}\n`);
+    yield notify.notifyAdmins(
+      `:x: A reservation been cancelled at #${space.link()}`,
+      ['slack'],
+      {channel: '#reservations'},
+    );
     queue.scheduler.cancel(
       'parking-auto-cancel',
       `parking-reservation-${currentReservationId}`,
