@@ -93,7 +93,10 @@ module.exports = {
       locationId: location.id,
       ownerId: query.userId,
       notes: query.notes,
-    });
+      chargerLevel: query.chargerLevel,  
+      waiveOwned: query.waiveOwned,
+      chargerBrand: query.chargerBrand,  
+    });                                  
 
     yield entry.save();
     yield location.update({name: `WaivePark #${ entry.id }` });
