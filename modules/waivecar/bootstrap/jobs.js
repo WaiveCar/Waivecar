@@ -20,4 +20,5 @@ module.exports = function *() {
   yield require('./schedules/make-cars-unavailable');
   yield require('./schedules/check-user-levels');
   yield require('./schedules/waivework-billing');
+  yield require('./schedules/waivework-reminder');
 };

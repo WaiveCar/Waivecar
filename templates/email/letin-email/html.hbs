@@ -1,23 +1,26 @@
 <div class="main"><h3>Hi {{ name }}.</h3>
   <p>
-    {{ intro }}
+    {{{ intro }}}
   </p>
-  {{#if isWaivework}}
+  {{#unless isWaivework}}
     <p>Remember, to drive with Waive you'll need:
       <ul>
         <li>A very clean driving record</li>
         <li>A valid credit card</li>
       </ul>
     </p>
+  {{/unless}}
+  {{#if isWaivework}} 
+    <p>
+      Please click <a href="https://calendly.com/waivework/pickup/">here</a> to schedule your appointment.
+    </p>
   {{/if}}
   <p>
     The next steps are to give yourself a password, log in and set up your account.
   </p>
-
   <p>
-    <a href={{ passwordlink }}><b>Click here to set up your password</b></a>. 
+    <a href={{ passwordlink }}><b>Click here to set up your password</b></a>.
   </p>
-
   <p>
     <em>Important:</em> This is a secret, exclusive, private and personal link connected to your email address. <b>It is only good for the next 3 days.</b>
     Please do not share it. Thanks!

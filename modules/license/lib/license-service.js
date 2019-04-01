@@ -39,8 +39,9 @@ module.exports = class LicenseService extends Service {
         message : `This license has already been registered. Please use the contact form for questions if you believe this is an error.`
       }, 400);
     }
-
-    this.hasAccess(user, _user);
+    if (!data.fromComputer) {
+      this.hasAccess(user, _user);
+    }
 
     // Strip time off birthDate
     if (data.birthDate && /.+T.+/.test(data.birthDate)) {
@@ -67,19 +68,17 @@ module.exports = class LicenseService extends Service {
         message : `Your date of birth appears to have some errors. Are you really ${age} years old?`
       }, 400);
     }
-
     let license = new License(data);
 
     if (license.birthDate) {
-      let userLink         = yield Verification.createUserLink(user, license, _user);
-      license.linkedUserId = userLink.id;
+      //let userLink         = yield Verification.createUserLink(user, license, _user);
+      //license.linkedUserId = userLink.id;
       license.status       = 'provided';
     }
 
     yield license.save();
 
     license.relay('store');
-
     return license;
   }
 

@@ -1,16 +1,22 @@
 <div class="main"><h3>Hi {{ name }}.</h3>
   <p>
-    {{ intro }}
+    {{{ intro }}}
   </p>
-  <p>Remember, to drive with Waive you'll need:
-    <ul>
-      <li>A very clean driving record</li>
-      <li>A valid credit card</li>
-    </ul>
-  </p>
-  <p>
-    The next steps are to log in and set up your account.
-  </p>
+  {{#unless isWaivework}}
+    <p>Remember, to drive with Waive you'll need:
+      <ul>
+        <li>A very clean driving record</li>
+        <li>A valid credit card</li>
+      </ul>
+    </p>
+    <p>
+      The next steps are to log in and set up your account.
+    </p>
+  {{else}}
+    <p>
+      If you would like to get started with WaiveWork, please schedule an appointment to pick up a car <a href="https://calendly.com/waivework/pickup" target="_blank">here</a>.  
+    </p>
+  {{/unless}}
 
   <p>
     Best regards,<br>

@@ -133,6 +133,7 @@ Route.post('/waitlist/addNote', ['WaitlistController@addNote' ]);
 Route.post('/waitlist/deleteNote', ['WaitlistController@deleteNote']);
 Route.post('/waitlist/prioritize', ['WaitlistController@prioritize' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
+Route.post('/waitlist/waiveWorkEmail', ['WaitlistController@waiveWorkEmail'])
 
 Route.get('/actions/hash/:id', ['ActionController@getHash']);
 Route.get('/actions/forward/:type/:id', ['ActionController@goForward']);

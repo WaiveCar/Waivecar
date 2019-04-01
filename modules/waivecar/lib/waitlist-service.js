@@ -11,7 +11,9 @@ let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
 let moment        = require('moment');
-let OrderService = require('../../shop/lib/order-service.js');
+let scheduler = Bento.provider('queue').scheduler;
+let OrderService = require('../../shop/lib/order-service');
+let LicenseService = require('../../license/lib/license-service');
 
 
 let UserService = require('./user-service');
@@ -180,21 +182,38 @@ module.exports = {
 
       record = new Waitlist(data);
       yield record.save();
-      if(data['accountType'] == 'waivework') {
+      if(data.accountType == 'waivework') {
         data = {...payload, ...data};
         data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+        yield record.update({
+          notes: JSON.stringify([{...data, number: data.licensesNumber}]),
+        });
         try {
           let email = new Email();
           yield email.send({
             to       : 'dennis.mata.t7h8@statefarm.com',
             cc       : 'frank@waive.car',
             from     : config.email.sender,
-            subject  : `${data['firstName']} ${data['lastName']} - WaiveCar`,
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
             template : 'waivework-signup',
             context  : {
               ...data
+            }
+          });
+        } catch(ex) {
+          console.log("Unable to send email", ex);
+        }
+        try {
+          let email = new Email();
+          yield email.send({
+            to       : data.email,
+            from     : config.email.sender,
+            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+            template : 'waivework-confirmation',
+            context  : {
+              name: `${data['firstName']} ${data['lastName']}`,
             }
           });
         } catch(ex) {
@@ -407,7 +426,6 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
-    console.log('recordList in letInByRecord', recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -416,19 +434,18 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: "Welcome to the Waivework program. If you have received this email, it means you have been approved!",
+      waivework: `Welcome to the WaiveWork program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our regular billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following regular billing day. Your initial payment will be due when you pick up the car. The next steps are to schedule a pickup appointment and set up your account. After you have set your password, please add a payment method to save time on the day of your appoint. Additionally, please review the terms of Waivework <a href=”http://waivecar.com/pic/waivework-agreement.pdf”>here</a>. Frank will be in touch about getting you a customized version of these terms for you to e-sign. If you have any questions, please don't hesitate to email Frank, our director of WaiveWork by clicking <a href="mailto:frank@waive.car">here</a>.`,
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
     if (recordList[0].accountType === 'waivework') {
       opts.intro = 'waivework'
-      
+      params.isWaivework = true;
     }
 
     opts.intro = opts.intro || 'waitlist';
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
-      params.isWaivework = true;
     }
     params.intro = introMap[opts.intro];
 
@@ -485,6 +502,12 @@ module.exports = {
           // in good faith, going through the entire process again,
           // presuming that they didn't receive or lost the previous. 
           log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
+          if (params.isWaivework) {
+            throw error.parse({
+              code    : 'Already signed up',
+              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+            }, 400);
+          }
           yield record.update({userId: userRecord.id});
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
@@ -496,6 +519,12 @@ module.exports = {
           }
         } else {
           log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
+          if (params.isWaivework) {
+            throw error.parse({
+              code    : 'Already signed up',
+              message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
+            }, 400);
+          }
           continue;
         }
       }
@@ -510,19 +539,51 @@ module.exports = {
       let context = Object.assign({}, params || {}, {
         name: fullName
       });
-
       // If a user set their password through signup then we transfer it over
       if(record.password) {
         template = 'letin-email-nopass';
       } else {
         // otherwise we need to have a password assignment
         let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
-        context.passwordlink = `https://lb.waivecar.com/reset-password?hash=${res.token.hash}&isnew=yes`;
+        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes${params.isWaivework && '&iswork=yes'}`;
       }
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
       try {
+        if (params.isWaivework) {
+          yield userRecord.update({isWaivework: true});
+          scheduler.add('waivework-reminder', {
+            uid   : `waivework-reminder-${userRecord.id}`,
+            timer : {value: 8, type: 'hours'},
+            data  : {
+              userId: userRecord.id,
+            }
+          });
+          if (record.notes) {
+            // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
+            // provided license info to our system when they are let in
+            let userNotes = JSON.parse(record.notes);
+            for (let note of userNotes) {
+              if (note.accountType && note.accountType === 'waivework') {
+                try {
+                  yield LicenseService.store({
+                    ...note, 
+                    number: note.licenseNumber, 
+                    street1: note.address1,
+                    street2: note.address2,
+                    expirationDate: moment(note.expiration).format(),
+                    birthDate: moment(note.birthDate).format(),
+                    userId: userRecord.id, 
+                    fromComputer: true,
+                  });
+                } catch(e) {
+                  console.log('error storing license', e);
+                }
+              }
+            };
+          }
+        }
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
@@ -543,7 +604,6 @@ module.exports = {
   },
 
   *letIn(payload, _user) {
-    console.log('payload for letin', payload);
     // This is "clever" because we want a round-robin fashion.
     // So the sql that we want is essentially:
     //
@@ -564,7 +624,6 @@ module.exports = {
     let recordList = [];
     if('idList' in payload) {
       recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
-      console.log('recordlist above', recordList);
     } else {
       let letInCount = parseInt(payload.amount, 10);
 
@@ -581,17 +640,41 @@ module.exports = {
           ],
           limit: letInCount
         });
-        console.log('recordlist below', recordList);
       } else {
         log.warn(`0 people requested to be let in. This may be an error`);
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user);
+      let userList = yield this.letInByRecord(recordList, _user, {perWeek: payload.perWeek});
       for(var ix = 0; ix < userList.length; ix++) {
         yield userList[ix].addTag('la');
       }
     }
-  }
+  },
 
+  *sendWaiveWorkEmail(opts) {
+    let email = new Email(), emailOpts = {};
+    let context = {...opts, isWaivework: true};
+    context.name = `${opts.user.firstName} ${opts.user.lastName}`;
+    context.intro = `Welcome to the WaiveWork program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. When scheduling a pickup appointment, please keep in mind that our regular billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following regular billing day. Your initial payment will be due when you pick up the car. The next steps are to schedule a pickup appointment and set up your account. After you have set your password, please add a payment method to save time on the day of your appoint. Additionally, please review the terms of Waivework <a href=”http://waivecar.com/pic/waivework-agreement.pdf”>here</a>. Frank will be in touch about getting you a customized version of these terms for you to e-sign. If you have any questions, please don't hesitate to email Frank, our director of WaiveWork by clicking <a href="mailto:frank@waive.car">here</a>.`;
+    scheduler.add('waivework-reminder', {
+      uid   : `waivework-reminder-${opts.user.id}`,
+      timer : {value: 8, type: 'hours'},
+      data  : {
+        userId: opts.user.id,
+      },
+    });
+    try {
+      emailOpts = {
+        to       : opts.email,
+        from     : config.email.sender,
+        subject  : 'Welcome to WaiveWork',
+        template : 'letin-email-nopass',
+        context  : context,
+      };
+      yield email.send(emailOpts);
+    } catch(err) {
+      log.warn('Failed to deliver notification email: ', emailOpts, err);      
+    }
+  }
 };
