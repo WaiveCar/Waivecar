@@ -71,8 +71,8 @@ module.exports = class LicenseService extends Service {
     let license = new License(data);
 
     if (license.birthDate) {
-      //let userLink         = yield Verification.createUserLink(user, license, _user);
-      //license.linkedUserId = userLink.id;
+      let userLink         = yield Verification.createUserLink(user, license, _user);
+      license.linkedUserId = userLink.id;
       license.status       = 'provided';
     }
 
