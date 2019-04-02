@@ -38,7 +38,7 @@ function inside(obj) {
 
     return distance < 80467;
   } 
-  return (obj.placeName.search(/los angeles|culver city|beverly hills|santa monica/i) != -1);
+  return false;//(obj.placeName.search(/los angeles|culver city|beverly hills|santa monica/i) != -1);
 }
 
 module.exports = {
