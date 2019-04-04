@@ -93,6 +93,7 @@ var eventMap = {
     cb: function *(state) {
       let action = false;
       
+      /*
       let stateList = [ 
         ['rlM4Iz', 'brand'],
         ['v91rhf', 'car'],
@@ -106,6 +107,7 @@ var eventMap = {
           action = [['loadUrl', url]];
         }
       } 
+      */
 
       return {action: action, state: state};
     }
