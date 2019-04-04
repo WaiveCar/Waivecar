@@ -188,7 +188,7 @@ module.exports = {
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         yield record.update({
-          notes: JSON.stringify([{...data, number: data.licensesNumber}]),
+          notes: JSON.stringify([{...data}]),
         });
         try {
           let email = new Email();
@@ -206,6 +206,7 @@ module.exports = {
           console.log("Unable to send email", ex);
         }
         try {
+          yield notify.sendTextMessage(record, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
           let email = new Email();
           yield email.send({
             to       : data.email,
