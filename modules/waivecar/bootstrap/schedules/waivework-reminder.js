@@ -2,6 +2,7 @@ let scheduler = Bento.provider('queue').scheduler;
 let User = Bento.model('User');
 let Email = Bento.provider('email');
 let config = Bento.config;
+let notify = Bento.module('waivecar/lib/notification-service');
 
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
@@ -28,7 +29,10 @@ scheduler.process('waivework-reminder', function*(job) {
   }
   text += '</p>';
   try {
-    yield notify.sendTextMessage(opts.user, `Just a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`);
+    yield notify.sendTextMessage(
+      user,
+      `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
+    );
     let email = new Email();
     yield email.send({
       to: user.email,
