@@ -61,8 +61,7 @@ module.exports = class WaitList extends Component {
               { this.state.waivework == 'yes' &&
                 <div>
                   <p>Your information has been saved and our staff will contact you within about two business days.</p>
-                  <p>If you have any questions, dont hesitate to give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at 
-                    <a href="mailto:support@waive.car">support@waive.car</a>.
+                  <p>If you have any questions, dont hesitate to give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.
                   </p>
                 </div>
               }
