@@ -555,6 +555,7 @@ module.exports = {
           yield userRecord.update({isWaivework: true});
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
+            unique: true,
             timer : {value: 8, type: 'hours'},
             data  : {
               userId: userRecord.id,
@@ -659,6 +660,7 @@ module.exports = {
     context.intro = `<p>Welcome to the WaiveWork program! If you have received this email, it means you have been approved! If you choose to move forward with WaiveWork your payment will be $${opts.perWeek} a week. </p><p>When scheduling a pickup appointment, please keep in mind that our regular billing dates are on the 1st, 8th, 15th and 22nd of each month. If you pick up a car on a different date, your initial payment will be of a prorated amount based on the number of days left until the following regular billing day. Your initial payment will be due when you pick up the car. The next steps are to schedule a pickup appointment and set up your account.</p><p>After you have set your password, please add a payment method to save time on the day of your appointment. Additionally, please review the terms of Waivework <a href=”http://waivecar.com/pic/waivework-agreement.pdf”>here</a>. We will be in touch about getting you a customized version of these terms for you to e-sign.</p><p>Please don't hesitate to reach out to customer service with any questions you may have at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`;
     scheduler.add('waivework-reminder', {
       uid   : `waivework-reminder-${opts.user.id}`,
+      unique: true,
       timer : {value: 8, type: 'hours'},
       data  : {
         userId: opts.user.id,
