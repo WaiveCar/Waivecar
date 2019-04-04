@@ -554,6 +554,7 @@ module.exports = {
       try {
         if (params.isWaivework) {
           yield userRecord.update({isWaivework: true});
+          yield notify.sendTextMessage(record, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
             unique: true,
@@ -668,6 +669,7 @@ module.exports = {
       },
     });
     try {
+      yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
       emailOpts = {
         to       : opts.email,
         from     : config.email.sender,

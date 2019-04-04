@@ -28,6 +28,7 @@ scheduler.process('waivework-reminder', function*(job) {
   }
   text += '</p>';
   try {
+    yield notify.sendTextMessage(opts.user, `Just a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`);
     let email = new Email();
     yield email.send({
       to: user.email,
