@@ -157,6 +157,8 @@ module.exports = class LicenseService extends Service {
 
     this.hasAccess(user, _user);
 
+    yield license.update(data);
+    
     // ### create user in verification provider and establish link.
 
     //
