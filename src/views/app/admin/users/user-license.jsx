@@ -97,7 +97,7 @@ module.exports = class UserDetails extends React.Component {
    * @return {Void}
    */
   submit = (event) => {
-    console.log('event: ', event)
+    //console.log('event: ', event)
     let form = new Form(event);
     api.put(`/licenses/${ this.state.license.id }`, form.data, (err) => {
       if (err) {
