@@ -2643,6 +2643,18 @@ module.exports = class BookingService extends Service {
     }
   }
 
+  static *flags(bookingId, payload) {
+    let booking = yield Booking.findById(bookingId);
+    for(var ix in payload) {
+      if(payload[ix]) {
+        yield booking.addFlag(ix);
+      } else {
+        yield booking.unFlag(ix);
+      }
+    }
+    return booking;
+  }
+
   static *updateWaiveworkPayment(bookingId, payload) {
     let nextPayment = yield WaiveworkPayment.findOne({
       where: {

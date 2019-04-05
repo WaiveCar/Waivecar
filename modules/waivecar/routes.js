@@ -18,6 +18,7 @@ Route.get('/history/booking/:id',  [ 'LogController@bookingHistory' ]);
 
 Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
+Route.put('/bookings/:id/flags',   [ 'isAuthenticated', 'isAdmin', 'BookingsController@flags' ]);
 Route.get('/bookings/:id/notes',   [ 'isAuthenticated', 'NotesController@getBookingNotes' ]);
 Route.get('/bookings/:id/parkingDetails',   [ 'isAuthenticated', 'BookingsController@getParkingDetails' ]);
 Route.put('/bookings/:id/checkParity', [ 'isAuthenticated', 'BookingsController@checkCarParityWithUser' ]);
