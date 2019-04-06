@@ -80,7 +80,6 @@ module.exports = {
   },
 
   *add(payload, _user) {
-    console.log('payload: ', payload);
     // This is toooottally unauthenticated and anyone can type in any email
     // address so we can't leak information such as someone's location. So
     // we carefully construct what we're returning to the user and only
@@ -192,7 +191,6 @@ module.exports = {
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         
         if (payload.wantsElectric === 'true') {
-          console.log('user wants electric');
           yield toAddNotes.update({
             notes: JSON.stringify([...JSON.parse(toAddNotes.notes), 'Prefers electric']),
           });
