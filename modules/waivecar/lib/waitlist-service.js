@@ -191,11 +191,13 @@ module.exports = {
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         
-        if (payload.wantsElectric) {
+        if (payload.wantsElectric === 'true') {
           console.log('user wants electric');
-          yield this.addNote({id: record.id, note: `Prefers electric`});
+          yield toAddNotes.update({
+            notes: JSON.stringify([...JSON.parse(toAddNotes.notes), 'Prefers electric']),
+          });
         }
-        yield record.update({
+        yield toAddNotes.update({
           notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data})]),
         });
         try {
@@ -575,9 +577,7 @@ module.exports = {
             // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
             // provided license info to our system when they are let in
             let userNotes = JSON.parse(record.notes);
-            console.log('notes: ', userNotes);
             for (let note of userNotes) {
-              console.log('note: ', note);
               try {
                 note = JSON.parse(note);
                 if (note.accountType && note.accountType === 'waivework') {
