@@ -58,6 +58,7 @@ module.exports = {
       notes.push(payload.note);
     }
     yield record.update({notes: JSON.stringify(notes)});
+    return record;
   },
 
   *deleteNote(payload, _user) {
@@ -79,6 +80,7 @@ module.exports = {
   },
 
   *add(payload, _user) {
+    console.log('payload: ', payload);
     // This is toooottally unauthenticated and anyone can type in any email
     // address so we can't leak information such as someone's location. So
     // we carefully construct what we're returning to the user and only
@@ -187,8 +189,14 @@ module.exports = {
         data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+        let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
+        
+        if (payload.wantsElectric) {
+          console.log('user wants electric');
+          yield this.addNote({id: record.id, note: `Prefers electric`});
+        }
         yield record.update({
-          notes: JSON.stringify([{...data}]),
+          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data})]),
         });
         try {
           let email = new Email();
@@ -567,23 +575,28 @@ module.exports = {
             // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
             // provided license info to our system when they are let in
             let userNotes = JSON.parse(record.notes);
+            console.log('notes: ', userNotes);
             for (let note of userNotes) {
-              if (note.accountType && note.accountType === 'waivework') {
-                try {
-                  yield LicenseService.store({
-                    ...note, 
-                    number: note.licenseNumber, 
-                    street1: note.address1,
-                    street2: note.address2,
-                    expirationDate: moment(note.expiration).format(),
-                    birthDate: moment(note.birthDate).format(),
-                    userId: userRecord.id, 
-                    fromComputer: true,
-                  });
-                } catch(e) {
-                  console.log('error storing license', e);
+              console.log('note: ', note);
+              try {
+                note = JSON.parse(note);
+                if (note.accountType && note.accountType === 'waivework') {
+                  try {
+                    yield LicenseService.store({
+                      ...note, 
+                      number: note.licenseNumber, 
+                      street1: note.address1,
+                      street2: note.address2,
+                      expirationDate: moment(note.expiration).format(),
+                      birthDate: moment(note.birthDate).format(),
+                      userId: userRecord.id, 
+                      fromComputer: true,
+                    });
+                  } catch(e) {
+                    console.log('error storing license', e);
+                  }
                 }
-              }
+              } catch(e) {}
             };
           }
         }
