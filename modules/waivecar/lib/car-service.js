@@ -1523,7 +1523,7 @@ module.exports = {
     let cars = yield Car.find({
       where: {
         license: {
-          $and: [{$like: 'work%'}, {$like: `%${query.search}`}]
+          $and: [{$like: `%${query.search}`}]
         }
       }
     });
