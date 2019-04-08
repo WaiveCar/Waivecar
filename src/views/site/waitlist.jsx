@@ -23,6 +23,7 @@ module.exports = class WaitList extends Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <div id='home'>
         <footer id='wait-header' className='section section-footer bg-inverse'>
@@ -58,21 +59,28 @@ module.exports = class WaitList extends Component {
                   <p>Please check your email for further instructions.</p>
                 </div>
               }
-              { this.state.waivework == 'yes' &&
+              { this.state.waivework == 'yes' && !this.state.alreadyLetIn &&
                 <div>
                   <p>Your information has been saved and our staff will reach out to you by email or phone within about two business days.</p>
                   <p>If you have any questions, dont hesitate to give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.
                   </p>
                 </div>
               }
-              { this.state.established == 'yes' &&
+              { this.state.waivework == 'yes' && (this.state.alreadyLetIn || this.state.established) &&
+                <div>
+                  <p>
+                    You have either already signed up or are already an active WaiveCar user. To get started with WaiveWork please call us at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.  
+                  </p>
+                </div>
+              }
+              { this.state.established == 'yes' && !this.state.waivework &&
                 <div>
                   <p>It looks like you're already a member!</p>
                   <p>If you're having issues logging in, try <a href="/reset-password">resetting your password</a>.</p>
                   <p>Still no luck? Give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>
                 </div>
               }
-              { this.state.alreadyLetIn == 'yes' &&
+              { this.state.alreadyLetIn == 'yes' && !this.state.waivework &&
                 <div>
                   <p>It looks like we've already let you in!</p>
                   <p>You should have received an email with further instructions. We've sent another one in case you missed it.</p>
