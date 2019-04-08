@@ -58,7 +58,6 @@ module.exports = {
       notes.push(payload.note);
     }
     yield record.update({notes: JSON.stringify(notes)});
-    return record;
   },
 
   *deleteNote(payload, _user) {
@@ -156,8 +155,7 @@ module.exports = {
       // so we just try it all again. The letin code is smart enough to
       // just send out emails and not create duplicate records
       if (user) {
-        yield this.letInByRecord(user, _user);
-        
+        yield this.letInByRecord([user], _user);
         // we set a magical custom flag
         
         // FIELD
@@ -188,15 +186,8 @@ module.exports = {
         data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
         data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
         data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
-        let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
-        
-        if (payload.wantsElectric === 'true') {
-          yield toAddNotes.update({
-            notes: JSON.stringify([...JSON.parse(toAddNotes.notes), 'Prefers electric']),
-          });
-        }
-        yield toAddNotes.update({
-          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data})]),
+        yield record.update({
+          notes: JSON.stringify([{...data}]),
         });
         try {
           let email = new Email();
@@ -576,25 +567,22 @@ module.exports = {
             // provided license info to our system when they are let in
             let userNotes = JSON.parse(record.notes);
             for (let note of userNotes) {
-              try {
-                note = JSON.parse(note);
-                if (note.accountType && note.accountType === 'waivework') {
-                  try {
-                    yield LicenseService.store({
-                      ...note, 
-                      number: note.licenseNumber, 
-                      street1: note.address1,
-                      street2: note.address2,
-                      expirationDate: moment(note.expiration).format(),
-                      birthDate: moment(note.birthDate).format(),
-                      userId: userRecord.id, 
-                      fromComputer: true,
-                    });
-                  } catch(e) {
-                    console.log('error storing license', e);
-                  }
+              if (note.accountType && note.accountType === 'waivework') {
+                try {
+                  yield LicenseService.store({
+                    ...note, 
+                    number: note.licenseNumber, 
+                    street1: note.address1,
+                    street2: note.address2,
+                    expirationDate: moment(note.expiration).format(),
+                    birthDate: moment(note.birthDate).format(),
+                    userId: userRecord.id, 
+                    fromComputer: true,
+                  });
+                } catch(e) {
+                  console.log('error storing license', e);
                 }
-              } catch(e) {}
+              }
             };
           }
         }
