@@ -160,6 +160,9 @@ module.exports = {
         
         // FIELD
         res.alreadyLetIn = 'yes';
+        if (data.accountType === 'waivework') {
+          res.waiveWork = 'yes';
+        }
 
       // Otherwise if it's a user that's established.`
       } else if(user) {
