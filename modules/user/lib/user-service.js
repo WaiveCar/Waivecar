@@ -174,7 +174,11 @@ module.exports = {
         opts.where = {
           $and: _.flatten(
             query.map((term) => {
-              return sequelize.literal(`concat_ws(' ', first_name, last_name, status) like '%${term}%'`);
+              if (term.match(/work/g)) {
+                return sequelize.literal(`concat_ws(' ', is_waivework=true)`)
+              } else {
+                return sequelize.literal(`concat_ws(' ', first_name, last_name, status) like '%${term}%'`);
+              }
             })
           )
         };
@@ -204,7 +208,6 @@ module.exports = {
       } else {
         opts.order = [ ['updated_at', 'DESC'] ];
       } 
-
       return yield User.find(opts);
     } 
     return [];
