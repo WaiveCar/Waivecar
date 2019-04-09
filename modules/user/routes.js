@@ -3,6 +3,7 @@
 let config = Bento.config.user;
 
 Route.get('/users/me',             'UsersController@me');
+Route.get('/users/inter',             'UsersController@intercom');
 Route.put('/users/tags/:verb/:tag','UsersController@tag');
 Route.put('/reset-password',       'UsersController@passwordReset');
 Route.pst('/reset-password/token', 'UsersController@passwordToken');

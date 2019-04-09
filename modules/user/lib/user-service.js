@@ -33,6 +33,28 @@ let _         = require('lodash')
 
 module.exports = {
 
+  *updateIntercom() {
+    let GroupRole = Bento.model('GroupRole');
+    let GroupUser = Bento.model('GroupUser');
+    let allRoles = yield GroupRole.find();
+    let roleMap = {};
+    let list = 'csula level waivework la'.split(' ');
+    let idList = [];
+    allRoles.forEach(row => {
+      if (list.includes(row.name)) {
+        roleMap[row.id] = row.name;
+        idList.push(row.id);
+      }
+    });
+    let allGroups = yield GroupUser.find({where: { groupRoleId: { $in: idList } } });
+    let ix = 0, ttl = allGroups.length;
+    for(var row of allGroups) {
+      yield Intercom.update(row.userId, 'program', roleMap[row.groupRoleId]);
+      console.log([row.userId, roleMap[row.groupRoleId], Math.round(100 * ix++ / ttl)]);
+    }
+
+  },
+
   *store(payload, _user, opts) {
     let data = yield hooks.require('user:store:before', payload, _user, opts);
 

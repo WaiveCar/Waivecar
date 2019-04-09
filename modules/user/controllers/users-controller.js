@@ -17,6 +17,10 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.get(id, this.auth.user);
   };
 
+  controller.intercom = function *() {
+    return yield service.updateIntercom();
+  }
+
   controller.me = function *() {
     if (this.auth.check()) {
       // We are also piggy-backing the user agent on top of this.

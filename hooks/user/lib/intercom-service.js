@@ -21,12 +21,20 @@ module.exports = {
     return yield client.users.delete({ id: user.id });
   },
 
-  *update(who, what) {
-    var payload = {user_id: who.id};
-
+  *update(who, what, value) {
+    var payload;
+    if(who.id) {
+      payload = {user_id: who.id};
+    } else {
+      payload = {user_id: who};
+    }
+   
     if(what) {
       if(!Array.isArray(what)) {
         what = [what];
+      }
+      if(!Array.isArray(value)) {
+        value = [value];
       }
 
       let topLevel = ['email', 'phone', 'name'];
@@ -38,13 +46,15 @@ module.exports = {
           if(!payload.custom_attributes) {
             payload.custom_attributes = {};
           }
-          payload.custom_attributes[row] = who[row];
+          if(arguments.length == 2) {
+            payload.custom_attributes[row] = who[row];
+          } else {
+            payload.custom_attributes[row] = value.shift();
+          }
         }
       });
     }
     let res = yield (this.getClient()).users.update(payload);
-
-    console.log(res);
   }
 
 };
