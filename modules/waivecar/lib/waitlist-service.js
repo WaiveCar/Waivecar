@@ -137,40 +137,7 @@ module.exports = {
     }
 
     if (data.accountType === 'waivework') {
-      data = {...payload, ...data};
-      data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
-      data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
-      data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
-      try {
-        let email = new Email();
-        yield email.send({
-          to       : 'dennis.mata.t7h8@statefarm.com',
-          cc       : 'frank@waive.car',
-          from     : config.email.sender,
-          subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
-          template : 'waivework-signup',
-          context  : {
-            ...data
-          }
-        });
-      } catch(ex) {
-        console.log("Unable to send email", ex);
-      }
-      try {
-        yield notify.sendTextMessage(data, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
-        let email = new Email();
-        yield email.send({
-          to       : data.email,
-          from     : config.email.sender,
-          subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
-          template : 'waivework-confirmation',
-          context  : {
-            name: `${data['firstName']} ${data['lastName']}`,
-          }
-        });
-      } catch(ex) {
-        console.log("Unable to send email", ex);
-      }
+      yield this.requestWorkQuote(payload, data);
     }
 
     // We first see if the person has already tried to join us previously
@@ -435,6 +402,43 @@ module.exports = {
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
     return userList;
+  },
+
+  *requestWorkQuote(payload, data) {
+    data = {...payload, ...data};
+    data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
+    data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
+    data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+    try {
+      let email = new Email();
+      yield email.send({
+        to       : 'dennis.mata.t7h8@statefarm.com',
+        cc       : 'frank@waive.car',
+        from     : config.email.sender,
+        subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+        template : 'waivework-signup',
+        context  : {
+          ...data
+        }
+      });
+    } catch(ex) {
+      console.log("Unable to send email", ex);
+    }
+    try {
+      yield notify.sendTextMessage(data, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
+      let email = new Email();
+      yield email.send({
+        to       : data.email,
+        from     : config.email.sender,
+        subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+        template : 'waivework-confirmation',
+        context  : {
+          name: `${data['firstName']} ${data['lastName']}`,
+        }
+      });
+    } catch(ex) {
+      console.log("Unable to send email", ex);
+    }
   },
 
   //
