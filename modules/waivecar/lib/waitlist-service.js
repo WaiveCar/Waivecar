@@ -136,6 +136,43 @@ module.exports = {
       searchOpts.where['$or'].push({ phone: payload.phone });
     }
 
+    if (data.accountType === 'waivework') {
+      data = {...payload, ...data};
+      data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
+      data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
+      data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+      try {
+        let email = new Email();
+        yield email.send({
+          to       : 'dennis.mata.t7h8@statefarm.com',
+          cc       : 'frank@waive.car',
+          from     : config.email.sender,
+          subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+          template : 'waivework-signup',
+          context  : {
+            ...data
+          }
+        });
+      } catch(ex) {
+        console.log("Unable to send email", ex);
+      }
+      try {
+        yield notify.sendTextMessage(data, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
+        let email = new Email();
+        yield email.send({
+          to       : data.email,
+          from     : config.email.sender,
+          subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
+          template : 'waivework-confirmation',
+          context  : {
+            name: `${data['firstName']} ${data['lastName']}`,
+          }
+        });
+      } catch(ex) {
+        console.log("Unable to send email", ex);
+      }
+    }
+
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
 
@@ -146,7 +183,6 @@ module.exports = {
     }
     if (record || user) {
       // They've signed up before, that's chill. 
-      
       if (record) {
         // We always update the signup_count regardless
         yield record.update({signupCount: record.signupCount + 1 });
@@ -168,8 +204,14 @@ module.exports = {
       // Otherwise if it's a user that's established.`
       } else if(user) {
         res.established = 'yes';
+        if (data.accountType === 'waivework') {
+          res.waivework = 'yes';
+        }
       } else {
         res.signedUp = 'yes';
+        if (data.accountType === 'waivework') {
+          res.waivework = 'yes';
+        }
       }
     } else {
       // We haven't seen this person before... 
@@ -186,10 +228,6 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
-        data = {...payload, ...data};
-        data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
-        data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
-        data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         if (payload.wantsElectric === 'true') {
           yield toAddNotes.update({
@@ -199,36 +237,6 @@ module.exports = {
         yield toAddNotes.update({
           notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data})]),
         });
-        try {
-          let email = new Email();
-          yield email.send({
-            to       : 'dennis.mata.t7h8@statefarm.com',
-            cc       : 'frank@waive.car',
-            from     : config.email.sender,
-            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
-            template : 'waivework-signup',
-            context  : {
-              ...data
-            }
-          });
-        } catch(ex) {
-          console.log("Unable to send email", ex);
-        }
-        try {
-          yield notify.sendTextMessage(record, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
-          let email = new Email();
-          yield email.send({
-            to       : data.email,
-            from     : config.email.sender,
-            subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
-            template : 'waivework-confirmation',
-            context  : {
-              name: `${data['firstName']} ${data['lastName']}`,
-            }
-          });
-        } catch(ex) {
-          console.log("Unable to send email", ex);
-        }
       }
 
       // If this is a valid waivework signup
