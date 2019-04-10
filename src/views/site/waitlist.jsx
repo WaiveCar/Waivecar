@@ -59,14 +59,14 @@ module.exports = class WaitList extends Component {
                   <p>Please check your email for further instructions.</p>
                 </div>
               }
-              { this.state.waivework == 'yes' && !this.state.alreadyLetIn &&
+              { this.state.waivework == 'yes' && !this.state.alreadyLetIn && !this.state.signedUp && !this.state.established &&
                 <div>
                   <p>Your information has been saved and our staff will reach out to you by email or phone within about two business days.</p>
                   <p>If you have any questions, dont hesitate to give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.
                   </p>
                 </div>
               }
-              { this.state.waivework == 'yes' && (this.state.alreadyLetIn || this.state.established) &&
+              { this.state.waivework == 'yes' && (this.state.alreadyLetIn || this.state.established || this.state.signedUp) &&
                 <div>
                   <p>
                     You have either already signed up or are already an active WaiveCar user. To get started with WaiveWork please call us at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.  
