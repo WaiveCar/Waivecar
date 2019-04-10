@@ -52,29 +52,39 @@ scheduler.process('waivework-billing', function*(job) {
     }
   }
 
+
   let today = moment();
+
+  // The unpaid WaiveworkPayments that are created on the previous billing date
+  // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
+  // works by making the charge that was scheduled on the previous billing date and
+  // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
+  let todaysPayments = yield WaiveworkPayment.find({
+    where: {
+      date: {
+        $lt: moment(today)
+          .add(1, 'days')
+          .format('YYYY-MM-DD'),
+      },
+      bookingPaymentId: null,
+    },
+    include: [
+      {
+        model: 'Booking',
+        as: 'booking',
+      },
+    ],
+  });
+
+  // This is a payment reminder to be sent out the 
+  let lastReminder = moment().daysInMonth() - 1;
+  // If the current day is two days before the current payment date, a reminder will need to be sent out
+  if ([6, 13, 20, lastReminder].includes(today.date())) {
+
+  }
+
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(today.date())) {
-    // The unpiad WaiveworkPayments that are created on the previous billing date
-    // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
-    // works by making the charge that was scheduled on the previous billing date and
-    // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
-    let todaysPayments = yield WaiveworkPayment.find({
-      where: {
-        date: {
-          $lt: moment(today)
-            .add(1, 'days')
-            .format('YYYY-MM-DD'),
-        },
-        bookingPaymentId: null,
-      },
-      include: [
-        {
-          model: 'Booking',
-          as: 'booking',
-        },
-      ],
-    });
     for (let oldPayment of todaysPayments) {
       if (
         yield redis.shouldProcess(
