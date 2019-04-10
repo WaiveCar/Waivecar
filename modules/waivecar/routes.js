@@ -134,6 +134,7 @@ Route.post('/waitlist/deleteNote', ['WaitlistController@deleteNote']);
 Route.post('/waitlist/prioritize', ['WaitlistController@prioritize' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 Route.post('/waitlist/waiveWorkEmail', ['WaitlistController@waiveWorkEmail'])
+Route.post('/waitlist/requestWorkQuote', ['WaitlistController@requestWorkQuote'])
 
 Route.get('/actions/hash/:id', ['ActionController@getHash']);
 Route.get('/actions/forward/:type/:id', ['ActionController@goForward']);
