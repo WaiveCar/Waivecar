@@ -41,7 +41,7 @@ scheduler.process('waivework-reminder', function*(job) {
       subject: `${user.firstName} ${
         user.lastName
       } - Upcoming WaiveWork Pickup Appointment`,
-      template: 'waivework-reminder',
+      template: 'waivework-appointment-reminder',
       context: {
         name,
         text,
