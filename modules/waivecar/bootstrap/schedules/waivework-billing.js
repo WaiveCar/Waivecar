@@ -58,7 +58,8 @@ scheduler.process('waivework-billing', function*(job) {
   let currentDay = today.date();
 
   //remove the below
-  currentDay = 29;
+  currentDay = 15;
+  today.date(currentDay)
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
@@ -67,60 +68,57 @@ scheduler.process('waivework-billing', function*(job) {
   // This is a payment reminder to be sent out the
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
-  try {
-    if ([6, 13, 20, lastReminder].includes(currentDay)) {
-      let todaysPayments = yield WaiveworkPayment.find({
-        where: {
-          date: {
-            $gt: moment(today).format('YYYY-MM-DD'),
-          },
-          bookingPaymentId: null,
+  if ([6, 13, 20, lastReminder].includes(currentDay)) {
+    let todaysPayments = yield WaiveworkPayment.find({
+      where: {
+        date: {
+          $gt: moment(today).format('YYYY-MM-DD'),
         },
-        include: [
-          {
-            model: 'Booking',
-            as: 'booking',
-          },
-        ],
-      });
-      for (let upcomingPayment of todaysPayments) {
-        if (
-          yield redis.shouldProcess(
-            'waivework-auto-charge',
-            upcomingPayment.id,
-            90 * 1000,
-          )
-        ) {
-          let user = yield User.findById(upcomingPayment.booking.userId);
-          let email = new Email(), emailOpts = {};
-          try {
-            yield notify.sendTextMessage(
-              user,
-              `Just a reminder! Your credit card will be charged $${(
-                upcomingPayment.amount / 100
-              ).toFixed(
-                2,
-              )} automatically for the next week of your WaiveWork booking.`,
-            );
-            emailOpts = {
-              to: user.email,
-              from: config.email.sender,
-              subject: 'Your Upcoming WaiveWork Payment',
-              template: 'waivework-payment-reminder',
-              context: {
-                name: `${user.firstName} ${user.lastName}`,
-                amount: (upcomingPayment.amount / 100).toFixed(2),
-              },
-            };
-            yield email.send(emailOpts);
-          } catch (e) {
-            console.log('error sending email', e);
-          }
+        bookingPaymentId: null,
+      },
+      include: [
+        {
+          model: 'Booking',
+          as: 'booking',
+        },
+      ],
+    });
+    for (let upcomingPayment of todaysPayments) {
+      if (
+        yield redis.shouldProcess(
+          'waivework-auto-charge',
+          upcomingPayment.id,
+          90 * 1000,
+        )
+      ) {
+        let user = yield User.findById(upcomingPayment.booking.userId);
+        let email = new Email(),
+          emailOpts = {};
+        try {
+          yield notify.sendTextMessage(
+            user,
+            `Just a reminder! Your credit card will be charged $${(
+              upcomingPayment.amount / 100
+            ).toFixed(
+              2,
+            )} automatically for the next week of your WaiveWork booking.`,
+          );
+          emailOpts = {
+            to: user.email,
+            from: config.email.sender,
+            subject: 'Your Upcoming WaiveWork Payment',
+            template: 'waivework-payment-reminder',
+            context: {
+              name: `${user.firstName} ${user.lastName}`,
+              amount: (upcomingPayment.amount / 100).toFixed(2),
+            },
+          };
+          yield email.send(emailOpts);
+        } catch (e) {
+          console.log('error sending email', e);
         }
       }
     }
-  } catch (e) {
-    console.log('error: ', e);
   }
 
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
@@ -171,9 +169,11 @@ scheduler.process('waivework-billing', function*(job) {
             orderId: shopOrder.id,
           });
           yield bookingPayment.save();
+          /*
           yield oldPayment.update({
             bookingPaymentId: bookingPayment.id,
           });
+          */
         } catch (e) {
           yield notify.slack(
             {
@@ -183,11 +183,13 @@ scheduler.process('waivework-billing', function*(job) {
             },
             {channel: '#waivework-charges'},
           );
+          /*
           yield oldPayment.update({
             bookingPaymentId: e.shopOrder.id,
           });
+          */
         }
-
+        /*
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
           date: moment().add(7, 'days'),
@@ -195,6 +197,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
+        */
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
         // the testing period for this process
         yield notify.slack(
@@ -212,8 +215,6 @@ scheduler.process('waivework-billing', function*(job) {
 
 module.exports = function*() {
   let timer = {value: 12, type: 'seconds'};
-
-  //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
