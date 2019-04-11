@@ -202,7 +202,7 @@ module.exports = {
           });
         }
         yield toAddNotes.update({
-          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data})]),
+          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data, ...payload})]),
         });
       }
 
@@ -408,7 +408,7 @@ module.exports = {
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
-    data.expiration = moment(payload.expiration).format('MM/DD/YYYY'); 
+    data.expirationDate = moment(payload.expirationDate).format('MM/DD/YYYY'); 
     try {
       let email = new Email();
       yield email.send({
@@ -595,10 +595,7 @@ module.exports = {
                   try {
                     yield LicenseService.store({
                       ...note, 
-                      number: note.licenseNumber, 
-                      street1: note.address1,
-                      street2: note.address2,
-                      expirationDate: moment(note.expiration).format(),
+                      expirationDate: moment(note.expirationDate).format(),
                       birthDate: moment(note.birthDate).format(),
                       userId: userRecord.id, 
                       fromComputer: true,
