@@ -171,7 +171,7 @@ module.exports = {
     } else {
       // We haven't seen this person before... 
 
-      isInside = inside(payload);
+      isInside = false;//inside(payload);
 
       // If they are outside la then we just give them
       // a priority of 0, otherwise it's 1. Note the plus
@@ -240,6 +240,7 @@ module.exports = {
     }
 
     if(data['accountType'] != 'waivework') {
+      /*
       if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
         res.fastTrack = 'yes';
         delete res.inside;
@@ -261,7 +262,7 @@ module.exports = {
         }
         yield user.addTag('la');
 
-      } else if (promo === 'csula-student' || promo === 'csula-staff' || promo.match(/^cal/)) {
+      } else */if (promo === 'csula-student' || promo === 'csula-staff' || promo.match(/^cal/)) {
         res.csula = 'yes';
         res.fastTrack = 'yes';
         delete res.inside;
@@ -286,7 +287,7 @@ module.exports = {
           type: 'unit'
         });
         yield note.save();
-      } else if(promo === 'levelbk') {
+      } /*else if(promo === 'levelbk') {
         res.level = 'yes';
         res.fastTrack = 'yes';
         delete res.inside;
@@ -317,7 +318,7 @@ module.exports = {
         } else {
           console.log("The following produced an error", record);
         }
-      }
+      }*/
     }
     return res;
   },
