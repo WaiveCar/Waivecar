@@ -36,6 +36,8 @@ export default class WaiveWorkRequest extends Component {
             licenseState: licenses[0].state,
             expiration: licenses[0].expirationDate,
             userId: this.props.user.id,
+            address1: licenses[0].street1,
+            address2: licenses[0].street2,
           },
           (err, response) => {
             if (err) {
