@@ -8,6 +8,7 @@ let OrderService = Bento.module('shop/lib/order-service');
 let BookingPayment = Bento.model('BookingPayment');
 let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
+let config = Bento.config;
 let moment = require('moment');
 
 scheduler.process('waivework-billing', function*(job) {
@@ -54,67 +55,92 @@ scheduler.process('waivework-billing', function*(job) {
   }
 
   let today = moment();
+  let currentDay = today.date();
+
+  //remove the below
+  currentDay = 29;
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
   // works by making the charge that was scheduled on the previous billing date and
   // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
-  let todaysPayments = yield WaiveworkPayment.find({
-    where: {
-      date: {
-        $lt: moment(today)
-          .add(1, 'days')
-          .format('YYYY-MM-DD'),
-      },
-      bookingPaymentId: null,
-    },
-    include: [
-      {
-        model: 'Booking',
-        as: 'booking',
-      },
-    ],
-  });
-
   // This is a payment reminder to be sent out the
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
-  if ([6, 13, 20, lastReminder].includes(today.date())) {
-    for (let oldPayment of todaysPayments) {
-      if (
-        yield redis.shouldProcess(
-          'waivework-auto-charge',
-          oldPayment.id,
-          90 * 1000,
-        )
-      ) {
-        let user = yield User.findById(oldPayment.booking.userId);
-        let email = new Email(),
-          emailOpts = {};
-        try {
-          yield notify.sendTextMessage(
-            user,
-            `Something, something dark side... something, something complete`,
-          );
-          emailOpts = {
-            to: user.email,
-            from: config.email.sender,
-            subject: 'Your Upcoming WaiveWork Payment',
-            template: 'waivework-payment-reminder',
-            context: {
-              name: `${user.firstName} ${user.lastName}`,
-              amount: (oldPayment.amount / 100).toFixed(2),
-            },
-          };
-        } catch (e) {
-          console.log('error sending email', e);
+  try {
+    if ([6, 13, 20, lastReminder].includes(currentDay)) {
+      let todaysPayments = yield WaiveworkPayment.find({
+        where: {
+          date: {
+            $gt: moment(today).format('YYYY-MM-DD'),
+          },
+          bookingPaymentId: null,
+        },
+        include: [
+          {
+            model: 'Booking',
+            as: 'booking',
+          },
+        ],
+      });
+      for (let upcomingPayment of todaysPayments) {
+        if (
+          yield redis.shouldProcess(
+            'waivework-auto-charge',
+            upcomingPayment.id,
+            90 * 1000,
+          )
+        ) {
+          let user = yield User.findById(upcomingPayment.booking.userId);
+          let email = new Email(), emailOpts = {};
+          try {
+            yield notify.sendTextMessage(
+              user,
+              `Just a reminder! Your credit card will be charged $${(
+                upcomingPayment.amount / 100
+              ).toFixed(
+                2,
+              )} automatically for the next week of your WaiveWork booking.`,
+            );
+            emailOpts = {
+              to: user.email,
+              from: config.email.sender,
+              subject: 'Your Upcoming WaiveWork Payment',
+              template: 'waivework-payment-reminder',
+              context: {
+                name: `${user.firstName} ${user.lastName}`,
+                amount: (upcomingPayment.amount / 100).toFixed(2),
+              },
+            };
+            yield email.send(emailOpts);
+          } catch (e) {
+            console.log('error sending email', e);
+          }
         }
       }
     }
+  } catch (e) {
+    console.log('error: ', e);
   }
 
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
-  if ([1, 8, 15, 22].includes(today.date())) {
+  if ([1, 8, 15, 22].includes(currentDay)) {
+    let todaysPayments = yield WaiveworkPayment.find({
+      where: {
+        date: {
+          $lt: moment(today)
+            .add(1, 'days')
+            .format('YYYY-MM-DD'),
+        },
+        bookingPaymentId: null,
+      },
+      include: [
+        {
+          model: 'Booking',
+          as: 'booking',
+        },
+      ],
+    });
     for (let oldPayment of todaysPayments) {
       if (
         yield redis.shouldProcess(
@@ -185,7 +211,9 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'hours'};
+  let timer = {value: 12, type: 'seconds'};
+
+  //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
