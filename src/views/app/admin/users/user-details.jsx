@@ -10,6 +10,7 @@ import AddCard        from '../../components/user/cards/add-card';
 import RideList       from '../../components/user/rides/ride-list';
 import ChargeList     from '../../components/user/charges/charge-list';
 import WaiveWorkDetails from './waivework-details'; 
+import WaiveWorkRequest from './waivework-request';
 
 
 module.exports = class UserDetails extends React.Component {
@@ -484,7 +485,7 @@ module.exports = class UserDetails extends React.Component {
             <AddCard user={ user } currentUser={ false }></AddCard>
             : ''
           }
-          { this.state.currentUser.isWaivework && <WaiveWorkDetails user={user} /> }
+          { this.state.currentUser.isWaivework ? <WaiveWorkDetails user={user} /> : <WaiveWorkRequest user={user} />}
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
