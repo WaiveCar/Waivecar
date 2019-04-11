@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {api} from 'bento';
+import {snackbar} from 'bento-web';
 
 export default class WaiveWorkRequest extends Component {
   constructor(props) {
@@ -7,9 +9,47 @@ export default class WaiveWorkRequest extends Component {
       rideshare: 'true',
       wantsElectric: 'true',
       offerPerWeek: null,
-
-    }
+      enabled: true,
+    };
   }
+
+  requestQuote = () => {
+    api.get(
+      '/licenses',
+      {
+        userId: this.props.user.id,
+      },
+      (err, licenses) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        api.post(
+          '/waitlist/requestWorkQuote',
+          {
+            ...this.props.user,
+            ...licenses[0],
+            ...this.state,
+            licenseNumber: licenses[0].number,
+            licenseState: licenses[0].state,
+            expiration: licenses[0].expirationDate,
+            userId: this.props.user.id,
+          },
+          (err, response) => {
+            if (err) {
+              return snackbar.notify({
+                type: 'danger',
+                message: err.message,
+              });
+            }
+            console.log('response: ', response);
+          },
+        );
+      },
+    );
+  };
 
   render() {
     return (
@@ -19,20 +59,43 @@ export default class WaiveWorkRequest extends Component {
           <small>Request an insurance quote for this user</small>
         </h3>
         <div className="box-content">
-          <label>For Rideshare</label>
-          <div onChange={(e) => this.setState({rideshare: e.target.value})}>
-            <input type="radio" value="true" name="rideshare" defaultChecked/> yes
-            <input type="radio" value="false" name="rideshare"/> no
+          <div onChange={e => this.setState({rideshare: e.target.value})}>
+            <label>For Rideshare</label>
+            <input
+              type="radio"
+              value="true"
+              name="rideshare"
+              defaultChecked
+            />{' '}
+            yes
+            <input type="radio" value="false" name="rideshare" /> no
           </div>
-          <label>Prefers Electric</label>
-          <div onChange={(e) => this.setState({wantsElectric: e.target.value})}>
-            <input type="radio" value="true" name="wantsElectric" defaultChecked/> yes
+          <div onChange={e => this.setState({wantsElectric: e.target.value})}>
+            <label>Prefers Electric</label>
+            <input
+              type="radio"
+              value="true"
+              name="wantsElectric"
+              defaultChecked
+            />{' '}
+            yes
             <input type="radio" value="false" name="wantsElectric" /> no
           </div>
-          <label>Offer Per Week</label>
-          <input type="number" onChange={(e) => this.setState({offerPerWeek: e.target.value})}/>
+          <label>Offer Per Week: </label>
+          <input
+            type="number"
+            onChange={e => this.setState({offerPerWeek: e.target.value})}
+          />
+          <div>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => this.requestQuote()}>
+              Request Quote
+            </button>
+          </div>
         </div>
       </div>
     );
-  };
+  }
 }
