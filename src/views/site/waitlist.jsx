@@ -23,7 +23,6 @@ module.exports = class WaitList extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <div id='home'>
         <footer id='wait-header' className='section section-footer bg-inverse'>
