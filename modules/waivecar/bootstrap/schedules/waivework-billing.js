@@ -1,6 +1,7 @@
 let redis = require('../../lib/redis-service');
 let notify = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
+let Email = Bento.provider('email');
 let Booking = Bento.model('Booking');
 let User = Bento.model('User');
 let OrderService = Bento.module('shop/lib/order-service');
@@ -52,7 +53,6 @@ scheduler.process('waivework-billing', function*(job) {
     }
   }
 
-
   let today = moment();
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
@@ -76,11 +76,41 @@ scheduler.process('waivework-billing', function*(job) {
     ],
   });
 
-  // This is a payment reminder to be sent out the 
+  // This is a payment reminder to be sent out the
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
   if ([6, 13, 20, lastReminder].includes(today.date())) {
-
+    for (let oldPayment of todaysPayments) {
+      if (
+        yield redis.shouldProcess(
+          'waivework-auto-charge',
+          oldPayment.id,
+          90 * 1000,
+        )
+      ) {
+        let user = yield User.findById(oldPayment.booking.userId);
+        let email = new Email(),
+          emailOpts = {};
+        try {
+          yield notify.sendTextMessage(
+            user,
+            `Something, something dark side... something, something complete`,
+          );
+          emailOpts = {
+            to: user.email,
+            from: config.email.sender,
+            subject: 'Your Upcoming WaiveWork Payment',
+            template: 'waivework-payment-reminder',
+            context: {
+              name: `${user.firstName} ${user.lastName}`,
+              amount: (oldPayment.amount / 100).toFixed(2),
+            },
+          };
+        } catch (e) {
+          console.log('error sending email', e);
+        }
+      }
+    }
   }
 
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
