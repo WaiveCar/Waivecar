@@ -154,6 +154,26 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  failedChargeEmail() {
+    let {currentWaiveworkBooking, perWeek} = this.state;
+    api.post(
+      `/waiveworkPayment/${currentWaiveworkBooking.id}/failedPayment`,
+      {amount: perWeek * 100, userId: this.props.user.id},
+      (err, result) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        return snackbar.notify({
+          type: 'success',
+          message: 'Failed charge email sent.',
+        });
+      },
+    );
+  }
+
   bookingAction(action) {
     let {currentWaiveworkBooking} = this.state;
     if (
@@ -321,7 +341,13 @@ class WaiveWorkDetails extends Component {
                         onClick={() =>
                           this.bookingAction(ended ? 'complete' : 'end')
                         }>
-                        {ended ? 'Complete' : 'End'} Waivework Booking
+                        {ended ? 'Complete' : 'End'} Booking
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => this.failedChargeEmail()}>
+                        Failed Charge Email
                       </button>
                     </div>
                   </div>
