@@ -40,5 +40,9 @@ Bento.Register.Controller('WaitlistController', function(controller) {
     return yield waitlist.sendWaiveWorkEmail(this.payload);
   }
 
+  controller.requestWorkQuote = function *() {
+    return yield waitlist.requestWorkQuote(this.payload, {});
+  }
+
   return controller;
 });

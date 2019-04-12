@@ -2,12 +2,13 @@ let scheduler = Bento.provider('queue').scheduler;
 let User = Bento.model('User');
 let Email = Bento.provider('email');
 let config = Bento.config;
+let notify = Bento.module('waivecar/lib/notification-service');
 
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
   let user = yield User.findById(userId);
   let name = `${user.firstName} ${user.lastName}`;
-  let text = '<p>Thanks for signing up for WaiveWork!';
+  let text = '<p>Thanks for signing up for WaiveWork! ';
   if (!user.verifiedPhone || !user.stripeId || !user.password) {
     text += ' Before your pickup appointment please make sure to: <ul>';
     if (!user.password) {
@@ -28,6 +29,10 @@ scheduler.process('waivework-reminder', function*(job) {
   }
   text += '</p>';
   try {
+    yield notify.sendTextMessage(
+      user,
+      `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
+    );
     let email = new Email();
     yield email.send({
       to: user.email,
@@ -36,7 +41,7 @@ scheduler.process('waivework-reminder', function*(job) {
       subject: `${user.firstName} ${
         user.lastName
       } - Upcoming WaiveWork Pickup Appointment`,
-      template: 'waivework-reminder',
+      template: 'waivework-appointment-reminder',
       context: {
         name,
         text,

@@ -27,6 +27,7 @@ Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@upda
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
 Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
+Route.post('/waiveworkPayment/:bookingId/failedPayment', [ 'isAuthenticated', 'BookingsController@failedWaiveworkPayment' ]);
 Route.put('/waiveworkPayment/:bookingId', [ 'isAuthenticated', 'BookingsController@updateWaiveworkPayment' ]);
 
 // ### Patches
@@ -135,6 +136,7 @@ Route.post('/waitlist/deleteNote', ['WaitlistController@deleteNote']);
 Route.post('/waitlist/prioritize', ['WaitlistController@prioritize' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 Route.post('/waitlist/waiveWorkEmail', ['WaitlistController@waiveWorkEmail'])
+Route.post('/waitlist/requestWorkQuote', ['WaitlistController@requestWorkQuote'])
 
 Route.get('/actions/hash/:id', ['ActionController@getHash']);
 Route.get('/actions/forward/:type/:id', ['ActionController@goForward']);
