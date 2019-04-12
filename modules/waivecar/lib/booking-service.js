@@ -2661,11 +2661,11 @@ module.exports = class BookingService extends Service {
     try {
       yield notify.sendTextMessage(
         user,
-        endText,
+        text,
       );
       emailOpts = {
         to: user.email,
-        from: config.email.sender,
+        from: Bento.config.email.sender,
         subject: 'Your WaiveWork Payment',
         template: 'waivework-general',
         context: {
@@ -2677,5 +2677,6 @@ module.exports = class BookingService extends Service {
     } catch (e) {
       console.log('error sending email', e);
     }
+    return;
   }
 };

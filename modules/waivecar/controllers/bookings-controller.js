@@ -170,7 +170,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
   }
 
   controller.failedWaiveworkPayment = function *(bookingId) {
-    return yield booking.updateWaiveworkPayment(failed, this.payload);
+    return yield booking.failedWaiveworkPayment(bookingId, this.payload);
   }
 
   return controller;
