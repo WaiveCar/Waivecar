@@ -22,6 +22,7 @@ export default class WaiveWorkRequest extends Component {
         },
         (err, licenses) => {
           if (err) {
+            this.setState({disabled: false});
             return snackbar.notify({
               type: 'danger',
               message: err.message,
@@ -44,11 +45,12 @@ export default class WaiveWorkRequest extends Component {
             'offerPerWeek',
           ];
           for (let item of requiredItems) {
-            if (!item in body) {
+            if (!body[item]) {
               let message =
                 item !== 'offerPerWeek'
                   ? 'Please make sure that the all necessary license fields are entered into our system'
                   : 'Please enter the amount that the user is offering per week';
+              this.setState({disabled: false});
               return snackbar.notify({
                 type: 'danger',
                 message,
@@ -57,6 +59,7 @@ export default class WaiveWorkRequest extends Component {
           }
           api.post('/waitlist/requestWorkQuote', body, (err, response) => {
             if (err) {
+              this.setState({disabled: false});
               return snackbar.notify({
                 type: 'danger',
                 message: err.message,
