@@ -57,10 +57,6 @@ scheduler.process('waivework-billing', function*(job) {
   let today = moment();
   let currentDay = today.date();
 
-  //remove the below
-  currentDay = 15;
-  today.date(currentDay)
-
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
   // works by making the charge that was scheduled on the previous billing date and
