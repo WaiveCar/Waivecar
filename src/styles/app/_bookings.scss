@@ -19,6 +19,23 @@
     text-align : center;
   }
 
+  .flags{
+    .flags-button{
+      margin-bottom:        2px;
+      margin-left:          3px;
+      margin-right:         3px;
+    }
+
+    .not-active {
+      opacity : 0.3;
+    }
+    p {
+      text-align : center;
+      color     : #767676;
+      font-size : 1.2rem;
+    }
+  }
+
   .fee-list {
     width : 100%;
   }
