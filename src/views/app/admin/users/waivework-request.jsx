@@ -84,26 +84,40 @@ export default class WaiveWorkRequest extends Component {
           <div onChange={e => this.setState({rideshare: e.target.value})}>
             <label>For Rideshare</label>
             <input
+              style={{marginLeft: '0.7rem'}}
               type="radio"
               value="true"
               name="rideshare"
               defaultChecked
             />{' '}
-            yes
-            <input type="radio" value="false" name="rideshare" /> no
+            Yes
+            <input
+              style={{marginLeft: '0.7rem'}}
+              type="radio"
+              value="false"
+              name="rideshare"
+            />{' '}
+            No
           </div>
           <div onChange={e => this.setState({wantsElectric: e.target.value})}>
             <label>Prefers Electric</label>
             <input
+              style={{marginLeft: '0.7rem'}}
               type="radio"
               value="true"
               name="wantsElectric"
               defaultChecked
             />{' '}
-            yes
-            <input type="radio" value="false" name="wantsElectric" /> no
+            Yes
+            <input
+              style={{marginLeft: '0.7rem'}}
+              type="radio"
+              value="false"
+              name="wantsElectric"
+            />{' '}
+            No
           </div>
-          <label>Offer Per Week: </label>
+          <label style={{marginRight: '0.7rem'}}>Offer Per Week: </label>
           <input
             type="number"
             onChange={e => this.setState({offerPerWeek: e.target.value})}
