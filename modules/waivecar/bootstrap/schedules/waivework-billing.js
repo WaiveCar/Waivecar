@@ -123,7 +123,6 @@ scheduler.process('waivework-billing', function*(job) {
 
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
-    console.log('inside');
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
         date: {
@@ -171,11 +170,9 @@ scheduler.process('waivework-billing', function*(job) {
             orderId: shopOrder.id,
           });
           yield bookingPayment.save();
-          /*
           yield oldPayment.update({
             bookingPaymentId: bookingPayment.id,
           });
-          */
           endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} was successful. Thanks for using Waive!`;
         } catch (e) {
           yield notify.slack(
@@ -186,15 +183,11 @@ scheduler.process('waivework-billing', function*(job) {
             },
             {channel: '#waivework-charges'},
           );
-          /*
           yield oldPayment.update({
             bookingPaymentId: e.shopOrder.id,
           });
-          */
           endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} has failed. We will be in touch shortly about it.`
         }
-        console.log('endText', endText);
-        /*
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
           date: moment().add(7, 'days'),
@@ -202,7 +195,6 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
-        */
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
         // the testing period for this process
         yield notify.slack(
@@ -242,7 +234,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 12, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   // Make sure to change this timer back
   scheduler.add('waivework-billing', {
     init: true,
