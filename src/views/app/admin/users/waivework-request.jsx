@@ -9,47 +9,71 @@ export default class WaiveWorkRequest extends Component {
       rideshare: 'true',
       wantsElectric: 'true',
       offerPerWeek: null,
-      enabled: true,
+      disabled: false,
     };
   }
 
   requestQuote = () => {
-    api.get(
-      '/licenses',
-      {
-        userId: this.props.user.id,
-      },
-      (err, licenses) => {
-        if (err) {
-          return snackbar.notify({
-            type: 'danger',
-            message: err.message,
-          });
-        }
-        api.post(
-          '/waitlist/requestWorkQuote',
-          {
+    this.setState({disabled: true}, () => {
+      api.get(
+        '/licenses',
+        {
+          userId: this.props.user.id,
+        },
+        (err, licenses) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: err.message,
+            });
+          }
+          let body = {
             ...this.props.user,
             ...licenses[0],
             ...this.state,
             licenseState: licenses[0].state,
             userId: this.props.user.id,
-          },
-          (err, response) => {
+          };
+          let requiredItems = [
+            'firstName',
+            'lastName',
+            'licenseState',
+            'street1',
+            'number',
+            'expirationDate',
+            'offerPerWeek',
+          ];
+          for (let item of requiredItems) {
+            if (!item in body) {
+              let message =
+                item !== 'offerPerWeek'
+                  ? 'Please make sure that the all necessary license fields are entered into our system'
+                  : 'Please enter the amount that the user is offering per week';
+              return snackbar.notify({
+                type: 'danger',
+                message,
+              });
+            }
+          }
+          api.post('/waitlist/requestWorkQuote', body, (err, response) => {
             if (err) {
               return snackbar.notify({
                 type: 'danger',
                 message: err.message,
               });
             }
-            console.log('response: ', response);
-          },
-        );
-      },
-    );
+            return snackbar.notify({
+              type: 'success',
+              message: 'Quote for WaiveWork insurance requested',
+            });
+          });
+        },
+      );
+    });
   };
 
   render() {
+    let {disabled} = this.state;
     return (
       <div className="box">
         <h3>
@@ -88,6 +112,7 @@ export default class WaiveWorkRequest extends Component {
             <button
               type="button"
               className="btn btn-primary"
+              disabled={disabled}
               onClick={() => this.requestQuote()}>
               Request Quote
             </button>
