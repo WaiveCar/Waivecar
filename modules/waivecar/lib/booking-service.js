@@ -2652,4 +2652,30 @@ module.exports = class BookingService extends Service {
     yield nextPayment.update({amount: payload.amount});
     return nextPayment;
   }
+
+  static *failedWaiveworkPayment(bookingId, payload) {
+    let email = new Email(),
+      emailOpts = {};
+    let text = `Your payment for WaiveWork of ${(payload.amount / 100).toFixed(2)} has failed. We will be in touch shortly about it.`;
+    let user = yield User.findById(payload.userId);
+    try {
+      yield notify.sendTextMessage(
+        user,
+        endText,
+      );
+      emailOpts = {
+        to: user.email,
+        from: config.email.sender,
+        subject: 'Your WaiveWork Payment',
+        template: 'waivework-general',
+        context: {
+          name: `${user.firstName} ${user.lastName}`,
+          text, 
+        },
+      };
+      yield email.send(emailOpts);
+    } catch (e) {
+      console.log('error sending email', e);
+    }
+  }
 };
