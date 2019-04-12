@@ -183,6 +183,18 @@ module.exports = {
       return;
     }
 
+    let plateNumber = car.plateNumber || car.plateNumberWork;
+    if(!plateNumber) {
+      let newCar = yield Car.findById(car.id);
+      plateNumber = newCar.plateNumber;
+
+      if(!plateNumber) {
+        yield notify.slack(
+          { text: `:beers: A booking with ${ car.link() } started which CANNOT be ended in tikd because some plate number issue. Chris should probably fix this.` },
+          { channel: '#rental-alerts' },
+        );
+      }
+    }
     return yield this.post('renters', {
       rentalId : "booking-" + booking.id,
       eventName : state,

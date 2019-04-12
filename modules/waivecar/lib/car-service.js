@@ -37,7 +37,7 @@ let carMap = false;
 
 function legacyWorkAround(car) {
   car.plateNumberWork = car.plateNumber;
-  delete car.plateNumber;
+  //delete car.plateNumber;
 }
 
 module.exports = {
