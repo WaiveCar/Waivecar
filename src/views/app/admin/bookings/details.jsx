@@ -54,8 +54,8 @@ module.exports = class RideDetails extends React.Component {
           return (flag != "Waivework")
         })
         var carPath
-        if(!isNotWaiveWork || this.props.carPath.length > 50) {
-          carPath = this.props.carPath.slice((this.props.carPath.length-50))
+        if(!isNotWaiveWork || this.props.carPath.length > 100) {
+          carPath = this.props.carPath.slice((this.props.carPath.length-100))
         } else {
           carPath = this.props.carPath
         }
