@@ -18,21 +18,17 @@ module.exports = class RideDetails extends React.Component {
       address : [],
       switchStat : [],
       time : [],
+      lat : [],
+      lng : []
     };
   }
 
-  getAddress(lat, long, data, i, lastObject) {
+  getAddress(lat, lng, data, i) {
     let url = `https://basic.waivecar.com/location.php`;
-    let qs  = `latitude=${ lat }&longitude=${ long }`;
-    //debugger;
+    let qs  = `latitude=${ lat }&longitude=${ lng }`;
 
     api.external(url,qs, (err,addressSite) => {
       data.address[i] = addressSite;
-
-      if (lastObject) {
-        //console.log(lastObject);
-        //console.log(data.address);
-      }
       this.setState();
     });
   }
@@ -52,20 +48,20 @@ module.exports = class RideDetails extends React.Component {
       var tempDriving = 0, tempStill = 0, lastLat = 0, lastLong = 0, lastTime = 0;
       if (this.props.carPath.length != 0) {
         clearInterval(ival);
-        var data = {time:[], switchStat: [], address: []};
+        var data = {time:[], switchStat: [], address: [], lat: [], lng: []};
         this.setState({
           startTime : this.props.carPath[0][2],
           finishTime : this.props.carPath[this.props.carPath.length - 1][2]
         });
         var j = 0;
         for (var i = 0; i < this.props.carPath.length; i++) {
-          /*console.log(i);
-          console.log(JSON.stringify(this.props.carPath[i])); */
           //If the car just started
           if(this.props.carPath[i][2] == this.state.startTime) {
             this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j);
             j++
             data.switchStat.push('started');
+            data.lat.push(this.props.carPath[i][0]);
+            data.lng.push(this.props.carPath[i][1]);
           }
           //If the car just finished
           else if (this.props.carPath[i][2] == this.state.finishTime) {
@@ -73,7 +69,9 @@ module.exports = class RideDetails extends React.Component {
             if (tempDriving != 0) {
               tempDriving = tempDriving + (new Date(this.props.carPath[i][2]).getTime() - new Date(lastTime).getTime());
               data.time.push(this.getTTime(tempDriving)); //hours
-              this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j, true);
+              this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j);
+              data.lat.push(this.props.carPath[i][0]);
+              data.lng.push(this.props.carPath[i][1]);
               j++
               tempDriving = 0;
               data.switchStat.push('endWDrive');
@@ -81,7 +79,9 @@ module.exports = class RideDetails extends React.Component {
             } else {
               tempStill = tempStill + (new Date(this.props.carPath[i][2]).getTime() - new Date(lastTime).getTime());
               data.time.push(this.getTTime(tempStill));
-              this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j, true);
+              this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j);
+              data.lat.push(this.props.carPath[i][0]);
+              data.lng.push(this.props.carPath[i][1]);
               j++
               tempStill = 0;
               data.switchStat.push('endWStop');
@@ -94,6 +94,8 @@ module.exports = class RideDetails extends React.Component {
               data.time.push(this.getTTime(tempDriving)); //hours
               data.time.push(this.props.carPath[i-1][2]);
               this.getAddress(this.props.carPath[i][0],this.props.carPath[i][1],data,j);
+              data.lat.push(this.props.carPath[i][0]);
+              data.lng.push(this.props.carPath[i][1]);
               j++
               tempDriving = 0;
             } else {
@@ -113,18 +115,7 @@ module.exports = class RideDetails extends React.Component {
           lastLat = this.props.carPath[i][0];
           lastLong = this.props.carPath[i][1];
           lastTime = this.props.carPath[i][2];
-          /*console.log(JSON.stringify(data));
-          console.log(JSON.stringify(data.switchStat)); */
         }
-        /*
-        var length = data.time.length;
-        for(var i = 0; i < length ;i++) {
-          data.time.push(data.time[i]);
-        }
-        length = data.switchStat.length;
-        for(var i = 0; i < length ;i++) {
-          data.switchStat.push(data.switchStat[i]);
-        }*/
         this.setState(data);
       }
     }.bind(this), 1000);
@@ -134,6 +125,7 @@ module.exports = class RideDetails extends React.Component {
     var ride = null, data = null, duration = null, carTimeline = null, indexT = 0, indexA = 0;
     try {
       data = this.props.booking;
+      window.booking = this.props.booking
 
       // ### Ride
 
@@ -177,7 +169,9 @@ module.exports = class RideDetails extends React.Component {
       carTimeline = {
         switchStat : this.state.switchStat,
         address : this.state.address,
-        time: this.state.time
+        time : this.state.time,
+        latitude : this.state.lat,
+        longitude : this.state.lng
       }
     } catch(ex) {
       return (
@@ -281,7 +275,7 @@ module.exports = class RideDetails extends React.Component {
                           <span className='time'>
                             {moment(path[2]).format('h:mm:ss a')}
                           </span>
-                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.latitude[indexA-1]},${carTimeline.longitude[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
                         </span>
                       </div>);
                     break;
@@ -297,7 +291,7 @@ module.exports = class RideDetails extends React.Component {
                           <span className='time'>
                             {moment(path[2]).format('h:mm:ss a')}
                           </span>
-                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.latitude[indexA-1]},${carTimeline.longitude[indexA-1]}`}>{carTimeline.address[indexA-1]}
                           </a>
 
                         </span>
@@ -309,13 +303,13 @@ module.exports = class RideDetails extends React.Component {
                         <span className='duration'>
                           {carTimeline.time[indexT-1]}
                         </span>
-                        <span>parked </span>
-                      <br/> 
+                        <span>parked</span>
+                      <br/>
                       <span className="address">
                         <span className='time'>
                           {moment(path[2]).format('h:mm:ss a')}
                         </span>
-                        <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}
+                        <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.latitude[indexA-1]},${carTimeline.longitude[indexA-1]}`}>{carTimeline.address[indexA-1]}
                         </a>
                       </span>
                     </div>);
@@ -327,12 +321,12 @@ module.exports = class RideDetails extends React.Component {
                             {carTimeline.time[indexT-2]}
                           </span>
                           <span>driving </span>
-                        <br/> 
+                        <br/>
                         <span className="address">
                           <span className='time'>
                            {moment(carTimeline.time[indexT-1]).format('h:mm:ss a')}
                           </span>
-                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.address[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
+                          <a target='_blank' href={`https://maps.google.com/?q=${carTimeline.latitude[indexA-1]},${carTimeline.longitude[indexA-1]}`}>{carTimeline.address[indexA-1]}</a>
                         </span>
                       </div>);
                     break;
@@ -343,7 +337,6 @@ module.exports = class RideDetails extends React.Component {
                           {carTimeline.time[indexT-1]}
                         </span>
                         <span>parked </span>
-                        
                       </div>);
                       break;
                     default:

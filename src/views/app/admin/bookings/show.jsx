@@ -4,6 +4,7 @@ import { Link }                from 'react-router';
 import BookingFees             from './fees';
 import BookingPayment          from './payment';
 import BookingDetails          from './details';
+import BookingFlags            from './flags';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
 import UserLicense from '../users/user-license';
@@ -57,8 +58,8 @@ module.exports = class BookingsView extends React.Component {
         return;
       }
       // When the relay updates the booking it doesn't pass over a user
-      // object or the car or payments, this means that it gets blown away 
-      // and the page stops functioning.  To work around this, since 
+      // object or the car or payments, this means that it gets blown away
+      // and the page stops functioning.  To work around this, since
       // the user doesn't change we store it OOB of the booking variable
       this.setState({
         booking: booking,
@@ -79,7 +80,7 @@ module.exports = class BookingsView extends React.Component {
       var locationHistory = model.data.data;
       if (!Object.keys(model.data).length) {
         // This is done so that the bookings that are missing carpaths show the beginning and end of ride
-        let { details } = this.state; 
+        let { details } = this.state;
         let start = [details[0].latitude, details[0].longitude, details[0].createdAt];
         let end;
         if (details[1]) {
@@ -104,7 +105,7 @@ module.exports = class BookingsView extends React.Component {
       return;
     }
     if(confirm("Are you sure you want to cite the user for a " + word + " sign?")) {
-      api.post(`/parking/cite/${ type }`, { 
+      api.post(`/parking/cite/${ type }`, {
         carId: this.state.car.id,
         userId: this.state.user.id,
         bookingId: this.state.booking.id }, (err, model) => {
@@ -234,7 +235,7 @@ module.exports = class BookingsView extends React.Component {
     let action = false;
     switch (booking.status) {
       case 'reserved' : {
-        action = ( 
+        action = (
           <div>
             <div>
               <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>
@@ -271,7 +272,7 @@ module.exports = class BookingsView extends React.Component {
       }
     }
 
-    var force = ""; 
+    var force = "";
     if (this.state.force) {
       force = <button type="button" onClick={ () => { this.update(this.state.force, true) } } className="btn btn-link">force</button>
     }
@@ -301,10 +302,10 @@ module.exports = class BookingsView extends React.Component {
           [ 'Wrong','wrong', details.path ],
           [ 'Not Sign', 'notsign', details.path ],
           [ 'Broke Rules', 'lawless', true ]
-        ].map(row => 
+        ].map(row =>
           <div className="col-xs-3" key={ row[0] }>
-            <button 
-              onClick={ this.cite.bind(this, row) } 
+            <button
+              onClick={ this.cite.bind(this, row) }
               className={ "btn " + ((!row[2] || this.state.booking.flags[row[1]]) ? "disabled btn-link" : "primary")}>{ row[0] }</button>
           </div>
         )
@@ -437,7 +438,7 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Car</strong>
                 <div>
-                  { car ? 
+                  { car ?
                     <Link to={ `/cars/${ car.id }` }>
                       { car.license || car.id }
                     </Link>
@@ -466,7 +467,7 @@ module.exports = class BookingsView extends React.Component {
                   <em>Parked:</em> {moment(parkingDetails.createdAt).format('HH:mm dddd')}<br/>
                   <em>Move by:</em> { parkingDetails.userInput ? parkingDetails.userInput :
                     <span>
-                      {(parkingDetails.expireHour + 100).toString().slice(1)}:00 {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][parkingDetails.expireDay]} 
+                      {(parkingDetails.expireHour + 100).toString().slice(1)}:00 {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][parkingDetails.expireDay]}
                     </span>
                   }
                 </h4>
@@ -497,6 +498,9 @@ module.exports = class BookingsView extends React.Component {
           booking.status === 'completed'
             ? <BookingFees bookingId={ booking.id } userId={ user.id } cartId={ booking.cartId } />
             : ''
+        }
+        {
+          <BookingFlags booking={ booking } userId={ user.id }/>
         }
         { this.renderNotes(booking) }
       </div>
