@@ -50,19 +50,15 @@ module.exports = class RideDetails extends React.Component {
         var data = {time:[], switchStat: [], address: [], lat: [], lng: []};
         //This waivework related code due to wanting to limit the amount of data points
         //when the booking is a waive work
-        debugger;
         var isNotWaiveWork = Object.keys(this.props.booking.flags).every((flag) => {
           return (flag != "Waivework")
         })
-        debugger;
         var carPath
         if(!isNotWaiveWork || this.props.carPath.length > 50) {
           carPath = this.props.carPath.slice((this.props.carPath.length-50))
         } else {
           carPath = this.props.carPath
         }
-        console.log(carPath)
-        debugger
         this.setState({
           startTime : carPath[0][2],
           finishTime : carPath[carPath.length - 1][2]
