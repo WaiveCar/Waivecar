@@ -19,7 +19,8 @@ module.exports = class RideDetails extends React.Component {
       switchStat : [],
       time : [],
       lat : [],
-      lng : []
+      lng : [],
+      smallPath : null
     };
   }
 
@@ -54,12 +55,13 @@ module.exports = class RideDetails extends React.Component {
           return (flag != "Waivework")
         })
         var carPath
-        if(!isNotWaiveWork || this.props.carPath.length > 100) {
-          carPath = this.props.carPath.slice((this.props.carPath.length-100))
+        if(!isNotWaiveWork || this.props.carPath.length > 800) {
+          carPath = this.props.carPath.slice((this.props.carPath.length-800))
         } else {
           carPath = this.props.carPath
         }
         this.setState({
+          smallPath : carPath,
           startTime : carPath[0][2],
           finishTime : carPath[carPath.length - 1][2]
         });
@@ -265,18 +267,10 @@ module.exports = class RideDetails extends React.Component {
               </div>
             </div>
             {
-              this.props.carPath && this.props.carPath[0] &&
+              this.props.carPath && this.props.carPath[0] && this.state.switchStat && this.state.switchStat[0] &&
               <div className="box-content timeline">
                 <strong>Timeline</strong><br/>
-                {//here for debugging purposes
-                  /*this.state.switchStat.map((stat,i) => {
-                  return (<div key = {i}>
-                    {i}
-                    {stat}
-                  <br/>
-                  </div>)
-                })*/}
-                {this.props.carPath.map((path, i) => {
+                {this.state.smallPath.map((path, i) => {
                   switch(this.state.switchStat[i]) {
                     case "started":
                       {indexA++};
