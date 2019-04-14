@@ -267,7 +267,7 @@ module.exports = class RideDetails extends React.Component {
               </div>
             </div>
             {
-              this.props.carPath && this.props.carPath[0] && this.state.switchStat && this.state.switchStat[0] &&
+              this.state.switchStat && this.state.switchStat[0] &&
               <div className="box-content timeline">
                 <strong>Timeline</strong><br/>
                 {this.state.smallPath.map((path, i) => {
