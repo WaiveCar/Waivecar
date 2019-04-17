@@ -62,10 +62,11 @@ module.exports = class StripeCharges {
     });
   }
 
-  *refund(id, charge) {
+  *refund(id, amount) {
     return yield new Promise((resolve, reject) => {
       this.stripe.refunds.create({
-        charge : id
+        charge : id,
+        amount,
       }, (err, res) => {
 
         this.log('refund', {id: id}, [err, res]);
