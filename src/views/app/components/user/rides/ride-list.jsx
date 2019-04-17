@@ -140,6 +140,7 @@ class RideList extends Component {
     let duration  = moment.duration(moment((ride.end || {}).createdAt).diff(moment((ride.start || {}).createdAt)));
     ride.duration = {
       raw     : duration,
+      days    : duration.days(),
       hours   : duration.hours(),
       minutes : duration.minutes(),
       seconds : duration.seconds()
@@ -170,8 +171,9 @@ class RideList extends Component {
             { moment(data.createdAt).format('MMMM D YYYY') }
           </td>
           <td>
-            { ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours > 1 ? 's ' : ' ' }` : ' ' }
-            { `${ ride.duration.minutes } minute${ ride.duration.minutes > 1 ? 's' : '' }` }
+            { ride.duration.days ? `${ ride.duration.days }d ` : '' }
+            { (ride.duration.hours || ride.duration.days) ? `${ ride.duration.hours }hr ` : '' }
+            { `${ ride.duration.minutes }m  }` }
           </td>
           <td>
             { data.car ? data.car.license : '(unknown)' }
