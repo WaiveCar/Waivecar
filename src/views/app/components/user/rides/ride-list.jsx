@@ -172,8 +172,8 @@ class RideList extends Component {
           </td>
           <td>
             { ride.duration.days ? `${ ride.duration.days }d ` : '' }
-            { (ride.duration.hours || ride.duration.days) ? `${ ride.duration.hours }hr ` : '' }
-            { `${ ride.duration.minutes }m  }` }
+            { (ride.duration.hours || ride.duration.days) ? `${ ride.duration.hours }h ` : '' }
+            { `${ ride.duration.minutes }m  ` }
           </td>
           <td>
             { data.car ? data.car.license : '(unknown)' }
