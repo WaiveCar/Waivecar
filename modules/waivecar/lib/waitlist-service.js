@@ -137,10 +137,6 @@ module.exports = {
       searchOpts.where['$or'].push({ phone: payload.phone });
     }
 
-    if (data.accountType === 'waivework') {
-      yield this.requestWorkQuote(payload, data);
-    }
-
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
 
@@ -166,22 +162,22 @@ module.exports = {
         // FIELD
         res.alreadyLetIn = 'yes';
         if (data.accountType === 'waivework') {
-          yield Intercom.addTag(record, 'WaiveWork');
-          res.waivework = 'yes';
+          //yield Intercom.addTag(record, 'WaiveWork');
+          //res.waivework = 'yes';
         }
 
       // Otherwise if it's a user that's established.`
       } else if (user) {
         res.established = 'yes';
         if (data.accountType === 'waivework') {
-          yield Intercom.addTag(record, 'WaiveWork');
-          res.waivework = 'yes';
+          //yield Intercom.addTag(record, 'WaiveWork');
+          //res.waivework = 'yes';
         }
       } else {
         res.signedUp = 'yes';
         if (data.accountType === 'waivework') {
-          yield Intercom.addTag(record, 'WaiveWork');
-          res.waivework = 'yes';
+          //yield Intercom.addTag(record, 'WaiveWork');
+          //res.waivework = 'yes';
         }
       }
     } else {
@@ -199,12 +195,7 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
-        try {
-          yield Intercom.addUser(record)
-          yield Intercom.addTag(record, 'WaiveWork');
-        } catch(e) {
-          console.log('error adding to intercom: ', e);
-        }
+        yield Intercom.addUser(record)
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         if (payload.wantsElectric === 'true') {
           yield toAddNotes.update({
@@ -315,6 +306,10 @@ module.exports = {
         }
       }*/
     }
+    if (data.accountType === 'waivework') {
+      yield this.requestWorkQuote(payload, data);
+      res.waivework = 'yes';
+    }
     return res;
   },
 
@@ -416,6 +411,11 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
+    try {
+      yield Intercom.addTag(payload, 'WaiveWork');
+    } catch(e) {
+      console.log('error tagging user', e);
+    }
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
