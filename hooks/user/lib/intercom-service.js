@@ -16,6 +16,17 @@ module.exports = {
     });
   },
 
+  *addTag(record, tag) {
+    yield this.getClient().tags.tag({
+      name: tag, 
+      users: [
+        {
+          email: record.email,
+        }
+      ]
+    });
+  },
+
   *removeUser (user){
     let client = this.getClient();
     return yield client.users.delete({ id: user.id });

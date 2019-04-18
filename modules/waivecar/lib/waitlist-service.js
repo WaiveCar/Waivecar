@@ -14,6 +14,7 @@ let moment        = require('moment');
 let scheduler = Bento.provider('queue').scheduler;
 let OrderService = require('../../shop/lib/order-service');
 let LicenseService = require('../../license/lib/license-service');
+let Intercom = require('../../user/lib/intercom-service')
 
 
 let UserService = require('./user-service');
@@ -195,6 +196,14 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
+        console.log("data.accountType == 'waivework'");
+        try {
+          yield Intercom.addUser(record)
+          yield Intercom.addTag(record, 'WaiveWork');
+          console.log('user and tag should be added');
+        } catch(e) {
+          console.log('error adding to intercom: ', e);
+        }
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         if (payload.wantsElectric === 'true') {
           yield toAddNotes.update({
