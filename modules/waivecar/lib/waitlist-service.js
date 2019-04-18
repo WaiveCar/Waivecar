@@ -399,11 +399,7 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
-    try {
-      yield Intercom.addTag(payload, 'WaiveWork');
-    } catch(e) {
-      console.log('error tagging user', e);
-    }
+    yield Intercom.addTag(payload, 'WaiveWork');
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
@@ -462,6 +458,11 @@ module.exports = {
     if (recordList[0].accountType === 'waivework') {
       opts.intro = 'waivework'
       params.isWaivework = true;
+      try {
+        yield Intercom.addTag(recordList[0], 'WaiveWork');
+      } catch(e) {
+        console.log('error tagging user', e);
+      }
     }
 
     opts.intro = opts.intro || 'waitlist';
