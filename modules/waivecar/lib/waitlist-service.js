@@ -166,18 +166,21 @@ module.exports = {
         // FIELD
         res.alreadyLetIn = 'yes';
         if (data.accountType === 'waivework') {
+          yield Intercom.addTag(record, 'WaiveWork');
           res.waivework = 'yes';
         }
 
       // Otherwise if it's a user that's established.`
-      } else if(user) {
+      } else if (user) {
         res.established = 'yes';
         if (data.accountType === 'waivework') {
+          yield Intercom.addTag(record, 'WaiveWork');
           res.waivework = 'yes';
         }
       } else {
         res.signedUp = 'yes';
         if (data.accountType === 'waivework') {
+          yield Intercom.addTag(record, 'WaiveWork');
           res.waivework = 'yes';
         }
       }
@@ -196,11 +199,9 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
-        console.log("data.accountType == 'waivework'");
         try {
           yield Intercom.addUser(record)
           yield Intercom.addTag(record, 'WaiveWork');
-          console.log('user and tag should be added');
         } catch(e) {
           console.log('error adding to intercom: ', e);
         }
