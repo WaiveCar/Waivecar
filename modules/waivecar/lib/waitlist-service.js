@@ -161,24 +161,12 @@ module.exports = {
         
         // FIELD
         res.alreadyLetIn = 'yes';
-        if (data.accountType === 'waivework') {
-          //yield Intercom.addTag(record, 'WaiveWork');
-          //res.waivework = 'yes';
-        }
 
       // Otherwise if it's a user that's established.`
       } else if (user) {
         res.established = 'yes';
-        if (data.accountType === 'waivework') {
-          //yield Intercom.addTag(record, 'WaiveWork');
-          //res.waivework = 'yes';
-        }
       } else {
         res.signedUp = 'yes';
-        if (data.accountType === 'waivework') {
-          //yield Intercom.addTag(record, 'WaiveWork');
-          //res.waivework = 'yes';
-        }
       }
     } else {
       // We haven't seen this person before... 
