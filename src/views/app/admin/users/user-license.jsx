@@ -153,11 +153,11 @@ module.exports = class UserDetails extends React.Component {
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>License Number</label>
-                <input type="text" name="number" className="form-control" defaultValue={ license.number } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} required />
+                <input type="text" name="number" className="form-control" defaultValue={ license.number } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>State</label>
-                <input type="text" name="state" className="form-control" defaultValue={ license.state } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} required />
+                <input type="text" name="state" className="form-control" defaultValue={ license.state } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Status</label>
@@ -167,35 +167,35 @@ module.exports = class UserDetails extends React.Component {
             <div className="form-group row">
               <FormInput className="col-md-6 bento-form-input">
                 <label>Address Line 1</label>
-                <input type="text" name="street1" className="form-control" defaultValue={ license.street1 } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} required />
+                <input type="text" name="street1" className="form-control" defaultValue={ license.street1 } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
               <FormInput className="col-md-6 bento-form-input">
                 <label>Address Line 2</label>
-                <input type="text" name="street2" className="form-control" defaultValue={ license.street2 } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} />
+                <input type="text" name="street2" className="form-control" defaultValue={ license.street2 } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} />
               </FormInput>
             </div>
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>City</label>
-                <input type="text" name="city" className="form-control" defaultValue={ license.city } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} />
+                <input type="text" name="city" className="form-control" defaultValue={ license.city } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Zip</label>
-                <input type="text" name="zip" className="form-control" defaultValue={ license.zip } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} />
+                <input type="text" name="zip" className="form-control" defaultValue={ license.zip } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} />
               </FormInput>
             </div>
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>First Name</label>
-                <input type="text" name="firstName" className="form-control" defaultValue={ license.firstName } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} required />
+                <input type="text" name="firstName" className="form-control" defaultValue={ license.firstName } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Middle Name (Optional)</label>
-                <input type="text" name="middleName" className="form-control" defaultValue={ license.middleName } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} />
+                <input type="text" name="middleName" className="form-control" defaultValue={ license.middleName } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Last Name</label>
-                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided && !(this.state.groupRole && this.state.userInfo.groupRole.name === 'Administrator')} required />
+                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided && ! this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
             </div>
             <div className="form-group row">
