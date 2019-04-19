@@ -14,6 +14,7 @@ let moment        = require('moment');
 let scheduler = Bento.provider('queue').scheduler;
 let OrderService = require('../../shop/lib/order-service');
 let LicenseService = require('../../license/lib/license-service');
+let Intercom = require('../../user/lib/intercom-service')
 
 
 let UserService = require('./user-service');
@@ -136,10 +137,6 @@ module.exports = {
       searchOpts.where['$or'].push({ phone: payload.phone });
     }
 
-    if (data.accountType === 'waivework') {
-      yield this.requestWorkQuote(payload, data);
-    }
-
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
 
@@ -164,21 +161,12 @@ module.exports = {
         
         // FIELD
         res.alreadyLetIn = 'yes';
-        if (data.accountType === 'waivework') {
-          res.waivework = 'yes';
-        }
 
       // Otherwise if it's a user that's established.`
-      } else if(user) {
+      } else if (user) {
         res.established = 'yes';
-        if (data.accountType === 'waivework') {
-          res.waivework = 'yes';
-        }
       } else {
         res.signedUp = 'yes';
-        if (data.accountType === 'waivework') {
-          res.waivework = 'yes';
-        }
       }
     } else {
       // We haven't seen this person before... 
@@ -195,6 +183,7 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
+        yield Intercom.addUser(record)
         let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
         if (payload.wantsElectric === 'true') {
           yield toAddNotes.update({
@@ -305,6 +294,10 @@ module.exports = {
         }
       }*/
     }
+    if (data.accountType === 'waivework') {
+      yield this.requestWorkQuote(payload, data);
+      res.waivework = 'yes';
+    }
     return res;
   },
 
@@ -406,6 +399,7 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
+    yield Intercom.addTag(payload, 'WaiveWork');
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
@@ -464,6 +458,11 @@ module.exports = {
     if (recordList[0].accountType === 'waivework') {
       opts.intro = 'waivework'
       params.isWaivework = true;
+      try {
+        yield Intercom.addTag(recordList[0], 'WaiveWork');
+      } catch(e) {
+        console.log('error tagging user', e);
+      }
     }
 
     opts.intro = opts.intro || 'waitlist';
