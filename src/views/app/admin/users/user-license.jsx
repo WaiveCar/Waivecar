@@ -195,7 +195,7 @@ module.exports = class UserDetails extends React.Component {
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Last Name</label>
-                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided && !this.state.userInfo.groupRole.name === 'Administrator'} required />
+                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided && ! this.state.userInfo.groupRole.name === 'Administrator'} required />
               </FormInput>
             </div>
             <div className="form-group row">

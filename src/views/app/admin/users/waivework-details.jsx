@@ -36,7 +36,7 @@ class WaiveWorkDetails extends Component {
             message: err.message,
           });
         }
-        if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
+        if (bookings[0]) {
           this.setState(
             {
               perWeek:
