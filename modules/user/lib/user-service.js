@@ -506,11 +506,20 @@ module.exports = {
         data.password = yield bcrypt.hash(data.password, 10);
       }
       yield user.update(data);
+      if ('isWaivework' in payload) {
+        if (payload.isWaivework) {
+          yield notify.notifyAdmins(`:racing_car: ${ user.name()} has been added to WaiveWork by ${_user.name()}.`, [ 'slack' ], { channel : '#user-alerts' });
+          log.info(`${user.name()} added to WaiveWork - ${moment().format('YYYY-MM-DD')}`);
+        } else {
+          yield notify.notifyAdmins(`:octagonal_sign: ${ user.name()} has been removed from WaiveWork by ${_user.name()}.`, [ 'slack' ], { channel : '#user-alerts' });
+          log.info(`${user.name()} removed from WaiveWork - ${moment().format('YYYY-MM-DD')}`);
+        }
+      }
       yield hooks.require('user:update:after', user, _user);
     }
 
     user.relay('update');
-
+  
     return user;
   },
 
