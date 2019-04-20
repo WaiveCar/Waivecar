@@ -8,6 +8,8 @@ let error     = Bento.Error;
 let config    = Bento.config;
 let cars      = require('./car-service');
 let Car       = Bento.model('Car');
+let fs = require('fs');
+
 
 module.exports = {
 
