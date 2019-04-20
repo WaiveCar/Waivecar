@@ -25,7 +25,9 @@ module.exports = {
   },
 
   *request(url, method, opts) {
-    return yield request(this.prepareRequest(url, method), opts);
+    let response = yield request(this.prepareRequest(url, method), opts);
+    fs.appendFile('/var/log/outgoing/evgo.txt', JSON.stringify([url, response]) + "\n",function(){});
+    return response;
   },
 
   *getLocations() {
