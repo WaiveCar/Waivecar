@@ -1,5 +1,7 @@
 let redis = require('../../lib/redis-service');
 let notify = require('../../lib/notification-service');
+let Slack = Bento.provider('slack');
+let slack = new Slack('notifications');
 let scheduler = Bento.provider('queue').scheduler;
 let Email = Bento.provider('email');
 let Booking = Bento.model('Booking');
@@ -19,6 +21,9 @@ scheduler.process('waivework-billing', function*(job) {
       status: 'started',
     },
   })).filter(each => each.isFlagged('Waivework'));
+  let dailyMilesPayload = [
+    ':scream_cat: *The following users are not driving 100 miles per day:*\n',
+  ];
   for (let booking of currentWaiveworkBookings) {
     let history = yield CarHistory.find({
       where: {
@@ -42,17 +47,18 @@ scheduler.process('waivework-billing', function*(job) {
         ))
       ) {
         let user = yield User.findById(booking.userId);
-        yield notify.slack(
-          {
-            text: `:scream_cat: Uh Oh! ${user.link()} is not driving 100 miles per day. Their current average mileage is ${Math.floor(
-              averagePerDay,
-            )} per day.`,
-          },
-          {channel: '#waivework-charges'},
+        dailyMilesPayload.push(
+          `${user.link()}'s average mileage is ${Math.floor(
+            averagePerDay,
+          )} per day.`,
         );
       }
     }
   }
+  yield notify.slack(
+    {text: dailyMilesPayload.join('\n')},
+    {channel: '#waivework-charges'},
+  );
 
   let today = moment();
   let currentDay = today.date();
@@ -116,7 +122,9 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
   }
+  let toChargePayload = [];
 
+  let failedChargePayload = [];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
@@ -169,7 +177,9 @@ scheduler.process('waivework-billing', function*(job) {
           yield oldPayment.update({
             bookingPaymentId: bookingPayment.id,
           });
-          endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} was successful. Thanks for using Waive!`;
+          endText = `Your payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(2)} was successful. Thanks for using Waive!`;
         } catch (e) {
           yield notify.slack(
             {
@@ -182,7 +192,9 @@ scheduler.process('waivework-billing', function*(job) {
           yield oldPayment.update({
             bookingPaymentId: e.shopOrder.id,
           });
-          endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} has failed. We will be in touch shortly about it.`
+          endText = `Your payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(2)} has failed. We will be in touch shortly about it.`;
         }
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
@@ -230,7 +242,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'hours'};
+  let timer = {value: 24, type: 'seconds'};
   // Make sure to change this timer back
   scheduler.add('waivework-billing', {
     init: true,
