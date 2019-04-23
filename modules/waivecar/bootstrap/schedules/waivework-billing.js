@@ -122,9 +122,12 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
   }
-  let toChargePayload = [];
-
-  let failedChargePayload = [];
+  let chargesPayload = [
+    ':watch: *The following users are to be charged this week:* \n',
+  ];
+  let failedChargePayload = [
+    ":male_vampire: *The following users's weekly charges have failed:* \n",
+  ];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
@@ -181,13 +184,10 @@ scheduler.process('waivework-billing', function*(job) {
             oldPayment.amount / 100
           ).toFixed(2)} was successful. Thanks for using Waive!`;
         } catch (e) {
-          yield notify.slack(
-            {
-              text: `:male_vampire: ${user.link()} had a failed charge of $${(
-                oldPayment.amount / 100
-              ).toFixed(2)} for their Waivework Rental. ${e.message}`,
-            },
-            {channel: '#waivework-charges'},
+          failedChargePayload.push(
+            `${user.link()} had a failed charge of $${(
+              oldPayment.amount / 100
+            ).toFixed(2)} for their Waivework Rental. ${e.message}`,
           );
           yield oldPayment.update({
             bookingPaymentId: e.shopOrder.id,
@@ -205,14 +205,10 @@ scheduler.process('waivework-billing', function*(job) {
         yield newPayment.save();
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
         // the testing period for this process
-        yield notify.slack(
-          {
-            text: `:watch: ${user.link()} to be charged $${(
-              oldPayment.amount / 100
-            ).toFixed(2)} today for their Waivework Rental`,
-          },
-          {channel: '#waivework-charges'},
-        );
+        chargesPayload.push(`${user.link()} has been charged 
+          $${(oldPayment.amount / 100).toFixed(
+            2,
+          )} today for their Waivework Rental`);
         /* This section that sends the email should be turned on when automatic charges are actually made
         let email = new Email(),
           emailOpts = {};
@@ -238,6 +234,14 @@ scheduler.process('waivework-billing', function*(job) {
         */
       }
     }
+    yield notify.slack(
+      {text: chargesPayload.join('\n')},
+      {channel: '#waivework-charges'},
+    );
+    yield notify.slack(
+      {text: failedChargePayload.join('\n')},
+      {channel: '#waivework-charges'},
+    );
   }
 });
 
