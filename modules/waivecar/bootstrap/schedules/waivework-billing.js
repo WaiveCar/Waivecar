@@ -233,15 +233,15 @@ scheduler.process('waivework-billing', function*(job) {
         }
         */
       }
+      yield notify.slack(
+        {text: chargesPayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+      yield notify.slack(
+        {text: failedChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
     }
-    yield notify.slack(
-      {text: chargesPayload.join('\n')},
-      {channel: '#waivework-charges'},
-    );
-    yield notify.slack(
-      {text: failedChargePayload.join('\n')},
-      {channel: '#waivework-charges'},
-    );
   }
 });
 
