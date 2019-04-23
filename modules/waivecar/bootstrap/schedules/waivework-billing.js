@@ -185,7 +185,7 @@ scheduler.process('waivework-billing', function*(job) {
           ).toFixed(2)} was successful. Thanks for using Waive!`;
         } catch (e) {
           failedChargePayload.push(
-            `${user.link()} had a failed charge of $${(
+            `${user.link()} had a failed automatic charge of $${(
               oldPayment.amount / 100
             ).toFixed(2)} for their Waivework Rental. ${e.message}`,
           );
@@ -205,10 +205,10 @@ scheduler.process('waivework-billing', function*(job) {
         yield newPayment.save();
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
         // the testing period for this process
-        chargesPayload.push(`${user.link()} has been charged 
+        chargesPayload.push(`${user.link()} was attempted to be charged 
           $${(oldPayment.amount / 100).toFixed(
             2,
-          )} today for their Waivework Rental`);
+          )} automatically today for their Waivework Rental`);
         /* This section that sends the email should be turned on when automatic charges are actually made
         let email = new Email(),
           emailOpts = {};
