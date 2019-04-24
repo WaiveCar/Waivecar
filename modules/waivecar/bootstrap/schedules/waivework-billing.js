@@ -12,6 +12,7 @@ let CarHistory = Bento.model('CarHistory');
 let config = Bento.config;
 let moment = require('moment');
 let carService = require('../../lib/car-service');
+let log = Bento.Log;
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -113,7 +114,7 @@ scheduler.process('waivework-billing', function*(job) {
           };
           yield email.send(emailOpts);
         } catch (e) {
-          console.log('error sending email', e);
+          log.warn('error sending email', e);
         }
       }
     }
@@ -168,7 +169,7 @@ scheduler.process('waivework-billing', function*(job) {
           })).length === 1;
         if (isFirstPayment) {
           // Add logic for first payment here
-          console.log('this is the user\'s first payment');
+          log.warn("this is the user's first payment");
         } else {
           let endText;
           try {
@@ -209,7 +210,7 @@ scheduler.process('waivework-billing', function*(job) {
                 true,
               );
             } catch (e) {
-              console.log('error: ', e);
+              log.warn('error: ', e);
             }
           }
           // This here needs to be fixed to bill on the correct date
@@ -252,7 +253,7 @@ scheduler.process('waivework-billing', function*(job) {
             };
             yield email.send(emailOpts);
           } catch (e) {
-            console.log('error sending email', e);
+            log.warn('error sending email', e);
           }
         }
       }
