@@ -690,7 +690,6 @@ module.exports = {
         userId: opts.user.id,
       },
     });
-    console.log(opts.user.email);
     try {
       yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
       emailOpts = {
