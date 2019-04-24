@@ -184,9 +184,9 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: bookingPayment.id,
             });
-            endText = `Your payment for WaiveWork of ${(
+            endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} was successful. Thanks for using Waive!`;
+            ).toFixed(2)} was successful!`;
           } catch (e) {
             yield notify.slack(
               {
@@ -261,7 +261,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   // Make sure to change this timer back
   //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
