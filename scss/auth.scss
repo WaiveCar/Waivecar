@@ -23,6 +23,9 @@
       flex-direction: column;
       justify-content: space-between;
       .logoPicture{
+        position: absolute;
+        top: 0;
+        width: 75%;
         background: url('../img/bg_logo.png') no-repeat center center;
         background-size: contain;
         height: 60px;
