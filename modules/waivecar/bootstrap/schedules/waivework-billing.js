@@ -131,6 +131,9 @@ scheduler.process('waivework-billing', function*(job) {
   let failedChargePayload = [
     ":male_vampire: *The following users's weekly charges have failed:* \n",
   ];
+  let firstChargePayload = [
+    ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
+  ];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   //remove this later
   currentDay = 22;
@@ -152,7 +155,6 @@ scheduler.process('waivework-billing', function*(job) {
         },
       ],
     });
-    console.log('todaysPayments', todaysPayments);
     for (let oldPayment of todaysPayments) {
       if (
         yield redis.shouldProcess(
@@ -170,7 +172,10 @@ scheduler.process('waivework-billing', function*(job) {
         // The line below should be removed later once we are done watching to see if the payment process
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
         // is necessary for the scheduling of the new charge.
-        data.amount = 0;
+        if (process.env.NODE_ENV !== 'production') {
+          // This is done so that users are not charged during testing
+          data.amout = 0;
+        }
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
         let isFirstPayment =
@@ -179,9 +184,23 @@ scheduler.process('waivework-billing', function*(job) {
               bookingId: oldPayment.bookingId,
             },
           })).length === 1;
-        if (!isFirstPayment) {
+        if (isFirstPayment) {
           // Add logic for first payment here
-          log.warn("this is the user's first payment");
+          console.log("this is the user's first payment");
+          // A dummy shopOrder must be made for inital payments so that the next payments may be made
+          data.amount = 0;
+          let shopOrder = (yield OrderService.quickCharge(data, null, {
+            nocredit: true,
+          })).order;
+
+          let bookingPayment = new BookingPayment({
+            bookingId: oldPayment.booking.id,
+            orderId: shopOrder.id,
+          });
+          yield bookingPayment.save();
+          yield oldPayment.update({
+            bookingPaymentId: bookingPayment.id,
+          });
         } else {
           let endText;
           try {
@@ -201,7 +220,6 @@ scheduler.process('waivework-billing', function*(job) {
               oldPayment.amount / 100
             ).toFixed(2)} was successful!`;
           } catch (e) {
-            console.log('error: ', e.shopOrder);
             failedChargePayload.push(
               `${user.link()} had a failed automatic charge of $${(
                 oldPayment.amount / 100
@@ -223,26 +241,29 @@ scheduler.process('waivework-billing', function*(job) {
               log.warn('error: ', e);
             }
           }
-          // This here needs to be fixed to bill on the correct date
-          let dates = [8, 15, 22, 1, 8];
-          let nextDay = dates[dates.indexOf(currentDay) + 1];
-          let toAddMonth = currentDay === 22;
-          let nextDate = moment()
-            .month(toAddMonth ? moment().month() + 1 : moment().month())
-            .date(nextDay);
-          let newPayment = new WaiveworkPayment({
-            bookingId: oldPayment.booking.id,
-            date: nextDate,
-            bookingPaymentId: null,
-            amount: oldPayment.amount,
-          });
-          yield newPayment.save();
-          // For now, this Slack notification should indicate to Frank when to charge the users manually during
-          // the testing period for this process
-          chargesPayload.push(`${user.link()} was attempted to be charged 
-          $${(oldPayment.amount / 100).toFixed(
-            2,
-          )} automatically today for their Waivework Rental`);
+        }
+        // This here needs to be fixed to bill on the correct date
+        let dates = [8, 15, 22, 1, 8];
+        let nextDay = dates[dates.indexOf(currentDay) + 1];
+        let toAddMonth = currentDay === 22;
+        let nextDate = moment()
+          .month(toAddMonth ? moment().month() + 1 : moment().month())
+          .date(nextDay);
+        let newPayment = new WaiveworkPayment({
+          bookingId: oldPayment.booking.id,
+          date: nextDate,
+          bookingPaymentId: null,
+          amount: oldPayment.amount,
+        });
+        yield newPayment.save();
+        // For now, this Slack notification should indicate to Frank when to charge the users manually during
+        // the testing period for this process
+        if (!isFirstPayment) {
+          chargesPayload.push(
+            `${user.link()} was attempted to be charged $${(
+              oldPayment.amount / 100
+            ).toFixed(2)} automatically today for their Waivework Rental`,
+          );
           let email = new Email(),
             emailOpts = {};
           try {
@@ -274,6 +295,12 @@ scheduler.process('waivework-billing', function*(job) {
       if (failedChargePayload.length > 1) {
         yield notify.slack(
           {text: failedChargePayload.join('\n')},
+          {channel: '#waivework-charges'},
+        );
+      }
+      if (firstChargePayload.length > 1) {
+        yield notify.slack(
+          {text: firstChargePayload.join('\n')},
           {channel: '#waivework-charges'},
         );
       }
