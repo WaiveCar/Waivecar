@@ -1268,7 +1268,7 @@ module.exports = {
   },
 
   *lockImmobilizer(id, _user, isComputer) {
-    if (_user.hasAccess('admin') || isComputer) {
+    if (_user && _user.hasAccess('admin') || isComputer) {
       // this is an admin immobilizing the vehicle ... 
       // the user in a booking shouldn't be able to undo this.
       let car = yield Car.findById(id, {
