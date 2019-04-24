@@ -1,4 +1,5 @@
 let redis = require('../../lib/redis-service');
+let sequelize = require('sequelize');
 let notify = require('../../lib/notification-service');
 let Slack = Bento.provider('slack');
 let slack = new Slack('notifications');
@@ -12,6 +13,8 @@ let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
 let config = Bento.config;
 let moment = require('moment');
+let carService = require('../../lib/car-service');
+let log = Bento.Log;
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -117,7 +120,7 @@ scheduler.process('waivework-billing', function*(job) {
           };
           yield email.send(emailOpts);
         } catch (e) {
-          console.log('error sending email', e);
+          log.warn('error sending email', e);
         }
       }
     }
@@ -129,6 +132,9 @@ scheduler.process('waivework-billing', function*(job) {
     ":male_vampire: *The following users's weekly charges have failed:* \n",
   ];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
+  //remove this later
+  currentDay = 22;
+  //
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -146,6 +152,7 @@ scheduler.process('waivework-billing', function*(job) {
         },
       ],
     });
+    console.log('todaysPayments', todaysPayments);
     for (let oldPayment of todaysPayments) {
       if (
         yield redis.shouldProcess(
@@ -166,88 +173,111 @@ scheduler.process('waivework-billing', function*(job) {
         data.amount = 0;
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
-        let endText;
-        try {
-          let shopOrder = (yield OrderService.quickCharge(data, null, {
-            nocredit: true,
-          })).order;
+        let isFirstPayment =
+          (yield WaiveworkPayment.find({
+            where: {
+              bookingId: oldPayment.bookingId,
+            },
+          })).length === 1;
+        console.log(isFirstPayment);
+        if (!isFirstPayment) {
+          // Add logic for first payment here
+          log.warn("this is the user's first payment");
+        } else {
+          let endText;
+          try {
+            let shopOrder = (yield OrderService.quickCharge(data, null, {
+              nocredit: true,
+            })).order;
 
-          let bookingPayment = new BookingPayment({
-            bookingId: oldPayment.booking.id,
-            orderId: shopOrder.id,
-          });
-          yield bookingPayment.save();
-          yield oldPayment.update({
-            bookingPaymentId: bookingPayment.id,
-          });
-          endText = `Your payment for WaiveWork of ${(
-            oldPayment.amount / 100
-          ).toFixed(2)} was successful. Thanks for using Waive!`;
-        } catch (e) {
-          failedChargePayload.push(
-            `${user.link()} had a failed automatic charge of $${(
+            let bookingPayment = new BookingPayment({
+              bookingId: oldPayment.booking.id,
+              orderId: shopOrder.id,
+            });
+            yield bookingPayment.save();
+            yield oldPayment.update({
+              bookingPaymentId: bookingPayment.id,
+            });
+            endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} for their Waivework Rental. ${e.message}`,
-          );
-          yield oldPayment.update({
-            bookingPaymentId: e.shopOrder.id,
+            ).toFixed(2)} was successful!`;
+          } catch (e) {
+            yield oldPayment.update({
+              bookingPaymentId: e.shopOrder.id,
+            });
+            endText = `Your payment for WaiveWork of ${(
+              oldPayment.amount / 100
+            ).toFixed(2)} has failed. We will be in touch shortly about it.`;
+            try {
+              yield carService.lockImmobilizer(
+                oldPayment.booking.carId,
+                null,
+                true,
+              );
+            } catch (e) {
+              log.warn('error: ', e);
+            }
+          }
+          // This here needs to be fixed to bill on the correct date
+          let dates = [8, 15, 22, 1, 8];
+          let nextDay = dates[dates.indexOf(currentDay) + 1];
+          let toAddMonth = currentDay === 22;
+          let nextDate = moment()
+            .month(toAddMonth ? moment().month() + 1 : moment().month())
+            .date(nextDay);
+          let newPayment = new WaiveworkPayment({
+            bookingId: oldPayment.booking.id,
+            date: nextDate,
+            bookingPaymentId: null,
+            amount: oldPayment.amount,
           });
-          endText = `Your payment for WaiveWork of ${(
-            oldPayment.amount / 100
-          ).toFixed(2)} has failed. We will be in touch shortly about it.`;
-        }
-        let newPayment = new WaiveworkPayment({
-          bookingId: oldPayment.booking.id,
-          date: moment().add(7, 'days'),
-          bookingPaymentId: null,
-          amount: oldPayment.amount,
-        });
-        yield newPayment.save();
-        // For now, this Slack notification should indicate to Frank when to charge the users manually during
-        // the testing period for this process
-        chargesPayload.push(`${user.link()} was attempted to be charged 
+          yield newPayment.save();
+          // For now, this Slack notification should indicate to Frank when to charge the users manually during
+          // the testing period for this process
+          chargesPayload.push(`${user.link()} was attempted to be charged 
           $${(oldPayment.amount / 100).toFixed(
             2,
           )} automatically today for their Waivework Rental`);
-        /* This section that sends the email should be turned on when automatic charges are actually made
-        let email = new Email(),
-          emailOpts = {};
-        try {
-          yield notify.sendTextMessage(
-            user,
-            endText,
-          );
-          emailOpts = {
-            to: user.email,
-            from: config.email.sender,
-            subject: 'Your WaiveWork Payment',
-            template: 'waivework-general',
-            context: {
-              name: `${user.firstName} ${user.lastName}`,
-              text: endText, 
-            },
-          };
-          yield email.send(emailOpts);
-        } catch (e) {
-          console.log('error sending email', e);
+          let email = new Email(),
+            emailOpts = {};
+          try {
+            yield notify.sendTextMessage(user, endText);
+            emailOpts = {
+              to: user.email,
+              from: config.email.sender,
+              subject: 'Your WaiveWork Payment',
+              template: 'waivework-general',
+              context: {
+                name: `${user.firstName} ${user.lastName}`,
+                text: endText,
+              },
+            };
+            yield email.send(emailOpts);
+          } catch (e) {
+            console.log('error sending email', e);
+          }
         }
-        */
+      }
+      if (chargesPayload.length > 1) {
+        yield notify.slack(
+          {text: chargesPayload.join('\n')},
+          {channel: '#waivework-charges'},
+        );
+      }
+      if (failedChargePayload.length > 1) {
+        yield notify.slack(
+          {text: failedChargePayload.join('\n')},
+          {channel: '#waivework-charges'},
+        );
       }
     }
-    yield notify.slack(
-      {text: chargesPayload.join('\n')},
-      {channel: '#waivework-charges'},
-    );
-    yield notify.slack(
-      {text: failedChargePayload.join('\n')},
-      {channel: '#waivework-charges'},
-    );
   }
 });
 
 module.exports = function*() {
   let timer = {value: 24, type: 'seconds'};
   // Make sure to change this timer back
+  //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
