@@ -185,8 +185,13 @@ scheduler.process('waivework-billing', function*(job) {
             },
           })).length === 1;
         if (isFirstPayment) {
-          // Add logic for first payment here
           console.log("this is the user's first payment");
+          firstChargePayload.push(
+            `${user.link()}'s charge of $${(oldPayment.amount / 100).toFixed(
+              2,
+            )}.`,
+          );
+          // Add logic for first payment here
           // A dummy shopOrder must be made for inital payments so that the next payments may be made
           data.amount = 0;
           let shopOrder = (yield OrderService.quickCharge(data, null, {
@@ -256,6 +261,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
+        console.log('newPayment', newPayment);
         // For now, this Slack notification should indicate to Frank when to charge the users manually during
         // the testing period for this process
         if (!isFirstPayment) {
@@ -298,6 +304,7 @@ scheduler.process('waivework-billing', function*(job) {
           {channel: '#waivework-charges'},
         );
       }
+      console.log('firstChargePayload', firstChargePayload);
       if (firstChargePayload.length > 1) {
         yield notify.slack(
           {text: firstChargePayload.join('\n')},
