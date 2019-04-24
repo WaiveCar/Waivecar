@@ -1,4 +1,5 @@
 let redis = require('../../lib/redis-service');
+let sequelize = require('sequelize');
 let notify = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Email = Bento.provider('email');
@@ -119,6 +120,9 @@ scheduler.process('waivework-billing', function*(job) {
   }
 
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
+  //remove this later
+  currentDay = 22;
+  //
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -136,6 +140,7 @@ scheduler.process('waivework-billing', function*(job) {
         },
       ],
     });
+    console.log('todaysPayments', todaysPayments);
     for (let oldPayment of todaysPayments) {
       if (
         yield redis.shouldProcess(
@@ -156,6 +161,13 @@ scheduler.process('waivework-billing', function*(job) {
         data.amount = 0;
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
+        let isFirstPayment = yield WaiveworkPayment.find({
+          where: {
+            bookingId: oldPayment.bookingId,
+          },
+          attributes: [[sequelize.fn('COUNT', sequelize.col('id')), 'paymentCount']],
+        });
+        console.log('isFirst', isFirstPayment[0]);
         let endText;
         try {
           let shopOrder = (yield OrderService.quickCharge(data, null, {
@@ -170,7 +182,9 @@ scheduler.process('waivework-billing', function*(job) {
           yield oldPayment.update({
             bookingPaymentId: bookingPayment.id,
           });
-          endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} was successful. Thanks for using Waive!`;
+          endText = `Your payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(2)} was successful. Thanks for using Waive!`;
         } catch (e) {
           yield notify.slack(
             {
@@ -183,12 +197,23 @@ scheduler.process('waivework-billing', function*(job) {
           yield oldPayment.update({
             bookingPaymentId: e.shopOrder.id,
           });
-          endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} has failed. We will be in touch shortly about it.`
-          yield carService.lockImmobilizer(oldPayment.booking.carId, null, true);
+          endText = `Your payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(2)} has failed. We will be in touch shortly about it.`;
+          yield carService.lockImmobilizer(
+            oldPayment.booking.carId,
+            null,
+            true,
+          );
         }
+        // This here needs to be fixed to bill on the correct date
+        let dates = [8, 15, 22, 1, 8];
+        let nextDay = dates[dates.indexOf(currentDay) + 1];
+        let toAddMonth = currentDay === 22;
+        let nextDate = moment().month(toAddMonth ? moment().month() + 1 : moment().month()).date(nextDay);
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
-          date: moment().add(7, 'days'),
+          date: nextDate,
           bookingPaymentId: null,
           amount: oldPayment.amount,
         });
@@ -232,8 +257,9 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'hours'};
+  let timer = {value: 24, type: 'seconds'};
   // Make sure to change this timer back
+  //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
