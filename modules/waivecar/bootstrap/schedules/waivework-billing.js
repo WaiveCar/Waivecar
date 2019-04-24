@@ -10,6 +10,7 @@ let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
 let config = Bento.config;
 let moment = require('moment');
+let carService = require('../../lib/car-service');
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -183,6 +184,7 @@ scheduler.process('waivework-billing', function*(job) {
             bookingPaymentId: e.shopOrder.id,
           });
           endText = `Your payment for WaiveWork of ${(oldPayment.amount / 100).toFixed(2)} has failed. We will be in touch shortly about it.`
+          yield carService.lockImmobilizer(oldPayment.booking.carId, null, true);
         }
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,

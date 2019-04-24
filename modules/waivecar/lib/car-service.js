@@ -1267,8 +1267,8 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'unlock', _user, car);
   },
 
-  *lockImmobilizer(id, _user) {
-    if (_user.hasAccess('admin')) {
+  *lockImmobilizer(id, _user, isComputer) {
+    if (_user.hasAccess('admin') || isComputer) {
       // this is an admin immobilizing the vehicle ... 
       // the user in a booking shouldn't be able to undo this.
       let car = yield Car.findById(id, {
