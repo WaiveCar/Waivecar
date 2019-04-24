@@ -179,7 +179,6 @@ scheduler.process('waivework-billing', function*(job) {
               bookingId: oldPayment.bookingId,
             },
           })).length === 1;
-        console.log(isFirstPayment);
         if (!isFirstPayment) {
           // Add logic for first payment here
           log.warn("this is the user's first payment");
@@ -202,6 +201,12 @@ scheduler.process('waivework-billing', function*(job) {
               oldPayment.amount / 100
             ).toFixed(2)} was successful!`;
           } catch (e) {
+            console.log('error: ', e.shopOrder);
+            failedChargePayload.push(
+              `${user.link()} had a failed automatic charge of $${(
+                oldPayment.amount / 100
+              ).toFixed(2)} for their Waivework Rental. ${e.message}`,
+            );
             yield oldPayment.update({
               bookingPaymentId: e.shopOrder.id,
             });
@@ -258,12 +263,14 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       }
+      console.log('chargesPayload', chargesPayload);
       if (chargesPayload.length > 1) {
         yield notify.slack(
           {text: chargesPayload.join('\n')},
           {channel: '#waivework-charges'},
         );
       }
+      console.log('failedChargePayload', failedChargePayload);
       if (failedChargePayload.length > 1) {
         yield notify.slack(
           {text: failedChargePayload.join('\n')},
