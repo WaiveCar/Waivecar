@@ -120,11 +120,6 @@ Scheduler.process = function process(jobId, handler) {
   });
 };
 
-/**
- * Cancels a scheduled job.
- * @param  {String} job
- * @return {Void} [description]
- */
 Scheduler.cancel = function cancel(job, uid) {
   return co(function *() {
     uid = uid ? ':' + uid : '';
@@ -149,12 +144,6 @@ Scheduler.cancel = function cancel(job, uid) {
   });
 };
 
-/**
- * @param  {String} job
- * @param  {Object} options
- * @param  {Moment} time
- * @return {Void}
- */
 function addJob(job, options, time) {
   let uid     = options.uid ? ':' + options.uid : '';
   let trigger = getScheduleTrigger(job, time, options.silent);
