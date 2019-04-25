@@ -126,16 +126,20 @@ scheduler.process('waivework-billing', function*(job) {
     }
   }
   let chargesPayload = [
-    ':watch: *The following users are to be charged this week:* \n',
+    ':watch: *The following users are to be charged automatically this week:* \n',
   ];
   let failedChargePayload = [
-    ":male_vampire: *The following users's weekly charges have failed:* \n",
+    ":male_vampire: *The following users's weekly automatic charges have failed:* \n",
   ];
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
-  //remove this later
+  /*remove this later
+   *
+   *MAKE SURE TO REMOVE THIS
+   * 
+   * */
   currentDay = 22;
   //
   if ([1, 8, 15, 22].includes(currentDay)) {
@@ -160,9 +164,10 @@ scheduler.process('waivework-billing', function*(job) {
         yield redis.shouldProcess(
           'waivework-auto-charge',
           oldPayment.id,
-          90 * 1000,
+          //90 * 1000,
         )
       ) {
+        let endText;
         let data = {
           userId: oldPayment.booking.userId,
           amount: oldPayment.amount,
@@ -197,7 +202,7 @@ scheduler.process('waivework-billing', function*(job) {
           let shopOrder = (yield OrderService.quickCharge(data, null, {
             nocredit: true,
           })).order;
-
+          
           let bookingPayment = new BookingPayment({
             bookingId: oldPayment.booking.id,
             orderId: shopOrder.id,
@@ -207,7 +212,6 @@ scheduler.process('waivework-billing', function*(job) {
             bookingPaymentId: bookingPayment.id,
           });
         } else {
-          let endText;
           try {
             let shopOrder = (yield OrderService.quickCharge(data, null, {
               nocredit: true,
@@ -226,9 +230,9 @@ scheduler.process('waivework-billing', function*(job) {
             ).toFixed(2)} was successful!`;
           } catch (e) {
             failedChargePayload.push(
-              `${user.link()} had a failed automatic charge of $${(
+              `${user.link()} had a failed charge of $${(
                 oldPayment.amount / 100
-              ).toFixed(2)} for their Waivework Rental. ${e.message}`,
+              ).toFixed(2)}. ${e.message}`,
             );
             yield oldPayment.update({
               bookingPaymentId: e.shopOrder.id,
@@ -247,6 +251,7 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
+        console.log('endText', endText);
         // This here needs to be fixed to bill on the correct date
         let dates = [8, 15, 22, 1, 8];
         let nextDay = dates[dates.indexOf(currentDay) + 1];
@@ -261,9 +266,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
-        console.log('newPayment', newPayment);
-        // For now, this Slack notification should indicate to Frank when to charge the users manually during
-        // the testing period for this process
+        console.log('isFirstPayment', isFirstPayment);
         if (!isFirstPayment) {
           chargesPayload.push(
             `${user.link()} was attempted to be charged $${(
@@ -290,27 +293,27 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       }
-      console.log('chargesPayload', chargesPayload);
-      if (chargesPayload.length > 1) {
-        yield notify.slack(
-          {text: chargesPayload.join('\n')},
-          {channel: '#waivework-charges'},
-        );
-      }
-      console.log('failedChargePayload', failedChargePayload);
-      if (failedChargePayload.length > 1) {
-        yield notify.slack(
-          {text: failedChargePayload.join('\n')},
-          {channel: '#waivework-charges'},
-        );
-      }
-      console.log('firstChargePayload', firstChargePayload);
-      if (firstChargePayload.length > 1) {
-        yield notify.slack(
-          {text: firstChargePayload.join('\n')},
-          {channel: '#waivework-charges'},
-        );
-      }
+    }
+    console.log('chargesPayload', chargesPayload);
+    if (chargesPayload.length > 1) {
+      yield notify.slack(
+        {text: chargesPayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    console.log('failedChargePayload', failedChargePayload);
+    if (failedChargePayload.length > 1) {
+      yield notify.slack(
+        {text: failedChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    console.log('firstChargePayload', firstChargePayload);
+    if (firstChargePayload.length > 1) {
+      yield notify.slack(
+        {text: firstChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
     }
   }
 });
