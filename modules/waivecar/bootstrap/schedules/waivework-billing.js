@@ -193,7 +193,7 @@ scheduler.process('waivework-billing', function*(job) {
           let shopOrder = (yield OrderService.quickCharge(data, null, {
             nocredit: true,
           })).order;
-          
+
           let bookingPayment = new BookingPayment({
             bookingId: oldPayment.booking.id,
             orderId: shopOrder.id,
@@ -257,9 +257,9 @@ scheduler.process('waivework-billing', function*(job) {
         yield newPayment.save();
         if (!isFirstPayment) {
           chargesPayload.push(
-            `${user.link()} charged $${(
-              oldPayment.amount / 100
-            ).toFixed(2)} automatically.`,
+            `${user.link()} charged $${(oldPayment.amount / 100).toFixed(
+              2,
+            )} automatically.`,
           );
           let email = new Email(),
             emailOpts = {};
@@ -281,6 +281,14 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       }
+      yield notify.slack(
+        {text: chargesPayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+      yield notify.slack(
+        {text: failedChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
     }
     if (chargesPayload.length > 1) {
       yield notify.slack(

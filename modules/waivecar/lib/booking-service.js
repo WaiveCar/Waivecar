@@ -516,7 +516,7 @@ module.exports = class BookingService extends Service {
     if (prorating === 0) {
       nextDate += 7;
     }
-    return {today, daysInMonth, currentDay, nextDate, numDays, daysLeft, prorating, proratedChargeAmount}; 
+    return {today, daysInMonth, currentDay, nextDate, proratedChargeAmount}; 
   }
     
   static *handleWaivework(booking, data, _user, driver) {
@@ -529,9 +529,7 @@ module.exports = class BookingService extends Service {
       daysInMonth, 
       currentDay, 
       nextDate, 
-      numDays, 
       daysLeft, 
-      prorating, 
       proratedChargeAmount
     } = (yield this.getProratedCharge(data.amount));
     // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
