@@ -1,6 +1,7 @@
 'use strict';
 let apiConfig   = Bento.config.api;
 
+let redis = require('../lib/redis-service.js');
 let queue = Bento.provider('queue');
 
 Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
@@ -347,6 +348,8 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     *delAllTimers() {
       yield this.delCancelTimer();
       yield this.delForfeitureTimers();
+      yield redis.hdel('sitStart', this.id);
+      yield redis.hdel('sitLast', this.id);
       queue.schedule.cancel('booking-extension-offer', `booking-${ this.id }`);
     },
 
