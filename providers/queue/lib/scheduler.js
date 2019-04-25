@@ -62,11 +62,30 @@ Scheduler.add = function add(job, options) {
       } else {
         timer = moment().utc().add(options.timer.value, options.timer.type);
       }
+      //
+      // We need to tidy up our database in a few ways. This
+      // is one of them.
+      //
+      let expire = options.timer.value * {
+        seconds:  1,
+        minutes:  60,
+        hours:    60 * 60, 
+        days:     60 * 60 * 24
+      }[options.timer.type];
+
+      if(isNaN(expire)) {
+        // if that totally fucking failed then
+        // we just fall back on it being 2 days.
+        expire = 60 * 60 * 24 * 2;
+      }
+      // we add an hour for good luck.
+      expire += 3600;
+
       yield redis.set(SCHEDULES + job + uid, JSON.stringify({
         job     : job,
         timer   : timer.format(),
         options : options
-      }));
+      }), expire);
     }
     if (options.init) {
       delete options.init;
