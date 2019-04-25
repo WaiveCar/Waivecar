@@ -38,7 +38,7 @@ module.exports = {
 
       // for debugging
       startCommand.body = payload;
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([startCommand, response]) + "\n",function(){});
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, response.body]) + "\n",function(){});
       return responseJSON;
     } catch(ex) {
       console.log(ex);
@@ -108,6 +108,7 @@ module.exports = {
     }
     if (yield this.addCarIfNeeded(car)) {
       let res = yield this.changeLiability('service-started', car, booking, user);
+      console.log(res);
       if(!res) {
         console.log(`Can't add liability for booking ${booking.id}`);
       } else {
@@ -124,6 +125,7 @@ module.exports = {
     }
 
     let res = yield this.changeLiability('service-ended', car, booking, user);
+    console.log(res);
     if(!res) {
       console.log(`Can't remove liability for booking ${booking.id}`);
     } else {
