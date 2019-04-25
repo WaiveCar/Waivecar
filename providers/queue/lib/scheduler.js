@@ -85,7 +85,9 @@ Scheduler.add = function add(job, options) {
         job     : job,
         timer   : timer.format(),
         options : options
-      }), expire);
+      }));
+      // and hopefully this helps us dump this later.
+      yield redis.expire(SCHEDULES + job + uid, expire);
     }
     if (options.init) {
       delete options.init;
