@@ -183,6 +183,15 @@ module.exports = {
       return;
     }
 
+    let missing = ['street1', 'city', 'state', 'zip'].filter(row => !license[row]).join(', ');
+    if(missing) {
+      yield notify.slack(
+        { text: `:genie: ${ user.link() } is missing the following fields in their license: ${missing}. Booking ${ booking.link() } cannot be added to tikd.` },
+        { channel: '#rental-alerts' },
+      );
+      return;
+    }
+
     let plateNumber = car.plateNumber || car.plateNumberWork;
     if(!plateNumber) {
       let newCar = yield Car.findById(car.id);
