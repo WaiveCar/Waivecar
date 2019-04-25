@@ -360,8 +360,23 @@ class WaiveWorkDetails extends Component {
             </div>
           ) : (
             <div>
-              Not currently booked into a WaiveWork vehicle
+              <h4>Not currently booked into WaiveWork</h4>
               <div className="row" style={{marginTop: '4px'}}>
+                <input
+                  className="col-xs-6"
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  type="number"
+                  placeholder="Amount Per Week"
+                  value={perWeek}
+                  onChange={e => this.setState({perWeek: e.target.value})}
+                />
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => this.sendEmail()}>
+                  Send Quote
+                </button>
+              </div>
+              <div className="row" style={{marginTop: '10px'}}>
                 <input
                   onChange={e => this.setState({carSearchWord: e.target.value})}
                   value={carSearchWord}
@@ -373,22 +388,6 @@ class WaiveWorkDetails extends Component {
                   className="btn btn-primary btn-sm col-xs-6"
                   onClick={() => this.carSearch()}>
                   Find Car
-                </button>
-              </div>
-              <div className="row" style={{marginTop: '4px'}}>
-                Amount Per Week:
-                <input
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  type="number"
-                  value={perWeek}
-                  onChange={e => this.setState({perWeek: e.target.value})}
-                />
-              </div>
-              <div className="row" style={{marginTop: '4px'}}>
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.sendEmail()}>
-                  Send Email
                 </button>
               </div>
               {searchResults &&
