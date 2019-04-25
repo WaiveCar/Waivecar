@@ -158,6 +158,7 @@ function addJob(job, options, time) {
 
       let task = queue
         .create(job, options.data || {})
+        .removeOnComplete( true )
         .save((err) => {
           if (err) {
             return log.error(err);
