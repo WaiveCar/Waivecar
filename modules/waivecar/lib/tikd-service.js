@@ -179,7 +179,7 @@ module.exports = {
     let license = yield user.getLicense();
     if(!license) {
       yield notify.slack(
-        { text: `:genie: ${ user.link() } does not have a license on file. Booking ${ booking.link() } cannot be added to tikd` },
+        { text: `:genie: ${ user.link() } does not have a license on file. ${ booking.link() } cannot be added to tikd` },
         { channel: '#rental-alerts' },
       );
       return;
@@ -188,7 +188,7 @@ module.exports = {
     let missing = ['street1', 'city', 'state', 'zip'].filter(row => !license[row]).join(', ');
     if(missing) {
       yield notify.slack(
-        { text: `:genie: ${ user.link() } is missing the following fields in their license: ${missing}. Booking ${ booking.link() } cannot be added to tikd.` },
+        { text: `:genie: ${ user.link() } is missing the following fields in their license: ${missing}. ${ booking.link() } cannot be added to tikd.` },
         { channel: '#rental-alerts' },
       );
       return;
