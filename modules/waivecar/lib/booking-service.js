@@ -490,12 +490,7 @@ module.exports = class BookingService extends Service {
 
 
 
-
-  static *handleWaivework(booking, data, _user, driver) {
-    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
-    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
-    // be charged a prorated amount for the amount of time before that date
-    yield this.ready(booking.id, _user);
+  static *getProratedCharge(weeklyAmount) {
     let today = moment().tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
@@ -517,10 +512,28 @@ module.exports = class BookingService extends Service {
     let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
     let daysLeft = (nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay;
     let prorating = daysLeft / numDays;
-    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1));
+    let proratedChargeAmount = Math.floor(Number(weeklyAmount) * (prorating > 0 ? prorating : 1));
     if (prorating === 0) {
       nextDate += 7;
     }
+    return {today, daysInMonth, currentDay, nextDate, numDays, daysLeft, prorating, proratedChargeAmount}; 
+  }
+    
+  static *handleWaivework(booking, data, _user, driver) {
+    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
+    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
+    // be charged a prorated amount for the amount of time before that date
+    yield this.ready(booking.id, _user);
+    let {
+      today, 
+      daysInMonth, 
+      currentDay, 
+      nextDate, 
+      numDays, 
+      daysLeft, 
+      prorating, 
+      proratedChargeAmount
+    } = (yield this.getProratedCharge(data.amount));
     // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
     // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
@@ -552,7 +565,6 @@ module.exports = class BookingService extends Service {
         message: e.message,
       }, 404);
     }
-    console.log(moment().tz('America/Los_Angeles').add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'));
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
       date: moment().tz('America/Los_Angeles').add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days').format('YYYY-MM-DD'),
