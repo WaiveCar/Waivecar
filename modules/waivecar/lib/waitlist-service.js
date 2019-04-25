@@ -408,7 +408,7 @@ module.exports = {
       let email = new Email();
       yield email.send({
         to       : 'dennis.mata.t7h8@statefarm.com',
-        cc       : 'frank@waive.car',
+        cc       : 'work@waive.car',
         from     : config.email.sender,
         subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
         template : 'waivework-signup',
