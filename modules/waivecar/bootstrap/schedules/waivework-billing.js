@@ -188,7 +188,6 @@ scheduler.process('waivework-billing', function*(job) {
               2,
             )}.`,
           );
-          // Add logic for first payment here
           // A dummy shopOrder must be made for inital payments so that the next payments may be made
           data.amount = 0;
           let shopOrder = (yield OrderService.quickCharge(data, null, {
@@ -243,7 +242,6 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
-        // This here needs to be fixed to bill on the correct date
         let dates = [8, 15, 22, 1, 8];
         let nextDay = dates[dates.indexOf(currentDay) + 1];
         let toAddMonth = currentDay === 22;
@@ -307,7 +305,6 @@ scheduler.process('waivework-billing', function*(job) {
 
 module.exports = function*() {
   let timer = {value: 24, type: 'hours'};
-  // Make sure to change this timer back
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
