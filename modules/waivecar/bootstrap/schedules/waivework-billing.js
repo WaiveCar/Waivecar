@@ -190,7 +190,6 @@ scheduler.process('waivework-billing', function*(job) {
             },
           })).length === 1;
         if (isFirstPayment) {
-          console.log("this is the user's first payment");
           firstChargePayload.push(
             `${user.link()}'s charge of $${(oldPayment.amount / 100).toFixed(
               2,
@@ -251,7 +250,6 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
-        console.log('endText', endText);
         // This here needs to be fixed to bill on the correct date
         let dates = [8, 15, 22, 1, 8];
         let nextDay = dates[dates.indexOf(currentDay) + 1];
@@ -266,12 +264,11 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
-        console.log('isFirstPayment', isFirstPayment);
         if (!isFirstPayment) {
           chargesPayload.push(
-            `${user.link()} was attempted to be charged $${(
+            `${user.link()} charged $${(
               oldPayment.amount / 100
-            ).toFixed(2)} automatically today for their Waivework Rental`,
+            ).toFixed(2)} automatically.`,
           );
           let email = new Email(),
             emailOpts = {};
@@ -294,21 +291,18 @@ scheduler.process('waivework-billing', function*(job) {
         }
       }
     }
-    console.log('chargesPayload', chargesPayload);
     if (chargesPayload.length > 1) {
       yield notify.slack(
         {text: chargesPayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
-    console.log('failedChargePayload', failedChargePayload);
     if (failedChargePayload.length > 1) {
       yield notify.slack(
         {text: failedChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
-    console.log('firstChargePayload', firstChargePayload);
     if (firstChargePayload.length > 1) {
       yield notify.slack(
         {text: firstChargePayload.join('\n')},
