@@ -1715,8 +1715,7 @@ module.exports = class BookingService extends Service {
 
     let isLevel = yield car.isTagged('level');
     yield booking.cancel();
-    yield booking.delCancelTimer();
-    yield booking.delForfeitureTimers();
+    yield booking.delAllTimers();
     yield car.removeDriver();
     yield car.available();
     yield this.notifyUsers(car);

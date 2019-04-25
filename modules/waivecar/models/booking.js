@@ -344,6 +344,12 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
     },
 
+    *delAllTimers() {
+      yield this.delCancelTimer();
+      yield this.delForfeitureTimers();
+      queue.schedule.cancel('booking-extension-offer', `booking-${ this.id }`);
+    },
+
     //
     // Sets ride reminder schedules.
     // @param {Object} user
