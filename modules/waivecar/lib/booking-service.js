@@ -552,9 +552,10 @@ module.exports = class BookingService extends Service {
         message: e.message,
       }, 404);
     }
+    console.log(moment().tz('America/Los_Angeles').add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'));
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().tz('America/Los_Angeles').add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'),
+      date: moment().tz('America/Los_Angeles').add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days').format('YYYY-MM-DD'),
       bookingPaymentId: null,
       amount: weeklyAmount,
     });
