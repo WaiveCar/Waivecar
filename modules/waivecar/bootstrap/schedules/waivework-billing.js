@@ -135,13 +135,6 @@ scheduler.process('waivework-billing', function*(job) {
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
-  /*remove this later
-   *
-   *MAKE SURE TO REMOVE THIS
-   * 
-   * */
-  currentDay = 22;
-  //
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -164,7 +157,7 @@ scheduler.process('waivework-billing', function*(job) {
         yield redis.shouldProcess(
           'waivework-auto-charge',
           oldPayment.id,
-          //90 * 1000,
+          90 * 1000,
         )
       ) {
         let endText;
@@ -236,7 +229,7 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: e.shopOrder.id,
             });
-            endText = `Your payment for WaiveWork of ${(
+            endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
             ).toFixed(2)} has failed. We will be in touch shortly about it.`;
             try {
@@ -313,9 +306,8 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   // Make sure to change this timer back
-  //scheduler.cancel('waivework-billing');
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
