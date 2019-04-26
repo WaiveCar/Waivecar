@@ -27,9 +27,7 @@ module.exports = {
   },
 
   *request(url, method, opts) {
-    let response = yield request(this.prepareRequest(url, method), opts);
-    //fs.appendFile('/var/log/outgoing/evgo.txt', JSON.stringify([url, response]) + "\n",function(){});
-    return response;
+    return yield request(this.prepareRequest(url, method), opts);
   },
 
   *getLocations() {
@@ -105,6 +103,7 @@ module.exports = {
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
     let response = yield request(startCommand);
+    fs.appendFile('/var/log/outgoing/evgo.txt', [chargerId, response.body].join(' ') + "\n",function(){});
 
     try {
       return JSON.parse(response.body);
