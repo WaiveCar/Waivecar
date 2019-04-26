@@ -8,7 +8,7 @@ Bento.Register.Controller('ChargersController', function(controller) {
     };
 
     controller.start = function *(id, charger){
-        return yield service.start(id, charger);
+        return yield service.start(id, charger, this.auth.user);
     };
 
     return controller;
