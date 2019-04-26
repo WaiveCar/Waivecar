@@ -95,7 +95,7 @@ Route.put('/parking/:id/occupy', [ 'isAuthenticated', 'ParkingController@occupy'
 Route.put('/parking/:id/cancel', [ 'isAuthenticated', 'ParkingController@cancel' ]);
 Route.put('/parking/vacate/:carId', [ 'isAuthenticated', 'ParkingController@vacate' ]);
 
-Route.put('/chargers/start/:id/:charger', 'ChargersController@start');
+Route.put('/chargers/start/:id/:charger', [ 'isAuthenticated', 'ChargersController@start' ]);
 Route.get('/chargers/list', 'ChargersController@chargers');
 
 
