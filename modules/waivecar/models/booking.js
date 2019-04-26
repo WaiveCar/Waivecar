@@ -350,7 +350,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       yield this.delForfeitureTimers();
       yield redis.hdel('sitStart', this.id);
       yield redis.hdel('sitLast', this.id);
-      queue.schedule.cancel('booking-extension-offer', `booking-${ this.id }`);
+      queue.scheduler.cancel('booking-extension-offer', `booking-${ this.id }`);
     },
 
     //
