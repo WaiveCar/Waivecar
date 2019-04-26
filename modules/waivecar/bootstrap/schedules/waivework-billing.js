@@ -134,7 +134,6 @@ scheduler.process('waivework-billing', function*(job) {
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
-  currentDay = 22;
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
@@ -170,8 +169,11 @@ scheduler.process('waivework-billing', function*(job) {
         };
         // The line below should be removed later once we are done watching to see if the payment process
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
-        // is necessary for the scheduling of the new charge.
-        data.amount = 0;
+        // is necessary for the scheduling of the new charge. It can be toggled in and out for turning on/off charging users
+        /////// 
+        //data.amount = 0;
+        //////
+
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
         let isFirstPayment =
@@ -304,7 +306,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
