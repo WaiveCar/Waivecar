@@ -488,9 +488,7 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
-
-
-  static *getProratedCharge(weeklyAmount, startDate) {
+  static *calculateProratedCharge(weeklyAmount, startDate) {
     let today = moment(startDate).tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
@@ -532,7 +530,7 @@ module.exports = class BookingService extends Service {
       nextDate, 
       daysLeft, 
       proratedChargeAmount
-    } = (yield this.getProratedCharge(data.amount));
+    } = (yield this.calculateProratedCharge(data.amount));
     // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
     // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';

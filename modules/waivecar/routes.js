@@ -27,6 +27,7 @@ Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@upda
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
 Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
+Route.get('/waiveworkPayment/calculateProratedCharge', [ 'isAuthenticated', 'BookingsController@calculateProratedCharge' ]
 Route.post('/waiveworkPayment/:bookingId/failedPayment', [ 'isAuthenticated', 'BookingsController@failedWaiveworkPayment' ]);
 Route.put('/waiveworkPayment/:bookingId', [ 'isAuthenticated', 'BookingsController@updateWaiveworkPayment' ]);
 
