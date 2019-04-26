@@ -490,8 +490,8 @@ module.exports = class BookingService extends Service {
 
 
 
-  static *getProratedCharge(weeklyAmount) {
-    let today = moment().tz('America/Los_Angeles');
+  static *getProratedCharge(weeklyAmount, startDate) {
+    let today = moment(startDate).tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
@@ -513,8 +513,9 @@ module.exports = class BookingService extends Service {
     let daysLeft = (nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay;
     let prorating = daysLeft / numDays;
     let proratedChargeAmount = Math.floor(Number(weeklyAmount) * (prorating > 0 ? prorating : 1));
+    let dates = [1, 8, 15, 22, 1]
     if (prorating === 0) {
-      nextDate += 7;
+      nextDate = dates[dates.indexOf(nextDate) + 1];
     }
     return {today, daysInMonth, currentDay, nextDate, proratedChargeAmount}; 
   }
