@@ -42,6 +42,24 @@ module.exports = {
     }
   },
 
+  // we aren't going to maintain this like any kind of competent software
+  // so we will to a linear search.
+  *evseToLocation(query) {
+    let start = new Date();
+    let locationList = yield this.getLocations();
+    for (let location of locationList) {
+      for (let evse of location.evses) {
+        if (evse.uid === query) {
+          console.log("Stupid linear search time " + (new Date() - start));
+          return location.id;
+        }
+      }
+    }
+    console.log("Stupid linear search time " + (new Date() - start));
+    // Let's make sure we don't lead an invalid query
+    return 0;
+  },
+
   *list(homebase) {
     let locations = (yield this.getLocations()).map(loc => {
       let obj = {
@@ -82,10 +100,13 @@ module.exports = {
   },
 
   *start(carId, chargerId, user) {
+    let locationId = this.evseToLoction(chargerId);
+
     let body = {
       response_url: "http://9ol.es/ocpi/charge-start.php?" + [
         "user=" + user.id,
-        "evse=" + chargerId
+        "evse=" + chargerId,
+        "loc=" + locationId
       ].join('&'),
       token: {
         uid: "049B53WAIVECAR",
