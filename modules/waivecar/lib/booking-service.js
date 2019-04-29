@@ -538,7 +538,6 @@ module.exports = class BookingService extends Service {
     data.waivework = true;
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
-    // The line below should be removed later once we are done watching to see if the payment process works reliably
     // Currently, the user will just be charged $0 while the prorated charge is still charged manually.
     data.amount = 0;
     try {
