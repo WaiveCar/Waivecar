@@ -14,6 +14,8 @@ class WaiveWorkDetails extends Component {
       searchResults: [],
       carHistory: [],
       perWeek: null,
+      startDate: null,
+      proratedChargeAmount: null,
       ended: false,
     };
   }
@@ -66,6 +68,19 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  getProratedCharge() {
+    let {perWeek, startDate} = this.state;
+    api.get(`/waiveworkPayment/calculateProratedCharge?amount=${perWeek}&startDate=${moment(startDate).format('YYYY-MM-DD')}`, (err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.setState({proratedChargeAmount: response.proratedChargeAmount}, () => console.log('state: ', this.state))
+    });                                                            
+  }                                                                
+                                                                   
   sendEmail() {
     let {user} = this.props;
     let {perWeek} = this.state;
@@ -214,6 +229,8 @@ class WaiveWorkDetails extends Component {
       carHistory,
       carSearchWord,
       ended,
+      startDate,
+      proratedChargeAmount,
     } = this.state;
     return (
       <div className="box">
@@ -374,6 +391,21 @@ class WaiveWorkDetails extends Component {
                   className="btn btn-primary btn-sm col-xs-6"
                   onClick={() => this.sendEmail()}>
                   Send Quote
+                </button>
+              </div>
+              <div className="row" style={{marginTop: '4px'}}>
+                <input
+                  className="col-xs-6"
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  type="date"
+                  placeholder="Start Date"
+                  value={startDate}
+                  onChange={e => this.setState({startDate: e.target.value})}
+                />
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => this.getProratedCharge()}>
+                  Get prorated amount
                 </button>
               </div>
               <div className="row" style={{marginTop: '10px'}}>
