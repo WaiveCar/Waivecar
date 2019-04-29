@@ -488,15 +488,8 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
-
-
-
-  static *handleWaivework(booking, data, _user, driver) {
-    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
-    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
-    // be charged a prorated amount for the amount of time before that date
-    yield this.ready(booking.id, _user);
-    let today = moment().tz('America/Los_Angeles');
+  static *calculateProratedCharge(weeklyAmount, startDate) {
+    let today = moment(startDate).tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
@@ -517,10 +510,27 @@ module.exports = class BookingService extends Service {
     let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
     let daysLeft = (nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay;
     let prorating = daysLeft / numDays;
-    let proratedChargeAmount = Math.floor(Number(data.amount) * (prorating > 0 ? prorating : 1));
+    let proratedChargeAmount = Math.floor(Number(weeklyAmount) * (prorating > 0 ? prorating : 1));
+    let dates = [1, 8, 15, 22, 1]
     if (prorating === 0) {
-      nextDate += 7;
+      nextDate = dates[dates.indexOf(nextDate) + 1];
     }
+    return {today, daysInMonth, currentDay, nextDate, proratedChargeAmount}; 
+  }
+    
+  static *handleWaivework(booking, data, _user, driver) {
+    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
+    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
+    // be charged a prorated amount for the amount of time before that date
+    yield this.ready(booking.id, _user);
+    let {
+      today, 
+      daysInMonth, 
+      currentDay, 
+      nextDate, 
+      daysLeft, 
+      proratedChargeAmount
+    } = (yield this.calculateProratedCharge(data.amount));
     // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
     // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
@@ -528,8 +538,7 @@ module.exports = class BookingService extends Service {
     data.waivework = true;
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
-    // The line below should be removed later once we are done watching to see if the payment process works reliably
-    // Currently, the user will just be charged $0. And is just overwriting the actual amount to be charged.
+    // Currently, the user will just be charged $0 while the prorated charge is still charged manually.
     data.amount = 0;
     try {
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
@@ -554,7 +563,7 @@ module.exports = class BookingService extends Service {
     }
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().add((nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay, 'days'),
+      date: moment().date(nextDate).month(nextDate !== 1 ? moment().month() : moment().month() + 1),
       bookingPaymentId: null,
       amount: weeklyAmount,
     });
