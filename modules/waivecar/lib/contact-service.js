@@ -180,7 +180,7 @@ module.exports = {
     if(remoteCmd) {
       let id = yield Charger.nameToUUID(remoteCmd[1]);
       if(id) {
-        yield Charger.start(null, id);
+        yield Charger.start(null, id, user);
         yield notify.sendTextMessage(user, "Starting " + remoteCmd[1]);
         yield slack('and is charging via sms');
       } else {
