@@ -489,7 +489,10 @@ module.exports = class BookingService extends Service {
   }
 
   static *calculateProratedCharge(weeklyAmount, startDate) {
-    let today = moment(startDate).tz('America/Los_Angeles');
+    // If th startDate is defined, it is used to calculate the prorated amount. If it 
+    // is not provided, the current time in Los Angeles needs to be used so that the
+    // calculation is based on the correct day.
+    let today = startDate ? moment(startDate) : moment().tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
