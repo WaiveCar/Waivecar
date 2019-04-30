@@ -70,17 +70,20 @@ class WaiveWorkDetails extends Component {
 
   getProratedCharge() {
     let {perWeek, startDate} = this.state;
-    api.get(`/waiveworkPayment/calculateProratedCharge?amount=${perWeek}&startDate=${moment(startDate).format('YYYY-MM-DD')}`, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      this.setState({proratedChargeAmount: response.proratedChargeAmount}, () => console.log('state: ', this.state))
-    });                                                            
-  }                                                                
-                                                                   
+    api.get(
+      `/waiveworkPayment/calculateProratedCharge?amount=${perWeek}&startDate=${startDate}`,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({proratedChargeAmount: response.proratedChargeAmount});
+      },
+    );
+  }
+
   sendEmail() {
     let {user} = this.props;
     let {perWeek} = this.state;
@@ -408,6 +411,9 @@ class WaiveWorkDetails extends Component {
                   Get prorated amount
                 </button>
               </div>
+              {proratedChargeAmount && (
+                <div>Charge amount: ${proratedChargeAmount}</div>
+              )}
               <div className="row" style={{marginTop: '10px'}}>
                 <input
                   onChange={e => this.setState({carSearchWord: e.target.value})}
@@ -423,20 +429,18 @@ class WaiveWorkDetails extends Component {
                 </button>
               </div>
               {searchResults &&
-                searchResults.map((item, i) => {
-                  return (
-                    <div key={i} className="row">
-                      <div style={{padding: '10px 0'}} className="col-xs-6">
-                        {item.license}
-                      </div>
-                      <button
-                        className="btn btn-link col-xs-6"
-                        onClick={() => this.book(item.id)}>
-                        Book Now
-                      </button>
+                searchResults.map((item, i) => (
+                  <div key={i} className="row">
+                    <div style={{padding: '10px 0'}} className="col-xs-6">
+                      {item.license}
                     </div>
-                  );
-                })}
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() => this.book(item.id)}>
+                      Book Now
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
         </div>
