@@ -100,7 +100,7 @@ module.exports = {
   },
 
   *start(carId, chargerId, user) {
-    let locationId = this.evseToLocation(chargerId);
+    let locationId = yield this.evseToLocation(chargerId);
 
     let body = {
       response_url: "http://9ol.es/ocpi/charge-start.php?" + [
