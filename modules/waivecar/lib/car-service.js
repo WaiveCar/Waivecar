@@ -147,6 +147,14 @@ module.exports = {
         if(matchSet.length === 0) {
           matchSet = [6];
         }
+        //
+        // THIS IS THE SHUTDOWN OF THE LA PROGRAM.
+        //
+        // We simply show no cars to people who are
+        // marked la by removing la cars from their
+        // matchlist.
+        //
+        matchSet = matchSet.filter(row => row != 6);
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
@@ -238,7 +246,7 @@ module.exports = {
           car.isAvailable = true;
         }
 
-        legacyWorkAround(car);
+        //legacyWorkAround(car);
       });
 
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
