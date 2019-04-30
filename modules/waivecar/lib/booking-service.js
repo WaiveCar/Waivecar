@@ -582,6 +582,62 @@ module.exports = class BookingService extends Service {
     return waiveworkPayment; 
   }
 
+  static *advanceWorkPayment(bookingId, _user) {
+    let paymentToChange = yield WaiveworkPayment.find({
+      where: {
+        bookingId,
+        bookingPaymentId: null,
+      },
+    });
+    let booking = yield Booking.findById(paymentToChange.bookingId);
+    let driver = yield User.findById(booking.userId);
+
+    let oldDay = moment(paymentToChange.date).date();
+    let oldMonth = moment(paymentToChange.date).month();
+    let paymentDays = [8, 15, 22, 1, 8];
+    let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
+    let newDate = moment(paymentToChange.date).day(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    try {
+      let data = {
+        userId: oldPayment.booking.userId,
+        amount: paymentToCharge.amount,
+        source: 'Waivework auto charge',
+        description: 'Weekly charge for waivework',
+      };
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: workCharge.id,
+      });
+      yield bookingPayment.save();
+      yield paymentToChange.update({
+        date: newDate,  
+      });
+      yield notify.slack(
+        {
+          text: `:ohyaa: ${driver.link()} charged $${(
+            oldPayment.amount / 100
+          ).toFixed(2)} in advance for their weekly WaiveWork payment, and it succeeded.`,
+        },
+        {channel: '#waivework-charges'},
+      );
+    } catch(e) {
+      yield notify.slack(
+        {
+          text: `:male_vampire: ${driver.link()} tried to charge $${(
+            oldPayment.amount / 100
+          ).toFixed(2)} in advance for their weekly WaiveWork payment, but it failed. ${e.message}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      throw error.parse({
+        code: 'CHARGE_FAILED',
+        message: e.message,
+      }, 404);
+    }
+    return paymentToChange;
+  }
+
   /*
    |--------------------------------------------------------------------------------
    | Read Methods
@@ -1674,6 +1730,7 @@ module.exports = class BookingService extends Service {
       if (waiveworkPayment) {
         yield waiveworkPayment.delete();
       }
+      // There may be some intercom flags to toggle here later
       yield user.update({isWaivework: false});
       yield notify.slack(
         {
