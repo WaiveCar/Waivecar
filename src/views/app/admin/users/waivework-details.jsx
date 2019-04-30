@@ -58,7 +58,7 @@ class WaiveWorkDetails extends Component {
                       message: err.message,
                     });
                   }
-                  this.setState({carHistory: history});
+                  this.setState({carHistory: history}, () => console.log('state: ', this.state));
                 },
               );
             },
@@ -255,6 +255,10 @@ class WaiveWorkDetails extends Component {
               <div>
                 Start Date:{' '}
                 {moment(currentWaiveworkBooking.createdAt).format('MM/DD/YYYY')}
+              </div>
+              <div>
+                Next Payment Date:{' '}
+                {moment(currentWaiveworkBooking.waiveworkPayment.date).format('MM/DD/YYYY')}
               </div>
               {carHistory.length && (
                 <div>
