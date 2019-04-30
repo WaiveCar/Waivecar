@@ -154,7 +154,7 @@ module.exports = {
         // marked la by removing la cars from their
         // matchlist.
         //
-        matchSet = matchSet.filter(row => row != 6);
+        // matchSet = matchSet.filter(row => row != 6);
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
