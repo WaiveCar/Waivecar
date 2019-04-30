@@ -42,7 +42,6 @@ export default class WaiveWorkRequest extends Component {
             'street1',
             'number',
             'expirationDate',
-            'offerPerWeek',
           ];
           for (let item of requiredItems) {
             if (!body[item]) {
