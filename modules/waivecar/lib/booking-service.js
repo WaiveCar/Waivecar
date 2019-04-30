@@ -701,6 +701,7 @@ module.exports = class BookingService extends Service {
       bookings[0].waiveworkPayment = (yield WaiveworkPayment.findOne({
         where: {
           bookingId: bookings[0].id,
+          bookingPaymentId: null,
         },
         order: [[ 'created_at', 'desc' ]],
         limit: 1,
