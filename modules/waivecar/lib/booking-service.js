@@ -1674,6 +1674,7 @@ module.exports = class BookingService extends Service {
       if (waiveworkPayment) {
         yield waiveworkPayment.delete();
       }
+      yield user.update({isWaivework: false});
       yield notify.slack(
         {
           text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
