@@ -589,6 +589,7 @@ module.exports = class BookingService extends Service {
         bookingPaymentId: null,
       },
     });
+    let oldDate = paymentToChange.date;
     let booking = yield Booking.findById(paymentToChange.bookingId);
     let driver = yield User.findById(booking.userId);
 
@@ -596,13 +597,13 @@ module.exports = class BookingService extends Service {
     let oldMonth = moment(paymentToChange.date).month();
     let paymentDays = [8, 15, 22, 1, 8];
     let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
-    let newDate = moment(paymentToChange.date).day(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    let newDate = moment(paymentToChange.date).date(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
     try {
       let data = {
         userId: driver.id,
         amount: paymentToChange.amount,
         source: 'Waivework auto charge',
-        description: 'Weekly charge for waivework',
+        description: `Weekly charge for Waivework for ${oldDate}`,
       };
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
       let bookingPayment = new BookingPayment({
