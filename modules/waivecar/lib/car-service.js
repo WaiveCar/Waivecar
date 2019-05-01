@@ -27,7 +27,7 @@ let CarHistory = Bento.model('CarHistory');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
-const util = require('util')
+let util = require('util');
 
 let geolib      = require('geolib');
 let fs          = require('fs');
