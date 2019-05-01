@@ -215,11 +215,14 @@ class WaiveWorkDetails extends Component {
             this.setState({ended: true});
           }
           if (response.status === 'success') {
-            this.setState({
-              currentWaiveworkBooking: null,
-              ended: false,
-              perWeek: null,
-            });
+            this.setState(
+              {
+                currentWaiveworkBooking: null,
+                ended: false,
+                perWeek: null,
+              },
+              () => window.location.reload(),
+            );
           }
         },
       );
@@ -238,7 +241,14 @@ class WaiveWorkDetails extends Component {
               message: `Error paying early: ${err.message}`,
             });
           }
+          console.log('state: ', this.state);
           console.log('response: ', response);
+          this.setState({
+            currentWaiveworkBooking: {
+              ...this.state.currentWaiveworkBooking,
+              waiveworkPayment: response,
+            },
+          });
         },
       );
     }
@@ -278,7 +288,9 @@ class WaiveWorkDetails extends Component {
               </div>
               <div>
                 Next Payment Date:{' '}
-                {moment.utc(currentWaiveworkBooking.waiveworkPayment.date).format('MM/DD/YYYY')}
+                {moment
+                  .utc(currentWaiveworkBooking.waiveworkPayment.date)
+                  .format('MM/DD/YYYY')}
               </div>
               {carHistory.length && (
                 <div>
