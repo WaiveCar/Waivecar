@@ -566,7 +566,9 @@ module.exports = class BookingService extends Service {
     }
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().date(nextDate).month(nextDate !== 1 ? moment().month() : moment().month() + 1),
+      date: moment().date(nextDate).month(nextDate !== 1 ? 
+        moment().tz('America/Los_Angeles').month() : 
+        moment().tz('America/Los_Angeles').month() + 1).format('YYYY-MM-DD'),
       bookingPaymentId: null,
       amount: weeklyAmount,
     });
@@ -603,7 +605,7 @@ module.exports = class BookingService extends Service {
         userId: driver.id,
         amount: paymentToChange.amount,
         source: 'Waivework auto charge',
-        description: `Weekly charge for Waivework for ${oldDate}`,
+        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')}`,
       };
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
       let bookingPayment = new BookingPayment({
