@@ -155,13 +155,13 @@ module.exports = {
         // matchlist.
         //
         matchSet = matchSet.filter(row => row != 6);
-        console.log(util.inspect(matchSet, false, null));
+        //console.log(util.inspect(matchSet, false, null));
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
         };
       }
-      console.log(util.inspect(opts,  false, null));
+      //console.log(util.inspect(opts,  false, null));
 
       let $where = opts.where;
       opts.where = {
