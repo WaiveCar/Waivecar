@@ -32,6 +32,7 @@ const util = require('util')
 let geolib      = require('geolib');
 let fs          = require('fs');
 let _         = require('lodash')
+const util = require('util')
 
 let carMap = false;
 
@@ -155,13 +156,13 @@ module.exports = {
         // matchlist.
         //
         matchSet = matchSet.filter(row => row != 6);
-        console.log(matchSet);
+        console.log(util.inspect(matchSet, false, null));
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
         };
       }
-      console.log(opts);
+      console.log(util.inspect(opts,  false, null));
 
       let $where = opts.where;
       opts.where = {
