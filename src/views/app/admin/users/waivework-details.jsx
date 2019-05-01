@@ -58,9 +58,7 @@ class WaiveWorkDetails extends Component {
                       message: err.message,
                     });
                   }
-                  this.setState({carHistory: history}, () =>
-                    console.log('state: ', this.state),
-                  );
+                  this.setState({carHistory: history});
                 },
               );
             },
@@ -241,8 +239,6 @@ class WaiveWorkDetails extends Component {
               message: `Error paying early: ${err.message}`,
             });
           }
-          console.log('state: ', this.state);
-          console.log('response: ', response);
           this.setState({
             currentWaiveworkBooking: {
               ...this.state.currentWaiveworkBooking,
