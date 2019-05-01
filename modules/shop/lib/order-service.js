@@ -119,7 +119,7 @@ module.exports = class OrderService extends Service {
       } else {
         charge.amount = charge.amount || 0;
         charge = `$${ (charge.amount / 100).toFixed(2) }`;
-        let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.name() }`;
+        let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.link() }`;
         if (!data.waivework) {
           yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
