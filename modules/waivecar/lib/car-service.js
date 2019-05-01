@@ -32,7 +32,6 @@ let util = require('util');
 let geolib      = require('geolib');
 let fs          = require('fs');
 let _         = require('lodash')
-const util = require('util')
 
 let carMap = false;
 
