@@ -58,7 +58,9 @@ class WaiveWorkDetails extends Component {
                       message: err.message,
                     });
                   }
-                  this.setState({carHistory: history}, () => console.log('state: ', this.state));
+                  this.setState({carHistory: history}, () =>
+                    console.log('state: ', this.state),
+                  );
                 },
               );
             },
@@ -224,6 +226,24 @@ class WaiveWorkDetails extends Component {
     }
   }
 
+  advanceWorkPayment() {
+    if (confirm('Are you sure you want to make this payment early?')) {
+      let {currentWaiveworkBooking} = this.state;
+      api.get(
+        `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+        (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: `Error paying early: ${err.message}`,
+            });
+          }
+          console.log('response: ', response);
+        },
+      );
+    }
+  }
+
   render() {
     let {
       currentWaiveworkBooking,
@@ -258,7 +278,9 @@ class WaiveWorkDetails extends Component {
               </div>
               <div>
                 Next Payment Date:{' '}
-                {moment(currentWaiveworkBooking.waiveworkPayment.date).format('MM/DD/YYYY')}
+                {moment(currentWaiveworkBooking.waiveworkPayment.date).format(
+                  'MM/DD/YYYY',
+                )}
               </div>
               {carHistory.length && (
                 <div>
@@ -323,7 +345,7 @@ class WaiveWorkDetails extends Component {
                             : 'Ride not yet over 1 week'}
                         </td>
                         <td>
-                          {carHistory.length
+                          {carHistory.length > 1
                             ? (
                                 (Number(
                                   carHistory[carHistory.length - 1].data,
@@ -366,6 +388,12 @@ class WaiveWorkDetails extends Component {
                           this.bookingAction(ended ? 'complete' : 'end')
                         }>
                         {ended ? 'Complete' : 'End'} Booking
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => this.advanceWorkPayment()}>
+                        Pay early
                       </button>
                       <button
                         type="button"
