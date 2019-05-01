@@ -181,6 +181,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.calculateProratedCharge(this.query.amount, this.query.startDate);
   };
 
+  controller.advanceWorkPayment = function *(bookingId) {
+    return yield booking.advanceWorkPayment(bookingId, this.auth.user);
+  };
+
   return controller;
 
 });

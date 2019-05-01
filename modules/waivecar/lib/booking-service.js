@@ -583,7 +583,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *advanceWorkPayment(bookingId, _user) {
-    let paymentToChange = yield WaiveworkPayment.find({
+    let paymentToChange = yield WaiveworkPayment.findOne({
       where: {
         bookingId,
         bookingPaymentId: null,
@@ -599,8 +599,8 @@ module.exports = class BookingService extends Service {
     let newDate = moment(paymentToChange.date).day(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
     try {
       let data = {
-        userId: oldPayment.booking.userId,
-        amount: paymentToCharge.amount,
+        userId: driver.id,
+        amount: paymentToChange.amount,
         source: 'Waivework auto charge',
         description: 'Weekly charge for waivework',
       };
@@ -616,8 +616,8 @@ module.exports = class BookingService extends Service {
       yield notify.slack(
         {
           text: `:ohyaa: ${driver.link()} charged $${(
-            oldPayment.amount / 100
-          ).toFixed(2)} in advance for their weekly WaiveWork payment, and it succeeded.`,
+            paymentToChange.amount / 100
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded.`,
         },
         {channel: '#waivework-charges'},
       );
@@ -625,8 +625,8 @@ module.exports = class BookingService extends Service {
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} tried to charge $${(
-            oldPayment.amount / 100
-          ).toFixed(2)} in advance for their weekly WaiveWork payment, but it failed. ${e.message}`,
+            paymentToChange.amount / 100
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, but it failed. ${e.message}`,
         },
         {channel: '#waivework-charges'},
       );
