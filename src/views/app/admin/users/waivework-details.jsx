@@ -439,7 +439,7 @@ class WaiveWorkDetails extends Component {
                 <input
                   className="col-xs-6"
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  type="date"
+                  type="text"
                   placeholder="Start Date"
                   value={startDate}
                   onChange={e => this.setState({startDate: e.target.value})}
