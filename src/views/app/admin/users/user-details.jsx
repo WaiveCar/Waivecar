@@ -485,8 +485,8 @@ module.exports = class UserDetails extends React.Component {
             <AddCard user={ user } currentUser={ false }></AddCard>
             : ''
           }
-          { this.state.currentUser.isWaivework ? <WaiveWorkDetails user={user} /> : <WaiveWorkRequest user={user} />}
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
+          { this.state.currentUser.isWaivework ? <WaiveWorkDetails user={user} /> : <WaiveWorkRequest user={user} />}
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
             <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>

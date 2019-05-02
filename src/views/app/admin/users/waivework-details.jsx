@@ -14,6 +14,8 @@ class WaiveWorkDetails extends Component {
       searchResults: [],
       carHistory: [],
       perWeek: null,
+      startDate: null,
+      proratedChargeAmount: null,
       ended: false,
     };
   }
@@ -62,6 +64,22 @@ class WaiveWorkDetails extends Component {
             },
           );
         }
+      },
+    );
+  }
+
+  getProratedCharge() {
+    let {perWeek, startDate} = this.state;
+    api.get(
+      `/waiveworkPayment/calculateProratedCharge?amount=${perWeek}&startDate=${startDate}`,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({proratedChargeAmount: response.proratedChargeAmount});
       },
     );
   }
@@ -195,12 +213,38 @@ class WaiveWorkDetails extends Component {
             this.setState({ended: true});
           }
           if (response.status === 'success') {
-            this.setState({
-              currentWaiveworkBooking: null,
-              ended: false,
-              perWeek: null,
+            this.setState(
+              {
+                currentWaiveworkBooking: null,
+                ended: false,
+                perWeek: null,
+              },
+              () => window.location.reload(),
+            );
+          }
+        },
+      );
+    }
+  }
+
+  advanceWorkPayment() {
+    if (confirm('Are you sure you want to make this payment early?')) {
+      let {currentWaiveworkBooking} = this.state;
+      api.get(
+        `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+        (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: `Error paying early: ${err.message}`,
             });
           }
+          this.setState({
+            currentWaiveworkBooking: {
+              ...this.state.currentWaiveworkBooking,
+              waiveworkPayment: response,
+            },
+          });
         },
       );
     }
@@ -214,6 +258,8 @@ class WaiveWorkDetails extends Component {
       carHistory,
       carSearchWord,
       ended,
+      startDate,
+      proratedChargeAmount,
     } = this.state;
     return (
       <div className="box">
@@ -235,6 +281,13 @@ class WaiveWorkDetails extends Component {
               <div>
                 Start Date:{' '}
                 {moment(currentWaiveworkBooking.createdAt).format('MM/DD/YYYY')}
+              </div>
+              <div>
+                Next Payment Date:{' '}
+                {moment
+                  .utc(currentWaiveworkBooking.waiveworkPayment.date)
+                    .format('MM/DD/YYYY')}{' '}
+                 {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(moment(), 'days') + 1} Days
               </div>
               {carHistory.length && (
                 <div>
@@ -299,7 +352,7 @@ class WaiveWorkDetails extends Component {
                             : 'Ride not yet over 1 week'}
                         </td>
                         <td>
-                          {carHistory.length
+                          {carHistory.length > 1
                             ? (
                                 (Number(
                                   carHistory[carHistory.length - 1].data,
@@ -345,6 +398,12 @@ class WaiveWorkDetails extends Component {
                       </button>
                       <button
                         type="button"
+                        className="btn btn-primary"
+                        onClick={() => this.advanceWorkPayment()}>
+                        Pay early
+                      </button>
+                      <button
+                        type="button"
                         className="btn btn-danger"
                         onClick={() => this.failedChargeEmail()}>
                         Failed Charge Email
@@ -360,8 +419,41 @@ class WaiveWorkDetails extends Component {
             </div>
           ) : (
             <div>
-              Not currently booked into a WaiveWork vehicle
+              <h4>Not currently booked into WaiveWork</h4>
               <div className="row" style={{marginTop: '4px'}}>
+                <input
+                  className="col-xs-6"
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  type="number"
+                  placeholder="Amount Per Week"
+                  value={perWeek}
+                  onChange={e => this.setState({perWeek: e.target.value})}
+                />
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => this.sendEmail()}>
+                  Send Quote
+                </button>
+              </div>
+              <div className="row" style={{marginTop: '4px'}}>
+                <input
+                  className="col-xs-6"
+                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  type="text"
+                  placeholder="Start Date"
+                  value={startDate}
+                  onChange={e => this.setState({startDate: e.target.value})}
+                />
+                <button
+                  className="btn btn-primary btn-sm col-xs-6"
+                  onClick={() => this.getProratedCharge()}>
+                  Get prorated amount
+                </button>
+              </div>
+              {proratedChargeAmount && (
+                <div>Charge amount: ${proratedChargeAmount}</div>
+              )}
+              <div className="row" style={{marginTop: '10px'}}>
                 <input
                   onChange={e => this.setState({carSearchWord: e.target.value})}
                   value={carSearchWord}
@@ -375,37 +467,19 @@ class WaiveWorkDetails extends Component {
                   Find Car
                 </button>
               </div>
-              <div className="row" style={{marginTop: '4px'}}>
-                Amount Per Week:
-                <input
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  type="number"
-                  value={perWeek}
-                  onChange={e => this.setState({perWeek: e.target.value})}
-                />
-              </div>
-              <div className="row" style={{marginTop: '4px'}}>
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.sendEmail()}>
-                  Send Email
-                </button>
-              </div>
               {searchResults &&
-                searchResults.map((item, i) => {
-                  return (
-                    <div key={i} className="row">
-                      <div style={{padding: '10px 0'}} className="col-xs-6">
-                        {item.license}
-                      </div>
-                      <button
-                        className="btn btn-link col-xs-6"
-                        onClick={() => this.book(item.id)}>
-                        Book Now
-                      </button>
+                searchResults.map((item, i) => (
+                  <div key={i} className="row">
+                    <div style={{padding: '10px 0'}} className="col-xs-6">
+                      {item.license}
                     </div>
-                  );
-                })}
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() => this.book(item.id)}>
+                      Book Now
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
         </div>
