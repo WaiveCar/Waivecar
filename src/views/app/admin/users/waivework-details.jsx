@@ -286,7 +286,8 @@ class WaiveWorkDetails extends Component {
                 Next Payment Date:{' '}
                 {moment
                   .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                  .format('MM/DD/YYYY')}
+                    .format('MM/DD/YYYY')}{' '}
+                 {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(moment(), 'days') + 1} Days
               </div>
               {carHistory.length && (
                 <div>
