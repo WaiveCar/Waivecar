@@ -58,10 +58,12 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
   }
-  yield notify.slack(
-    {text: dailyMilesPayload.join('\n')},
-    {channel: '#waivework-charges'},
-  );
+  if (dailyMilesPayload.length > 1) {
+    yield notify.slack(
+      {text: dailyMilesPayload.join('\n')},
+      {channel: '#waivework-charges'},
+    );
+  }
 
   let today = moment();
   let currentDay = today.date();
@@ -165,12 +167,13 @@ scheduler.process('waivework-billing', function*(job) {
           userId: oldPayment.booking.userId,
           amount: oldPayment.amount,
           source: 'Waivework auto charge',
-          description: 'Weekly charge for waivework',
+          description:
+            'Weekly charge for waivework - automatically on schduled day',
         };
         // The line below should be removed later once we are done watching to see if the payment process
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
         // is necessary for the scheduling of the new charge. It can be toggled in and out for turning on/off charging users
-        /////// 
+        ///////
         //data.amount = 0;
         //////
 

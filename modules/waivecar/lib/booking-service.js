@@ -489,7 +489,10 @@ module.exports = class BookingService extends Service {
   }
 
   static *calculateProratedCharge(weeklyAmount, startDate) {
-    let today = moment(startDate).tz('America/Los_Angeles');
+    // If th startDate is defined, it is used to calculate the prorated amount. If it 
+    // is not provided, the current time in Los Angeles needs to be used so that the
+    // calculation is based on the correct day.
+    let today = startDate ? moment(startDate) : moment().tz('America/Los_Angeles');
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
@@ -563,7 +566,9 @@ module.exports = class BookingService extends Service {
     }
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().date(nextDate).month(nextDate !== 1 ? moment().month() : moment().month() + 1),
+      date: moment().date(nextDate).month(nextDate !== 1 ? 
+        moment().tz('America/Los_Angeles').month() : 
+        moment().tz('America/Los_Angeles').month() + 1).format('YYYY-MM-DD'),
       bookingPaymentId: null,
       amount: weeklyAmount,
     });
@@ -577,6 +582,63 @@ module.exports = class BookingService extends Service {
       {channel: '#waivework-charges'},
     );
     return waiveworkPayment; 
+  }
+
+  static *advanceWorkPayment(bookingId, _user) {
+    let paymentToChange = yield WaiveworkPayment.findOne({
+      where: {
+        bookingId,
+        bookingPaymentId: null,
+      },
+    });
+    let oldDate = paymentToChange.date;
+    let booking = yield Booking.findById(paymentToChange.bookingId);
+    let driver = yield User.findById(booking.userId);
+
+    let oldDay = moment(paymentToChange.date).date();
+    let oldMonth = moment(paymentToChange.date).month();
+    let paymentDays = [8, 15, 22, 1, 8];
+    let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
+    let newDate = moment(paymentToChange.date).date(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    try {
+      let data = {
+        userId: driver.id,
+        amount: paymentToChange.amount,
+        source: 'Waivework auto charge',
+        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')}`,
+      };
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: workCharge.id,
+      });
+      yield bookingPayment.save();
+      yield paymentToChange.update({
+        date: newDate,  
+      });
+      yield notify.slack(
+        {
+          text: `:ohyaa: ${driver.link()} charged $${(
+            paymentToChange.amount / 100
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded.`,
+        },
+        {channel: '#waivework-charges'},
+      );
+    } catch(e) {
+      yield notify.slack(
+        {
+          text: `:male_vampire: ${driver.link()} tried to charge $${(
+            paymentToChange.amount / 100
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, but it failed. ${e.message}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      throw error.parse({
+        code: 'CHARGE_FAILED',
+        message: e.message,
+      }, 404);
+    }
+    return paymentToChange;
   }
 
   /*
@@ -698,6 +760,7 @@ module.exports = class BookingService extends Service {
       bookings[0].waiveworkPayment = (yield WaiveworkPayment.findOne({
         where: {
           bookingId: bookings[0].id,
+          bookingPaymentId: null,
         },
         order: [[ 'created_at', 'desc' ]],
         limit: 1,
@@ -1670,6 +1733,8 @@ module.exports = class BookingService extends Service {
       if (waiveworkPayment) {
         yield waiveworkPayment.delete();
       }
+      // There may be some intercom flags to toggle here later
+      yield user.update({isWaivework: false});
       yield notify.slack(
         {
           text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
