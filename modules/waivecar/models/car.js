@@ -240,7 +240,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
     
     tireWear : {
-      type : Sequelize.INTEGER,
+      type : Sequelize.TEXT,
       default : null,
     },
   };
