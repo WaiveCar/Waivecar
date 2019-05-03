@@ -34,8 +34,6 @@ module.exports = {
     let response = [
       yield this.request('locations'),
       yield this.request('locations?offset=500'),
-      yield this.request('locations?offset=1000'),
-      yield this.request('locations?offset=1500')
     ];
     try {
       return Array.prototype.concat.apply([], response.map(row => JSON.parse(row.body).data));
@@ -74,13 +72,15 @@ module.exports = {
         portList: []
       };
       loc.evses.forEach(evse => {
-        let type = evse.connectors[0].standard;
-        if(type === 'IEC_62196_T1_COMBO' || type === 'IEC_62196_T1') {
-          obj.portList.push({
-            type: type === 'IEC_62196_T1_COMBO' ? 'fast' : 'slow',
-            name: evse.physical_reference,
-            id: evse.uid
-          });
+        for(let connector of evse.connectors) {
+          let type = connector.standard;
+          if(type === 'IEC_62196_T1_COMBO' || type === 'IEC_62196_T1') {
+            obj.portList.push({
+              type: type === 'IEC_62196_T1_COMBO' ? 'fast' : 'slow',
+              name: evse.physical_reference,
+              id: evse.uid
+            });
+          }
         }
       });
       return obj;
