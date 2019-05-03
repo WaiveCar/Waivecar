@@ -284,7 +284,7 @@ class CarsShowView extends React.Component {
           <form role="form" onSubmit={ this.submit }>
             <div className="form-group row">
               <div className="row">
-                <div>
+                <div className="col-sm-3">
                   <div>
                     Current Body Grade: {car.bodyGrade ? car.bodyGrade : 'None assigned yet'}
                   </div>
@@ -297,7 +297,7 @@ class CarsShowView extends React.Component {
                     <option value="F">F</option>
                   </select>
                 </div>
-                <div>
+                <div className="col-sm-3">
                   <div>
                     Current Tire Wear: {car.tireWear ? car.tireWear : 'None assigned yet'}
                   </div>
