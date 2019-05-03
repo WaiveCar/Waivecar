@@ -283,6 +283,34 @@ class CarsShowView extends React.Component {
           </div>
           <form role="form" onSubmit={ this.submit }>
             <div className="form-group row">
+              <div className="row">
+                <div>
+                  <div>
+                    Current Body Grade: {car.bodyGrade ? car.bodyGrade : 'None assigned yet'}
+                  </div>
+                  <select name="bodyGrade">
+                    <option value="">Select a grade</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="F">F</option>
+                  </select>
+                </div>
+                <div>
+                  <div>
+                    Current Tire Wear: {car.tireWear ? car.tireWear : 'None assigned yet'}
+                  </div>
+                  <select name="tireWear">
+                    <option value="">Select level of wear</option>
+                    <option value="1">1(most)</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5(least)</option>
+                  </select>
+                </div>
+              </div>
               <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
               <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                 <div className="radio-inline">
@@ -317,7 +345,7 @@ class CarsShowView extends React.Component {
                 </div>
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
-                    <button type="submit" className="btn btn-sm">Update Tags</button>
+                    <button type="submit" className="btn btn-sm">Update Tags / Grade</button>
                   </div>
                 </div>
               </div>
@@ -487,6 +515,12 @@ class CarsShowView extends React.Component {
 
   submit = (event) => {
     let form = new helpers.Form(event);
+    if (!form.data.tireWear) {
+      delete form.data.tireWear;
+    }
+    if (!form.data.bodyGrade) {
+      delete form.data.bodyGrade;
+    }
     api.put(`/cars/${ this.state.car.cars[0].id }`, form.data, (err) => {
       if (err) {
         return snackbar.notify({
