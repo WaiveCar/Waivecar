@@ -302,12 +302,12 @@ class CarsShowView extends React.Component {
                     Current Tire Wear: {car.tireWear ? car.tireWear : 'None assigned yet'}
                   </div>
                   <select name="tireWear">
-                    <option value="">Select level of wear</option>
-                    <option value="1">1(most)</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5(least)</option>
+                    <option value="">Select a grade</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="F">F</option>
                   </select>
                 </div>
               </div>
