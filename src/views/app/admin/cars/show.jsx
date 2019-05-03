@@ -285,30 +285,16 @@ class CarsShowView extends React.Component {
             <div className="form-group row">
               <div className="row">
                 <div className="col-sm-3">
-                  <div>
-                    Current Body Grade: {car.bodyGrade ? car.bodyGrade : 'None assigned yet'}
-                  </div>
-                  <select name="bodyGrade">
-                    <option value="">Select a grade</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="F">F</option>
-                  </select>
+                  <label>
+                    Body Grade (A - F):
+                    <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
+                  </label>
                 </div>
                 <div className="col-sm-3">
-                  <div>
-                    Current Tire Wear: {car.tireWear ? car.tireWear : 'None assigned yet'}
-                  </div>
-                  <select name="tireWear">
-                    <option value="">Select a grade</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="F">F</option>
-                  </select>
+                  <label>
+                    Tire Wear (A - F):
+                    <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
+                  </label>
                 </div>
               </div>
               <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
@@ -515,12 +501,6 @@ class CarsShowView extends React.Component {
 
   submit = (event) => {
     let form = new helpers.Form(event);
-    if (!form.data.tireWear) {
-      delete form.data.tireWear;
-    }
-    if (!form.data.bodyGrade) {
-      delete form.data.bodyGrade;
-    }
     api.put(`/cars/${ this.state.car.cars[0].id }`, form.data, (err) => {
       if (err) {
         return snackbar.notify({
@@ -532,9 +512,6 @@ class CarsShowView extends React.Component {
         type    : 'success',
         message : 'Car details successfully updated'
       });
-      if (form.data.bodyGrade || form.data.tireWear) {
-        window.location.reload();
-      }
     });
     event.preventDefault();
   }
