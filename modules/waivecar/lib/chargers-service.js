@@ -32,8 +32,8 @@ module.exports = {
 
   *getLocations() {
     let response = [
-      yield this.request('locations'),
-      yield this.request('locations?offset=500'),
+      yield this.request('locations')/*,
+      yield this.request('locations?offset=500'),*/
     ];
     try {
       return Array.prototype.concat.apply([], response.map(row => JSON.parse(row.body).data));
