@@ -532,6 +532,9 @@ class CarsShowView extends React.Component {
         type    : 'success',
         message : 'Car details successfully updated'
       });
+      if (form.data.bodyGrade || form.data.tireWear) {
+        window.location.reload();
+      }
     });
     event.preventDefault();
   }
