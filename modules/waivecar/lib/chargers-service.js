@@ -80,19 +80,13 @@ module.exports = {
               name: evse.physical_reference,
               id: evse.uid
             });
-          } else {
-            console.log(evse);
-          }
+          } 
         }
       });
       return obj;
     });
 
-    return locations.filter( loc => loc.portList.length && GeocodingService.inDrivingZone(loc, 1.8, {
-        latitude  : 34.0166784,
-        longitude : -118.4914082,
-      }
-    ));
+    return locations.filter( loc => loc.portList.length && GeocodingService.inDrivingZone(loc, 1.8, homebase) );
   },
 
   *nameToUUID(name) {
