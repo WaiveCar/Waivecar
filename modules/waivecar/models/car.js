@@ -232,8 +232,17 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     comments : {
       type : Sequelize.TEXT()
-    }
+    },
 
+    bodyGrade : {
+      type : Sequelize.TEXT,
+      default : null,
+    },
+    
+    tireWear : {
+      type : Sequelize.INTEGER,
+      default : null,
+    },
   };
 
   model.methods = {
