@@ -250,6 +250,27 @@ class WaiveWorkDetails extends Component {
     }
   }
 
+  upload(e) {
+    let files = Array.from(e.target.files);
+    let formData = new FormData();
+    files.forEach((file, i) => {
+      formData.append(i, file);
+    });
+    api.post(
+      `/files?userId=${this.props.user.id}`,
+      formData,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Error paying early: ${err.message}`,
+          });
+        }
+        console.log('response: ', response);
+      },
+    );
+  }
+
   render() {
     let {
       currentWaiveworkBooking,
@@ -286,8 +307,12 @@ class WaiveWorkDetails extends Component {
                 Next Payment Date:{' '}
                 {moment
                   .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                    .format('MM/DD/YYYY')}{' '}
-                 {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(moment(), 'days') + 1} Days
+                  .format('MM/DD/YYYY')}{' '}
+                {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
+                  moment(),
+                  'days',
+                ) + 1}{' '}
+                Days
               </div>
               {carHistory.length && (
                 <div>
@@ -474,14 +499,23 @@ class WaiveWorkDetails extends Component {
                       {item.license}
                     </div>
                     <button
-                      className="btn btn-link col-xs-6"
-                      onClick={() => this.book(item.id)}>
-                      Book Now
+                      classname="btn btn-link col-xs-6"
+                      onclick={() => this.book(item.id)}>
+                      book now
                     </button>
                   </div>
                 ))}
             </div>
           )}
+          <div>
+            <label htmlFor="newFile">Upload Proof of Insurance</label>
+            <input
+              type="file"
+              id="newFile"
+              onChange={e => this.upload(e)}
+              multiple
+            />
+          </div>
         </div>
       </div>
     );
