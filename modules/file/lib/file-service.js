@@ -12,6 +12,11 @@ let config      = Bento.config.file;
 class FileService extends Service {
 
   *store(query, payload, _user) {
+    // The conditional below is done because when files are uploaded for insurance,
+    // they need to be associated with the correct user rather than the uploader
+    if (query.userId) {
+      _user.id = Number(query.userId);
+    }
     let validate   = hooks.get('file:validate');
     let collection = hooks.get('file:collection');
     let capture    = hooks.get('file:capture');
