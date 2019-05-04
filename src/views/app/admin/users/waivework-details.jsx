@@ -513,6 +513,7 @@ class WaiveWorkDetails extends Component {
             <input
               type="file"
               id="newFile"
+              accept="application/pdf"
               onChange={e => this.upload(e)}
               multiple
             />
