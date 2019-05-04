@@ -256,6 +256,7 @@ class WaiveWorkDetails extends Component {
     files.forEach((file, i) => {
       formData.append(i, file);
     });
+    formData.append('comment', 'insurance');
     api.post(
       `/files?userId=${this.props.user.id}`,
       formData,
@@ -263,7 +264,7 @@ class WaiveWorkDetails extends Component {
         if (err) {
           return snackbar.notify({
             type: 'danger',
-            message: `Error paying early: ${err.message}`,
+            message: `Uploading file: ${err.message}`,
           });
         }
         console.log('response: ', response);
