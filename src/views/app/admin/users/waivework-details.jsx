@@ -17,6 +17,7 @@ class WaiveWorkDetails extends Component {
       startDate: null,
       proratedChargeAmount: null,
       ended: false,
+      insurance: [],
     };
   }
 
@@ -66,6 +67,15 @@ class WaiveWorkDetails extends Component {
         }
       },
     );
+    api.get(`/files?userId=${this.props.user.id}&comment=insurance`, (err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.setState({insurance: response});
+    });
   }
 
   getProratedCharge() {
