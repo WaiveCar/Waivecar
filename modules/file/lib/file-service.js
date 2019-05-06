@@ -77,13 +77,8 @@ class FileService extends Service {
     }
   }
 
-  /**
-   * Returns a list of files.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *index(query, _user) {
+    console.log('query', query);
     if (_user.hasAccess('admin')) {
       return yield File.find(queryParser(query, {
         where : {
@@ -92,7 +87,8 @@ class FileService extends Service {
           name         : queryParser.STRING,
           mime         : queryParser.STRING,
           store        : queryParser.STRING,
-          bucket       : queryParser.STRING
+          bucket       : queryParser.STRING,
+          comment      : queryParser.STRING,
         }
       }));
     }
