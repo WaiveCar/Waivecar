@@ -170,6 +170,16 @@
 }
 
 
+.row.butnotfuckedup {
+  div.radio-inline {
+    padding-right: 1rem;
+    padding-left: 0;
+    margin-right: 0.5rem;
+    margin-left: 0;
+    vertical-align: sub;
+  }
+}
+
 // Checkboxes and radios
 //
 // Indent the labels to position radios/checkboxes as hanging controls.

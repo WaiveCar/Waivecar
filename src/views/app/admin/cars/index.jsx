@@ -389,7 +389,7 @@ module.exports = class CarsIndex extends React.Component {
     }
 
     return (
-      <Link key={ index } className="list-group-item" to={ route }>
+      <Link target="_blank" key={ index } className="list-group-item" to={ route }>
         { text }
       </Link>
     );
@@ -397,7 +397,7 @@ module.exports = class CarsIndex extends React.Component {
 
   renderShownFilters(count) {
     return (
-      <div className="form-group row">
+      <div className="form-group row butnotfuckedup">
         { shownList.map((what) =>
            <div className="radio-inline"> 
              <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
@@ -415,7 +415,7 @@ module.exports = class CarsIndex extends React.Component {
                name="filter"
                placeholder="Filter Results"
                className="form-control"
-               autocomplete="off"
+               autoComplete="off"
                onChange={ (e) => this.onFilter(e)}
           />
           { this.state.showHelp && <ul className="help">
