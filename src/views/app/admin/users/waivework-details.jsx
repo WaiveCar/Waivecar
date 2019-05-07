@@ -19,6 +19,7 @@ class WaiveWorkDetails extends Component {
       ended: false,
       insurance: [],
     };
+    this.fileUpload = null;
   }
 
   componentDidMount() {
@@ -67,16 +68,18 @@ class WaiveWorkDetails extends Component {
         }
       },
     );
-    api.get(`/files?userId=${this.props.user.id}&collectionId=insurance`, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      console.log('response: ', response);
-      this.setState({insurance: response});
-    });
+    api.get(
+      `/files?userId=${this.props.user.id}&collectionId=insurance`,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({insurance: response});
+      },
+    );
   }
 
   getProratedCharge() {
@@ -261,8 +264,8 @@ class WaiveWorkDetails extends Component {
     }
   }
 
-  upload(e) {
-    let files = Array.from(e.target.files);
+  upload() {
+    let files = Array.from(this.fileUpload.files);
     let formData = new FormData();
     files.forEach((file, i) => {
       formData.append(i, file);
@@ -277,7 +280,7 @@ class WaiveWorkDetails extends Component {
             message: `Uploading file: ${err.message}`,
           });
         }
-        console.log('response: ', response);
+        console.log('response', response);
       },
     );
   }
@@ -523,10 +526,14 @@ class WaiveWorkDetails extends Component {
             <input
               type="file"
               id="newFile"
-              accept="application/pdf"
-              onChange={e => this.upload(e)}
-              multiple
+              accept="application/pdf, image/jpeg"
+              ref={ref => (this.fileUpload = ref)}
             />
+            <button
+              className="btn btn-primary btn-sm col-xs-6"
+              onClick={() => this.upload()}>
+              Upload
+            </button>
           </div>
         </div>
       </div>
