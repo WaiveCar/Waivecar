@@ -361,19 +361,19 @@ class CarsShowView extends React.Component {
                 <ul className="list-group">
                   <li className="list-group-item">
                     <span className="pull-right">{ car.currentSpeed }</span>
-                    Current Speed
+                    Speed
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ car.charge }</span>
-                    Charge Level
+                    Charge
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ car.boardVoltage }</span>
-                    CloudBoxx Voltage
+                    Voltage
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ Math.round(0.621371 * car.totalMileage)  }</span>
-                    Total Miles
+                    Miles
                   </li>
                 </ul>
               </div>
@@ -630,6 +630,7 @@ class CarsShowView extends React.Component {
                 <Button
                   key       = { switches[5].ref }
                   className = { 'btn btn-link' }
+                  style     = {{ display: 'inline-block' }}
                   type      = { 'button' }
                   value     = { switches[5].label }
                   onClick   = { switches[5].onChange }
