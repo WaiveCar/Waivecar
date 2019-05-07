@@ -270,7 +270,8 @@ class WaiveWorkDetails extends Component {
     if (!policyNumber || !this.fileUpload.files.length) {
       return snackbar.notify({
         type: 'danger',
-        message: 'Please add a policy number and choose a file before uploading a photo',
+        message:
+          'Please add a policy number and choose a file before uploading a photo',
       });
     }
     let files = Array.from(this.fileUpload.files);
@@ -289,8 +290,8 @@ class WaiveWorkDetails extends Component {
             message: `Uploading file: ${err.message}`,
           });
         }
-        this.setState((state) => ({
-          insurance: [...state.insurance, ... response] 
+        this.setState(state => ({
+          insurance: [...state.insurance, ...response],
         }));
       },
     );
@@ -552,15 +553,18 @@ class WaiveWorkDetails extends Component {
             </button>
           </div>
           <div className="row">
-            {insurance.map((each, i) => (
-              <div key={i}>
-                Added on {moment(each.createdAt).format('MM/DD/YYYY')}:{' '}
-                <a href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}>
-                  here
-                </a>
-                Policy Number: {each.comment}
-              </div>
-            ))}
+            <ul>
+              {insurance.map((each, i) => (
+                <li key={i}>
+                  <a
+                    href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
+                    target="_blank">
+                    Policy Number: {each.comment}
+                  </a>
+                  {' '}Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
