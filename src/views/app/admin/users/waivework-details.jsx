@@ -278,8 +278,9 @@ class WaiveWorkDetails extends Component {
     files.forEach((file, i) => {
       formData.append(i, file);
     });
+    formData.append('comment', policyNumber);
     api.post(
-      `/files?userId=${this.props.user.id}&collectionId=insurance&comment=${this.state.policyNumber}`,
+      `/files?userId=${this.props.user.id}&collectionId=insurance`,
       formData,
       (err, response) => {
         if (err) {
