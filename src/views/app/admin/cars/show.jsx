@@ -348,12 +348,12 @@ class CarsShowView extends React.Component {
                     Ignition
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ Math.round(0.621371 * car.totalMileage)  }</span>
-                    Total Miles
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isDoorOpen) }</span>
                     Door Open
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
+                    Charging
                   </li>
                 </ul>
               </div>
@@ -368,12 +368,12 @@ class CarsShowView extends React.Component {
                     Charge Level
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
-                    Charging
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ car.boardVoltage }</span>
                     CloudBoxx Voltage
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ Math.round(0.621371 * car.totalMileage)  }</span>
+                    Total Miles
                   </li>
                 </ul>
               </div>
