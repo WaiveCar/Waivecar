@@ -344,33 +344,16 @@ class CarsShowView extends React.Component {
                     Key Secure
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isChargeCardSecure) }</span>
-                    Charge Card Secure
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isLocked) }</span>
-                    Locked
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isIgnitionOn) }</span>
                     Ignition
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isImmobilized) }</span>
-                    Immobilized
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isAvailable) }</span>
-                    Available
-                    { !car.isAvailable && <span className="user-link">&nbsp;<em>allocated to { car.user ? `${ car.user.firstName } ${ car.user.lastName }` : `user ${ car.userId }` }</em></span> }
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.inService) }</span>
-                    In Service
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ Math.round(0.621371 * car.totalMileage)  }</span>
                     Total Miles
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isDoorOpen) }</span>
+                    Door Open
                   </li>
                 </ul>
               </div>
@@ -385,28 +368,12 @@ class CarsShowView extends React.Component {
                     Charge Level
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.range }</span>
-                    Range
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
                     Charging
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isQuickCharging) }</span>
-                    Quick Charging
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isOnChargeAdapter) }</span>
-                    On Charge Adapter
-                  </li>
-                  <li className="list-group-item">
                     <span className="pull-right">{ car.boardVoltage }</span>
                     CloudBoxx Voltage
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isDoorOpen) }</span>
-                    Door Open
                   </li>
                 </ul>
               </div>
@@ -568,7 +535,7 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 6,
-        label    : 'Refresh Cloudboxx Data',
+        label    : 'Refresh',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
@@ -654,17 +621,19 @@ class CarsShowView extends React.Component {
                     </div>
                 }
               </div>
-              <div className="col-md-6">
+              <div className="col-md-3">
+                { this.service.getState('isLoading') ?  
+                  <img src="../images/site/spinner.gif" /> : (car.lastUpdated ? car.lastUpdated : this.service.getState('updatedAt')) 
+                }
+              </div>
+              <div className="col-md-3">
                 <Button
                   key       = { switches[5].ref }
-                  className = { 'btn btn-primary-outline' }
+                  className = { 'btn btn-link' }
                   type      = { 'button' }
                   value     = { switches[5].label }
                   onClick   = { switches[5].onChange }
                 />
-                Updated: { this.service.getState('isLoading') ?  
-                  <img src="../images/site/spinner.gif" /> : (car.lastUpdated ? car.lastUpdated : this.service.getState('updatedAt')) 
-                }
               </div>
             </div>
           </div>
