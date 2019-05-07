@@ -18,6 +18,7 @@ class WaiveWorkDetails extends Component {
       proratedChargeAmount: null,
       ended: false,
       insurance: [],
+      policyNumber: null,
     };
     this.fileUpload = null;
   }
@@ -265,13 +266,20 @@ class WaiveWorkDetails extends Component {
   }
 
   upload() {
+    let {policyNumber} = this.state;
+    if (!policyNumber || !this.fileUpload.files.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Please add a policy number and choose a file before uploading a photo',
+      });
+    }
     let files = Array.from(this.fileUpload.files);
     let formData = new FormData();
     files.forEach((file, i) => {
       formData.append(i, file);
     });
     api.post(
-      `/files?userId=${this.props.user.id}&collectionId=insurance`,
+      `/files?userId=${this.props.user.id}&collectionId=insurance&comment=${this.state.policyNumber}`,
       formData,
       (err, response) => {
         if (err) {
@@ -280,7 +288,9 @@ class WaiveWorkDetails extends Component {
             message: `Uploading file: ${err.message}`,
           });
         }
-        console.log('response', response);
+        this.setState((state) => ({
+          insurance: [...state.insurance, ... response] 
+        }));
       },
     );
   }
@@ -295,6 +305,7 @@ class WaiveWorkDetails extends Component {
       ended,
       startDate,
       proratedChargeAmount,
+      insurance,
     } = this.state;
     return (
       <div className="box">
@@ -529,6 +540,10 @@ class WaiveWorkDetails extends Component {
               accept="application/pdf, image/jpeg"
               ref={ref => (this.fileUpload = ref)}
             />
+            <input
+              type="text"
+              onChange={e => this.setState({policyNumber: e.target.value})}
+            />
             <button
               className="btn btn-primary btn-sm col-xs-6"
               onClick={() => this.upload()}>
@@ -536,11 +551,15 @@ class WaiveWorkDetails extends Component {
             </button>
           </div>
           <div className="row">
-            {this.state.insurance.map((each, i) => 
+            {insurance.map((each, i) => (
               <div key={i}>
-                Policy {i}: <a href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}>here</a>
+                Added on {moment(each.createdAt).format('MM/DD/YYYY')}:{' '}
+                <a href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}>
+                  here
+                </a>
+                Policy Number: {each.comment}
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
