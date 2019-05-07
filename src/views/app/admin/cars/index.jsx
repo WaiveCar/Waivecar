@@ -415,6 +415,7 @@ module.exports = class CarsIndex extends React.Component {
                name="filter"
                placeholder="Filter Results"
                className="form-control"
+               autocomplete="off"
                onChange={ (e) => this.onFilter(e)}
           />
           { this.state.showHelp && <ul className="help">
