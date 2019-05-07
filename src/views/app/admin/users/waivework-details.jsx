@@ -521,7 +521,7 @@ class WaiveWorkDetails extends Component {
                 ))}
             </div>
           )}
-          <div>
+          <div className="row" style={{marginTop: '1em'}}>
             <label htmlFor="newFile">Upload Proof of Insurance</label>
             <input
               type="file"
@@ -534,6 +534,13 @@ class WaiveWorkDetails extends Component {
               onClick={() => this.upload()}>
               Upload
             </button>
+          </div>
+          <div className="row">
+            {this.state.insurance.map((each, i) => 
+              <div key={i}>
+                Policy {i}: <a href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}>here</a>
+              </div>
+            )}
           </div>
         </div>
       </div>
