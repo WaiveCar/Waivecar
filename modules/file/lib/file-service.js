@@ -78,7 +78,6 @@ class FileService extends Service {
   }
 
   *index(query, _user) {
-    console.log('query', query);
     if (_user.hasAccess('admin')) {
       return yield File.find(queryParser(query, {
         where : {
