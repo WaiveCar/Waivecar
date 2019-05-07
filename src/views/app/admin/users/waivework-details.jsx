@@ -67,13 +67,14 @@ class WaiveWorkDetails extends Component {
         }
       },
     );
-    api.get(`/files?userId=${this.props.user.id}&comment=insurance`, (err, response) => {
+    api.get(`/files?userId=${this.props.user.id}&collectionId=insurance`, (err, response) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
           message: err.message,
         });
       }
+      console.log('response: ', response);
       this.setState({insurance: response});
     });
   }
@@ -266,9 +267,8 @@ class WaiveWorkDetails extends Component {
     files.forEach((file, i) => {
       formData.append(i, file);
     });
-    formData.append('comment', 'insurance');
     api.post(
-      `/files?userId=${this.props.user.id}`,
+      `/files?userId=${this.props.user.id}&collectionId=insurance`,
       formData,
       (err, response) => {
         if (err) {
