@@ -297,7 +297,7 @@ class WaiveWorkDetails extends Component {
     );
   }
 
-  deleteInsurance(id) {
+  deleteInsurance(id, idx) {
     api.delete(`/files/${id}`, (err, response) => {
       if (err) {
         return snackbar.notify({
@@ -305,7 +305,9 @@ class WaiveWorkDetails extends Component {
           message: `Uploading file: ${err.message}`,
         });
       }
-      console.log('resp: ', response);
+      this.setState(state => ({
+        insurance: state.insurance.filter(el => el.id !== id),
+      }));
     });
   }
 
@@ -574,7 +576,9 @@ class WaiveWorkDetails extends Component {
                     Policy Number: {each.comment}
                   </a>{' '}
                   Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
-                  <button onClick={() => this.deleteInsurance(each.id)}>Del</button>
+                  <button onClick={() => this.deleteInsurance(each.id, i)}>
+                    Del
+                  </button>
                 </li>
               ))}
             </ul>
