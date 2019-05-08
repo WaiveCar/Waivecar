@@ -297,6 +297,18 @@ class WaiveWorkDetails extends Component {
     );
   }
 
+  deleteInsurance(id) {
+    api.delete(`/files/${id}`, (err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Uploading file: ${err.message}`,
+        });
+      }
+      console.log('resp: ', response);
+    });
+  }
+
   render() {
     let {
       currentWaiveworkBooking,
@@ -560,8 +572,9 @@ class WaiveWorkDetails extends Component {
                     href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
                     target="_blank">
                     Policy Number: {each.comment}
-                  </a>
-                  {' '}Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
+                  </a>{' '}
+                  Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
+                  <button onClick={() => this.deleteInsurance(each.id)}>Del</button>
                 </li>
               ))}
             </ul>
