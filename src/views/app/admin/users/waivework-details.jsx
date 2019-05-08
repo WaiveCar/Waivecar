@@ -19,6 +19,7 @@ class WaiveWorkDetails extends Component {
       ended: false,
       insurance: [],
       policyNumber: null,
+      uploading: false,
     };
     this.fileUpload = null;
   }
@@ -266,33 +267,42 @@ class WaiveWorkDetails extends Component {
   }
 
   upload() {
-    let {policyNumber} = this.state;
-    if (!policyNumber || !this.fileUpload.files.length) {
-      return snackbar.notify({
-        type: 'danger',
-        message:
-          'Please add a policy number and choose a file before uploading a photo',
-      });
-    }
-    let files = Array.from(this.fileUpload.files);
-    let formData = new FormData();
-    files.forEach((file, i) => {
-      formData.append(i, file);
-    });
-    formData.append('comment', policyNumber);
-    api.post(
-      `/files?userId=${this.props.user.id}&collectionId=insurance`,
-      formData,
-      (err, response) => {
-        if (err) {
+    this.setState(
+      state => ({uploading: true}),
+      () => {
+        let {policyNumber} = this.state;
+        if (!policyNumber || !this.fileUpload.files.length) {
+          this.setState({uploading: false});
           return snackbar.notify({
             type: 'danger',
-            message: `Uploading file: ${err.message}`,
+            message:
+              'Please add a policy number and choose a file before uploading a photo',
           });
         }
-        this.setState(state => ({
-          insurance: [...state.insurance, ...response],
-        }));
+        let files = Array.from(this.fileUpload.files);
+        let formData = new FormData();
+        files.forEach((file, i) => {
+          formData.append(i, file);
+        });
+        formData.append('comment', policyNumber);
+        api.post(
+          `/files?userId=${this.props.user.id}&collectionId=insurance`,
+          formData,
+          (err, response) => {
+            if (err) {
+              this.setState({uploading: false});
+              return snackbar.notify({
+                type: 'danger',
+                message: `Uploading file: ${err.message}`,
+              });
+            }
+            this.fileUpload.value = '';
+            this.setState(state => ({
+              insurance: [...state.insurance, ...response],
+              uploading: false,
+            }));
+          },
+        );
       },
     );
   }
@@ -322,6 +332,7 @@ class WaiveWorkDetails extends Component {
       startDate,
       proratedChargeAmount,
       insurance,
+      uploading,
     } = this.state;
     return (
       <div className="box">
@@ -562,6 +573,7 @@ class WaiveWorkDetails extends Component {
             />
             <button
               className="btn btn-primary btn-sm col-xs-6"
+              disabled={uploading}
               onClick={() => this.upload()}>
               Upload
             </button>
