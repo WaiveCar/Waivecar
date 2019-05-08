@@ -60,8 +60,9 @@ module.exports = class WaitList extends Component {
               }
               { this.state.waivework == 'yes' && 
                 <div>
-                  <p>Your information has been saved and our staff will reach out to you by email or phone within about two business days.</p>
-                  <p>If you have any questions, dont hesitate to give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a> or email us at <a href="mailto:support@waive.car">support@waive.car</a>.
+                  <p>Your information has been saved, and submitted to insurance for a quote unique to you. Our staff will reach out to you by email within the next 2 business days. If you don't hear anything back by then, please email natosha@waive.car for an update
+                  </p>
+                  <p>If you have any questions, dont hesitate to shoot us an email  at <a href="mailto:support@waive.car">support@waive.car</a>.
                   </p>
                 </div>
               }
@@ -100,7 +101,7 @@ module.exports = class WaitList extends Component {
                 </div>
               }
               <div className="advertise">
-                <p>If you're interested in partnership or advertising opportunities with WaiveCar <a href="mailto:advertise@waivecar.com">drop us an email</a>.</p>
+                <p>If you're interested in a partnership with us or advertising opportunities, email us at <a href="mailto:info@waivecar.com">info@waive.car</a>.</p>
               </div>
             </div>
           </div>
