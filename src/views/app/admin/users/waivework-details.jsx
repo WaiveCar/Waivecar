@@ -240,7 +240,7 @@ class WaiveWorkDetails extends Component {
               currentWaiveworkBooking: null,
               ended: false,
               perWeek: null,
-            });
+            }, () => window.location.reload());
           }
         },
       );
@@ -338,6 +338,7 @@ class WaiveWorkDetails extends Component {
       insurance,
       uploading,
     } = this.state;
+    console.log('carHistory', carHistory)
     return (
       <div className="box">
         <h3>
@@ -376,7 +377,7 @@ class WaiveWorkDetails extends Component {
                   </div>
                 </div>
               )}
-              {carHistory.length && (
+              {carHistory.length > 1 && (
                 <div>
                   Total Miles Driven:{' '}
                   {(
@@ -386,7 +387,6 @@ class WaiveWorkDetails extends Component {
                   ).toFixed(2)}
                 </div>
               )}
-              {carHistory.length && (
                 <div style={{textAlign: 'center'}}>
                   Average Miles Per Day:
                   <table style={{width: '100%'}}>
@@ -455,7 +455,6 @@ class WaiveWorkDetails extends Component {
                     </tbody>
                   </table>
                 </div>
-              )}
               {currentWaiveworkBooking.waiveworkPayment ||
               (currentWaiveworkBooking.waiveworkPayment &&
                 currentWaiveworkBooking.status === 'ended') ? (
@@ -502,7 +501,8 @@ class WaiveWorkDetails extends Component {
               ) : (
                 <div>
                   <div>
-                    Automatic payment not currently setup for this Booking
+                    Automatic payment not currently setup for this booking
+                    {ended && ' and it has been ended, but not completed'}.
                   </div>
                   <button
                     type="button"
