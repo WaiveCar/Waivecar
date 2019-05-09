@@ -49,6 +49,7 @@ class WaiveWorkDetails extends Component {
                 bookings[0].waiveworkPayment &&
                 (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
               currentWaiveworkBooking: bookings[0],
+              ended: bookings[0].status === 'ended',
             },
             () => {
               api.get(
@@ -226,17 +227,20 @@ class WaiveWorkDetails extends Component {
             });
           }
           if (response.isCarReachable) {
-            this.setState({ended: true});
+            this.setState({
+              ended: true,
+              currentWaiveworkBooking: {
+                ...this.state.currentWaiveworkBooking,
+                waiveworkPayment: null,
+              },
+            });
           }
           if (response.status === 'success') {
-            this.setState(
-              {
-                currentWaiveworkBooking: null,
-                ended: false,
-                perWeek: null,
-              },
-              () => window.location.reload(),
-            );
+            this.setState({
+              currentWaiveworkBooking: null,
+              ended: false,
+              perWeek: null,
+            });
           }
         },
       );
@@ -453,7 +457,8 @@ class WaiveWorkDetails extends Component {
                 </div>
               )}
               {currentWaiveworkBooking.waiveworkPayment ||
-              currentWaiveworkBooking.status === 'ended' ? (
+              (currentWaiveworkBooking.waiveworkPayment &&
+                currentWaiveworkBooking.status === 'ended') ? (
                 <div>
                   <div>
                     Price Per Week:{' '}
@@ -496,7 +501,17 @@ class WaiveWorkDetails extends Component {
                 </div>
               ) : (
                 <div>
-                  Automatic payment not setup for this Booking
+                  <div>
+                    Automatic payment not currently setup for this Booking
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() =>
+                      this.bookingAction(ended ? 'complete' : 'end')
+                    }>
+                    {ended ? 'Complete' : 'End'} Booking
+                  </button>
                 </div>
               )}
             </div>
@@ -558,7 +573,7 @@ class WaiveWorkDetails extends Component {
                     </div>
                     <button
                       className="btn btn-link col-xs-6"
-                      onclick={() => this.book(item.id)}>
+                      onClick={() => this.book(item.id)}>
                       book now
                     </button>
                   </div>
