@@ -157,7 +157,7 @@ class CarsShowView extends React.Component {
       if (user.isWaivework) {
         return snackbar.notify({
           type    : 'danger',
-          message : 'To book users into WaiveWork, please use the WaiveWork section of their profiles.',
+          message : 'To book a user into WaiveWork, please use the WaiveWork section of their profile.',
         });
       
       } else {
@@ -172,7 +172,7 @@ class CarsShowView extends React.Component {
           // This seems to update the screen. There's probably better ways
           // but I have no idea how this rube goldberg contraption works.
           this.service.setCar(this.id());
-        })
+        });
       }
     });
   }
