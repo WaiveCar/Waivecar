@@ -343,7 +343,7 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {currentWaiveworkBooking ? (
             <div>
-              Current WaiveWork Booking:{' '}
+              Current Booking:{' '}
               <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
                 {currentWaiveworkBooking.id}
               </Link>{' '}
@@ -351,21 +351,27 @@ class WaiveWorkDetails extends Component {
               <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
                 {currentWaiveworkBooking.car.license}
               </Link>
-              <div>
-                Start Date:{' '}
-                {moment(currentWaiveworkBooking.createdAt).format('MM/DD/YYYY')}
-              </div>
-              <div>
-                Next Payment Date:{' '}
-                {moment
-                  .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                  .format('MM/DD/YYYY')}{' '}
-                {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
-                  moment(),
-                  'days',
-                ) + 1}{' '}
-                Days
-              </div>
+              {currentWaiveworkBooking.waiveworkPayment && (
+                <div>
+                  <div>
+                    Start Date:{' '}
+                    {moment(currentWaiveworkBooking.createdAt).format(
+                      'MM/DD/YYYY',
+                    )}
+                  </div>
+                  <div>
+                    Next Payment Date:{' '}
+                    {moment
+                      .utc(currentWaiveworkBooking.waiveworkPayment.date)
+                      .format('MM/DD/YYYY')}{' '}
+                    {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
+                      moment(),
+                      'days',
+                    ) + 1}{' '}
+                    Days
+                  </div>
+                </div>
+              )}
               {carHistory.length && (
                 <div>
                   Total Miles Driven:{' '}
@@ -490,7 +496,7 @@ class WaiveWorkDetails extends Component {
                 </div>
               ) : (
                 <div>
-                  Automatic payment not yet setup for this WaiveWork Booking
+                  Automatic payment not setup for this Booking
                 </div>
               )}
             </div>
@@ -551,7 +557,7 @@ class WaiveWorkDetails extends Component {
                       {item.license}
                     </div>
                     <button
-                      classname="btn btn-link col-xs-6"
+                      className="btn btn-link col-xs-6"
                       onclick={() => this.book(item.id)}>
                       book now
                     </button>
