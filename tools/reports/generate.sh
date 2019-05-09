@@ -16,7 +16,7 @@ appImpressions() {
     cur=$path/s$i
     mkdir -p $cur
     rsync -azvr -f '+ car*' -f '- *' waive-prod$i:/var/log/outgoing/ $cur
-    cat $cur/carsrequest.txt $cur/carsrequest.txt.1 | grep $year_month >> accum
+    cat $cur/carsrequest.txt | grep $year_month >> accum
     gunzip -c $cur/cars*gz | grep $year_month >> accum
   done
 
