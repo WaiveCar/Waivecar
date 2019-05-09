@@ -20,6 +20,7 @@ class WaiveWorkDetails extends Component {
       insurance: [],
       policyNumber: null,
       uploading: false,
+      payingEarly: false,
     };
     this.fileUpload = null;
   }
@@ -252,24 +253,31 @@ class WaiveWorkDetails extends Component {
 
   advanceWorkPayment() {
     if (confirm('Are you sure you want to make this payment early?')) {
-      let {currentWaiveworkBooking} = this.state;
-      api.get(
-        `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
-        (err, response) => {
-          if (err) {
-            return snackbar.notify({
-              type: 'danger',
-              message: `Error paying early: ${err.message}`,
-            });
-          }
-          this.setState({
-            currentWaiveworkBooking: {
-              ...currentWaiveworkBooking,
-              waiveworkPayment: response,
-            },
-          });
-        },
-      );
+      this.setState({payingEarly: true}, () => {
+        let {currentWaiveworkBooking} = this.state;
+        api.get(
+          `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+          (err, response) => {
+            if (err) {
+              this.setState({payingEarly: false});
+              return snackbar.notify({
+                type: 'danger',
+                message: `Error paying early: ${err.message}`,
+              });
+            }
+            this.setState(
+              {
+                currentWaiveworkBooking: {
+                  ...currentWaiveworkBooking,
+                  waiveworkPayment: response,
+                },
+                payingEarly: false,
+              },
+              () => console.log('state', this.state),
+            );
+          },
+        );
+      });
     }
   }
 
@@ -342,6 +350,7 @@ class WaiveWorkDetails extends Component {
       proratedChargeAmount,
       insurance,
       uploading,
+      payingEarly,
     } = this.state;
     return (
       <div className="box">
@@ -482,6 +491,7 @@ class WaiveWorkDetails extends Component {
                       <button
                         type="button"
                         className="btn btn-primary"
+                        disabled={payingEarly}
                         onClick={() => this.advanceWorkPayment()}>
                         Pay early
                       </button>
