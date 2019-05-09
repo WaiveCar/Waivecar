@@ -236,11 +236,14 @@ class WaiveWorkDetails extends Component {
             });
           }
           if (response.status === 'success') {
-            this.setState({
-              currentWaiveworkBooking: null,
-              ended: false,
-              perWeek: null,
-            }, () => window.location.reload());
+            this.setState(
+              {
+                currentWaiveworkBooking: null,
+                ended: false,
+                perWeek: null,
+              },
+              () => window.location.reload(),
+            );
           }
         },
       );
@@ -261,7 +264,7 @@ class WaiveWorkDetails extends Component {
           }
           this.setState({
             currentWaiveworkBooking: {
-              ...this.state.currentWaiveworkBooking,
+              ...currentWaiveworkBooking,
               waiveworkPayment: response,
             },
           });
@@ -312,17 +315,19 @@ class WaiveWorkDetails extends Component {
   }
 
   deleteInsurance(id, idx) {
-    api.delete(`/files/${id}`, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: `Uploading file: ${err.message}`,
-        });
-      }
-      this.setState(state => ({
-        insurance: state.insurance.filter(el => el.id !== id),
-      }));
-    });
+    if (confirm('Are you sure you want to delete this insurance policy?')) {
+      api.delete(`/files/${id}`, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Uploading file: ${err.message}`,
+          });
+        }
+        this.setState(state => ({
+          insurance: state.insurance.filter(el => el.id !== id),
+        }));
+      });
+    }
   }
 
   render() {
@@ -338,7 +343,6 @@ class WaiveWorkDetails extends Component {
       insurance,
       uploading,
     } = this.state;
-    console.log('carHistory', carHistory)
     return (
       <div className="box">
         <h3>
@@ -387,74 +391,66 @@ class WaiveWorkDetails extends Component {
                   ).toFixed(2)}
                 </div>
               )}
-                <div style={{textAlign: 'center'}}>
-                  Average Miles Per Day:
-                  <table style={{width: '100%'}}>
-                    <tbody>
-                      <tr>
-                        <th>All Time</th>
-                        <th>Last 30 Days</th>
-                        <th>Last Week</th>
-                        <th>Yesterday</th>
-                      </tr>
-                      <tr>
-                        <td>
-                          {carHistory.length
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(carHistory[0].data)) /
-                                carHistory.length *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 day'}
-                        </td>
-                        <td>
-                          {carHistory[carHistory.length - 31]
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 31].data,
-                                  )) /
-                                30 *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 30 days'}
-                        </td>
-                        <td>
-                          {carHistory[carHistory.length - 8]
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 8].data,
-                                  )) /
-                                7 *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 week'}
-                        </td>
-                        <td>
-                          {carHistory.length > 1
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 2].data,
-                                  )) *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 day'}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+              <div style={{textAlign: 'center'}}>
+                Average Miles Per Day:
+                <table style={{width: '100%'}}>
+                  <tbody>
+                    <tr>
+                      <th>All Time</th>
+                      <th>Last 30 Days</th>
+                      <th>Last Week</th>
+                      <th>Yesterday</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        {carHistory.length
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(carHistory[0].data)) /
+                              carHistory.length *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 day'}
+                      </td>
+                      <td>
+                        {carHistory[carHistory.length - 31]
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 31].data,
+                                )) /
+                              30 *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 30 days'}
+                      </td>
+                      <td>
+                        {carHistory[carHistory.length - 8]
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 8].data,
+                                )) /
+                              7 *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 week'}
+                      </td>
+                      <td>
+                        {carHistory.length > 1
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 2].data,
+                                )) *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 day'}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               {currentWaiveworkBooking.waiveworkPayment ||
               (currentWaiveworkBooking.waiveworkPayment &&
                 currentWaiveworkBooking.status === 'ended') ? (
@@ -600,23 +596,38 @@ class WaiveWorkDetails extends Component {
             </button>
           </div>
           <div className="row">
-            <ul>
-              {insurance.map((each, i) => (
-                <li key={i}>
-                  <a
-                    href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
-                    target="_blank">
-                    Policy Number: {each.comment}
-                  </a>{' '}
-                  Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
-                  <button
-                    className="test"
-                    onClick={() => this.deleteInsurance(each.id, i)}>
-                    <i className="material-icons">delete</i>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <table className="table-striped profile-table">
+              <thead>
+                <tr>
+                  <th>Policy Number</th>
+                  <th>Added On:</th>
+                  <th className="text-center">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {insurance.map((each, i) => (
+                  <tr key={i}>
+                    <td>
+                      <a
+                        href={`http://waivecar-prod.s3.amazonaws.com/${
+                          each.path
+                        }`}
+                        target="_blank">
+                        {each.comment}
+                      </a>{' '}
+                    </td>
+                    <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
+                    <td className="text-center">
+                      <button
+                        className="test"
+                        onClick={() => this.deleteInsurance(each.id, i)}>
+                        <i className="material-icons">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
