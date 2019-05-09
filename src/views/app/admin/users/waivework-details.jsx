@@ -588,8 +588,10 @@ class WaiveWorkDetails extends Component {
                     Policy Number: {each.comment}
                   </a>{' '}
                   Added on {moment(each.createdAt).format('MM/DD/YYYY')}{' '}
-                  <button onClick={() => this.deleteInsurance(each.id, i)}>
-                    Del
+                  <button
+                    className="test"
+                    onClick={() => this.deleteInsurance(each.id, i)}>
+                    <i className="material-icons">delete</i>
                   </button>
                 </li>
               ))}
