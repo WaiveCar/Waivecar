@@ -153,18 +153,28 @@ class CarsShowView extends React.Component {
     //
     // Why the carId is so deeply entrenched is bs I'm not willing
     // to get into right now.
-    let data = { 'source': 'web', 'userId': user_id, 'carId': this.state.car.cars[0].id };
-    api.post('/bookings', data, (err, user) => {
-      if(err) {
+    api.get(`/users/${user_id}`, (err, user) => {
+      if (user.isWaivework) {
         return snackbar.notify({
           type    : 'danger',
-          message : err.message
+          message : 'To book a user into WaiveWork, please use the WaiveWork section of their profile.',
+        });
+      
+      } else {
+        let data = { 'source': 'web', 'userId': user_id, 'carId': this.state.car.cars[0].id };
+        api.post('/bookings', data, (err, user) => {
+          if(err) {
+            return snackbar.notify({
+              type    : 'danger',
+              message : err.message
+            });
+          }
+          // This seems to update the screen. There's probably better ways
+          // but I have no idea how this rube goldberg contraption works.
+          this.service.setCar(this.id());
         });
       }
-      // This seems to update the screen. There's probably better ways
-      // but I have no idea how this rube goldberg contraption works.
-      this.service.setCar(this.id());
-    })
+    });
   }
 
   renderCarMedia(car) {

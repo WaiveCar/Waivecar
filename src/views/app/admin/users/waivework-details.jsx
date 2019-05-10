@@ -17,7 +17,12 @@ class WaiveWorkDetails extends Component {
       startDate: null,
       proratedChargeAmount: null,
       ended: false,
+      insurance: [],
+      policyNumber: null,
+      uploading: false,
+      payingEarly: false,
     };
+    this.fileUpload = null;
   }
 
   componentDidMount() {
@@ -45,6 +50,7 @@ class WaiveWorkDetails extends Component {
                 bookings[0].waiveworkPayment &&
                 (bookings[0].waiveworkPayment.amount / 100).toFixed(2),
               currentWaiveworkBooking: bookings[0],
+              ended: bookings[0].status === 'ended',
             },
             () => {
               api.get(
@@ -64,6 +70,18 @@ class WaiveWorkDetails extends Component {
             },
           );
         }
+      },
+    );
+    api.get(
+      `/files?userId=${this.props.user.id}&collectionId=insurance`,
+      (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({insurance: response});
       },
     );
   }
@@ -210,7 +228,13 @@ class WaiveWorkDetails extends Component {
             });
           }
           if (response.isCarReachable) {
-            this.setState({ended: true});
+            this.setState({
+              ended: true,
+              currentWaiveworkBooking: {
+                ...this.state.currentWaiveworkBooking,
+                waiveworkPayment: null,
+              },
+            });
           }
           if (response.status === 'success') {
             this.setState(
@@ -229,24 +253,88 @@ class WaiveWorkDetails extends Component {
 
   advanceWorkPayment() {
     if (confirm('Are you sure you want to make this payment early?')) {
-      let {currentWaiveworkBooking} = this.state;
-      api.get(
-        `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
-        (err, response) => {
-          if (err) {
-            return snackbar.notify({
-              type: 'danger',
-              message: `Error paying early: ${err.message}`,
-            });
-          }
-          this.setState({
-            currentWaiveworkBooking: {
-              ...this.state.currentWaiveworkBooking,
-              waiveworkPayment: response,
-            },
+      this.setState({payingEarly: true}, () => {
+        let {currentWaiveworkBooking} = this.state;
+        api.get(
+          `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+          (err, response) => {
+            if (err) {
+              this.setState({payingEarly: false});
+              return snackbar.notify({
+                type: 'danger',
+                message: `Error paying early: ${err.message}`,
+              });
+            }
+            this.setState(
+              {
+                currentWaiveworkBooking: {
+                  ...currentWaiveworkBooking,
+                  waiveworkPayment: response,
+                },
+                payingEarly: false,
+              },
+              () => console.log('state', this.state),
+            );
+          },
+        );
+      });
+    }
+  }
+
+  upload() {
+    let {policyNumber} = this.state;
+    if (!policyNumber || !this.fileUpload.files.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message:
+          'Please add a policy number and choose a file before uploading a photo.',
+      });
+    }
+    console.log('uploading...');
+    this.setState(
+      state => ({uploading: true}),
+      () => {
+        let files = Array.from(this.fileUpload.files);
+        let formData = new FormData();
+        files.forEach((file, i) => {
+          formData.append(i, file);
+        });
+        formData.append('comment', policyNumber);
+        api.post(
+          `/files?userId=${this.props.user.id}&collectionId=insurance`,
+          formData,
+          (err, response) => {
+            if (err) {
+              this.setState({uploading: false});
+              return snackbar.notify({
+                type: 'danger',
+                message: `Uploading file: ${err.message}`,
+              });
+            }
+            this.fileUpload.value = '';
+            this.setState(state => ({
+              insurance: [...response, ...state.insurance],
+              uploading: false,
+            }));
+          },
+        );
+      },
+    );
+  }
+
+  deleteInsurance(id, idx) {
+    if (confirm('Are you sure you want to delete this insurance policy?')) {
+      api.delete(`/files/${id}`, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Uploading file: ${err.message}`,
           });
-        },
-      );
+        }
+        this.setState(state => ({
+          insurance: state.insurance.filter(el => el.id !== id),
+        }));
+      });
     }
   }
 
@@ -260,6 +348,9 @@ class WaiveWorkDetails extends Component {
       ended,
       startDate,
       proratedChargeAmount,
+      insurance,
+      uploading,
+      payingEarly,
     } = this.state;
     return (
       <div className="box">
@@ -270,26 +361,38 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {currentWaiveworkBooking ? (
             <div>
-              Current WaiveWork Booking:{' '}
-              <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
-                {currentWaiveworkBooking.id}
-              </Link>{' '}
-              in{' '}
-              <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
-                {currentWaiveworkBooking.car.license}
-              </Link>
-              <div>
-                Start Date:{' '}
-                {moment(currentWaiveworkBooking.createdAt).format('MM/DD/YYYY')}
-              </div>
-              <div>
-                Next Payment Date:{' '}
-                {moment
-                  .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                    .format('MM/DD/YYYY')}{' '}
-                 {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(moment(), 'days') + 1} Days
-              </div>
-              {carHistory.length && (
+              <h4>
+                Current Booking:{' '}
+                <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
+                  {currentWaiveworkBooking.id}
+                </Link>{' '}
+                in{' '}
+                <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
+                  {currentWaiveworkBooking.car.license}
+                </Link>
+              </h4>
+              {currentWaiveworkBooking.waiveworkPayment && (
+                <div>
+                  <div>
+                    Start Date:{' '}
+                    {moment(currentWaiveworkBooking.createdAt).format(
+                      'MM/DD/YYYY',
+                    )}
+                  </div>
+                  <div>
+                    Next Payment Date:{' '}
+                    {moment
+                      .utc(currentWaiveworkBooking.waiveworkPayment.date)
+                      .format('MM/DD/YYYY')}{' '}
+                    {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
+                      moment(),
+                      'days',
+                    ) + 1}{' '}
+                    Days
+                  </div>
+                </div>
+              )}
+              {carHistory.length > 1 && (
                 <div>
                   Total Miles Driven:{' '}
                   {(
@@ -299,78 +402,69 @@ class WaiveWorkDetails extends Component {
                   ).toFixed(2)}
                 </div>
               )}
-              {carHistory.length && (
-                <div style={{textAlign: 'center'}}>
-                  Average Miles Per Day:
-                  <table style={{width: '100%'}}>
-                    <tbody>
-                      <tr>
-                        <th>All Time</th>
-                        <th>Last 30 Days</th>
-                        <th>Last Week</th>
-                        <th>Yesterday</th>
-                      </tr>
-                      <tr>
-                        <td>
-                          {carHistory.length
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(carHistory[0].data)) /
-                                carHistory.length *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 day'}
-                        </td>
-                        <td>
-                          {carHistory[carHistory.length - 31]
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 31].data,
-                                  )) /
-                                30 *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 30 days'}
-                        </td>
-                        <td>
-                          {carHistory[carHistory.length - 8]
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 8].data,
-                                  )) /
-                                7 *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 week'}
-                        </td>
-                        <td>
-                          {carHistory.length > 1
-                            ? (
-                                (Number(
-                                  carHistory[carHistory.length - 1].data,
-                                ) -
-                                  Number(
-                                    carHistory[carHistory.length - 2].data,
-                                  )) *
-                                0.621371
-                              ).toFixed(2)
-                            : 'Ride not yet over 1 day'}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <div style={{textAlign: 'center'}}>
+                Average Miles Per Day:
+                <table style={{width: '100%'}}>
+                  <tbody>
+                    <tr>
+                      <th>All Time</th>
+                      <th>Last 30 Days</th>
+                      <th>Last Week</th>
+                      <th>Yesterday</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        {carHistory.length
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(carHistory[0].data)) /
+                              carHistory.length *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 day'}
+                      </td>
+                      <td>
+                        {carHistory[carHistory.length - 31]
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 31].data,
+                                )) /
+                              30 *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 30 days'}
+                      </td>
+                      <td>
+                        {carHistory[carHistory.length - 8]
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 8].data,
+                                )) /
+                              7 *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 week'}
+                      </td>
+                      <td>
+                        {carHistory.length > 1
+                          ? (
+                              (Number(carHistory[carHistory.length - 1].data) -
+                                Number(
+                                  carHistory[carHistory.length - 2].data,
+                                )) *
+                              0.621371
+                            ).toFixed(2)
+                          : 'Ride not yet over 1 day'}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               {currentWaiveworkBooking.waiveworkPayment ||
-              currentWaiveworkBooking.status === 'ended' ? (
+              (currentWaiveworkBooking.waiveworkPayment &&
+                currentWaiveworkBooking.status === 'ended') ? (
                 <div>
                   <div>
                     Price Per Week:{' '}
@@ -399,6 +493,7 @@ class WaiveWorkDetails extends Component {
                       <button
                         type="button"
                         className="btn btn-primary"
+                        disabled={payingEarly}
                         onClick={() => this.advanceWorkPayment()}>
                         Pay early
                       </button>
@@ -413,7 +508,18 @@ class WaiveWorkDetails extends Component {
                 </div>
               ) : (
                 <div>
-                  Automatic payment not yet setup for this WaiveWork Booking
+                  <div>
+                    Automatic payment not currently setup for this booking
+                    {ended && ' and it has been ended, but not completed'}.
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() =>
+                      this.bookingAction(ended ? 'complete' : 'end')
+                    }>
+                    {ended ? 'Complete' : 'End'} Booking
+                  </button>
                 </div>
               )}
             </div>
@@ -471,17 +577,91 @@ class WaiveWorkDetails extends Component {
                 searchResults.map((item, i) => (
                   <div key={i} className="row">
                     <div style={{padding: '10px 0'}} className="col-xs-6">
-                      {item.license}
+                      <Link to={`/cars/${item.id}`} target="_blank">
+                        {item.license}
+                      </Link>
                     </div>
                     <button
                       className="btn btn-link col-xs-6"
                       onClick={() => this.book(item.id)}>
-                      Book Now
+                      book now
                     </button>
                   </div>
                 ))}
             </div>
           )}
+          <div className="row" style={{marginTop: '2em'}}>
+            <h4>Upload Proof of Insurance</h4>
+            <div className="row">
+              <input
+                type="text"
+                className="col-xs-6"
+                style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                placeholder="Policy Number"
+                onChange={e => this.setState({policyNumber: e.target.value})}
+              />
+              <button
+                className="btn btn-primary btn-sm col-xs-6"
+                disabled={uploading}>
+                <label
+                  htmlFor="newFile"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    marginBottom: 0,
+                  }}>
+                  Upload
+                </label>
+                <input
+                  style={{
+                    opacity: 0,
+                    overflow: 'hidden',
+                    position: 'absolute',
+                    zIndex: -1,
+                  }}
+                  type="file"
+                  id="newFile"
+                  accept="application/pdf, image/jpeg"
+                  ref={ref => (this.fileUpload = ref)}
+                  onInput={() => this.upload()}
+                />
+              </button>
+            </div>
+          </div>
+          <div className="row">
+            <table className="table-striped profile-table">
+              <thead>
+                <tr>
+                  <th>Policy Number</th>
+                  <th>Added On:</th>
+                  <th className="text-center">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {insurance.map((each, i) => (
+                  <tr key={i}>
+                    <td>
+                      <a
+                        href={`http://waivecar-prod.s3.amazonaws.com/${
+                          each.path
+                        }`}
+                        target="_blank">
+                        {each.comment}
+                      </a>{' '}
+                    </td>
+                    <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
+                    <td className="text-center">
+                      <button
+                        className="test"
+                        onClick={() => this.deleteInsurance(each.id, i)}>
+                        <i className="material-icons">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     );
