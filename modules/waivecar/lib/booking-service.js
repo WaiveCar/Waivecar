@@ -1734,7 +1734,6 @@ module.exports = class BookingService extends Service {
         yield waiveworkPayment.delete();
       }
       // There may be some intercom flags to toggle here later
-      yield user.update({isWaivework: false});
       yield notify.slack(
         {
           text: `Autopay for ${user.link()} has been stopped due to their booking being ended`,
@@ -2048,6 +2047,9 @@ module.exports = class BookingService extends Service {
     yield this.relay('update', booking, _user);
     if(errorAtEnd) {
       throw errorAtEnd;
+    }
+    if (booking.isFlagged('Waivework')) {
+      yield user.update({isWaivework: false});
     }
   }
 
