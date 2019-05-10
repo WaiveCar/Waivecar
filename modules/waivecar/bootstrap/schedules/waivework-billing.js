@@ -15,6 +15,7 @@ let config = Bento.config;
 let moment = require('moment');
 let carService = require('../../lib/car-service');
 let log = Bento.Log;
+let uuid = require('uuid');
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -136,7 +137,9 @@ scheduler.process('waivework-billing', function*(job) {
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
+  let toImmobilize = [];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
+  currentDay = 22;
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -234,15 +237,7 @@ scheduler.process('waivework-billing', function*(job) {
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
             ).toFixed(2)} has failed. We will be in touch shortly about it.`;
-            try {
-              yield carService.lockImmobilizer(
-                oldPayment.booking.carId,
-                null,
-                true,
-              );
-            } catch (e) {
-              log.warn('error: ', e);
-            }
+            toImmobilize.push(oldPayment.booking);
           }
         }
         let dates = [8, 15, 22, 1, 8];
@@ -281,11 +276,25 @@ scheduler.process('waivework-billing', function*(job) {
               };
               yield email.send(emailOpts);
             } catch (e) {
-              console.log('error sending email', e);
+              log.warn('error sending email', e);
             }
           }
         }
       }
+    }
+    try {
+      // Make sure to change the timer back from seconds to hours
+      //scheduler.cancel('waivework-immobilize');
+      scheduler.add('waivework-immobilize', {
+        // A uid based on something needs to be added here because the code will run on both servers
+        uid: `waivework-immobilize-${uuid.v4()}`,
+        timer: {value: 24, type: 'seconds'},
+        data: {
+          toImmobilize,
+        },
+      });
+    } catch(e) {
+      log.warn('error starting immobilizer timer: ', e); 
     }
     if (chargesPayload.length > 1) {
       yield notify.slack(
@@ -309,7 +318,9 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'hours'};
+  // Change this timer back to hours!!!
+  //scheduler.cancel('waivework-billing');
+  let timer = {value: 24, type: 'seconds'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
