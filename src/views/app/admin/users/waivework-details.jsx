@@ -312,7 +312,7 @@ class WaiveWorkDetails extends Component {
             }
             this.fileUpload.value = '';
             this.setState(state => ({
-              insurance: [...state.insurance, ...response],
+              insurance: [...response, ...state.insurance],
               uploading: false,
             }));
           },
@@ -589,12 +589,6 @@ class WaiveWorkDetails extends Component {
           )}
           <div className="row" style={{marginTop: '2em'}}>
             <h4>Upload Proof of Insurance</h4>
-            <input
-              type="file"
-              id="newFile"
-              accept="application/pdf, image/jpeg"
-              ref={ref => (this.fileUpload = ref)}
-            />
             <div className="row">
               <input
                 type="text"
@@ -605,9 +599,21 @@ class WaiveWorkDetails extends Component {
               />
               <button
                 className="btn btn-primary btn-sm col-xs-6"
-                disabled={uploading}
-                onClick={() => this.upload()}>
-                Upload
+                disabled={uploading}>
+                <label htmlFor="newFile">Upload</label>
+                <input
+                  style={{
+                    opacity: 0,
+                    overflow: 'hidden',
+                    position: 'absolute',
+                    zIndex: -1,
+                  }}
+                  type="file"
+                  id="newFile"
+                  accept="application/pdf, image/jpeg"
+                  ref={ref => (this.fileUpload = ref)}
+                  onChange={() => this.upload()}
+                />
               </button>
             </div>
           </div>
