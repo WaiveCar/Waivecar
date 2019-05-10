@@ -282,18 +282,17 @@ class WaiveWorkDetails extends Component {
   }
 
   upload() {
+    let {policyNumber} = this.state;
+    if (!policyNumber || !this.fileUpload.files.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message:
+          'Please add a policy number and choose a file before uploading a photo.',
+      });
+    }
     this.setState(
       state => ({uploading: true}),
       () => {
-        let {policyNumber} = this.state;
-        if (!policyNumber || !this.fileUpload.files.length) {
-          this.setState({uploading: false});
-          return snackbar.notify({
-            type: 'danger',
-            message:
-              'Please add a policy number and choose a file before uploading a photo',
-          });
-        }
         let files = Array.from(this.fileUpload.files);
         let formData = new FormData();
         files.forEach((file, i) => {
@@ -575,7 +574,9 @@ class WaiveWorkDetails extends Component {
                 searchResults.map((item, i) => (
                   <div key={i} className="row">
                     <div style={{padding: '10px 0'}} className="col-xs-6">
-                      {item.license}
+                      <Link to={`/cars/${item.id}`} target="_blank">
+                        {item.license}
+                      </Link>
                     </div>
                     <button
                       className="btn btn-link col-xs-6"
@@ -586,24 +587,29 @@ class WaiveWorkDetails extends Component {
                 ))}
             </div>
           )}
-          <div className="row" style={{marginTop: '1em'}}>
-            <label htmlFor="newFile">Upload Proof of Insurance</label>
+          <div className="row" style={{marginTop: '2em'}}>
+            <h4>Upload Proof of Insurance</h4>
             <input
               type="file"
               id="newFile"
               accept="application/pdf, image/jpeg"
               ref={ref => (this.fileUpload = ref)}
             />
-            <input
-              type="text"
-              onChange={e => this.setState({policyNumber: e.target.value})}
-            />
-            <button
-              className="btn btn-primary btn-sm col-xs-6"
-              disabled={uploading}
-              onClick={() => this.upload()}>
-              Upload
-            </button>
+            <div className="row">
+              <input
+                type="text"
+                className="col-xs-6"
+                style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                placeholder="Policy Number"
+                onChange={e => this.setState({policyNumber: e.target.value})}
+              />
+              <button
+                className="btn btn-primary btn-sm col-xs-6"
+                disabled={uploading}
+                onClick={() => this.upload()}>
+                Upload
+              </button>
+            </div>
           </div>
           <div className="row">
             <table className="table-striped profile-table">
