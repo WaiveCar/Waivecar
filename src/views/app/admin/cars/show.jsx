@@ -292,8 +292,14 @@ class CarsShowView extends React.Component {
                 </div>
                 <div className="col-sm-3">
                   <label>
-                    Tire Wear (A - F):
-                    <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
+                    Front Tire Wear (A - F):
+                    <input type="text" name="frontTireWear" defaultValue={car.frontTireWear} />
+                  </label>
+                </div>
+                <div className="col-sm-3">
+                  <label>
+                    Rear Tire Wear (A - F):
+                    <input type="text" name="rearTireWear" defaultValue={car.rearTireWear} />
                   </label>
                 </div>
               </div>
