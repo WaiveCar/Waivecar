@@ -239,7 +239,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       default : null,
     },
     
-    tireWear : {
+    frontTireWear : {
+      type : Sequelize.TEXT,
+      default : null,
+    },
+    rearTireWear : {
       type : Sequelize.TEXT,
       default : null,
     },
