@@ -1,18 +1,7 @@
 module.exports = {
 
-  /*
-   |--------------------------------------------------------------------------------
-   | File
-   |--------------------------------------------------------------------------------
-   |
-   | @param {Array}  types     The file types accepted by the file handler.
-   | @param {Number} limit     The file size limit accepted.
-   | @param {Object} providers Provider settings and default assignments.
-   |
-   */
-
   file : {
-    types     : [ 'jpg', 'jpeg', 'png', 'gif', 'bmp' ],
+    types     : [ 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf'],
     limit     : 20480000,
     providers : {
       default : 'local',

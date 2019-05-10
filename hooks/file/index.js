@@ -28,6 +28,9 @@ hooks.set('file:collection', function *(query, _user) {
   if (query.bookingId) {
     return yield booking.collection(query.bookingId);
   }
+  if (query.collectionId) {
+    return query.collectionId;
+  }
   return null;
 });
 

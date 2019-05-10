@@ -12,6 +12,11 @@ let config      = Bento.config.file;
 class FileService extends Service {
 
   *store(query, payload, _user) {
+    // The conditional below is done because when files are uploaded for insurance,
+    // they need to be associated with the correct user rather than the uploader
+    if (query.userId) {
+      _user.id = Number(query.userId);
+    }
     let validate   = hooks.get('file:validate');
     let collection = hooks.get('file:collection');
     let capture    = hooks.get('file:capture');
@@ -72,24 +77,25 @@ class FileService extends Service {
     }
   }
 
-  /**
-   * Returns a list of files.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *index(query, _user) {
+    let order;
+    if (query.collectionId === 'insurance') {
+      order = [['created_at', 'asc']];
+    }
     if (_user.hasAccess('admin')) {
-      return yield File.find(queryParser(query, {
+      let actualQuery = queryParser(query, {
         where : {
           userId       : queryParser.NUMBER,
           collectionId : queryParser.STRING,
           name         : queryParser.STRING,
           mime         : queryParser.STRING,
           store        : queryParser.STRING,
-          bucket       : queryParser.STRING
-        }
-      }));
+          bucket       : queryParser.STRING,
+          comment      : queryParser.STRING,
+        },
+      })
+      actualQuery.order = order;
+      return yield File.find(actualQuery);
     }
 
     // ### Prepare Query
