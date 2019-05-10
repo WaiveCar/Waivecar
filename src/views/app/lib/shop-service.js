@@ -122,48 +122,50 @@ module.exports = class ShopService extends Service {
    * @param {String} cardId
    */
   deleteCard(cardId) {
+    if (confirm('Are you sure you want to delete this card?')) {
 
-    // ### Hide Button
-    // If a delete button has been defined we hide the button while processing
-    // the delete request.
+      // ### Hide Button
+      // If a delete button has been defined we hide the button while processing
+      // the delete request.
 
-    let btn = this.getRefs(`delete-card-${ cardId }`);
-    if (btn) {
-      btn.className = dom.setClass({ hide : true });
-    }
-
-    // ### Submit Request
-
-    api.delete(`/shop/cards/${ cardId }`, (err) => {
-      if (err) {
-        if (btn) {
-          btn.className = dom.setClass({
-            hide : false
-          });
-        }
-        return this.error(err.message);
+      let btn = this.getRefs(`delete-card-${ cardId }`);
+      if (btn) {
+        btn.className = dom.setClass({ hide : true });
       }
 
-      // ### Update State
-      // Updates the payment cards state.
+      // ### Submit Request
 
-      this.setState('cards', function () {
-        let cards  = this.getState('cards');
-        let result = [];
-        cards.forEach((card) => {
-          if (card.id !== cardId) {
-            result.push(card);
+      api.delete(`/shop/cards/${ cardId }`, (err) => {
+        if (err) {
+          if (btn) {
+            btn.className = dom.setClass({
+              hide : false
+            });
           }
-        });
-        return result;
-      }.call(this));
+          return this.error(err.message);
+        }
 
-      // ### Notify
-      // Notify client of successfull card removal.
+        // ### Update State
+        // Updates the payment cards state.
 
-      this.success(`Your payment card was successfully removed from your account`);
-    });
+        this.setState('cards', function () {
+          let cards  = this.getState('cards');
+          let result = [];
+          cards.forEach((card) => {
+            if (card.id !== cardId) {
+              result.push(card);
+            }
+          });
+          return result;
+        }.call(this));
 
+        // ### Notify
+        // Notify client of successfull card removal.
+
+        this.success(`Your payment card was successfully removed from your account`);
+      });
+    
+    }
   }
 
 };
