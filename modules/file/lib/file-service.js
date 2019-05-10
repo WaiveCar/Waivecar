@@ -78,8 +78,12 @@ class FileService extends Service {
   }
 
   *index(query, _user) {
+    let order;
+    if (query.collectionId === 'insurance') {
+      order = [['created_at', 'asc']];
+    }
     if (_user.hasAccess('admin')) {
-      return yield File.find(queryParser(query, {
+      let actualQuery = queryParser(query, {
         where : {
           userId       : queryParser.NUMBER,
           collectionId : queryParser.STRING,
@@ -88,8 +92,10 @@ class FileService extends Service {
           store        : queryParser.STRING,
           bucket       : queryParser.STRING,
           comment      : queryParser.STRING,
-        }
-      }));
+        },
+      })
+      actualQuery.order = order;
+      return yield File.find(actualQuery);
     }
 
     // ### Prepare Query
