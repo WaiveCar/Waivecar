@@ -290,6 +290,7 @@ class WaiveWorkDetails extends Component {
           'Please add a policy number and choose a file before uploading a photo.',
       });
     }
+    console.log('uploading...');
     this.setState(
       state => ({uploading: true}),
       () => {
@@ -360,14 +361,16 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {currentWaiveworkBooking ? (
             <div>
-              Current Booking:{' '}
-              <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
-                {currentWaiveworkBooking.id}
-              </Link>{' '}
-              in{' '}
-              <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
-                {currentWaiveworkBooking.car.license}
-              </Link>
+              <h4>
+                Current Booking:{' '}
+                <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
+                  {currentWaiveworkBooking.id}
+                </Link>{' '}
+                in{' '}
+                <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
+                  {currentWaiveworkBooking.car.license}
+                </Link>
+              </h4>
               {currentWaiveworkBooking.waiveworkPayment && (
                 <div>
                   <div>
@@ -600,7 +603,15 @@ class WaiveWorkDetails extends Component {
               <button
                 className="btn btn-primary btn-sm col-xs-6"
                 disabled={uploading}>
-                <label htmlFor="newFile">Upload</label>
+                <label
+                  htmlFor="newFile"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    marginBottom: 0,
+                  }}>
+                  Upload
+                </label>
                 <input
                   style={{
                     opacity: 0,
@@ -612,7 +623,7 @@ class WaiveWorkDetails extends Component {
                   id="newFile"
                   accept="application/pdf, image/jpeg"
                   ref={ref => (this.fileUpload = ref)}
-                  onChange={() => this.upload()}
+                  onInput={() => this.upload()}
                 />
               </button>
             </div>
