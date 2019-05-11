@@ -2,10 +2,15 @@ let scheduler = Bento.provider('queue').scheduler;
 let carService = require('../../lib/car-service');
 let notify = require('../../lib/notification-service');
 let ShopOrder = Bento.model('Shop/Order');
+let User = Bento.model('User');
+let Car = Bento.model('Car');
 let moment = require('moment');
 let log = Bento.Log;
 
 scheduler.process('waivework-immobilize', function*(job) {
+  let slackPayload = [
+    ':violin: *The following users have had their cars immobilized due to their faillure pay in the 24 hours following their failed automatic payment*\n',
+  ];
   for (let oldPayment of job.data.toImmobilize) {
     let recentOrder = yield ShopOrder.findOne({
       where: {
@@ -26,6 +31,13 @@ scheduler.process('waivework-immobilize', function*(job) {
         log.warn('error immobilizing: ', e);
       }
       try {
+        let user = yield User.findById(oldPayment.booking.userId);
+        let car = yield Car.findById(oldPayment.booking.carId);
+        slackPayload.push(`${user.link()} in ${car.link()}\n`);
+      } catch (e) {
+        log.warn('error getting slack message: ', e);
+      }
+      try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
           'It has been 24 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please contact us to resolve the issue.',
@@ -34,6 +46,12 @@ scheduler.process('waivework-immobilize', function*(job) {
         log.warn('error sending text: ', e);
       }
     }
+  }
+  if (slackPayload.length > 1) {
+    yield notify.slack(
+      {text: slackPayload.join('\n')},
+      {channel: '#waivework-charges'},
+    );
   }
 });
 

@@ -234,7 +234,9 @@ scheduler.process('waivework-billing', function*(job) {
             });
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} has failed. Please contact us about paying it.`;
+            ).toFixed(
+              2,
+            )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized.`;
             toImmobilize.push(oldPayment);
           }
         }
@@ -290,8 +292,8 @@ scheduler.process('waivework-billing', function*(job) {
           toImmobilize,
         },
       });
-    } catch(e) {
-      log.warn('error starting immobilizer timer: ', e); 
+    } catch (e) {
+      log.warn('error starting immobilizer timer: ', e);
     }
     if (chargesPayload.length > 1) {
       yield notify.slack(
