@@ -138,7 +138,7 @@ scheduler.process('waivework-billing', function*(job) {
   ];
   let toImmobilize = [];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
-  currentDay = 22;
+
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -283,11 +283,10 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
     try {
-      // Make sure to change the timer back from seconds to hours
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
-        timer: {value: 24, type: 'seconds'},
+        timer: {value: 24, type: 'hours'},
         data: {
           toImmobilize,
         },
@@ -317,8 +316,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  // Change this timer back to hours!!!
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,

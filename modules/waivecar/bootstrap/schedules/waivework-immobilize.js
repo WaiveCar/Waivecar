@@ -12,6 +12,8 @@ scheduler.process('waivework-immobilize', function*(job) {
     ':violin: *The following users have had their cars immobilized due to their faillure pay in the 24 hours following their failed automatic payment*\n',
   ];
   for (let oldPayment of job.data.toImmobilize) {
+    // This looks to see if they have successfully paid the weekly charge in the preceeding 24 hours by
+    // finding any successful charges for the amount of the payment.
     let recentOrder = yield ShopOrder.findOne({
       where: {
         userId: oldPayment.booking.userId,
@@ -24,19 +26,16 @@ scheduler.process('waivework-immobilize', function*(job) {
         status: 'paid',
       },
     });
+
     if (!recentOrder) {
       try {
         yield carService.lockImmobilizer(oldPayment.booking.carId, null, true);
       } catch (e) {
         log.warn('error immobilizing: ', e);
       }
-      try {
-        let user = yield User.findById(oldPayment.booking.userId);
-        let car = yield Car.findById(oldPayment.booking.carId);
-        slackPayload.push(`${user.link()} in ${car.link()}\n`);
-      } catch (e) {
-        log.warn('error getting slack message: ', e);
-      }
+      let user = yield User.findById(oldPayment.booking.userId);
+      let car = yield Car.findById(oldPayment.booking.carId);
+      slackPayload.push(`${user.link()} in ${car.link()}\n`);
       try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
