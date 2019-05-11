@@ -13,7 +13,6 @@ let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
 let config = Bento.config;
 let moment = require('moment');
-let carService = require('../../lib/car-service');
 let log = Bento.Log;
 let uuid = require('uuid');
 
@@ -235,7 +234,7 @@ scheduler.process('waivework-billing', function*(job) {
             });
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} has failed. We will be in touch shortly about it.`;
+            ).toFixed(2)} has failed. Please contact us about paying it.`;
             toImmobilize.push(oldPayment);
           }
         }
@@ -283,7 +282,6 @@ scheduler.process('waivework-billing', function*(job) {
     }
     try {
       // Make sure to change the timer back from seconds to hours
-      //scheduler.cancel('waivework-immobilize');
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
@@ -318,7 +316,6 @@ scheduler.process('waivework-billing', function*(job) {
 
 module.exports = function*() {
   // Change this timer back to hours!!!
-  //scheduler.cancel('waivework-billing');
   let timer = {value: 24, type: 'seconds'};
   scheduler.add('waivework-billing', {
     init: true,
