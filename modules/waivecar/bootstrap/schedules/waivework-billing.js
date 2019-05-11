@@ -213,7 +213,6 @@ scheduler.process('waivework-billing', function*(job) {
             let shopOrder = (yield OrderService.quickCharge(data, null, {
               nocredit: true,
             })).order;
-
             let bookingPayment = new BookingPayment({
               bookingId: oldPayment.booking.id,
               orderId: shopOrder.id,
@@ -237,7 +236,7 @@ scheduler.process('waivework-billing', function*(job) {
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
             ).toFixed(2)} has failed. We will be in touch shortly about it.`;
-            toImmobilize.push(oldPayment.booking);
+            toImmobilize.push(oldPayment);
           }
         }
         let dates = [8, 15, 22, 1, 8];
