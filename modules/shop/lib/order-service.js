@@ -136,7 +136,9 @@ module.exports = class OrderService extends Service {
       }), user);
 
     } catch (err) {
-      yield this.failedCharge(data.amount || charge.amount, user, err);
+      if (!data.waivework) {
+        yield this.failedCharge(data.amount || charge.amount, user, err);
+      }
       yield this.suspendIfMultipleFailed(user);
 
       throw {
