@@ -66,6 +66,7 @@ module.exports = {
 
   *attemptSingleAction(user, command, opts) {
     // alias commands are blank.
+    var remoteCmd;
     var success = true;
     let sendToSupport = false;
     let guessed = false;
@@ -178,7 +179,7 @@ module.exports = {
     }
 
     // accessing a car from someone else's phone ... top secret command!
-    let remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
+    remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
     if(remoteCmd) {
       let car = yield Car.findOne({where: { license: { $like: remoteCmd[1] } } });
       if(car && car.userId) {
@@ -244,7 +245,7 @@ module.exports = {
       }
     }
 
-    if(user && user.isWaivework)
+    if(user && user.isWaivework) {
       if (! waiveworkAllowedList.includes(command) ) {
         return false;
       }
