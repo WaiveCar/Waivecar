@@ -158,7 +158,7 @@ module.exports = class CarsIndex extends React.Component {
   isCarIncludes(car, opts) {
     let res = true;
     if (opts.raw) { 
-      res = car.licenseLower.includes(opts.raw) || car.name.includes(opts.raw) || car.plateNumber.includes(opts.raw);
+      res = car.licenseLower.includes(opts.raw) || car.name.includes(opts.raw) || (car.plateNumber && car.plateNumber.includes(opts.raw));
       if(!res && opts.isFlagged) {
         res = true;
         // this allows us to search for say "low available"
