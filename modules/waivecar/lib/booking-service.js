@@ -480,10 +480,15 @@ module.exports = class BookingService extends Service {
 
     if (data.isWaivework) {
       yield booking.addFlag('Waivework');
-      let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
-      booking = booking.toJSON();
-      booking.car = car;
-      booking.waiveworkPayment = waiveworkPayment;
+      let waiveworkPayment;
+      try {
+        let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
+        booking = booking.toJSON();
+        booking.car = car;
+        booking.waiveworkPayment = waiveworkPayment;
+      } catch(e) {
+        console.log('error handling waivework: ', e);
+      }
     }
     return booking;
   }
