@@ -141,7 +141,12 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
         model : 'users',
         key   : 'id'
       }
-    }
+    },
+
+    createdAt : {
+      type: Sequelize.DATE,
+    },
+
 
   };
 
