@@ -364,7 +364,7 @@ module.exports = class BookingService extends Service {
     }
 
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
-    if (process.env.NODE_ENV === 'production' && !driver.hasAccess('admin') && OrderService.authorize.last.newAuthorization) {
+    if (process.env.NODE_ENV === 'production' && !driver.hasAccess('admin') && OrderService.authorize.last && OrderService.authorize.last.newAuthorization) {
       try {
         let authorizationPayment = new BookingPayment({
           bookingId : booking.id,
