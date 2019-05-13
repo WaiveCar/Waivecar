@@ -70,6 +70,7 @@ module.exports = {
     let sendToSupport = false;
     let guessed = false;
     let magicEnd = /([\d:]+\s*(a|p)\.?m?\.?(\s|$)|\d+\s?hour|\d+\s?hr|no sign|next|week|tom|mon|tue|wed|thu|fri|sat|sun)/g;
+    let waiveworkAllowedList = ['charge','access','lock','unlock','account'];
     let magicBreak = /(not|don't)/g;
     let documentation = {
       available: "List available WaiveCars",
@@ -176,19 +177,6 @@ module.exports = {
       return true;
     }
 
-    let remoteCmd = command.match(/^charge (\w*)$/i);
-    if(remoteCmd) {
-      let id = yield Charger.nameToUUID(remoteCmd[1]);
-      if(id) {
-        yield Charger.start(null, id, user);
-        yield notify.sendTextMessage(user, "Starting " + remoteCmd[1]);
-        yield slack('and is charging via sms');
-      } else {
-        yield notify.sendTextMessage(user, "Could not find charger '" + remoteCmd[1] + "'. Check the spelling");
-      }
-      return true;
-    }
-
     // accessing a car from someone else's phone ... top secret command!
     remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
     if(remoteCmd) {
@@ -256,6 +244,24 @@ module.exports = {
       }
     }
 
+    if(user && user.isWaivework)
+      if (! waiveworkAllowedList.includes(command) ) {
+        return false;
+      }
+    }
+
+    let remoteCmd = command.match(/^charge (\w*)$/i);
+    if(remoteCmd) {
+      let id = yield Charger.nameToUUID(remoteCmd[1]);
+      if(id) {
+        yield Charger.start(null, id, user);
+        yield notify.sendTextMessage(user, "Starting " + remoteCmd[1]);
+        yield slack('and is charging via sms');
+      } else {
+        yield notify.sendTextMessage(user, "Could not find charger '" + remoteCmd[1] + "'. Check the spelling");
+      }
+      return true;
+    }
     //
     //
     // now we can do the simple ones.
