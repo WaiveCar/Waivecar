@@ -178,7 +178,7 @@ module.exports = {
     }
 
     // accessing a car from someone else's phone ... top secret command!
-    remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
+    let remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
     if(remoteCmd) {
       let car = yield Car.findOne({where: { license: { $like: remoteCmd[1] } } });
       if(car && car.userId) {
@@ -250,7 +250,7 @@ module.exports = {
       }
     }
 
-    let remoteCmd = command.match(/^charge (\w*)$/i);
+    remoteCmd = command.match(/^charge (\w*)$/i);
     if(remoteCmd) {
       let id = yield Charger.nameToUUID(remoteCmd[1]);
       if(id) {

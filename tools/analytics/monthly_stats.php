@@ -37,7 +37,7 @@ function duration_fix($duration, $startTime, $endTime) {
   return $duration;
 }
 
-$lateHour = 22;
+$lateHour = 21;
 $earlyHour = 8;
 
 $activeHourCount = $lateHour - $earlyHour;
@@ -151,7 +151,7 @@ while ( true ) {
   $utilization = ($ttl_month / 60) / ($total_active * 60 * $activeHourCount);
   //var_dump(['utilization' => $utilization, 'ttl_month'=> $ttl_month, 'total_active' => $total_active]);
   $count[] = ['utilization', $utilization];
-  //echo  dodate($last) . " " . $total_active . " " . $utilization . "\n";
+  echo  dodate($last) . " " . $total_active . " " . $utilization . "\n";
 
   foreach($setList as $set) {
     $res = one("select count(*) as ttl from $set where created_at > " . dodate($last) . " and created_at < " . dodate($current));
@@ -164,7 +164,6 @@ while ( true ) {
     $current[0]++;
   }
 
-  /*
   if($first) {
     fputcsv($handle, array_map(function($row) { return $row[0]; }, $count));
     $first = false;
@@ -174,6 +173,5 @@ while ( true ) {
 	if($m == 0) { return $row[1] ;}
 	return $m;
   }, $count));
-   */
 }
 
