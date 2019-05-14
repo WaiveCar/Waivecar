@@ -120,7 +120,7 @@ module.exports = {
     if(profanity) {
       // Moe/Chris
       for(let uid of [17173, 287]) {
-        yield notify.sendTextMessage(uid, `Oh dear, ${user.name()} sent "${message}"`);
+        yield notify.sendTextMessage(uid, `Oh dear, ${user.name()} sent "${opts.raw}"`);
       }
       return yield this.returnError(user, {message: "Sorry things are frustrating. A high priority alert has been raised."});
     }
