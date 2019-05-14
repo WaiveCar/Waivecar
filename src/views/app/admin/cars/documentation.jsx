@@ -93,7 +93,6 @@ class Documentation extends Component {
 
   render() {
     let {uploading, car} = this.state;
-    console.log(this.state);
     return (
       <div className="box">
         <h3>Car Documentation</h3>
@@ -131,6 +130,8 @@ class Documentation extends Component {
                         opacity: 0,
                         overflow: 'hidden',
                         position: 'absolute',
+                        top: '50%',
+                        right: '50%',
                         zIndex: -1,
                       }}
                       type="file"

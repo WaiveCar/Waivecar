@@ -5,6 +5,7 @@ import {snackbar} from 'bento-web';
 import moment from 'moment';
 import Service from '../../lib/car-service';
 
+
 class WaiveWorkDetails extends Component {
   constructor(props) {
     super(props);
@@ -621,6 +622,8 @@ class WaiveWorkDetails extends Component {
                     opacity: 0,
                     overflow: 'hidden',
                     position: 'absolute',
+                    top: '50%',
+                    right: '50%',
                     zIndex: -1,
                   }}
                   type="file"
