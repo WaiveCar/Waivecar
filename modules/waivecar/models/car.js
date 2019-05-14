@@ -264,6 +264,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         key   : 'id'
       }
     },
+
+    videoFileId : {
+      type       : Sequelize.STRING(28),
+      references : {
+        model : 'file',
+        key   : 'id'
+      }
+    },
   };
 
   model.methods = {
@@ -585,6 +593,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       this.hasMany(GroupCar,  { as : 'tagList', foreignKey : 'carId' });
       this.belongsTo(File, { as : 'registrationFile', foreignKey : 'registrationFileId' });
       this.belongsTo(File, { as : 'inspectionFile', foreignKey : 'inspectionFileId' });
+      this.belongsTo(File, { as : 'videoFile', foreignKey : 'videoFileId' });
     }
   ];
 
