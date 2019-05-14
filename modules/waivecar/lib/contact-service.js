@@ -118,7 +118,10 @@ module.exports = {
     let profanity = command.match(/(fuck|shit|damn|cunt|cocksucker|idiot|retard|asshole/);
 
     if(profanity) {
-      yield notify.sendTextMessage(287, `Oh dear, ${user.name()} sent "${message}"`);
+      // Moe/Chris
+      for(let uid of [17173, 287]) {
+        yield notify.sendTextMessage(uid, `Oh dear, ${user.name()} sent "${message}"`);
+      }
       return yield this.returnError(user, {message: "Sorry things are frustrating. A high priority alert has been raised."});
     }
 
