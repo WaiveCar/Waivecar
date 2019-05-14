@@ -3,21 +3,24 @@ import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import moment from 'moment';
 
+let fileTypes = ['inspection', 'registration', 'video'];
+
 class Documentation extends Component {
   constructor(props) {
     super(props);
     this.state = {
       uploading: false,
       car: props.car,
-      inspectionFile: null,
-      registrationFile: null,
     };
+    for (let type of fileTypes) {
+      this.state[`${type}File`] = null;
+    }
   }
 
   componentDidMount() {
     let {car} = this.props;
 
-    for (let type of ['inspection', 'registration']) {
+    for (let type of fileTypes) {
       api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -31,14 +34,13 @@ class Documentation extends Component {
   }
 
   upload(type) {
-    let {registrationExpireDate, inspectionExpireDate} = this.state;
-    let {submit} = this.props;
-    let expireDate =
-      type === 'registration' ? registrationExpireDate : inspectionExpireDate;
-    let fileRef =
-      type === 'registration'
-        ? this.registrationFileUpload
-        : this.inspectionFileUpload;
+    let {
+      registrationExpireDate,
+      inspectionExpireDate,
+      videoExpireDate,
+    } = this.state;
+    let expireDate = this.state[`${type}ExpireDate`];
+    let fileRef = this[`${type}FileUpload`];
     if (!expireDate || !fileRef.files.length) {
       return snackbar.notify({
         type: 'danger',
@@ -64,7 +66,6 @@ class Documentation extends Component {
             });
           }
           fileRef.value = '';
-          //store new file in state below
           this.updateCar({[`${type}FileId`]: response[0].id}, car =>
             this.setState({
               uploading: false,
@@ -100,7 +101,7 @@ class Documentation extends Component {
           className="box-content"
           style={{display: 'flex', justifyContent: 'center'}}>
           <div style={{width: '80%'}}>
-            {['registration', 'inspection'].map((type, i) => (
+            {fileTypes.map((type, i) => (
               <div key={i} className="row" style={{marginTop: '2em'}}>
                 <h4>Upload {type}</h4>
                 <div className="row">
@@ -136,7 +137,7 @@ class Documentation extends Component {
                       }}
                       type="file"
                       id={`new${type}File`}
-                      accept="application/pdf, image/jpeg"
+                      accept="application/pdf, image/jpeg, video/*"
                       ref={ref => (this[`${type}FileUpload`] = ref)}
                       onInput={() => this.upload(type)}
                     />
@@ -157,16 +158,23 @@ class Documentation extends Component {
                           )}
                         </div>
                         <div>
-                          {this.state[`${type}File`].mime ===
-                          'application/pdf' ? (
+                          {this.state[`${type}File`].mime !== 'image/jpeg' ? (
                             <embed
-                              style={{height: '400px'}}
-                              src={`http://docs.google.com/gview?url=http://waivecar-prod.s3.amazonaws.com/${
-                                this.state[`${type}File`].path
-                              }&embedded=true`}
+                              style={{maxWidth: '100%'}}
+                              src={
+                                this.state[`${type}File`].mime ===
+                                'application/pdf'
+                                  ? `http://docs.google.com/gview?url=http://waivecar-prod.s3.amazonaws.com/${
+                                      this.state[`${type}File`].path
+                                    }&embedded=true`
+                                  : `http://waivecar-prod.s3.amazonaws.com/${
+                                      this.state[`${type}File`].path
+                                    }`
+                              }
                             />
                           ) : (
                             <img
+                              style={{maxWidth: '100%'}}
                               src={`http://waivecar-prod.s3.amazonaws.com/${
                                 this.state[`${type}File`].path
                               }`}
