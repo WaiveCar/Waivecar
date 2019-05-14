@@ -378,11 +378,11 @@ class WaiveWorkDetails extends Component {
                     {moment(currentWaiveworkBooking.createdAt).format(
                       'MM/DD/YYYY',
                     )}{' - '}
-                    {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
+                    Day {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
                       moment.utc(),
                       'days',
-                    )}{' '}
-                    Days Passed
+                    ) + 1}{' '}
+                    of Booking
                   </div>
                   <div>
                     Next Payment Date:{' '}
@@ -390,7 +390,7 @@ class WaiveWorkDetails extends Component {
                       .utc(currentWaiveworkBooking.waiveworkPayment.date)
                       .format('MM/DD/YYYY')}{' - '}
                     {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
-                      moment(),
+                      moment(moment().format('YYYY-MM-DD')),
                       'days',
                     ) + 1}{' '}
                     Days From Now
