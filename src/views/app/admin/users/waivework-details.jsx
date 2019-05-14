@@ -265,16 +265,13 @@ class WaiveWorkDetails extends Component {
                 message: `Error paying early: ${err.message}`,
               });
             }
-            this.setState(
-              {
-                currentWaiveworkBooking: {
-                  ...currentWaiveworkBooking,
-                  waiveworkPayment: response,
-                },
-                payingEarly: false,
+            this.setState({
+              currentWaiveworkBooking: {
+                ...currentWaiveworkBooking,
+                waiveworkPayment: response,
               },
-              () => console.log('state', this.state),
-            );
+              payingEarly: false,
+            });
           },
         );
       });
@@ -287,7 +284,7 @@ class WaiveWorkDetails extends Component {
       return snackbar.notify({
         type: 'danger',
         message:
-          'Please add a policy number and choose a file before uploading a file.',
+          'Please add a expiration date and choose a file before uploading a file.',
       });
     }
     this.setState(
@@ -376,8 +373,10 @@ class WaiveWorkDetails extends Component {
                     Start Date:{' '}
                     {moment(currentWaiveworkBooking.createdAt).format(
                       'MM/DD/YYYY',
-                    )}{' - '}
-                    Day {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
+                    )}
+                    {' - '}
+                    Day{' '}
+                    {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
                       moment.utc(),
                       'days',
                     ) + 1}{' '}
@@ -387,7 +386,8 @@ class WaiveWorkDetails extends Component {
                     Next Payment Date:{' '}
                     {moment
                       .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                      .format('MM/DD/YYYY')}{' - '}
+                      .format('MM/DD/YYYY')}
+                    {' - '}
                     {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
                       moment(moment().format('YYYY-MM-DD')),
                       'days',

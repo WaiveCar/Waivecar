@@ -811,7 +811,7 @@ class CarsShowView extends React.Component {
         { this.state.latestBooking && this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
-        <Documentation carId={car.id} />
+        <Documentation car={car} />
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
         { this.renderDamage(car) }
