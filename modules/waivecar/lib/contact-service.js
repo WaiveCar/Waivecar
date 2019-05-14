@@ -122,11 +122,10 @@ module.exports = {
       for(let uid of [17173, 287]) {
         yield notify.sendTextMessage(uid, `Oh dear, ${user.name()} sent "${opts.raw}"`);
       }
-      return yield this.returnError(user, {message: "Sorry things are frustrating. A high priority alert has been raised."});
-    }
-
-
-    if(argCmd) {
+      let message = yield this.returnError(user, {message: "Sorry things are frustrating. A high priority alert has been raised."});
+      yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" and we sent "${ message }"` }, { channel : '#app_support' });
+      return true;
+    } else if(argCmd) {
 
       let license = argCmd[2].replace(/\s/g, '');
       if(license.length < 4) {
