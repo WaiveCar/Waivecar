@@ -115,6 +115,13 @@ module.exports = {
     command = command.toLowerCase();
     let commandOrig = command;
     let argCmd = command.match(/^(normal|una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
+    let profanity = command.match(/(fuck|shit|damn|cunt|cocksucker|idiot|retard|asshole/);
+
+    if(profanity) {
+      yield notify.sendTextMessage(287, `Oh dear, ${user.name()} sent "${message}"`);
+      return yield this.returnError(user, {message: "Sorry things are frustrating. A high priority alert has been raised."});
+    }
+
 
     if(argCmd) {
 
