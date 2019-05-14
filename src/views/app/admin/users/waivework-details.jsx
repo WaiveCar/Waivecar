@@ -18,7 +18,7 @@ class WaiveWorkDetails extends Component {
       proratedChargeAmount: null,
       ended: false,
       insurance: [],
-      policyNumber: null,
+      expireDate: null,
       uploading: false,
       payingEarly: false,
     };
@@ -282,15 +282,14 @@ class WaiveWorkDetails extends Component {
   }
 
   upload() {
-    let {policyNumber} = this.state;
-    if (!policyNumber || !this.fileUpload.files.length) {
+    let {expireDate} = this.state;
+    if (!expireDate || !this.fileUpload.files.length) {
       return snackbar.notify({
         type: 'danger',
         message:
           'Please add a policy number and choose a file before uploading a photo.',
       });
     }
-    console.log('uploading...');
     this.setState(
       state => ({uploading: true}),
       () => {
@@ -299,7 +298,7 @@ class WaiveWorkDetails extends Component {
         files.forEach((file, i) => {
           formData.append(i, file);
         });
-        formData.append('comment', policyNumber);
+        formData.append('comment', expireDate);
         api.post(
           `/files?userId=${this.props.user.id}&collectionId=insurance`,
           formData,
@@ -599,11 +598,11 @@ class WaiveWorkDetails extends Component {
             <h4>Upload Proof of Insurance</h4>
             <div className="row">
               <input
-                type="text"
+                type="date"
                 className="col-xs-6"
                 style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                placeholder="Policy Number"
-                onChange={e => this.setState({policyNumber: e.target.value})}
+                placeholder="Expiration Date"
+                onChange={e => this.setState({expireDate: e.target.value})}
               />
               <button
                 className="btn btn-primary btn-sm col-xs-6"
@@ -637,7 +636,7 @@ class WaiveWorkDetails extends Component {
             <table className="table-striped profile-table">
               <thead>
                 <tr>
-                  <th>Policy Number</th>
+                  <th>Expiration Date</th>
                   <th>Added On:</th>
                   <th className="text-center">Delete</th>
                 </tr>
@@ -651,7 +650,7 @@ class WaiveWorkDetails extends Component {
                           each.path
                         }`}
                         target="_blank">
-                        {each.comment}
+                        {moment(each.comment).format('MM/DD/YYYY')}
                       </a>{' '}
                     </td>
                     <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
