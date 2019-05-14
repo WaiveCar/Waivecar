@@ -287,7 +287,7 @@ class WaiveWorkDetails extends Component {
       return snackbar.notify({
         type: 'danger',
         message:
-          'Please add a policy number and choose a file before uploading a photo.',
+          'Please add a policy number and choose a file before uploading a file.',
       });
     }
     this.setState(
