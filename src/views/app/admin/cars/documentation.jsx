@@ -144,18 +144,16 @@ class Documentation extends Component {
                 <div>
                   {this.state[`${type}File`] ? (
                     <div style={{display: 'flex', justifyContent: 'center'}}>
-                      <div>
+                      <a
+                        href={`http://waivecar-prod.s3.amazonaws.com/${
+                          this.state[`${type}File`].path
+                        }`}
+                        target="_blank">
                         <div>
-                          <a
-                            href={`http://waivecar-prod.s3.amazonaws.com/${
-                              this.state[`${type}File`].path
-                            }`}
-                            target="_blank">
-                            Expiring on{' '}
-                            {moment(this.state[`${type}File`].comment).format(
-                              'MM/DD/YYYY',
-                            )}
-                          </a>
+                          Expiring on{' '}
+                          {moment(this.state[`${type}File`].comment).format(
+                            'MM/DD/YYYY',
+                          )}
                         </div>
                         <div>
                           {this.state[`${type}File`].mime ===
@@ -174,7 +172,7 @@ class Documentation extends Component {
                             />
                           )}
                         </div>
-                      </div>
+                      </a>
                     </div>
                   ) : (
                     `${type} not yet uploaded`
