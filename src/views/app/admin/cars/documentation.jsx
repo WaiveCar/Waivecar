@@ -1,15 +1,33 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
+import moment from 'moment';
 
 class Documentation extends Component {
   constructor(props) {
     super(props);
-    let {car} = props;
     this.state = {
       uploading: false,
       car: props.car,
+      inspectionFile: null,
+      registrationFile: null,
     };
+  }
+
+  componentDidMount() {
+    let {car} = this.props;
+
+    for (let type of ['inspection', 'registration']) {
+      api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({[`${type}File`]: response});
+      });
+    }
   }
 
   upload(type) {
@@ -50,6 +68,7 @@ class Documentation extends Component {
           this.updateCar({[`${type}FileId`]: response[0].id}, car =>
             this.setState({
               uploading: false,
+              [`${type}File`]: response[0],
               car,
             }),
           );
@@ -73,7 +92,8 @@ class Documentation extends Component {
   };
 
   render() {
-    let {uploading} = this.state;
+    let {uploading, car} = this.state;
+    console.log(this.state);
     return (
       <div className="box">
         <h3>Car Documentation</h3>
@@ -120,6 +140,45 @@ class Documentation extends Component {
                       onInput={() => this.upload(type)}
                     />
                   </button>
+                </div>
+                <div>
+                  {this.state[`${type}File`] ? (
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                      <div>
+                        <div>
+                          <a
+                            href={`http://waivecar-prod.s3.amazonaws.com/${
+                              this.state[`${type}File`].path
+                            }`}
+                            target="_blank">
+                            Expiring on{' '}
+                            {moment(this.state[`${type}File`].comment).format(
+                              'MM/DD/YYYY',
+                            )}
+                          </a>
+                        </div>
+                        <div>
+                          {this.state[`${type}File`].mime ===
+                          'application/pdf' ? (
+                            <embed
+                              style={{height: '400px'}}
+                              src={`http://docs.google.com/gview?url=http://waivecar-prod.s3.amazonaws.com/${
+                                this.state[`${type}File`].path
+                              }&embedded=true`}
+                            />
+                          ) : (
+                            <img
+                              src={`http://waivecar-prod.s3.amazonaws.com/${
+                                this.state[`${type}File`].path
+                              }`}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    `${type} not yet uploaded`
+                  )}
                 </div>
               </div>
             ))}
