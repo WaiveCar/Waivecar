@@ -115,7 +115,7 @@ module.exports = {
     command = command.toLowerCase();
     let commandOrig = command;
     let argCmd = command.match(/^(normal|una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
-    let profanity = command.match(/(fuck|shit|damn|cunt|cocksucker|idiot|retard|asshole/);
+    let profanity = command.match(/(fuck|shit|damn|cunt|cocksucker|idiot|retard|asshole)/);
 
     if(profanity) {
       // Moe/Chris
