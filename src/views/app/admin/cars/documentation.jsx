@@ -19,7 +19,6 @@ class Documentation extends Component {
 
   componentDidMount() {
     let {car} = this.props;
-
     for (let type of fileTypes) {
       api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
         if (err) {
@@ -159,19 +158,28 @@ class Documentation extends Component {
                         </div>
                         <div>
                           {this.state[`${type}File`].mime !== 'image/jpeg' ? (
-                            <embed
-                              style={{maxWidth: '100%'}}
-                              src={
-                                this.state[`${type}File`].mime ===
-                                'application/pdf'
-                                  ? `http://docs.google.com/gview?url=http://waivecar-prod.s3.amazonaws.com/${
+                            <div>
+                              {this.state[`${type}File`].mime ===
+                              'application/pdf' ? (
+                                <embed
+                                  style={{maxWidth: '100%'}}
+                                  src={`http://docs.google.com/gview?url=http://waivecar-prod.s3.amazonaws.com/${
+                                    this.state[`${type}File`].path
+                                  }&embedded=true`}
+                                />
+                              ) : (
+                                <video
+                                  style={{maxWidth: '100%', height: '600px'}}
+                                  controls="controls">
+                                  <source
+                                    src={`http://waivecar-prod.s3.amazonaws.com/${
                                       this.state[`${type}File`].path
-                                    }&embedded=true`
-                                  : `http://waivecar-prod.s3.amazonaws.com/${
-                                      this.state[`${type}File`].path
-                                    }`
-                              }
-                            />
+                                    }`}
+                                    type={this.state[`${type}File`].mime}
+                                  />
+                                </video>
+                              )}
+                            </div>
                           ) : (
                             <img
                               style={{maxWidth: '100%'}}
