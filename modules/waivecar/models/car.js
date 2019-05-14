@@ -243,9 +243,26 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.TEXT,
       default : null,
     },
+
     rearTireWear : {
       type : Sequelize.TEXT,
       default : null,
+    },
+
+    registrationFileId : {
+      type       : Sequelize.STRING(28),
+      references : {
+        model : 'file',
+        key   : 'id'
+      }
+    },
+
+    inspectionFileId : {
+      type       : Sequelize.STRING(28),
+      references : {
+        model : 'file',
+        key   : 'id'
+      }
     },
   };
 
@@ -560,11 +577,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'User',
     'Booking',
     'GroupCar',
-    function(User, Booking, GroupCar) {
+    'File',
+    function(User, Booking, GroupCar, File) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.belongsTo(Booking, { as : 'currentBooking', foreignKey : 'bookingId' });
       this.hasMany(Booking, { as : 'bookings' });
       this.hasMany(GroupCar,  { as : 'tagList', foreignKey : 'carId' });
+      this.belongsTo(File, { as : 'registrationFile', foreignKey : 'registrationFileId' });
+      this.belongsTo(File, { as : 'inspectionFile', foreignKey : 'inspectionFileId' });
     }
   ];
 
