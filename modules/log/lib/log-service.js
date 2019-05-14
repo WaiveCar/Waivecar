@@ -530,11 +530,29 @@ module.exports = class LogService {
 
       allOdometers.forEach((row) => {
         let id = includeMap[row.carId];
+        row.data = +row.data;
         if( ! (id in bookByCar) ) {
           bookByCar[id] = [];
-          carOdometer[id] = [Number.MAX_VALUE, 0];
         }
-        row.data = +row.data;
+
+        if(
+          !  (id in carOdometer)
+
+             // If inverse gets moved from car to car, we need to try to accomodate
+             // for that by doing incremental checking.
+             //
+             // If our odometer miraculously went down by some non-trivial amount
+          || row.data < carOdometer[id][2] - 15
+
+             // or if it went up by some unachievable 1-day amount, in this case
+             // we are choosing 3200KM, which is 24 hours driving at 83mph.
+          || row.data > carOdometer[id][2] + 3200
+        ) {
+          // We reset our accumulators then to the current value, assuming
+          // that some device was transferred to a different car
+          carOdometer[id] = [row.data, row.data, row.data];
+        }
+
         // we really don't want to consider 0s for the beginning of our
         // analysis ... no cars start at 0 miles while available for rental
         if(row.data > 0) {
