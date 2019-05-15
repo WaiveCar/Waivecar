@@ -175,7 +175,7 @@ class Documentation extends Component {
                                     src={`http://waivecar-prod.s3.amazonaws.com/${
                                       this.state[`${type}File`].path
                                     }`}
-                                    type={this.state[`${type}File`].mime}
+                                    type={'video/mp4'}
                                   />
                                 </video>
                               )}
