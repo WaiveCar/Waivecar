@@ -101,7 +101,7 @@ class Documentation extends Component {
           style={{display: 'flex', justifyContent: 'center'}}>
           <div style={{width: '80%'}}>
             {fileTypes.map((type, i) => (
-              <div key={i} className="row" style={{marginTop: '2em'}}>
+              <div key={i} className="row" style={{marginTop: '2em', maxHeight: '400px'}}>
                 <h4>Upload {type}</h4>
                 <div className="row">
                   <input
@@ -150,7 +150,7 @@ class Documentation extends Component {
                           this.state[`${type}File`].path
                         }`}
                         target="_blank">
-                        <div>
+                        <div style={{textAlign: 'left'}}>
                           Expiring on{' '}
                           {moment(this.state[`${type}File`].comment).format(
                             'MM/DD/YYYY',
@@ -169,7 +169,7 @@ class Documentation extends Component {
                                 />
                               ) : (
                                 <video
-                                  style={{maxWidth: '100%', height: '600px'}}
+                                  style={{maxWidth: '100%', maxHeight: '300px'}}
                                   controls="controls">
                                   <source
                                     src={`http://waivecar-prod.s3.amazonaws.com/${
