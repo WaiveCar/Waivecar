@@ -20,15 +20,17 @@ class Documentation extends Component {
   componentDidMount() {
     let {car} = this.props;
     for (let type of fileTypes) {
-      api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
-        if (err) {
-          return snackbar.notify({
-            type: 'danger',
-            message: err.message,
-          });
-        }
-        this.setState({[`${type}File`]: response});
-      });
+      if (car[`${type}FileId`]) {
+        api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: err.message,
+            });
+          }
+          this.setState({[`${type}File`]: response});
+        });
+      }
     }
   }
 
@@ -101,7 +103,10 @@ class Documentation extends Component {
           style={{display: 'flex', justifyContent: 'center'}}>
           <div style={{width: '80%'}}>
             {fileTypes.map((type, i) => (
-              <div key={i} className="row" style={{marginTop: '2em', maxHeight: '400px'}}>
+              <div
+                key={i}
+                className="row"
+                style={{marginTop: '2em', maxHeight: '400px'}}>
                 <h4>Upload {type}</h4>
                 <div className="row">
                   <input
