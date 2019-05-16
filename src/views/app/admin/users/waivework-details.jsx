@@ -377,8 +377,8 @@ class WaiveWorkDetails extends Component {
                     )}
                     {' - '}
                     Day{' '}
-                    {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
-                      moment.utc(),
+                    {moment().diff(
+                      moment(currentWaiveworkBooking.createdAt),
                       'days',
                     ) + 1}{' '}
                     of Booking
