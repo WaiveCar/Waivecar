@@ -614,6 +614,7 @@ class WaiveWorkDetails extends Component {
                     width: '100%',
                     height: '100%',
                     marginBottom: 0,
+                    cursor: 'pointer',
                   }}>
                   Upload
                 </label>
