@@ -43,6 +43,7 @@ class Documentation extends Component {
     let expireDate = this.state[`${type}ExpireDate`];
     let fileRef = this[`${type}FileUpload`];
     if (!expireDate || !fileRef.files.length) {
+      fileRef.value = '';
       return snackbar.notify({
         type: 'danger',
         message:
