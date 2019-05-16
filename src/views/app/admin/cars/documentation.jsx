@@ -108,45 +108,47 @@ class Documentation extends Component {
                 key={i}
                 className="row"
                 style={{marginTop: '2em', maxHeight: '400px'}}>
-                <h4>Upload {type}</h4>
-                <div className="row">
-                  <input
-                    type="date"
-                    className="col-xs-6"
-                    style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                    placeholder="Expiration Date"
-                    onChange={e =>
-                      this.setState({[`${type}ExpireDate`]: e.target.value})
-                    }
-                  />
-                  <button
-                    className="btn btn-primary btn-sm col-xs-6"
-                    disabled={uploading}>
-                    <label
-                      htmlFor={`new${type}File`}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        marginBottom: 0,
-                      }}>
-                      Upload
-                    </label>
+                <h4>{type[0].toUpperCase() + type.slice(1)}</h4>
+                <div style={{display: 'flex', justifyContent: 'center', margin: '1rem 0'}}>
+                  <div className="row" style={{width: '80%'}}>
                     <input
-                      style={{
-                        opacity: 0,
-                        overflow: 'hidden',
-                        position: 'absolute',
-                        top: '50%',
-                        right: '50%',
-                        zIndex: -1,
-                      }}
-                      type="file"
-                      id={`new${type}File`}
-                      accept="application/pdf, image/jpeg, video/*"
-                      ref={ref => (this[`${type}FileUpload`] = ref)}
-                      onInput={() => this.upload(type)}
+                      type="date"
+                      className="col-xs-6"
+                      style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                      placeholder="Expiration Date"
+                      onChange={e =>
+                        this.setState({[`${type}ExpireDate`]: e.target.value})
+                      }
                     />
-                  </button>
+                    <button
+                      className="btn btn-primary btn-sm col-xs-6"
+                      disabled={uploading}>
+                      <label
+                        htmlFor={`new${type}File`}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          marginBottom: 0,
+                        }}>
+                        Upload
+                      </label>
+                      <input
+                        style={{
+                          opacity: 0,
+                          overflow: 'hidden',
+                          position: 'absolute',
+                          top: '50%',
+                          right: '50%',
+                          zIndex: -1,
+                        }}
+                        type="file"
+                        id={`new${type}File`}
+                        accept="application/pdf, image/jpeg, video/*"
+                        ref={ref => (this[`${type}FileUpload`] = ref)}
+                        onInput={() => this.upload(type)}
+                      />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   {this.state[`${type}File`] ? (
