@@ -67,7 +67,7 @@ module.exports = class OrderService extends Service {
     if (!_user.hasAccess('admin') && user.isWaivework && data.amount === 0) {
       throw error.parse({
         code    : `FORBIDDEN`,
-        message : `WaiveWork users are not able to clear their balance for late fees this way. Please contact us to clear your balance and any pay late fees.`
+        message : `WaiveWork users are not able to clear their own balance. Please contact us to clear your balance and any pay late fees.`
       }, 400);
     }
 
