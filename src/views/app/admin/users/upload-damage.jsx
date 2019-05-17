@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {api} from 'bento';
+import {snackbar} from 'bento-web';
 
 let types = ['left', 'right', 'front', 'rear', 'other'];
 
@@ -7,6 +9,7 @@ class UploadDamage extends Component {
     super(props);
     this.state = {
       choosingDamage: false,
+      uploading: false,
     };
     types.forEach(type => {
       this[type] = null;
@@ -15,7 +18,31 @@ class UploadDamage extends Component {
   }
 
   upload(type) {
-    console.log('uploading', type);
+    let fileRef = this[type];
+    this.setState(
+      state => ({uploading: true}),
+      () => {
+        let files = Array.from(fileRef.files);
+        let formData = new FormData();
+        files.forEach((file, i) => {
+          formData.append(i, file);
+        });
+        api.post('/files', formData, (err, response) => {
+          if (err) {
+            this.setState({uploading: false});
+            return snackbar.notify({
+              type: 'danger',
+              message: `Uploading file: ${err.message}`,
+            });
+          }
+          fileRef.value = '';
+          this.setState({
+            uploading: false,
+            [`${type}File`]: response[0],
+          });
+        });
+      },
+    );
   }
 
   render() {
@@ -67,6 +94,11 @@ class UploadDamage extends Component {
                         onInput={() => this.upload(type)}
                       />
                     </button>
+                    {this.state[`${type}File`] ? (
+                      <div>has file</div>
+                    ) : (
+                      <div>no file selected</div>
+                    )}
                   </div>
                 ))}
               </div>
