@@ -154,8 +154,6 @@ module.exports = {
         // marked la by removing la cars from their
         // matchlist.
         //
-        matchSet = matchSet.filter(row => row != 6);
-
         // Here we try to inform the user of the unfortunate
         // state of affairs.
         if(matchSet.length === 1 && matchSet[0] === 6) {
@@ -167,6 +165,9 @@ module.exports = {
             yield notify.sendTextMessage(user, `We've put WaiveCar on hold for now. For more information go to https://waive.car/future`);
           }
         }
+
+        // Now we filter them out of the results, thus hiding the LA cars.
+        matchSet = matchSet.filter(row => row != 6);
 
         //console.log(util.inspect(matchSet, false, null));
 
