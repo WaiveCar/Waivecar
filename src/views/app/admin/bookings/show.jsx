@@ -497,6 +497,7 @@ module.exports = class BookingsView extends React.Component {
                 A ride must be ended before details are shown.
               </div>
         }
+        { this.renderBookingDamage(booking) }
         {
           payments.length
             ? this.renderPayments(payments)
@@ -511,7 +512,6 @@ module.exports = class BookingsView extends React.Component {
           <BookingFlags booking={ booking } userId={ user.id }/>
         }
         { this.renderNotes(booking) }
-        { this.renderBookingDamage(booking) }
       </div>
     );
   }
