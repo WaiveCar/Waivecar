@@ -178,7 +178,7 @@ class Documentation extends Component {
                                 />
                               ) : (
                                 <video
-                                  style={{maxWidth: '100%', maxHeight: '300px'}}
+                                  style={{maxWidth: '100%', maxHeight: '250px'}}
                                   controls="controls">
                                   <source
                                     src={`http://waivecar-prod.s3.amazonaws.com/${
