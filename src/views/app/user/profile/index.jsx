@@ -280,7 +280,7 @@ module.exports = class ProfileView extends React.Component {
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }
-        <UserParking admin={false} userId={ user.id }/>
+        {/*<UserParking admin={false} userId={ user.id }/>*/}
         { this.renderRides() }
         { this.renderCharges() }
         { this.renderAccountStatus() }

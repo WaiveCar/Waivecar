@@ -44,7 +44,7 @@ class RideList extends Component {
       if (err) {
         return console.log(err);
       }
-      if(['started','reserved'].indexOf(bookings[0].status) !== -1) {
+      if(bookings[0] && ['started','reserved'].indexOf(bookings[0].status) !== -1) {
         this.setState({ currentBooking: bookings[0] });
       }
       this.setState({

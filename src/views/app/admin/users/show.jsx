@@ -12,7 +12,7 @@ module.exports = class AdminUsersView extends React.Component {
     return (
       <div id="users">
         <UserDetails id={ this.props.params.id } />
-        <UserParking admin={true} userId={ this.props.params.id }/>
+        {/*<UserParking admin={true} userId={ this.props.params.id }/>*/}
         <UserLicense id={ this.props.params.id } />
         <UsersEvents id={ this.props.params.id } />
         <Stats id={ this.props.params.id }/>
