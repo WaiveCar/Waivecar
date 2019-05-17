@@ -158,7 +158,7 @@ module.exports = {
         // state of affairs.
         if(matchSet.length === 1 && matchSet[0] === 6) {
           let check = yield _user.incrFlag('wc-nomore');
-          if(check < 2 || Math.random() < 0.1) {
+          if(check < 3 || Math.random() < 0.4) {
             // Note: The link below is being redirected on static-real.waivecar.com in the
             // machine's /etc/nginx/sites-enabled/default file. It sits outside any git
             // repository.
