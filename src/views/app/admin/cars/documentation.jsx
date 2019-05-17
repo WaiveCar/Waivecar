@@ -109,7 +109,12 @@ class Documentation extends Component {
                 className="row"
                 style={{marginTop: '2em', maxHeight: '400px'}}>
                 <h4>{type[0].toUpperCase() + type.slice(1)}</h4>
-                <div style={{display: 'flex', justifyContent: 'center', margin: '1rem 0'}}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '1rem 0',
+                  }}>
                   <div className="row" style={{width: '80%'}}>
                     <input
                       type="date"

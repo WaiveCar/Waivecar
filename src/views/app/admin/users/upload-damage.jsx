@@ -32,17 +32,44 @@ class UploadDamage extends Component {
             this.setState({uploading: false});
             return snackbar.notify({
               type: 'danger',
-              message: `Uploading file: ${err.message}`,
+              message: `Error uploading file: ${err.message}`,
             });
           }
           fileRef.value = '';
-          this.setState({
-            uploading: false,
-            [`${type}File`]: response[0],
-          });
+          this.setState(
+            {
+              uploading: false,
+              [`${type}File`]: response[0],
+            },
+            () => {
+              let temp = this.state[`${type}File`];
+              temp.type = type;
+              this.setState({
+                [`${type}File`]: temp,
+              });
+            },
+          );
         });
       },
     );
+  }
+
+  submitReport() {
+    let {booking} = this.props;
+    let files = [];
+    types.forEach(type => {
+      if (this.state[`${type}File`]) {
+        files.push(this.state[`${type}File`]);
+      }
+    });
+    api.post('/reports', {bookingId: booking.id, files}, (err, result) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error creating report: ${err.message}`,
+        });
+      }
+    });
   }
 
   render() {
@@ -67,7 +94,7 @@ class UploadDamage extends Component {
                 style={{display: 'flex', justifyContent: 'space-between'}}>
                 {types.map((type, i) => (
                   <div key={i}>
-                    <button className="btn btn-primary btn-sm col-xs-12">
+                    <button className="btn btn-sm col-xs-12">
                       <label
                         htmlFor={`${type}File`}
                         style={{
@@ -103,6 +130,11 @@ class UploadDamage extends Component {
                 ))}
               </div>
             </div>
+            <button
+              className="btn btn-primary btn-sm col-xs-12"
+              onClick={() => this.submitReport()}>
+              Submit Report
+            </button>
           </div>
         )}
       </div>

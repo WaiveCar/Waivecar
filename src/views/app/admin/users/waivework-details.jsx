@@ -304,7 +304,7 @@ class WaiveWorkDetails extends Component {
               this.setState({uploading: false});
               return snackbar.notify({
                 type: 'danger',
-                message: `Uploading file: ${err.message}`,
+                message: `Error uploading file: ${err.message}`,
               });
             }
             this.fileUpload.value = '';
@@ -527,7 +527,7 @@ class WaiveWorkDetails extends Component {
                   </button>
                 </div>
               )}
-              <UploadDamage bookingId={currentWaiveworkBooking.id} />
+              <UploadDamage booking={currentWaiveworkBooking} />
             </div>
           ) : (
             <div>
