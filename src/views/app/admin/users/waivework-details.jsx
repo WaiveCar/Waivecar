@@ -21,7 +21,6 @@ class WaiveWorkDetails extends Component {
       expireDate: null,
       uploading: false,
       payingEarly: false,
-      choosingDamage: false,
     };
     this.fileUpload = null;
   }
@@ -348,6 +347,7 @@ class WaiveWorkDetails extends Component {
       insurance,
       uploading,
       payingEarly,
+      choosingDamage,
     } = this.state;
     return (
       <div className="box">
