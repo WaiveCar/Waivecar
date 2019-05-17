@@ -8,7 +8,14 @@ class UploadDamage extends Component {
     this.state = {
       choosingDamage: false,
     };
-    types.forEach(type => (this[type] = null));
+    types.forEach(type => {
+      this[type] = null;
+      this.state[`${type}File`] = null;
+    });
+  }
+
+  upload(type) {
+    console.log('uploading', type);
   }
 
   render() {
@@ -33,13 +40,33 @@ class UploadDamage extends Component {
                 style={{display: 'flex', justifyContent: 'space-between'}}>
                 {types.map((type, i) => (
                   <div key={i}>
-                    <input
-                      type="file"
-                      id={`new${type}File`}
-                      accept="image/jpeg"
-                      ref={ref => (this[type] = ref)}
-                      onInput={() => this.upload(type)}
-                    />
+                    <button className="btn btn-primary btn-sm col-xs-12">
+                      <label
+                        htmlFor={`${type}File`}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          marginBottom: 0,
+                          cursor: 'pointer',
+                        }}>
+                        {type}
+                      </label>
+                      <input
+                        style={{
+                          opacity: 0,
+                          overflow: 'hidden',
+                          position: 'absolute',
+                          top: '50%',
+                          right: '50%',
+                          zIndex: -1,
+                        }}
+                        type="file"
+                        id={`${type}File`}
+                        accept="image/jpeg"
+                        ref={ref => (this[type] = ref)}
+                        onInput={() => this.upload(type)}
+                      />
+                    </button>
                   </div>
                 ))}
               </div>
