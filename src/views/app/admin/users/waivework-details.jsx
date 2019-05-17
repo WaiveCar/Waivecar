@@ -3,8 +3,7 @@ import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import moment from 'moment';
-import Service from '../../lib/car-service';
-
+import UploadDamage from './upload-damage';
 
 class WaiveWorkDetails extends Component {
   constructor(props) {
@@ -22,6 +21,7 @@ class WaiveWorkDetails extends Component {
       expireDate: null,
       uploading: false,
       payingEarly: false,
+      choosingDamage: false,
     };
     this.fileUpload = null;
   }
@@ -527,6 +527,7 @@ class WaiveWorkDetails extends Component {
                   </button>
                 </div>
               )}
+              <UploadDamage bookingId={currentWaiveworkBooking.id} />
             </div>
           ) : (
             <div>
