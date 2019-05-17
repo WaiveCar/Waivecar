@@ -155,6 +155,19 @@ module.exports = {
         // matchlist.
         //
         matchSet = matchSet.filter(row => row != 6);
+
+        // Here we try to inform the user of the unfortunate
+        // state of affairs.
+        if(matchSet.length === 1 && matchSet[0] === 6) {
+          let check = yield user.incrFlag('wc-nomore');
+          if(check < 2 || Math.random() < 0.1) {
+            // Note: The link below is being redirected on static-real.waivecar.com in the
+            // machine's /etc/nginx/sites-enabled/default file. It sits outside any git
+            // repository.
+            yield notify.sendTextMessage(user, `We've put WaiveCar on hold for now. For more information go to https://waive.car/future`);
+          }
+        }
+
         //console.log(util.inspect(matchSet, false, null));
 
         opts.include[0].where = {
