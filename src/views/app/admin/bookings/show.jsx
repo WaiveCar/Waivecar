@@ -9,6 +9,9 @@ import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
 import UserLicense from '../users/user-license';
 import moment from 'moment';
+import config from 'config';
+
+const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 module.exports = class BookingsView extends React.Component {
 
@@ -50,7 +53,7 @@ module.exports = class BookingsView extends React.Component {
   }
 
   loadBooking(id) {
-    api.get(`/bookings/${ id }`, (err, booking) => {
+    api.get(`/bookings/${ id }?reports=true`, (err, booking) => {
       if (err) {
         this.setState({
           error : err
@@ -503,6 +506,7 @@ module.exports = class BookingsView extends React.Component {
           <BookingFlags booking={ booking } userId={ user.id }/>
         }
         { this.renderNotes(booking) }
+        { this.renderBookingDamage(booking) }
       </div>
     );
   }
