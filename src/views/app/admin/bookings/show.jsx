@@ -333,46 +333,51 @@ module.exports = class BookingsView extends React.Component {
     let link = <a className='booking-link' href={ '/bookings/' + booking.id } target="_blank"> #{ booking.id } </a>   
     let rowList = rowsToRender.reverse();
     return (
-      <div className="dmg-group">
-        {
-          details[1] ?
-            <div className="after-middle">
-              <span className='offset'>{moment.utc(moment(details[1].createdAt).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].createdAt).format('HH:mm YYYY/MM/DD')}  { link }
-            </div>
-          : <div> { link } </div>
-
-        }
-        {(rowsToRender[0] && rowsToRender[0].length) &&
-          <div>
-            {rowList.map((row, i) => {
-              return (
-                <div key={i}>
-                  {row.length && 
-                      <div className={bookingMiddle && (moment(row[0].createdAt).diff(bookingStart) < bookingMiddle ? 'ts before-middle' : 'ts after-middle')}>
-                      <span className='offset'>{`${moment.utc(moment(row[0].createdAt).diff(bookingStart)).format('H:mm')}`}</span>
-                    </div>
-                  }
-                  <div className="dmg-row">
-                    {row.map((image, j) =>  { 
-                      return image && image.file && ( 
-                        <div key={j} className="damage-image-holder">
-                          <a href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                            <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
-                          </a>
-                        </div>);
-                      }
-                    )}
-                  </div>
+        <div className="box">
+          <h3>Damage</h3>
+          <div className="box-content">
+          <div className="dmg-group">
+            {
+              details[1] ?
+                <div className="after-middle">
+                  <span className='offset'>{moment.utc(moment(details[1].createdAt).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].createdAt).format('HH:mm YYYY/MM/DD')}  { link }
                 </div>
-              )
-            })}
+              : <div> { link } </div>
+
+            }
+            {(rowsToRender[0] && rowsToRender[0].length) &&
+              <div>
+                {rowList.map((row, i) => {
+                  return (
+                    <div key={i}>
+                      {row.length && 
+                          <div className={bookingMiddle && (moment(row[0].createdAt).diff(bookingStart) < bookingMiddle ? 'ts before-middle' : 'ts after-middle')}>
+                          <span className='offset'>{`${moment.utc(moment(row[0].createdAt).diff(bookingStart)).format('H:mm')}`}</span>
+                        </div>
+                      }
+                      <div className="dmg-row">
+                        {row.map((image, j) =>  { 
+                          return image && image.file && ( 
+                            <div key={j} className="damage-image-holder">
+                              <a href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
+                                <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                              </a>
+                            </div>);
+                          }
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            }
+            {bookingStart &&
+              <div className='damage-booking-link before-middle'>
+                <span className='offset'>0:00</span> {bookingStart.format('HH:mm YYYY/MM/DD')}
+              </div>
+            }
           </div>
-        }
-        {bookingStart &&
-          <div className='damage-booking-link before-middle'>
-            <span className='offset'>0:00</span> {bookingStart.format('HH:mm YYYY/MM/DD')}
-          </div>
-        }
+        </div>
       </div>
     );
   }
