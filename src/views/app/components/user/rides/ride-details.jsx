@@ -12,7 +12,6 @@ class RideDetails extends Component {
 
   render() {
     let { start, end, fee, id, data } = this.props;
-    console.log('props', this.props);
     let noFeeText = 'Free Ride';
     let extraText = false;
     let isExtended = data.flags && data.flags.search(/extended/) !== -1;

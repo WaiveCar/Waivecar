@@ -71,7 +71,6 @@ class RideList extends Component {
       if (err) {
         return console.log(err);
       }
-      console.log('bookings: ', bookings);
       cb(bookings);
     });
   }
