@@ -278,7 +278,7 @@ let order = 2;
     title     : 'WaivePark',
     icon      : 'location_on',
     path      : '/waivepark',
-    locations : ['sidebar'],
+    locations : [/*'sidebar'*/],
     order     : order++
   }
 ].forEach(val => menu.add(val));
