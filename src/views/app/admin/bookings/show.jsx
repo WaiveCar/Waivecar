@@ -47,7 +47,7 @@ module.exports = class BookingsView extends React.Component {
   componentDidMount() {
     this.loadBooking(this.props.params.id);
     api.get(`/bookings/${ this.props.params.id }/parkingDetails`, (err, response) => {
-      this.setState({ parkingDetails: response.details });
+      this.setState({ parkingDetails: response && response.details });
     });
     //this.loadCarPath(this.props.params.id)
   }
