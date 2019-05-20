@@ -399,8 +399,8 @@ module.exports = class CarsIndex extends React.Component {
   renderShownFilters(count) {
     return (
       <div className="form-group row butnotfuckedup">
-        { shownList.map((what) =>
-           <div className="radio-inline"> 
+        { shownList.map((what, i) =>
+           <div className="radio-inline" key={i}> 
              <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
            </div>
           )
