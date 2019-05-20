@@ -40,8 +40,9 @@ class Stats extends Component {
                   ['day', '24 hours'],
                   ['week', '7 days'],
                   ['month', '30 days']
-                ].map((row) => {
+                ].map((row, i) => {
                   return <button
+                    key={i}
                     style={{marginRight: "0.5rem"}}
                     className={ "btn btn-sm " + (mthis.state.timeFrameSelected === row[0] ? 'btn-primary' : '') }
                     onClick={() =>
