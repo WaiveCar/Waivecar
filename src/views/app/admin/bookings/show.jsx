@@ -330,7 +330,6 @@ module.exports = class BookingsView extends React.Component {
     rowsToRender = rowsToRender.filter(row => row.length);
     let bookingStart = details[0] && moment(details[0].createdAt);
     let bookingMiddle = details[0] && details[1] && moment(details[1].createdAt).diff(moment(details[0].createdAt)) / 2;
-    let link = <a className='booking-link' href={ '/bookings/' + booking.id } target="_blank"> #{ booking.id } </a>   
     let rowList = rowsToRender.reverse();
     return (
         <div className="box">
@@ -340,9 +339,9 @@ module.exports = class BookingsView extends React.Component {
             {
               details[1] ?
                 <div className="after-middle">
-                  <span className='offset'>{moment.utc(moment(details[1].createdAt).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].createdAt).format('HH:mm YYYY/MM/DD')}  { link }
+                  <span className='offset'>{moment.utc(moment(details[1].createdAt).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].createdAt).format('HH:mm YYYY/MM/DD')}
                 </div>
-              : <div> { link } </div>
+              : <div></div>
 
             }
             {(rowsToRender[0] && rowsToRender[0].length) &&
