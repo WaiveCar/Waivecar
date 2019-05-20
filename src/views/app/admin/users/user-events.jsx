@@ -18,7 +18,7 @@ module.exports = class UsersEvents extends React.Component {
 
   }
 
-  renderEvent(event) {
+  renderEvent(event, i) {
     comment = event.comment;
     if (event.type === 'SIT') {
       comment = <span>{ event.comment } minutes for booking <a href={ '/bookings/' + event.referenceId }>#{ event.referenceId }</a></span>
@@ -33,7 +33,7 @@ module.exports = class UsersEvents extends React.Component {
       comment = <span dangerouslySetInnerHTML={{ __html: event.comment }} />
     }
     return (
-      <tr>
+      <tr key={i}>
         <td title={ moment(event.createdAt).format('YYYY-MM-DD HH:mm:ss') }>{ moment(event.createdAt).format('MMM D YYYY') }</td>
         <td>{ event.type }</td>
         <td>{ comment }</td>
@@ -60,7 +60,7 @@ module.exports = class UsersEvents extends React.Component {
               </tr>
               </thead>
               <tbody>
-                {this.state.events.map(this.renderEvent)}
+                {this.state.events.map((event, i) => this.renderEvent(event, i))}
               </tbody>
             </table>
           </div>
