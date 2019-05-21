@@ -44,6 +44,8 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   update() {
+    let moment = require('moment');
+    let start = moment();
     api.get(`/carsWithBookings`, (err, cars) => {
       cars.forEach((row) => {
         row.licenseLower = row.license.toLowerCase();
@@ -58,7 +60,7 @@ module.exports = class CarsIndex extends React.Component {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
         shownCars: this.runShown({cars: cars})
-      } );
+      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
   }
 

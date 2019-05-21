@@ -69,6 +69,14 @@ class UploadDamage extends Component {
           message: `Error creating report: ${err.message}`,
         });
       }
+      let stateUpdate = {};
+      types.forEach(type => {
+        stateUpdate[`${type}File`] = null;
+      });
+      this.setState(stateUpdate, () => snackbar.notify({
+        type: 'success',
+        message: 'Report successfully submitted for this booking.'
+      }));
     });
   }
 
@@ -91,9 +99,19 @@ class UploadDamage extends Component {
             <div className="row" style={{marginTop: '0.5rem'}}>
               <div
                 className="row"
-                style={{display: 'flex', justifyContent: 'space-between'}}>
+                style={
+                  window.outerWidth > 800
+                    ? {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                      }
+                    : {}
+                }>
                 {types.map((type, i) => (
-                  <div key={i}>
+                  <div
+                    key={i}
+                    style={window.outerWidth > 800 ? {maxWidth: '20%'} : {}}>
                     <button className="btn btn-sm col-xs-12">
                       <label
                         htmlFor={`${type}File`}
@@ -122,7 +140,14 @@ class UploadDamage extends Component {
                       />
                     </button>
                     {this.state[`${type}File`] ? (
-                      <div>has file</div>
+                      <div>
+                        <img
+                          style={{width: '100%'}}
+                          src={`http://waivecar-prod.s3.amazonaws.com/${
+                            this.state[`${type}File`].path
+                          }`}
+                        />
+                      </div>
                     ) : (
                       <div>no file selected</div>
                     )}
