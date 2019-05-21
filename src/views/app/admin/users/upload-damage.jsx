@@ -73,10 +73,12 @@ class UploadDamage extends Component {
       types.forEach(type => {
         stateUpdate[`${type}File`] = null;
       });
-      this.setState(stateUpdate, () => snackbar.notify({
-        type: 'success',
-        message: 'Report successfully submitted for this booking.'
-      }));
+      this.setState(stateUpdate, () =>
+        snackbar.notify({
+          type: 'success',
+          message: 'Report successfully submitted for this booking.',
+        }),
+      );
     });
   }
 
@@ -84,7 +86,9 @@ class UploadDamage extends Component {
     let {choosingDamage} = this.state;
     return (
       <div style={{marginTop: '1rem'}}>
-        <div className="row">
+        <div
+          className="row"
+          style={{display: 'flex', justifyContent: 'center'}}>
           <button
             className="btn btn-primary btn-sm col-xs-6"
             onClick={() =>
@@ -94,13 +98,13 @@ class UploadDamage extends Component {
           </button>
         </div>
         {choosingDamage && (
-          <div className="row" style={{marginTop: '0.5rem'}}>
+          <div className="row" style={{marginTop: '1rem'}}>
             <h4>Damage Image Uploads</h4>
-            <div className="row" style={{marginTop: '0.5rem'}}>
+            <div className="row" style={{margin: '0.5rem 0'}}>
               <div
                 className="row"
                 style={
-                  window.outerWidth > 800
+                  window.outerWidth > 720
                     ? {
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -111,7 +115,7 @@ class UploadDamage extends Component {
                 {types.map((type, i) => (
                   <div
                     key={i}
-                    style={window.outerWidth > 800 ? {maxWidth: '20%'} : {}}>
+                    style={window.outerWidth > 720 ? {maxWidth: '20%'} : {}}>
                     <button className="btn btn-sm col-xs-12">
                       <label
                         htmlFor={`${type}File`}
@@ -141,12 +145,19 @@ class UploadDamage extends Component {
                     </button>
                     {this.state[`${type}File`] ? (
                       <div>
-                        <img
-                          style={{width: '100%'}}
-                          src={`http://waivecar-prod.s3.amazonaws.com/${
+                        <a
+                          href={`http://waivecar-prod.s3.amazonaws.com/${
                             this.state[`${type}File`].path
                           }`}
-                        />
+                          target="_blank"
+                        >
+                          <img
+                            style={{width: '100%'}}
+                            src={`http://waivecar-prod.s3.amazonaws.com/${
+                              this.state[`${type}File`].path
+                            }`}
+                          />
+                        </a>
                       </div>
                     ) : (
                       <div>no file selected</div>
