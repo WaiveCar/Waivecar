@@ -147,7 +147,7 @@ module.exports = class ProfileLicenseView extends React.Component {
           { !outcome && !auth.user().isWaivework && <p className="bg-info p-a">Pending Verification</p> }
           { outcome === 'consider' && <p className="bg-danger p-a">At this time your license has failed verification and you are unable to book a car. <br />If you would like a copy of your report or further explanation, please contact us.</p> }
           { outcome === 'clear'    && <p className="bg-success p-a">Your License has been cleared.</p> }
-          { auth.user().isWaivework && <p className="bg-success p-a">Thanks for signing up for Waivework</p>}
+          { auth.user().isWaivework && <p className="bg-success p-a">Thanks for signing up for WaiveWork</p>}
         </div>
       );
     }

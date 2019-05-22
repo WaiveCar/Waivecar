@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import moment from 'moment';
-import Service from '../../lib/car-service';
+import UploadDamage from './upload-damage';
 
 class WaiveWorkDetails extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class WaiveWorkDetails extends Component {
       proratedChargeAmount: null,
       ended: false,
       insurance: [],
-      policyNumber: null,
+      expireDate: null,
       uploading: false,
       payingEarly: false,
     };
@@ -265,16 +265,13 @@ class WaiveWorkDetails extends Component {
                 message: `Error paying early: ${err.message}`,
               });
             }
-            this.setState(
-              {
-                currentWaiveworkBooking: {
-                  ...currentWaiveworkBooking,
-                  waiveworkPayment: response,
-                },
-                payingEarly: false,
+            this.setState({
+              currentWaiveworkBooking: {
+                ...currentWaiveworkBooking,
+                waiveworkPayment: response,
               },
-              () => console.log('state', this.state),
-            );
+              payingEarly: false,
+            });
           },
         );
       });
@@ -282,15 +279,14 @@ class WaiveWorkDetails extends Component {
   }
 
   upload() {
-    let {policyNumber} = this.state;
-    if (!policyNumber || !this.fileUpload.files.length) {
+    let {expireDate} = this.state;
+    if (!expireDate || !this.fileUpload.files.length) {
       return snackbar.notify({
         type: 'danger',
         message:
-          'Please add a policy number and choose a file before uploading a photo.',
+          'Please add a expiration date and choose a file before uploading a file.',
       });
     }
-    console.log('uploading...');
     this.setState(
       state => ({uploading: true}),
       () => {
@@ -299,7 +295,7 @@ class WaiveWorkDetails extends Component {
         files.forEach((file, i) => {
           formData.append(i, file);
         });
-        formData.append('comment', policyNumber);
+        formData.append('comment', expireDate);
         api.post(
           `/files?userId=${this.props.user.id}&collectionId=insurance`,
           formData,
@@ -308,7 +304,7 @@ class WaiveWorkDetails extends Component {
               this.setState({uploading: false});
               return snackbar.notify({
                 type: 'danger',
-                message: `Uploading file: ${err.message}`,
+                message: `Error uploading file: ${err.message}`,
               });
             }
             this.fileUpload.value = '';
@@ -351,6 +347,7 @@ class WaiveWorkDetails extends Component {
       insurance,
       uploading,
       payingEarly,
+      choosingDamage,
     } = this.state;
     return (
       <div className="box">
@@ -378,17 +375,25 @@ class WaiveWorkDetails extends Component {
                     {moment(currentWaiveworkBooking.createdAt).format(
                       'MM/DD/YYYY',
                     )}
+                    {' - '}
+                    Day{' '}
+                    {moment().diff(
+                      moment(currentWaiveworkBooking.createdAt),
+                      'days',
+                    ) + 1}{' '}
+                    of Booking
                   </div>
                   <div>
                     Next Payment Date:{' '}
                     {moment
                       .utc(currentWaiveworkBooking.waiveworkPayment.date)
-                      .format('MM/DD/YYYY')}{' '}
+                      .format('MM/DD/YYYY')}
+                    {' - '}
                     {moment(currentWaiveworkBooking.waiveworkPayment.date).diff(
-                      moment(),
+                      moment(moment().format('YYYY-MM-DD')),
                       'days',
                     ) + 1}{' '}
-                    Days
+                    Days From Now
                   </div>
                 </div>
               )}
@@ -522,6 +527,7 @@ class WaiveWorkDetails extends Component {
                   </button>
                 </div>
               )}
+              <UploadDamage booking={currentWaiveworkBooking} />
             </div>
           ) : (
             <div>
@@ -594,11 +600,11 @@ class WaiveWorkDetails extends Component {
             <h4>Upload Proof of Insurance</h4>
             <div className="row">
               <input
-                type="text"
+                type="date"
                 className="col-xs-6"
                 style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                placeholder="Policy Number"
-                onChange={e => this.setState({policyNumber: e.target.value})}
+                placeholder="Expiration Date"
+                onChange={e => this.setState({expireDate: e.target.value})}
               />
               <button
                 className="btn btn-primary btn-sm col-xs-6"
@@ -609,6 +615,7 @@ class WaiveWorkDetails extends Component {
                     width: '100%',
                     height: '100%',
                     marginBottom: 0,
+                    cursor: 'pointer',
                   }}>
                   Upload
                 </label>
@@ -617,6 +624,8 @@ class WaiveWorkDetails extends Component {
                     opacity: 0,
                     overflow: 'hidden',
                     position: 'absolute',
+                    top: '50%',
+                    right: '50%',
                     zIndex: -1,
                   }}
                   type="file"
@@ -632,7 +641,7 @@ class WaiveWorkDetails extends Component {
             <table className="table-striped profile-table">
               <thead>
                 <tr>
-                  <th>Policy Number</th>
+                  <th>Expiration Date</th>
                   <th>Added On:</th>
                   <th className="text-center">Delete</th>
                 </tr>
@@ -646,7 +655,7 @@ class WaiveWorkDetails extends Component {
                           each.path
                         }`}
                         target="_blank">
-                        {each.comment}
+                        {moment(each.comment).format('MM/DD/YYYY')}
                       </a>{' '}
                     </td>
                     <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>

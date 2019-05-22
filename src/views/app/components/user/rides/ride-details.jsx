@@ -31,58 +31,61 @@ class RideDetails extends Component {
       <tr className="ride-details">
         <td colSpan="6">
           <div className="row">
-            <div className="col-md-4">
-              <div className="ride-map">
-                <GMap
-                  markerIcon = { '/images/map/active-waivecar.svg' }
-                  markers    = {[
-                    {
-                      longitude : start.longitude,
-                      latitude  : start.latitude,
-                      type      : 'start'
-                    },
-                    {
-                      longitude : end.longitude,
-                      latitude  : end.latitude,
-                      type      : 'end'
-                    }
-                  ]}
-                />
-              </div>
-            </div>
-            <div className="col-md-4 ride-meta">
-              <div className="ride-fee">
-                { fee ? `$${fee.toFixed(2)}` : noFeeText }
-                { extraText ? extraText : '' }
-              </div>
-              <div className="ride-date">
-                { moment(start.createdAt).format('dddd, MMMM Do YYYY h:mm a') }
-              </div>
-              <div className="ride-from">
-                <img src="/images/map/icon-start.svg" className="ride-icon" />
-                <div className="ride-time">{ moment(start.createdAt).format('h:mm A') }</div>
-                { start.address }
-              </div>
-              <div className="ride-to">
-                <img src="/images/map/icon-end.svg" className="ride-icon" />
-                <div className="ride-time">{ moment(end.createdAt).format('h:mm A') }</div>
-                { end.address }
-              </div>
-            </div>
-            <div className="col-md-4 ride-car">
-              <div className="ride-car-meta">
-                <img src={carImage} />
-                <h3>{ carName }</h3>
-                <div>
-                  <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
-                  Distance Traveled<br/>
-                  <strong>{ parseFloat(Math.round(((end.mileage - start.mileage) * 0.621371192) * 100) / 100).toFixed(2) } miles</strong>
-                  <div>
-                  { isExtended ? "Reservation Extended" : "" }
+            {!['reserved', 'started'].includes(this.props.data.status) ?
+              <div>
+                <div className="col-md-4">
+                  <div className="ride-map">
+                    <GMap
+                      markerIcon = { '/images/map/active-waivecar.svg' }
+                      markers    = {[
+                        {
+                          longitude : start.longitude,
+                          latitude  : start.latitude,
+                          type      : 'start'
+                        },
+                        {
+                          longitude : end.longitude,
+                          latitude  : end.latitude,
+                          type      : 'end'
+                        }
+                      ]}
+                    />
                   </div>
                 </div>
-              </div>
-            </div>
+                <div className="col-md-4 ride-meta">
+                  <div className="ride-fee">
+                    { fee ? `$${fee.toFixed(2)}` : noFeeText }
+                    { extraText ? extraText : '' }
+                  </div>
+                  <div className="ride-date">
+                    { moment(start.createdAt).format('dddd, MMMM Do YYYY h:mm a') }
+                  </div>
+                  <div className="ride-from">
+                    <img src="/images/map/icon-start.svg" className="ride-icon" />
+                    <div className="ride-time">{ moment(start.createdAt).format('h:mm A') }</div>
+                    { start.address }
+                  </div>
+                  <div className="ride-to">
+                    <img src="/images/map/icon-end.svg" className="ride-icon" />
+                    <div className="ride-time">{ moment(end.createdAt).format('h:mm A') }</div>
+                    { end.address }
+                  </div>
+                </div>
+                <div className="col-md-4 ride-car">
+                  <div className="ride-car-meta">
+                    <img src={carImage} />
+                    <h3>{ carName }</h3>
+                    <div>
+                      <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
+                      Distance Traveled<br/>
+                      <strong>{ parseFloat(Math.round(((end.mileage - start.mileage) * 0.621371192) * 100) / 100).toFixed(2) } miles</strong>
+                      <div>
+                      { isExtended ? "Reservation Extended" : "" }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div> : <div>Not Completed Yet</div>}
           </div>
         </td>
       </tr>

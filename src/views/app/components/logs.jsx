@@ -48,7 +48,7 @@ module.exports = class Logs extends React.Component {
   }
 
   renderAction(log) {
-    let actorLink =  <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
+    let actorLink = log.actor ? <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link> : 'The computer'
     let bookingLink = '';
     let carLink = '';
     if (log.booking) {

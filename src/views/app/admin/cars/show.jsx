@@ -10,6 +10,7 @@ import { fields }            from 'bento-ui';
 import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
+import Documentation from './documentation';
 import Logs from '../../components/logs';
 import config from 'config';
 import helpers from 'bento/lib/helpers';
@@ -746,14 +747,6 @@ class CarsShowView extends React.Component {
     let rowList = rowsToRender.reverse();
     return (
       <div className="dmg-group">
-        {
-          details[1] ?
-            <div className="after-middle">
-              <span className='offset'>{moment.utc(moment(details[1].created_at).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].created_at).format('HH:mm YYYY/MM/DD')}  { link }
-            </div>
-          : <div> { link } </div>
-
-        }
         {(rowsToRender[0] && rowsToRender[0].length) &&
           <div>
             {rowList.map((row, i) => {
@@ -761,7 +754,7 @@ class CarsShowView extends React.Component {
                 <div key={i}>
                   {row.length && 
                       <div className={bookingMiddle && (moment(row[0].created_at).diff(bookingStart) < bookingMiddle ? 'ts before-middle' : 'ts after-middle')}>
-                      <span className='offset'>{`${moment.utc(moment(row[0].created_at).diff(bookingStart)).format('H:mm')}`}</span>
+                      <span className='offset'>{`${moment.utc(moment(row[0].created_at).diff(bookingStart)).format('DD:HH:mm')}`}</span>
                     </div>
                   }
                   <div className="dmg-row">
@@ -832,6 +825,7 @@ class CarsShowView extends React.Component {
         { this.renderCarForm(car) }
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
+        <Documentation car={car} />
         { this.renderDamage(car) }
       </div>
     );

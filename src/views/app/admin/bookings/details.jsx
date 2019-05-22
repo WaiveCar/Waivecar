@@ -30,7 +30,7 @@ module.exports = class RideDetails extends React.Component {
 
     api.external(url,qs, (err,addressSite) => {
       data.address[i] = addressSite;
-      this.setState();
+      this.setState({});
     });
   }
 

@@ -12,7 +12,7 @@ class TableIndex extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'locations', ['address', 'type', 'name'], '/locations?details=true');
+    this.table = new Table(this, 'locations', ['address', 'type', 'name'], '/locations?details=true&nottype=user-parking');
 
     this.state = {
       search : null,
