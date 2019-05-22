@@ -206,7 +206,7 @@ class Documentation extends Component {
                       </a>
                     </div>
                   ) : (
-                    `${type} not yet uploaded`
+                    `${`${type[0].toUpperCase()}${type.slice(1)}`} not yet uploaded`
                   )}
                 </div>
               </div>
