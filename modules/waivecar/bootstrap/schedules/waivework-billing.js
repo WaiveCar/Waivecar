@@ -170,7 +170,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
           source: 'Waivework auto charge',
           description:
-            'Weekly charge for waivework - automatically on schduled day',
+            'Weekly charge for waivework - automatically on scheduled day',
         };
         // The line below should be removed later once we are done watching to see if the payment process
         // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
