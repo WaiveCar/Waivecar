@@ -293,6 +293,26 @@ class CarsShowView extends React.Component {
           </div>
           <form role="form" onSubmit={ this.submit }>
             <div className="form-group row">
+              <div className="row">
+                <div className="col-sm-3">
+                  <label>
+                    Body Grade (A - F):
+                    <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
+                  </label>
+                </div>
+                <div className="col-sm-3">
+                  <label>
+                    Front Tire Wear (A - F):
+                    <input type="text" name="frontTireWear" defaultValue={car.frontTireWear} />
+                  </label>
+                </div>
+                <div className="col-sm-3">
+                  <label>
+                    Rear Tire Wear (A - F):
+                    <input type="text" name="rearTireWear" defaultValue={car.rearTireWear} />
+                  </label>
+                </div>
+              </div>
               <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
               <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                 <div className="radio-inline">
@@ -327,7 +347,7 @@ class CarsShowView extends React.Component {
                 </div>
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
-                    <button type="submit" className="btn btn-sm">Update Tags</button>
+                    <button type="submit" className="btn btn-sm">Update Tags / Grade</button>
                   </div>
                 </div>
               </div>
