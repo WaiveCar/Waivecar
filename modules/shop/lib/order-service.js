@@ -64,7 +64,7 @@ module.exports = class OrderService extends Service {
     data.currency = 'usd';
     //data.currency || 'usd';
     //this.verifyCurrency(data.currency);
-    if (!_user.hasAccess('admin') && user.isWaivework && data.amount === 0) {
+    if (_user && !_user.hasAccess('admin') && user.isWaivework && data.amount === 0) {
       throw error.parse({
         code    : `FORBIDDEN`,
         message : `WaiveWork users are not able to clear their own balance. Please contact us to clear your balance and any pay late fees.`
