@@ -73,6 +73,9 @@ class UploadDamage extends Component {
       types.forEach(type => {
         stateUpdate[`${type}File`] = null;
       });
+      if (window.location.href.includes('bookings')) {
+        window.location.reload();
+      }
       this.setState(stateUpdate, () =>
         snackbar.notify({
           type: 'success',

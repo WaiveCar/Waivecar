@@ -8,6 +8,7 @@ import BookingFlags            from './flags';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
 import UserLicense from '../users/user-license';
+import UploadDamage from '../users/upload-damage';
 import moment from 'moment';
 import config from 'config';
 
@@ -376,6 +377,7 @@ module.exports = class BookingsView extends React.Component {
               </div>
             }
           </div>
+          <UploadDamage booking={booking}/>
         </div>
       </div>
     );
