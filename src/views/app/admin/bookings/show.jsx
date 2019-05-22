@@ -321,14 +321,14 @@ module.exports = class BookingsView extends React.Component {
     let bookingList = booking.reports;
     let { details } = booking;
     let rowsToRender = [];
-    if (bookingList.length >=8) {
+    if (bookingList && bookingList.length >=8) {
       let other = bookingList.filter(item => item.type === 'other');
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
     } else {
       rowsToRender = [bookingList];
     }
-    rowsToRender = rowsToRender.filter(row => row.length);
+    rowsToRender = rowsToRender.filter(row => row && row.length);
     let bookingStart = details[0] && moment(details[0].createdAt);
     let bookingMiddle = details[0] && details[1] && moment(details[1].createdAt).diff(moment(details[0].createdAt)) / 2;
     let rowList = rowsToRender.reverse();
@@ -337,14 +337,6 @@ module.exports = class BookingsView extends React.Component {
           <h3>Damage</h3>
           <div className="box-content">
           <div className="dmg-group">
-            {
-              details[1] ?
-                <div className="after-middle">
-                  <span className='offset'>{moment.utc(moment(details[1].createdAt).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].createdAt).format('HH:mm YYYY/MM/DD')}
-                </div>
-              : <div></div>
-
-            }
             {(rowsToRender[0] && rowsToRender[0].length) &&
               <div>
                 {rowList.map((row, i) => {
@@ -352,7 +344,7 @@ module.exports = class BookingsView extends React.Component {
                     <div key={i}>
                       {row.length && 
                           <div className={bookingMiddle && (moment(row[0].createdAt).diff(bookingStart) < bookingMiddle ? 'ts before-middle' : 'ts after-middle')}>
-                          <span className='offset'>{`${moment.utc(moment(row[0].createdAt).diff(bookingStart)).format('H:mm')}`}</span>
+                          <span className='offset'>{`${moment.utc(moment(row[0].createdAt).diff(bookingStart)).format('DD:HH:mm')}`}</span>
                         </div>
                       }
                       <div className="dmg-row">
@@ -466,6 +458,28 @@ module.exports = class BookingsView extends React.Component {
              <UserLicense id={ user.id } readOnly="1" />
           </div>
         </div>
+        {
+          this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath }/>
+            : <div className="box-empty">
+                <h3>Details</h3>
+                A ride must be ended before details are shown.
+              </div>
+        }
+        { this.renderBookingDamage(booking) }
+        {
+          payments.length
+            ? this.renderPayments(payments)
+            : ''
+        }
+        {
+          booking.status === 'completed'
+            ? <BookingFees bookingId={ booking.id } userId={ user.id } cartId={ booking.cartId } />
+            : ''
+        }
+        {
+          <BookingFlags booking={ booking } userId={ user.id }/>
+        }
+        { this.renderNotes(booking) }
         { parkingDetails && (
           <div className="box">
             <h3>Parking Info</h3>
@@ -491,28 +505,6 @@ module.exports = class BookingsView extends React.Component {
             </div>
           </div>
         )}
-        {
-          this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath }/>
-            : <div className="box-empty">
-                <h3>Details</h3>
-                A ride must be ended before details are shown.
-              </div>
-        }
-        { this.renderBookingDamage(booking) }
-        {
-          payments.length
-            ? this.renderPayments(payments)
-            : ''
-        }
-        {
-          booking.status === 'completed'
-            ? <BookingFees bookingId={ booking.id } userId={ user.id } cartId={ booking.cartId } />
-            : ''
-        }
-        {
-          <BookingFlags booking={ booking } userId={ user.id }/>
-        }
-        { this.renderNotes(booking) }
       </div>
     );
   }
