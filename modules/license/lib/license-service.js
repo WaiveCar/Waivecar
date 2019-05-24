@@ -71,9 +71,17 @@ module.exports = class LicenseService extends Service {
     let license = new License(data);
 
     if (license.birthDate) {
-      let userLink         = yield Verification.createUserLink(user, license, _user);
-      license.linkedUserId = userLink.id;
-      license.status       = 'provided';
+      try {
+        let userLink         = yield Verification.createUserLink(user, license, _user);
+        license.linkedUserId = userLink.id;
+        license.status       = 'provided';
+      } catch(e) {
+        yield notify.slack(
+          {text: `:exploding_head: ${user.link()} Failed to add user to Checkr. ${JSON.stringify(e)}`},
+          {channel: '#user-alerts'},
+        );
+        license.status = 'Checkr Error';
+      };
     }
 
     yield license.save();
