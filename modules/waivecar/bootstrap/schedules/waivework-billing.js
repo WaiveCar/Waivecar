@@ -15,6 +15,7 @@ let config = Bento.config;
 let moment = require('moment');
 let log = Bento.Log;
 let uuid = require('uuid');
+let request = require('co-request');
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -67,6 +68,9 @@ scheduler.process('waivework-billing', function*(job) {
 
   let today = moment();
   let currentDay = today.date();
+
+  // Chnage this back at end of ticket
+  currentDay = 1;
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
@@ -136,15 +140,17 @@ scheduler.process('waivework-billing', function*(job) {
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
+  let evgpChargePayload = [
+    ':zap: *The following users paid for evgo charging this week:* \n',
+  ];
   let toImmobilize = [];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
-
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
         date: {
           $lt: moment(today)
-            .add(1, 'days')
+            .add(8 /*change this back later 1*/, 'days')
             .format('YYYY-MM-DD'),
         },
         bookingPaymentId: null,
@@ -164,6 +170,7 @@ scheduler.process('waivework-billing', function*(job) {
           90 * 1000,
         )
       ) {
+        /*
         let endText;
         let data = {
           userId: oldPayment.booking.userId,
@@ -280,6 +287,19 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
+      */
+      }
+      try {
+        let {body} = yield request({
+          url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
+            oldPayment.booking.userId
+          }`,
+          method: 'GET',
+        });
+        body = JSON.parse(body);
+        console.log('data: ', body.data);
+      } catch (e) {
+        console.log('error: ', e);
       }
     }
     try {
@@ -316,7 +336,9 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'hours'};
+  //scheduler.cancel('waivework-billing');
+  // Change the timer below back to hours
+  let timer = {value: 24, type: 'seconds'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
