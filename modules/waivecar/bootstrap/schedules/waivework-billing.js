@@ -301,7 +301,6 @@ scheduler.process('waivework-billing', function*(job) {
             method: 'GET',
           });
           body = JSON.parse(body);
-          console.log('body', body);
           if (body.data.length) {
             try {
               let chargesTotal =
@@ -310,10 +309,10 @@ scheduler.process('waivework-billing', function*(job) {
               chargesTotal && console.log('total of charges', chargesTotal);
               let evgoChargeData = {
                 userId: oldPayment.booking.userId,
-                amount: oldPayment.amount,
+                amount: chargesTotal,
                 source: 'Waivework auto charge',
                 description:
-                  'Weekly charge EVGO charges- automatically on scheduled day',
+                  'Weekly charge EVGO charges - automatically charged by the computer',
               };
               let shopOrder = (yield OrderService.quickCharge(
                 evgoChargeData,
@@ -329,7 +328,7 @@ scheduler.process('waivework-billing', function*(job) {
               });
               yield bookingPayment.save();
             } catch (e) {
-              console.log('error charging for evgo: ', e);
+              console.log('error charging for evgo: ', e.message);
             }
           }
         } catch (e) {
