@@ -297,7 +297,9 @@ scheduler.process('waivework-billing', function*(job) {
           method: 'GET',
         });
         body = JSON.parse(body);
-        console.log('data: ', body.data);
+        let chargesTotal =
+          body.data.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) * 100;
+        chargesTotal && console.log('total of charges', chargesTotal);
       } catch (e) {
         console.log('error: ', e);
       }
