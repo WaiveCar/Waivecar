@@ -135,13 +135,14 @@ module.exports = class OrderService extends Service {
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and
       // modules/shop/lib/order-service.js it looks like we need to pass an object with
       // quantity, price, and description defined.
-      yield this.notifyOfCharge(Object.assign(opts, {
-        quantity: 1,
-        price: data.amount,
-        description: data.description,
-        chargeName: data.description,
-      }), user);
-
+      if (!data.waivework) {
+        yield this.notifyOfCharge(Object.assign(opts, {
+          quantity: 1,
+          price: data.amount,
+          description: data.description,
+          chargeName: data.description,
+        }), user);
+      }
     } catch (err) {
       if (!data.waivework) {
         yield this.failedCharge(data.amount || charge.amount, user, err);
