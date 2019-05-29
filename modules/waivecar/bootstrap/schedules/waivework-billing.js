@@ -135,14 +135,19 @@ scheduler.process('waivework-billing', function*(job) {
     ':watch: *The following users are to be charged automatically this week:* \n',
   ];
   let failedChargePayload = [
-    ":male_vampire: *The following users's weekly automatic charges have failed:* \n",
+    ":male_vampire: *The following users's weekly automatic charges have failed:* \n"
   ];
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
-  let evgpChargePayload = [
+  let evgoChargePayload = [
     ':zap: *The following users paid for evgo charging this week:* \n',
   ];
+
+  let failedEvgoCharges =[
+    ":flag-gr: *The following users's weekly automatic charges for EVGo charging have failed (we will attempt to charge again next week):* \n"
+  ];
+
   let toImmobilize = [];
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
@@ -288,20 +293,48 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       */
-      }
-      try {
-        let {body} = yield request({
-          url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
-            oldPayment.booking.userId
-          }`,
-          method: 'GET',
-        });
-        body = JSON.parse(body);
-        let chargesTotal =
-          body.data.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) * 100;
-        chargesTotal && console.log('total of charges', chargesTotal);
-      } catch (e) {
-        console.log('error: ', e);
+        try {
+          let {body} = yield request({
+            url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
+              oldPayment.booking.userId
+            }&paid=true`,
+            method: 'GET',
+          });
+          body = JSON.parse(body);
+          console.log('body', body);
+          if (body.data.length) {
+            try {
+              let chargesTotal =
+                body.data.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) *
+                100;
+              chargesTotal && console.log('total of charges', chargesTotal);
+              let evgoChargeData = {
+                userId: oldPayment.booking.userId,
+                amount: oldPayment.amount,
+                source: 'Waivework auto charge',
+                description:
+                  'Weekly charge EVGO charges- automatically on scheduled day',
+              };
+              let shopOrder = (yield OrderService.quickCharge(
+                evgoChargeData,
+                null,
+                {
+                  nocredit: true,
+                },
+              )).order;
+              console.log('shopOrder', shopOrder);
+              let bookingPayment = new BookingPayment({
+                bookingId: oldPayment.booking.id,
+                orderId: shopOrder.id,
+              });
+              yield bookingPayment.save();
+            } catch (e) {
+              console.log('error charging for evgo: ', e);
+            }
+          }
+        } catch (e) {
+          console.log('error: ', e);
+        }
       }
     }
     try {
