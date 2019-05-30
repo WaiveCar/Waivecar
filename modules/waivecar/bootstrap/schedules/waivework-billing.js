@@ -135,17 +135,17 @@ scheduler.process('waivework-billing', function*(job) {
     ':watch: *The following users are to be charged automatically this week:* \n',
   ];
   let failedChargePayload = [
-    ":male_vampire: *The following users's weekly automatic charges have failed:* \n"
+    ":male_vampire: *The following users's weekly automatic charges have failed:* \n",
   ];
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
   let evgoChargePayload = [
-    ':zap: *The following users paid for evgo charging this week:* \n',
+    ':zap: *The following users were successfully charged for EVgo charging this week:* \n',
   ];
 
-  let failedEvgoCharges =[
-    ":flag-gr: *The following users's weekly automatic charges for EVGo charging have failed (we will attempt to charge again next week):* \n"
+  let failedEvgoChargePayload = [
+    ":flag-gr: *The following users's weekly automatic charges for EVgo charging have failed:* \n",
   ];
 
   let toImmobilize = [];
@@ -175,7 +175,6 @@ scheduler.process('waivework-billing', function*(job) {
           90 * 1000,
         )
       ) {
-        /*
         let endText;
         let data = {
           userId: oldPayment.booking.userId,
@@ -193,6 +192,7 @@ scheduler.process('waivework-billing', function*(job) {
 
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
+        /*
         let isFirstPayment =
           (yield WaiveworkPayment.find({
             where: {
@@ -293,6 +293,7 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       */
+        // When done, this block may potentially need to move to only be run after the first payment
         try {
           let {body} = yield request({
             url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
@@ -306,10 +307,10 @@ scheduler.process('waivework-billing', function*(job) {
               let chargesTotal =
                 body.data.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) *
                 100;
-              chargesTotal && console.log('total of charges', chargesTotal);
               let evgoChargeData = {
                 userId: oldPayment.booking.userId,
                 amount: chargesTotal,
+                evgoCharges: body.data,
                 source: 'Waivework auto charge',
                 description:
                   'Weekly charge EVGO charges - automatically charged by the computer',
@@ -327,8 +328,20 @@ scheduler.process('waivework-billing', function*(job) {
                 orderId: shopOrder.id,
               });
               yield bookingPayment.save();
+              evgoChargePayload.push('');
             } catch (e) {
               console.log('error charging for evgo: ', e.message);
+              console.log('e.shopOrder', e.shopOrder);
+              let bookingPayment = new BookingPayment({
+                bookingId: oldPayment.booking.id,
+                orderId: e.shopOrder.id,
+              });
+              yield bookingPayment.save();
+              failedEvgoChargePayload.push(
+                `${user.link()} had a failed charge of $${(
+                  chargesTotal / 100
+                ).toFixed(2)}. ${e.message}`,
+              );
             }
           }
         } catch (e) {
@@ -363,6 +376,18 @@ scheduler.process('waivework-billing', function*(job) {
     if (firstChargePayload.length > 1) {
       yield notify.slack(
         {text: firstChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    if (evgoChargePayload.length > 1) {
+      yield notify.slack(
+        {text: evgoChargePayload.push.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    if (failedEvgoChargePayload.length > 1) {
+      yield notify.slack(
+        {text: failedEvgoChargePayload.push.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
