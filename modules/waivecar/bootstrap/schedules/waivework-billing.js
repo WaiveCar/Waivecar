@@ -381,13 +381,13 @@ scheduler.process('waivework-billing', function*(job) {
     }
     if (evgoChargePayload.length > 1) {
       yield notify.slack(
-        {text: evgoChargePayload.push.join('\n')},
+        {text: evgoChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
     if (failedEvgoChargePayload.length > 1) {
       yield notify.slack(
-        {text: failedEvgoChargePayload.push.join('\n')},
+        {text: failedEvgoChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
