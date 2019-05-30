@@ -309,25 +309,21 @@ scheduler.process('waivework-billing', function*(job) {
             100;
           if (evgoCharges.length) {
             let chargeIdList = evgoCharges.map(item => item.id);
-            console.log('chargeIdList', chargeIdList);
             let markPaidResponse = (yield request({
               url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA`,
               method: 'POST',
               body: JSON.stringify({data: chargeIdList}),
             })).body;
-            console.log('markPaidResponse', markPaidResponse);
-            // if not not production server, these charges need to be unmarked after they are marked as paid
+            // If not on production server, these charges need to be unmarked after they are marked as paid
             if (process.env.NODE_ENV !== 'production') {
               let deleteString = String(chargeIdList[0]);
               for (let i = 1; i < chargeIdList.length; i++) {
                 deleteString += `,${chargeIdList[i]}`;
               }
-              console.log('deleteString', deleteString);
               let unmarkPaidResponse = (yield request({
                 method: 'DELETE',
                 url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&id=${deleteString}`,
               })).body;
-              console.log('unmarkPaidResponse', unmarkPaidResponse);
             }
 
             try {
