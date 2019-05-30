@@ -294,6 +294,7 @@ scheduler.process('waivework-billing', function*(job) {
         }
       */
         // When done, this block may potentially need to move to only be run after the first payment
+        // TODO: mark the charges as paid on OCPI, make sure proper emails are sent to users, maybe put uris in config file?
         try {
           let {body} = yield request({
             url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
@@ -302,18 +303,41 @@ scheduler.process('waivework-billing', function*(job) {
             method: 'GET',
           });
           body = JSON.parse(body);
-          if (body.data.length) {
+          let evgoCharges = body.data;
+          let chargesTotal =
+            evgoCharges.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) *
+            100;
+          if (evgoCharges.length) {
+            let chargeIdList = evgoCharges.map(item => item.id);
+            console.log('chargeIdList', chargeIdList);
+            let markPaidResponse = (yield request({
+              url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA`,
+              method: 'POST',
+              body: JSON.stringify({data: chargeIdList}),
+            })).body;
+            console.log('markPaidResponse', markPaidResponse);
+            // if not not production server, these charges need to be unmarked after they are marked as paid
+            if (process.env.NODE_ENV !== 'production') {
+              let deleteString = String(chargeIdList[0]);
+              for (let i = 1; i < chargeIdList.length; i++) {
+                deleteString += `,${chargeIdList[i]}`;
+              }
+              console.log('deleteString', deleteString);
+              let unmarkPaidResponse = (yield request({
+                method: 'DELETE',
+                url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&id=${deleteString}`,
+              })).body;
+              console.log('unmarkPaidResponse', unmarkPaidResponse);
+            }
+
             try {
-              let chargesTotal =
-                body.data.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) *
-                100;
               let evgoChargeData = {
                 userId: oldPayment.booking.userId,
                 amount: chargesTotal,
-                evgoCharges: body.data,
                 source: 'Waivework auto charge',
                 description:
                   'Weekly charge EVGO charges - automatically charged by the computer',
+                evgoCharges,
               };
               let shopOrder = (yield OrderService.quickCharge(
                 evgoChargeData,
@@ -322,7 +346,6 @@ scheduler.process('waivework-billing', function*(job) {
                   nocredit: true,
                 },
               )).order;
-              console.log('shopOrder', shopOrder);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: shopOrder.id,
@@ -330,8 +353,6 @@ scheduler.process('waivework-billing', function*(job) {
               yield bookingPayment.save();
               evgoChargePayload.push('');
             } catch (e) {
-              console.log('error charging for evgo: ', e.message);
-              console.log('e.shopOrder', e.shopOrder);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: e.shopOrder.id,
