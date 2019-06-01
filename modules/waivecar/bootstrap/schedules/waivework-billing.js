@@ -297,7 +297,7 @@ scheduler.process('waivework-billing', function*(job) {
         // TODO: mark the charges as paid on OCPI, make sure proper emails are sent to users, maybe put uris in config file?
         try {
           let {body} = yield request({
-            url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&user=${
+            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
               oldPayment.booking.userId
             }&paid=true`,
             method: 'GET',
@@ -310,7 +310,7 @@ scheduler.process('waivework-billing', function*(job) {
           if (evgoCharges.length) {
             let chargeIdList = evgoCharges.map(item => item.id);
             let markPaidResponse = (yield request({
-              url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA`,
+              url: `${config.ocpi.url}?key=${config.ocpi.key}`,
               method: 'POST',
               body: JSON.stringify({data: chargeIdList}),
             })).body;
@@ -322,7 +322,7 @@ scheduler.process('waivework-billing', function*(job) {
               }
               let unmarkPaidResponse = (yield request({
                 method: 'DELETE',
-                url: `http://9ol.es/ocpi/billing.php?key=wfI8FEOVTaKOkXeF7QczhA&id=${deleteString}`,
+                url: `${config.ocpi.url}?key=${config.ocpi.key}&id=${deleteString}`,
               })).body;
             }
 
