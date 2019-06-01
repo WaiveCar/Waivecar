@@ -141,6 +141,7 @@ module.exports = class OrderService extends Service {
           price: data.amount,
           description: data.description,
           chargeName: data.description,
+          evgoCharges: data.evgoCharges && data.evgoCharges,
         }), user);
       }
     } catch (err) {
@@ -1125,8 +1126,16 @@ module.exports = class OrderService extends Service {
     let email = new Email();
     let word = false;
     try {
-      if(!Array.isArray(item)) {
+      if(!Array.isArray(item) && !item.evgoCharges) {
         item = [item];
+      }
+      if (item.evgoCharges) {
+        item = item.evgoCharges.map(charge => ({
+          name: `EVgo charging of ${charge.kwh}kwh on ${moment(charge.start).format('MM/DD/YYYY')}`,
+          quantity: 1,
+          price: charge.cost * 100,
+          total: charge.cost * 100,
+        }));
       }
       item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
       item.total = (Math.abs(item.totalNum / 100)).toFixed(2);
