@@ -57,6 +57,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     ctrl.all = prepareCars(cars);
 
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
+    /*
+     * in practice this ends up being a second error message. It's really unprofessional.
+     * Also after closing waivecar down it's incorrect.
+     */
     if(!carsInRange(ctrl.all, currentLocation, 30)) {
       if (modal && modal.isShown()) {
         return;
@@ -69,6 +73,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
         modal.show();
       });
     }
+    */
     ensureAvailableCars(cars);
   }
 
