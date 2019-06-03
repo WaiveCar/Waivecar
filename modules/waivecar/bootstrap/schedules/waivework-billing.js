@@ -410,8 +410,6 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  //scheduler.cancel('waivework-billing');
-  // Change the timer below back to hours
   let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-billing', {
     init: true,
