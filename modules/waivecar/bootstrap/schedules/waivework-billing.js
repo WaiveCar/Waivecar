@@ -67,14 +67,12 @@ scheduler.process('waivework-billing', function*(job) {
   let today = moment();
   let currentDay = today.date();
 
-  // Chnage this back at end of ticket
-  currentDay = 1;
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
   // works by making the charge that was scheduled on the previous billing date and
   // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
-  // This is a payment reminder to be sent out the
+  // This is a payment reminder to be sent out before payment day
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
   if ([6, 13, 20, lastReminder].includes(currentDay)) {
@@ -190,7 +188,6 @@ scheduler.process('waivework-billing', function*(job) {
 
         data.waivework = true;
         let user = yield User.findById(oldPayment.booking.userId);
-        /*
         let isFirstPayment =
           (yield WaiveworkPayment.find({
             where: {
@@ -290,7 +287,6 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
-      */
         try {
           let {body} = yield request({
             url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
@@ -416,7 +412,7 @@ scheduler.process('waivework-billing', function*(job) {
 module.exports = function*() {
   //scheduler.cancel('waivework-billing');
   // Change the timer below back to hours
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
