@@ -291,8 +291,6 @@ scheduler.process('waivework-billing', function*(job) {
           }
         }
       */
-        // When done, this block may potentially need to move to only be run after the first payment
-        // TODO: mark the charges as paid on OCPI, make sure proper emails are sent to users, maybe put uris in config file?
         try {
           let {body} = yield request({
             url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
@@ -324,7 +322,6 @@ scheduler.process('waivework-billing', function*(job) {
                   config.ocpi.key
                 }&id=${deleteString}`,
               })).body;
-              console.log('unmarked items: ', unmarkPaidResponse);
             }
 
             try {
@@ -343,7 +340,6 @@ scheduler.process('waivework-billing', function*(job) {
                   nocredit: true,
                 },
               )).order;
-              console.log('shopOrder: ', shopOrder);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: shopOrder.id,
@@ -355,7 +351,6 @@ scheduler.process('waivework-billing', function*(job) {
                 )}`,
               );
             } catch (e) {
-              console.log('err: ', e);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: e.shopOrder.id,
@@ -369,7 +364,7 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         } catch (e) {
-          console.log('error: ', e);
+          log.warn('Error automatically charging for evgo: ', e);
         }
       }
     }
@@ -403,14 +398,12 @@ scheduler.process('waivework-billing', function*(job) {
         {channel: '#waivework-charges'},
       );
     }
-    console.log('chargesPayload: ', evgoChargePayload);
     if (evgoChargePayload.length > 1) {
       yield notify.slack(
         {text: evgoChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
-    console.log('failedChargePayload: ', failedEvgoChargePayload);
     if (failedEvgoChargePayload.length > 1) {
       yield notify.slack(
         {text: failedEvgoChargePayload.join('\n')},
