@@ -151,7 +151,7 @@ scheduler.process('waivework-billing', function*(job) {
       where: {
         date: {
           $lt: moment(today)
-            .add(8 /*change this back later 1*/, 'days')
+            .add(1, 'days')
             .format('YYYY-MM-DD'),
         },
         bookingPaymentId: null,
