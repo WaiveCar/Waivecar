@@ -1,8 +1,6 @@
 let redis = require('../../lib/redis-service');
 let sequelize = require('sequelize');
 let notify = require('../../lib/notification-service');
-let Slack = Bento.provider('slack');
-let slack = new Slack('notifications');
 let scheduler = Bento.provider('queue').scheduler;
 let Email = Bento.provider('email');
 let Booking = Bento.model('Booking');
@@ -322,14 +320,17 @@ scheduler.process('waivework-billing', function*(job) {
               }
               let unmarkPaidResponse = (yield request({
                 method: 'DELETE',
-                url: `${config.ocpi.url}?key=${config.ocpi.key}&id=${deleteString}`,
+                url: `${config.ocpi.url}?key=${
+                  config.ocpi.key
+                }&id=${deleteString}`,
               })).body;
+              console.log('unmarked items: ', unmarkPaidResponse);
             }
 
             try {
               let evgoChargeData = {
                 userId: oldPayment.booking.userId,
-                amount: chargesTotal,
+                amount: Math.ceil(chargesTotal),
                 source: 'Waivework auto charge',
                 description:
                   'Weekly charge EVGO charges - automatically charged by the computer',
@@ -342,13 +343,19 @@ scheduler.process('waivework-billing', function*(job) {
                   nocredit: true,
                 },
               )).order;
+              console.log('shopOrder: ', shopOrder);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: shopOrder.id,
               });
               yield bookingPayment.save();
-              evgoChargePayload.push('');
+              evgoChargePayload.push(
+                `${user.link()} was charged $${(chargesTotal / 100).toFixed(
+                  2,
+                )}`,
+              );
             } catch (e) {
+              console.log('err: ', e);
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: e.shopOrder.id,
@@ -370,7 +377,7 @@ scheduler.process('waivework-billing', function*(job) {
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
-        timer: {value: 24, type: 'hours'},
+        timer: {value: 48, type: 'hours'},
         data: {
           toImmobilize,
         },
@@ -396,12 +403,14 @@ scheduler.process('waivework-billing', function*(job) {
         {channel: '#waivework-charges'},
       );
     }
+    console.log('chargesPayload: ', evgoChargePayload);
     if (evgoChargePayload.length > 1) {
       yield notify.slack(
         {text: evgoChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
+    console.log('failedChargePayload: ', failedEvgoChargePayload);
     if (failedEvgoChargePayload.length > 1) {
       yield notify.slack(
         {text: failedEvgoChargePayload.join('\n')},
