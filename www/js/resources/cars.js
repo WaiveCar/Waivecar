@@ -99,7 +99,7 @@ module.exports = angular.module('app').factory('Cars', [
     res.lock = function(params) {
       return $q(function(resolve,reject) {
         
-        $ble.lock(params.id).promise.then(function(){
+        $ble.immolock(params.id).promise.then(function(){
           $ble.status(params.id).promise.then(function(car) {
             if(car.isIgnitionOn === true) {
               return reject({data:{message:"Check the ignition"}});
@@ -121,7 +121,7 @@ module.exports = angular.module('app').factory('Cars', [
     res.unlock = function(params) {
       var defer = $q.defer();
       var done = false;
-      var bleHandle = $ble.unlock(params.id, done);
+      var bleHandle = $ble.immounlock(params.id, done);
 
       bleHandle.promise.then(function() {
         console.log("BTLE successful unlock");

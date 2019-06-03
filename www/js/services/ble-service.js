@@ -691,6 +691,8 @@ module.exports = angular.module('app.services').factory('$ble', [
       connect:    connect,
       lock:   function (carId, done) { return wrap(carId, 'CENTRAL_LOCK_CLOSE', done); },
       unlock: function (carId, done) { return wrap(carId, 'CENTRAL_LOCK_OPEN', done); },
+      immolock:   function (carId, done) { return wrap(carId, 'finish', done); },
+      immounlock: function (carId, done) { return wrap(carId, 'start', done); },
       any: function(carId, what) { return wrap(carId, what); },
       status: getStatus,
       setFunction: setFunction
