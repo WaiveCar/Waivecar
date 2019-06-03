@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget android-packageName="com.waivecardrive.app" android-versionCode="1001" id="com.waivecar.app" ios-CFBundleIdentifier="com.waivecar.app" ios-CFBundleVersion="1001" version="1.0.67" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-packageName="com.waivecardrive.app" android-versionCode="1002" id="com.waivecar.app" ios-CFBundleIdentifier="com.waivecar.app" ios-CFBundleVersion="1002" version="1.0.68" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
@@ -123,7 +123,7 @@
     <plugin name="cordova-android-support-gradle-release" spec="1.3.0">
         <variable name="ANDROID_SUPPORT_VERSION" value="27.+" />
     </plugin>
-    <plugin name="cordova-plugin-camera" spec="~4.0.3" >
+    <plugin name="cordova-plugin-camera" spec="~4.0.3">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Upload Photos" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Use Photos" />
     </plugin>
@@ -162,5 +162,4 @@
     <plugin name="cordova.plugins.diagnostic" spec="4.0.8" />
     <plugin name="cordova-plugin-intercom" spec="^5.1.1" />
     <plugin name="cordova-plugin-statusbar" spec="https://github.com/apache/cordova-plugin-statusbar" />
-    <engine name="ios" spec="^4.5.4" />
 </widget>

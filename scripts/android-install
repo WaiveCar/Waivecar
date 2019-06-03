@@ -1,1 +1,80 @@
-android
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+help() {
+  echo verbose nuke find restart unfuckup clear remove build install install_release stop start
+  exit
+}
+
+cmd=$( basename $0 )
+suffix=${cmd#android}
+if [ "$suffix" ]; then
+  suffix=${cmd#android-}
+  shift
+  $DIR/android $suffix $*
+  exit 0
+fi
+
+. $DIR/common.sh
+[ "$#" -lt 1 ] && help
+
+stop=
+start=
+
+for i in $*; do
+  case $1 in
+    verbose) set -x ;;
+    prebuild) 
+      prebuild
+      exit
+      ;;
+    debug) export DBG="strace -f -q -s 100 -o /tmp/app.trc " ;;
+    find) find=1 ;;
+    stop) stop=1 ;;
+    start) start=1 ;;
+    restart) 
+      start=1
+      stop=1 
+      ;;
+    clear) clear=1 ;; 
+    nuke) nuke=1 ;;
+    unfuckup) 
+      unfuckup=1 ;;
+    remove) 
+      remove=1 
+      start=
+    ;;
+    build) 
+      build=1 
+    ;;
+    install) install=1 ;;
+    install_release) install_release=1 ;;
+    *)
+      echo "$1 not understood"
+      help
+      ;;
+  esac
+
+  case $1 in
+    clear|install|install_release) 
+      start=1
+      stop=1
+      ;;
+    remove) 
+      stop=1
+      ;;
+  esac
+
+  shift
+done
+
+[ "$nuke" ] && nuke
+[ "$find" ] && get_device
+[ "$unfuckup" ] && unfuckup
+[ "$stop" ] && wrap stop
+[ "$build" ] && build
+[ "$remove" ] && wrap uninstall
+[ "$install" ] && find_and_install
+[ "$install_release" ] && wrap install $DIR/../releases/waivecardrive.apk
+[ "$clear" ] && wrap clear
+[ "$start" ] && wrap start

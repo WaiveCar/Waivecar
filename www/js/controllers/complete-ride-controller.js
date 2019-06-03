@@ -29,8 +29,6 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     ctrl.init();
 
-    //var ZendriveService = $injector.get('ZendriveService');
-
     function computeMiles(obj) {
       if(obj) {
         var multiplier = {"Spark EV":65,Tucson:255}[obj.model]||132;
@@ -43,7 +41,6 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
         .then(function(booking) {
           ctrl.booking = booking;
           $ride.setBooking(booking.id);
-          //ZendriveService.stop(booking.id);
 
           var start = _.find(booking.details, { type: 'start' });
           var end = _.find(booking.details, { type: 'end' });
