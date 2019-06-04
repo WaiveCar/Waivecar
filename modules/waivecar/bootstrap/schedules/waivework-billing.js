@@ -67,7 +67,6 @@ scheduler.process('waivework-billing', function*(job) {
   let today = moment();
   let currentDay = today.date();
 
-
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
   // works by making the charge that was scheduled on the previous billing date and
@@ -145,6 +144,7 @@ scheduler.process('waivework-billing', function*(job) {
   ];
 
   let toImmobilize = [];
+  currentDay = 1;
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
@@ -179,9 +179,8 @@ scheduler.process('waivework-billing', function*(job) {
           description:
             'Weekly charge for waivework - automatically on scheduled day',
         };
-        // The line below should be removed later once we are done watching to see if the payment process
-        // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
-        // is necessary for the scheduling of the new charge. It can be toggled in and out for turning on/off charging users
+        // The line below has been commented out, but can be commented back in to turn automatic charges for waivework payments off
+        // It can be toggled in and out for turning on/off charging users
         ///////
         //data.amount = 0;
         //////
