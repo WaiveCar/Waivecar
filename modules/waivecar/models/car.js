@@ -6,6 +6,7 @@ let Booking = Bento.model('Booking');
 let Utils = require('sequelize/lib/utils');
 require('./log');
 let Log = Bento.model('Log');
+let File = Bento.model('File');
 
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
@@ -564,8 +565,17 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         userId      : null,
         bookingId   : null
       });
-    }
+    },
 
+    waiveworkChecklist : function *() {
+      console.log('hello from checklist!');
+      let registrationFile = yield File.findById(this.registrationFileId);
+      console.log('regFile: ', registrationFile);
+      let inspectionFile = yield File.findById(this.inspectionFileId);
+      console.log('inspect', inspectionFile);
+      let requiredTagsList = [];
+      let missingList = [];
+    },
   };
 
   model.attributes = [

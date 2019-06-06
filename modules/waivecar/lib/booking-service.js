@@ -483,6 +483,7 @@ module.exports = class BookingService extends Service {
       let waiveworkPayment;
       try {
         let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
+        yield car.waiveworkChecklist();
         booking = booking.toJSON();
         booking.car = car;
         booking.waiveworkPayment = waiveworkPayment;
