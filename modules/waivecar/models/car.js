@@ -7,6 +7,7 @@ let Utils = require('sequelize/lib/utils');
 require('./log');
 let Log = Bento.model('Log');
 let File = Bento.model('File');
+let moment = require('moment');
 
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
@@ -567,14 +568,25 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    waiveworkChecklist : function *() {
-      console.log('hello from checklist!');
-      let registrationFile = yield File.findById(this.registrationFileId);
-      console.log('regFile: ', registrationFile);
-      let inspectionFile = yield File.findById(this.inspectionFileId);
-      console.log('inspect', inspectionFile);
+    waiveworkMissingItems : function *() {
       let requiredTagsList = [];
-      let missingList = [];
+      let problemList = [];
+      let registrationFile = yield File.findById(this.registrationFileId);
+      if (!registrationFile) {
+        problemList.push('registration missing');
+      }
+      if (registrationFile && moment(registrationFile.comment).diff(moment()) < 0) {
+        problemList.push('expired registration');
+      }
+      let inspectionFile = yield File.findById(this.inspectionFileId);
+      if (!inspectionFile) {
+        problemList.push('inspection missing')
+      }
+      if (inspectionFile && moment(inspectionFile.comment).diff(moment()) < 0) {
+        problemList.push('expired inspection');
+      }
+      console.log('list:', problemList);
+      return problemList;
     },
   };
 
