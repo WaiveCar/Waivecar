@@ -569,7 +569,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     waiveworkMissingItems : function *() {
-      let requiredTagsList = [];
       let problemList = [];
       let registrationFile = yield File.findById(this.registrationFileId);
       if (!registrationFile) {
@@ -594,6 +593,17 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       if (!this.bodyGrade) {
         problemList.push('missing body grade');
       }
+      // The level of charge should only be checked on electrics
+      if (!this.license.match(/work/gi) && this.charge < 75) {
+        problemList.push('charge below 75%');
+      }
+      let requiredTagsList = ['waivework', 'cleaninside', 'cleanoutside', 'haskeys', 'maintenanceupdated'];
+      requiredTagsList.forEach(tag => {
+        if (!this.hasTag(tag)) {
+          problemList.push(`not ${tag}`);
+        }
+      });
+
       console.log('list:', problemList);
       return problemList;
     },
