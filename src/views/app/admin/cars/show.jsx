@@ -346,6 +346,30 @@ class CarsShowView extends React.Component {
                     WaiveWork
                   </label>
                 </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="clean inside" defaultChecked={ this.hasTag('clean inside') } />
+                    Clean Inside
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="clean outside" defaultChecked={ this.hasTag('clean outside') } />
+                    Clean Outside
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="has keys" defaultChecked={ this.hasTag('has keys') } />
+                    Has Keys
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="maintenance updated" defaultChecked={ this.hasTag('maintenance updated') } />
+                    Maintenance Updated
+                  </label>
+                </div>
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
                     <button type="submit" className="btn btn-sm">Update Tags / Grade</button>
