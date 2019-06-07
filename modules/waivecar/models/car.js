@@ -598,13 +598,12 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         problemList.push('charge below 75%');
       }
       let requiredTagsList = ['waivework', 'cleaninside', 'cleanoutside', 'haskeys', 'maintenanceupdated'];
-      requiredTagsList.forEach(tag => {
-        if (!this.hasTag(tag)) {
-          problemList.push(`not ${tag}`);
+      for (let tag of requiredTagsList) {
+        if (!(yield this.hasTag(tag))) {
+          console.log('inside', tag);
+          problemList.push(`not tagged ${tag}`);
         }
-      });
-
-      console.log('list:', problemList);
+      };
       return problemList;
     },
 
