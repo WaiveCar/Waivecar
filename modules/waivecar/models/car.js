@@ -585,8 +585,21 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) < 0) {
         problemList.push('expired inspection');
       }
+      if (!this.frontTireWear) {
+        problemList.push('missing front tire grade');
+      }
+      if (!this.rearTireWear) {
+        problemList.push('missing rear tire grade');
+      }
+      if (!this.bodyGrade) {
+        problemList.push('missing body grade');
+      }
       console.log('list:', problemList);
       return problemList;
+    },
+
+    removeChecklistFlags : function *() {
+
     },
   };
 
