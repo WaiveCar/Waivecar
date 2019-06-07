@@ -597,7 +597,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       if (!this.license.match(/work/gi) && this.charge < 75) {
         problemList.push('charge below 75%');
       }
-      let requiredTagsList = ['waivework', 'cleaninside', 'cleanoutside', 'haskeys', 'maintenanceupdated'];
+      let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
         if (!(yield this.hasTag(tag))) {
           problemList.push(`not tagged ${tag}`);
