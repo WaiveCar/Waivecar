@@ -148,7 +148,7 @@ module.exports = class BookingService extends Service {
       if (missingItems.length) {
         throw error.parse({
           code: 'CAR_NOT_READY',
-          message: `This car is not ready to be sent out. The missing items are: ${missingItems.join(', ')}`,
+          message: `This car is not ready to be sent out. The issues are: ${missingItems.join(', ')}`,
         }, 400)
       }
     }
