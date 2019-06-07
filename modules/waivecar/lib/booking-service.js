@@ -141,6 +141,17 @@ module.exports = class BookingService extends Service {
     } catch(err) {
       yield bail(err);
     } 
+
+    if (data.isWaivework) {
+      // If the booking is Waivework, the checklist of items required before a waivework booking is run
+      let missingItems = yield car.waiveworkMissingItems();
+      if (missingItems.length) {
+        throw error.parse({
+          code: 'CAR_NOT_READY',
+          message: `This car is not ready to be sent out. The missing items are: ${missingItems.join(', ')}`,
+        }, 400)
+      }
+    }
     // At this point we immediately make the car unavailable to protect
     // against issues that can occur later in the code
     yield car.update({isAvailable: false});
@@ -483,7 +494,6 @@ module.exports = class BookingService extends Service {
       let waiveworkPayment;
       try {
         let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
-        yield car.waiveworkMissingItems();
         booking = booking.toJSON();
         booking.car = car;
         booking.waiveworkPayment = waiveworkPayment;

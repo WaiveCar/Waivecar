@@ -600,10 +600,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       let requiredTagsList = ['waivework', 'cleaninside', 'cleanoutside', 'haskeys', 'maintenanceupdated'];
       for (let tag of requiredTagsList) {
         if (!(yield this.hasTag(tag))) {
-          console.log('inside', tag);
           problemList.push(`not tagged ${tag}`);
         }
       };
+      console.log('problems: ', problemList);
       return problemList;
     },
 
