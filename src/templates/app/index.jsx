@@ -109,8 +109,13 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
-        path      : '/admin/waivework',
-        component : require('../../views/app/admin/waivework'),
+        path      : '/admin/waivework/waitlist',
+        component : require('../../views/app/admin/waivework/waitlist'),
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/admin/waivework/car-prep',
+        component : require('../../views/app/admin/waivework/car-prep'),
         onEnter   : policies.isAdministrator
       },
       {
@@ -243,9 +248,17 @@ let order = 2;
     order     : order++
   },
   {
-    title     : 'Waivework',
+    title     : 'WaiveWork Waitlist',
     icon      : 'building',
-    path      : '/admin/waivework',
+    path      : '/admin/waivework/waitlist',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'WaiveWork Car Prep',
+    icon      : 'building',
+    path      : '/admin/waivework/car-prep',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
