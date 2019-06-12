@@ -590,7 +590,7 @@ module.exports = {
 
     // echo service see waiveSCREEN #58
     if (params.query.Body.includes(';;echo')) {
-      yield notify.sendTextMessage({_phone: phone}, phone);
+      yield notify.sendTextMessage({_phone: phone}, `_number: ${phone}`);
       return true;
     }
 
