@@ -603,7 +603,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
           problemList.push(`not tagged ${tag}`);
         }
       };
-      console.log('problems: ', problemList);
       return problemList;
     },
 

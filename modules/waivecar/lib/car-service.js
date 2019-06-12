@@ -237,12 +237,14 @@ module.exports = {
     } else if (query.type === 'workprep') {
       opts.where.bookingId = null;
       cars = yield Car.find(opts);
-      for (let car of cars) {
-        car.missingItems = yield car.waiveworkMissingItems();
+      for (let i = 0; i < cars.length; i++) {
+        let missing = yield cars[i].waiveworkMissingItems();
+        cars[i] = cars[i].toJSON();
+        cars[i].missingItems = missing;
+        console.log('car', cars[i]);
       }
     } else {
       cars = yield Car.find(opts);
-
       // console.log(util.inspect(opts, false, null));
     }
 
@@ -255,8 +257,9 @@ module.exports = {
 
         // we want a single reference for this number
         // and not have it be computed in various places
-        car.range = car.milesAvailable(); 
-
+        if (query.type !== 'workprep') {
+          car.range = car.milesAvailable(); 
+        }
         available += car.isAvailable;
 
         // We toggle the car to be "available" for the admin so
@@ -273,7 +276,7 @@ module.exports = {
 
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
     }
-
+    console.log('cars', cars);
     return cars;
   },
 
