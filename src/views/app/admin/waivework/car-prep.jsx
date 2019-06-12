@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
+import ThSort from '../components/table-th';
 
 class CarPrep extends Component {
   constructor(props) {
@@ -24,17 +25,21 @@ class CarPrep extends Component {
   }
 
   render() {
+    let {cars} = this.state;
     return (
-      <div id="content">
-        <div className="content-wrapper">
-          <div className="box full">
-            <h3>Car Prep</h3>
-            <div className="box-content">
-              <div className="container">
-                <div className="row">
-                  <div className="col-xs-12" />
-                </div>
-              </div>
+      <div id="bookings-list" className="container">
+        <div className="box full">
+          <h3>Car Prep</h3>
+          <div className="box-content">
+            <div className="row">
+              <table className="box-table table-striped">
+                <thead>
+                </thead>
+                <tbody>
+                  {cars &&
+                    cars.map((car, i) => <div key={i}>{car.license}</div>)}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
