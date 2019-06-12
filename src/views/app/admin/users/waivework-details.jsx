@@ -161,10 +161,14 @@ class WaiveWorkDetails extends Component {
     }
     api.post('/bookings', data, (err, booking) => {
       if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
+        if (err.code === 'CAR_NOT_READY') {
+          return alert(err.message);
+        } else {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
       }
       this.setState({currentWaiveworkBooking: booking});
     });

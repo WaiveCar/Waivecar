@@ -9,7 +9,10 @@ class CarPrep extends Component {
   componentDidMount() {
     api.get('/cars?type=workprep', (err, response) => {
       if (err) {
-        return console.log('err', err);
+        return snackbar.notify({
+          type: 'danger',
+          message: 'something', //err.message,
+        });
       }
       console.log('response', response);
     });
