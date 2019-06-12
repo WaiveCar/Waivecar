@@ -234,6 +234,12 @@ module.exports = {
       }
       */
       return cars;
+    } else if (query.type === 'workprep') {
+      opts.where.bookingId = null;
+      cars = yield Car.find(opts);
+      for (let car of cars) {
+        car.missingItems = yield car.waiveworkMissingItems();
+      }
     } else {
       cars = yield Car.find(opts);
 
