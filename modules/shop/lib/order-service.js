@@ -135,14 +135,25 @@ module.exports = class OrderService extends Service {
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and
       // modules/shop/lib/order-service.js it looks like we need to pass an object with
       // quantity, price, and description defined.
-      yield this.notifyOfCharge(Object.assign(opts, {
-        quantity: 1,
-        price: data.amount,
-        description: data.description,
-        chargeName: data.description,
-      }), user);
-
+      if (!data.waivework) {
+        yield this.notifyOfCharge(Object.assign(opts, {
+          quantity: 1,
+          price: data.amount,
+          description: data.description,
+          chargeName: data.description,
+          evgoCharges: data.evgoCharges && data.evgoCharges,
+        }), user);
+      }
     } catch (err) {
+      if (data.evgoCharges) {
+        yield this.notifyOfCharge(Object.assign(opts, {
+          quantity: 1,
+          price: data.amount,
+          description: data.description,
+          chargeName: data.description,
+          evgoCharges: data.evgoCharges && data.evgoCharges,
+        }), user);
+      }
       if (!data.waivework) {
         yield this.failedCharge(data.amount || charge.amount, user, err);
       }
@@ -292,8 +303,8 @@ module.exports = class OrderService extends Service {
         ]
       });
       yield this.notifyOfCharge(items, user, {
-        subject: `Charges for your booking in ${currentBooking[0].car.license} on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
-        leadin: `Here's your receipt for any additional charges from your booking on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
+        subject: `Charges for your booking in ${currentBooking[0].car.license} started on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
+        leadin: `Here's your receipt for any additional charges from your booking started on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
       });
     }
 
@@ -1091,7 +1102,7 @@ module.exports = class OrderService extends Service {
     
     // if there's two parts we show a grand total, otherwise we omit it
     // because it looks redundant.
-    if(messageParts.length > 1){
+    if(messageParts.length > 1 && user.credit > 0){
       message = '$' + (-user.credit / 100).toFixed(2) + ' to ';
     } else {
       message = 'to ';
@@ -1124,8 +1135,16 @@ module.exports = class OrderService extends Service {
     let email = new Email();
     let word = false;
     try {
-      if(!Array.isArray(item)) {
+      if(!Array.isArray(item) && !item.evgoCharges) {
         item = [item];
+      }
+      if (item.evgoCharges) {
+        item = item.evgoCharges.map(charge => ({
+          name: `EVgo charging of ${charge.kwh}kwh on ${moment(charge.start).format('MM/DD/YYYY')}`,
+          quantity: 1,
+          price: charge.cost * 100,
+          total: charge.cost * 100,
+        }));
       }
       item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
       item.total = (Math.abs(item.totalNum / 100)).toFixed(2);

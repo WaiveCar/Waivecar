@@ -1,8 +1,6 @@
 let redis = require('../../lib/redis-service');
 let sequelize = require('sequelize');
 let notify = require('../../lib/notification-service');
-let Slack = Bento.provider('slack');
-let slack = new Slack('notifications');
 let scheduler = Bento.provider('queue').scheduler;
 let Email = Bento.provider('email');
 let Booking = Bento.model('Booking');
@@ -15,6 +13,7 @@ let config = Bento.config;
 let moment = require('moment');
 let log = Bento.Log;
 let uuid = require('uuid');
+let request = require('co-request');
 
 scheduler.process('waivework-billing', function*(job) {
   // The first section of this process checks all of the current waivework bookings to make
@@ -72,7 +71,7 @@ scheduler.process('waivework-billing', function*(job) {
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
   // works by making the charge that was scheduled on the previous billing date and
   // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
-  // This is a payment reminder to be sent out the
+  // This is a payment reminder to be sent out before payment day
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
   if ([6, 13, 20, lastReminder].includes(currentDay)) {
@@ -136,9 +135,17 @@ scheduler.process('waivework-billing', function*(job) {
   let firstChargePayload = [
     ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
   ];
-  let toImmobilize = [];
-  // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
+  let evgoChargePayload = [
+    ':zap: *The following users were successfully charged for EVgo charging this week:* \n',
+  ];
 
+  let failedEvgoChargePayload = [
+    ":flag-gr: *The following users's weekly automatic charges for EVgo charging have failed:* \n",
+  ];
+
+  let toImmobilize = [];
+  currentDay = 1;
+  // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -172,9 +179,8 @@ scheduler.process('waivework-billing', function*(job) {
           description:
             'Weekly charge for waivework - automatically on scheduled day',
         };
-        // The line below should be removed later once we are done watching to see if the payment process
-        // works reliably. Currently, the user will just be charged $0. The charge entry created by this charge
-        // is necessary for the scheduling of the new charge. It can be toggled in and out for turning on/off charging users
+        // The line below has been commented out, but can be commented back in to turn automatic charges for waivework payments off
+        // It can be toggled in and out for turning on/off charging users
         ///////
         //data.amount = 0;
         //////
@@ -280,13 +286,88 @@ scheduler.process('waivework-billing', function*(job) {
             }
           }
         }
+        try {
+          let {body} = yield request({
+            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
+              oldPayment.booking.userId
+            }&paid=true`,
+            method: 'GET',
+          });
+          body = JSON.parse(body);
+          let evgoCharges = body.data;
+          let chargesTotal =
+            evgoCharges.reduce((acc, chargeObj) => acc + chargeObj.cost, 0) *
+            100;
+          if (evgoCharges.length) {
+            let chargeIdList = evgoCharges.map(item => item.id);
+            let markPaidResponse = (yield request({
+              url: `${config.ocpi.url}?key=${config.ocpi.key}`,
+              method: 'POST',
+              body: JSON.stringify({data: chargeIdList}),
+            })).body;
+            // If not on production server, these charges need to be unmarked after they are marked as paid
+            if (process.env.NODE_ENV !== 'production') {
+              let deleteString = String(chargeIdList[0]);
+              for (let i = 1; i < chargeIdList.length; i++) {
+                deleteString += `,${chargeIdList[i]}`;
+              }
+              let unmarkPaidResponse = (yield request({
+                method: 'DELETE',
+                url: `${config.ocpi.url}?key=${
+                  config.ocpi.key
+                }&id=${deleteString}`,
+              })).body;
+            }
+
+            try {
+              let evgoChargeData = {
+                userId: oldPayment.booking.userId,
+                amount: Math.ceil(chargesTotal),
+                source: 'Waivework auto charge',
+                description:
+                  'Weekly charge EVGO charges - automatically charged by the computer',
+                evgoCharges,
+              };
+              let shopOrder = (yield OrderService.quickCharge(
+                evgoChargeData,
+                null,
+                {
+                  nocredit: true,
+                },
+              )).order;
+              let bookingPayment = new BookingPayment({
+                bookingId: oldPayment.booking.id,
+                orderId: shopOrder.id,
+              });
+              yield bookingPayment.save();
+              evgoChargePayload.push(
+                `${user.link()} was charged $${(chargesTotal / 100).toFixed(
+                  2,
+                )}`,
+              );
+            } catch (e) {
+              let bookingPayment = new BookingPayment({
+                bookingId: oldPayment.booking.id,
+                orderId: e.shopOrder.id,
+              });
+              yield bookingPayment.save();
+              failedEvgoChargePayload.push(
+                `${user.link()} had a failed charge of $${(
+                  chargesTotal / 100
+                ).toFixed(2)}. ${e.message}`,
+              );
+            }
+          }
+        } catch (e) {
+          log.warn('Error automatically charging for evgo: ', e);
+        }
       }
     }
     try {
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
-        timer: {value: 24, type: 'hours'},
+        timer: {value: 48, type: 'hours'},
         data: {
           toImmobilize,
         },
@@ -309,6 +390,18 @@ scheduler.process('waivework-billing', function*(job) {
     if (firstChargePayload.length > 1) {
       yield notify.slack(
         {text: firstChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    if (evgoChargePayload.length > 1) {
+      yield notify.slack(
+        {text: evgoChargePayload.join('\n')},
+        {channel: '#waivework-charges'},
+      );
+    }
+    if (failedEvgoChargePayload.length > 1) {
+      yield notify.slack(
+        {text: failedEvgoChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
