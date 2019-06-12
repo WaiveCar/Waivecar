@@ -236,12 +236,12 @@ module.exports = {
       return cars;
     } else if (query.type === 'workprep') {
       opts.where.bookingId = null;
+      opts.where.license = {$notLike: '%csula%'};
       cars = yield Car.find(opts);
       for (let i = 0; i < cars.length; i++) {
-        let missing = yield cars[i].waiveworkMissingItems();
+        let requiredItems = yield cars[i].waiveworkMissingItems();
         cars[i] = cars[i].toJSON();
-        cars[i].missingItems = missing;
-        console.log('car', cars[i]);
+        cars[i].requiredItems = requiredItems;
       }
     } else {
       cars = yield Car.find(opts);
@@ -276,7 +276,6 @@ module.exports = {
 
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
     }
-    console.log('cars', cars);
     return cars;
   },
 

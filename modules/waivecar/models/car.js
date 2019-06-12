@@ -568,42 +568,56 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    waiveworkMissingItems : function *() {
-      let problemList = [];
+    waiveworkChecklist : function *() {
+      let requiredItems = {
+        'registration missing': false,
+        'current registration': false,
+        'inspection missing': false,
+        'current inspection': false,
+        'front tire grade': false,
+        'rear tire grade': false,
+        'body grade': false,
+        'charge below 75%': false,
+        'waivework': false, 
+        'clean inside': false, 
+        'clean outside': false, 
+        'has keys': false,
+        'maintenance updated': false,
+      };
       let registrationFile = yield File.findById(this.registrationFileId);
       if (!registrationFile) {
-        problemList.push('registration missing');
+        requiredItems['registration missing'] = true;
       }
       if (registrationFile && moment(registrationFile.comment).diff(moment()) < 0) {
-        problemList.push('expired registration');
+        requiredItems['current registration'] = true;
       }
       let inspectionFile = yield File.findById(this.inspectionFileId);
       if (!inspectionFile) {
-        problemList.push('inspection missing')
+        requiredItems['inspection missing'] = true;
       }
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) < 0) {
-        problemList.push('expired inspection');
+        requiredItems['current inspection'] = true;
       }
       if (!this.frontTireWear) {
-        problemList.push('missing front tire grade');
+        requiredItems['front tire grade'] = true;
       }
       if (!this.rearTireWear) {
-        problemList.push('missing rear tire grade');
+        requiredItems['rear tire grade'] = true;
       }
       if (!this.bodyGrade) {
-        problemList.push('missing body grade');
+        requiredItems['body grade'] = true;
       }
       // The level of charge should only be checked on electrics
       if (!this.license.match(/work/gi) && this.charge < 75) {
-        problemList.push('charge below 75%');
+        requiredItems['charge below 75%'] = true;
       }
       let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
-        if (!(yield this.hasTag(tag))) {
-          problemList.push(`not tagged ${tag}`);
+        if (yield this.hasTag(tag))) {
+          requiredItems[tag] = true;
         }
       };
-      return problemList;
+      return requiredItems;
     },
 
     removeChecklistFlags : function *() {
