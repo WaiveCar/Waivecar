@@ -33,6 +33,16 @@ let fcm = new FCM(config.push.serverKey);
 
 module.exports = {
   *sendTextMessage(query, message) {
+    // this allows us to send messages to whomever
+    // regardless of whether we've contacted them prior
+    if(query._phone) {
+      let sms = new Sms();
+      yield sms.send({
+        to      : query._phone,
+        message : message
+      });
+    }
+
     let user = false;
     if(Number.isInteger(query)) {
       user = yield User.findById(query);

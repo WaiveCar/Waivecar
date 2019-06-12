@@ -588,6 +588,12 @@ module.exports = {
       return true;
     }
 
+    // echo service see waiveSCREEN #58
+    if (params.query.Body.includes(';;echo')) {
+      yield notify.sendTextMessage({_phone: phone}, phone);
+      return true;
+    }
+
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.
     if(user && (yield this.attemptAction(user, smstext, {raw: params.query.Body, phone: phone}))) {
