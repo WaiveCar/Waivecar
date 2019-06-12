@@ -5,6 +5,9 @@ import {snackbar} from 'bento-web';
 class CarPrep extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      cars: null,
+    };
   }
   componentDidMount() {
     api.get('/cars?type=workprep', (err, response) => {
@@ -14,12 +17,29 @@ class CarPrep extends Component {
           message: 'something', //err.message,
         });
       }
-      console.log('response', response);
+      this.setState(state => ({
+        cars: response,
+      }));
     });
   }
 
   render() {
-    return <div>Car Prep</div>;
+    return (
+      <div id="content">
+        <div className="content-wrapper">
+          <div className="box full">
+            <h3>Car Prep</h3>
+            <div className="box-content">
+              <div className="container">
+                <div className="row">
+                  <div className="col-xs-12" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
