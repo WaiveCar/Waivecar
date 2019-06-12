@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
-import ThSort from '../components/table-th';
+import {Link} from 'react-router';
 
 class CarPrep extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cars: null,
+      requiredItems: null,
     };
   }
   componentDidMount() {
@@ -15,33 +16,60 @@ class CarPrep extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: 'something', //err.message,
+          message: err.message,
         });
+      }
+      let items = [];
+      for (let item in response[0].requiredItems) {
+        items.push(item);
       }
       this.setState(state => ({
         cars: response,
+        requiredItems: items,
       }));
     });
   }
 
   render() {
-    let {cars} = this.state;
+    let {cars, requiredItems} = this.state;
     return (
-      <div id="bookings-list" className="container">
+      <div id="car-prep" className="container">
         <div className="box full">
           <h3>Car Prep</h3>
-          <div className="box-content">
-            <div className="row">
-              <table className="box-table table-striped">
-                <thead>
-                </thead>
-                <tbody>
-                  {cars &&
-                    cars.map((car, i) => <div key={i}>{car.license}</div>)}
-                </tbody>
-              </table>
+          {cars && (
+            <div className="box-content">
+              <div className="row">
+                <table className="box-table table-striped">
+                  <thead>
+                    <tr>
+                      <th>License</th>
+                      <th>In Repair</th>
+                      <th>Repair Reason</th>
+                      {requiredItems.map((item, i) => <th key={i}>{item}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cars.map((car, i) => (
+                      <tr key={i}>
+                        <td>
+                          <Link to={`/cars/${car.id}`}>{car.license}</Link>
+                        </td>
+                        <td>{car.inRepair ? 'yes' : 'no'}</td>
+                        <td>{car.repairReason ? car.repairReason : 'no'}</td>
+                        {requiredItems.map((item, i) => (
+                          <td>
+                            {typeof car.requiredItems[item] === 'boolean'
+                              ? car.requiredItems[item] ? 'yes' : 'no'
+                              : car.requiredItems[item]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     );
