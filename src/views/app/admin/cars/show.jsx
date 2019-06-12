@@ -273,7 +273,7 @@ class CarsShowView extends React.Component {
             default   = { car }
             buttons   = {[
               {
-                value : 'Update',
+                value : 'Update Above Info',
                 type  : 'submit',
                 class : 'btn btn-primary btn-profile-submit'
               }
