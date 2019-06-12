@@ -239,7 +239,7 @@ module.exports = {
       opts.where.license = {$notLike: '%csula%'};
       cars = yield Car.find(opts);
       for (let i = 0; i < cars.length; i++) {
-        let requiredItems = yield cars[i].waiveworkMissingItems();
+        let requiredItems = yield cars[i].waiveworkChecklist();
         cars[i] = cars[i].toJSON();
         cars[i].requiredItems = requiredItems;
       }

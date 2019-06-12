@@ -577,7 +577,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         'front tire grade': false,
         'rear tire grade': false,
         'body grade': false,
-        'charge below 75%': false,
+        'charge above 75%': false,
         'waivework': false, 
         'clean inside': false, 
         'clean outside': false, 
@@ -598,22 +598,22 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) < 0) {
         requiredItems['current inspection'] = true;
       }
-      if (!this.frontTireWear) {
-        requiredItems['front tire grade'] = true;
+      if (this.frontTireWear) {
+        requiredItems['front tire grade'] = this.frontTireWear;
       }
-      if (!this.rearTireWear) {
-        requiredItems['rear tire grade'] = true;
+      if (this.rearTireWear) {
+        requiredItems['rear tire grade'] = this.rearTireWear;
       }
-      if (!this.bodyGrade) {
-        requiredItems['body grade'] = true;
+      if (this.bodyGrade) {
+        requiredItems['body grade'] = this.bodyGrade;
       }
       // The level of charge should only be checked on electrics
-      if (!this.license.match(/work/gi) && this.charge < 75) {
-        requiredItems['charge below 75%'] = true;
+      if (!this.license.match(/work/gi) && this.charge >= 75) {
+        requiredItems['charge above 75%'] = true;
       }
       let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
-        if (yield this.hasTag(tag))) {
+        if (yield this.hasTag(tag)) {
           requiredItems[tag] = true;
         }
       };
