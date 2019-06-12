@@ -1,12 +1,23 @@
 import React, {Component} from 'react';
+import {api} from 'bento';
+import {snackbar} from 'bento-web';
 
-class CarReadiness extends Component {
+class CarPrep extends Component {
   constructor(props) {
     super(props);
   }
+  componentDidMount() {
+    api.get('/cars?type=workprep', (err, response) => {
+      if (err) {
+        return console.log('err', err);
+      }
+      console.log('response', response);
+    });
+  }
+
   render() {
-    return <div>Car Readiness</div>
+    return <div>Car Prep</div>;
   }
 }
 
-export default CarReadiness;
+export default CarPrep;
