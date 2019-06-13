@@ -97,6 +97,9 @@ module.exports = {
         // isAvailable: true,
       }
     };
+    if (query.type === 'workprep') {
+      delete opts.where.inRepair;
+    }
 
     if (!isAdmin) {
       opts.where.isAvailable = true;
@@ -571,9 +574,9 @@ module.exports = {
         changes.push(`${ix}: ${car[ix]} -> ${payload[ix]}`);
       }
     }
-
-    let device = yield this.getDevice(car.id, _user, 'update');
-
+    if (!payload.documents) {
+      let device = yield this.getDevice(car.id, _user, 'update');
+    }
     if (payload.tagList) {
       payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
 
@@ -592,14 +595,15 @@ module.exports = {
       }
       // Notifications may need to be added for changes in groupCar
     }
-
-    yield car.update(Object.assign(device || {}, payload));
-    if(yield this.shouldRelay(car)) {
-      legacyWorkAround(car);
-      relay.emit('cars', {
-        type : 'update',
-        data : car.toJSON()
-      });
+    if (!payload.documents) {
+      yield car.update(Object.assign(device || {}, payload));
+      if(yield this.shouldRelay(car)) {
+        legacyWorkAround(car);
+        relay.emit('cars', {
+          type : 'update',
+          data : car.toJSON()
+        });
+      }
     }
 
     if(changes.length > 0) {
