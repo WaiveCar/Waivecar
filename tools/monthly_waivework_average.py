@@ -8,13 +8,13 @@ today = datetime.datetime.strptime(datetime.datetime.today().strftime('%Y-%m-%d'
 month_ago = (today - dateutil.relativedelta.relativedelta(months=1)).strftime('%Y-%m-%d')
 
 cursor = mysql_connection.cursor()
-cursor.execute('select car_id, bookings.booking_id, bookings.data, total_mileage, total_mileage - bookings.data from waivework_payments join (select a.booking_id, a.car_id, a.data, total_mileage from (select bookings.id as booking_id, bookings.car_id, car_history.data as data from bookings join car_history on bookings.car_id=car_history.car_id where car_history.created_at like "{}%") as a join cars on a.car_id=cars.id) as bookings on waivework_payments.booking_id=bookings.booking_id where booking_payment_id is null and waivework_payments.deleted_at is null group by bookings.car_id;'.format(month_ago))
+cursor.execute('select car_id, bookings.booking_id, bookings.data * 0.621371, total_mileage * 0.621371, (total_mileage - bookings.data) * 0.621371 from waivework_payments join (select a.booking_id, a.car_id, a.data, total_mileage from (select bookings.id as booking_id, bookings.car_id, car_history.data as data from bookings join car_history on bookings.car_id=car_history.car_id where car_history.created_at like "{}%") as a join cars on a.car_id=cars.id) as bookings on waivework_payments.booking_id=bookings.booking_id where booking_payment_id is null and waivework_payments.deleted_at is null group by bookings.car_id;'.format(month_ago))
 
 
 for line in cursor:
     print(line)
 
-cursor.execute('select sum(diff) / count(diff) from (select car_id, bookings.booking_id, bookings.data, total_mileage, total_mileage - bookings.data as diff from waivework_payments join (select a.booking_id, a.car_id, a.data, total_mileage from (select bookings.id as booking_id, bookings.car_id, car_history.data as data from bookings join car_history on bookings.car_id=car_history.car_id where car_history.created_at like "{}%") as a join cars on a.car_id=cars.id) as bookings on waivework_payments.booking_id=bookings.booking_id where booking_payment_id is null and waivework_payments.deleted_at is null group by bookings.car_id) as b;'.format(month_ago))
+cursor.execute('select (sum(diff) / count(diff)) * 0.621371 from (select car_id, bookings.booking_id, bookings.data, total_mileage, total_mileage - bookings.data as diff from waivework_payments join (select a.booking_id, a.car_id, a.data, total_mileage from (select bookings.id as booking_id, bookings.car_id, car_history.data as data from bookings join car_history on bookings.car_id=car_history.car_id where car_history.created_at like "{}%") as a join cars on a.car_id=cars.id) as bookings on waivework_payments.booking_id=bookings.booking_id where booking_payment_id is null and waivework_payments.deleted_at is null group by bookings.car_id) as b;'.format(month_ago))
 
 for line in cursor:
     print(line)
