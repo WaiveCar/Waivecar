@@ -96,8 +96,11 @@ module.exports = class Magic extends React.Component {
   showCandidates() {
     var bar;
     var rows = this.state.candidates
-      .sort((a,b) => { return (a.inRepair - b.inRepair) * 150 + (b.charge - a.charge); })
-      .map((row, i) => {
+      .sort((a,b) => { return (
+          parseInt(a.license.replace(/[a-z]/ig,'')) -
+          parseInt(b.license.replace(/[a-z]/ig,''))
+        );
+      }).map((row, i) => {
         let dobar;
         let car = this.state.candidates[i];
 
