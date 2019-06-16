@@ -144,7 +144,6 @@ scheduler.process('waivework-billing', function*(job) {
   ];
 
   let toImmobilize = [];
-  currentDay = 1;
   // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
