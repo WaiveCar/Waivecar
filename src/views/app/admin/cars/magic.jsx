@@ -73,12 +73,12 @@ module.exports = class Magic extends React.Component {
       let htmlList = [];
       let klass = '';
       let checkList = [
-        ['isAvailable', 'thumbs-up'],
+        //['isAvailable', 'thumbs-up'],
         ['isImmobilized', 'exclamation-triangle', true],
-        ['userId', 'user'],
+        //['userId', 'user'],
         ['isLocked', 'lock'],
-        ['inRepair', 'wrench'],
-        ['isCharging', 'bolt']
+        //['inRepair', 'wrench'],
+        //['isCharging', 'bolt']
       ];
 
       checkList.forEach((row) => {
@@ -122,7 +122,7 @@ module.exports = class Magic extends React.Component {
     var rows = ['instabook', 'instaend', 'rentable', 'retrieve', 'lock-doors','unlock-doors','lock-immobilizer','unlock-immobilizer','available','unavailable'].map((verb) => {
       return <button className='btn' onClick={ this.beBoring.bind(this, verb) }>{ verb }</button>
     });
-    return <div> { rows } </div>
+    return <div className="car-list"> { rows } </div>
   }
 
   setAction(what) {

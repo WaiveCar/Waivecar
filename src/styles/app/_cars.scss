@@ -76,6 +76,14 @@
   }
 }
 .magic {
+  h1 {
+    position: fixed;
+    top: 45px;
+    background: white;
+    margin: 0;
+    width: 100%;
+    padding: 15px 0;
+  }
   .magic-links a {
     display: inline-block;
     text-align: center;
@@ -106,6 +114,9 @@
   }
   .active {
     color: rgb(0,0,0);
+  }
+  >div, .car-list {
+    margin-top: 85px;
   }
 }
  
