@@ -2,6 +2,7 @@
 
 let notify = require('../lib/notification-service');
 let config = Bento.config.notification;
+let User = Bento.model('User');
 
 Bento.Register.Controller('NotificationsController', function(controller) {
 
@@ -11,10 +12,13 @@ Bento.Register.Controller('NotificationsController', function(controller) {
    */
   controller.send = function *() {
     let message;
-
+    let user = this.auth && this.auth.user;
+    if (!user) {
+      user = yield User.findById(this.payload.userId);
+    }
     switch (this.payload.type) {
       case 'sms':
-        return yield handleSms(this.auth.user, this.payload.reason);
+        return yield handleSms(user, this.payload.message);
       default:
         return {
           sent : false
@@ -41,18 +45,12 @@ Bento.Register.Controller('NotificationsController', function(controller) {
 
   /**
    * Handle an sms notification using provided reason.
-   * @param {Object} user
-   * @param {String} reason
-   * @param {Object}
-   */
-  function *handleSms(user, _reason) {
-    let reason = config.reasons[_reason];
+   *
+  */
+  function *handleSms(user, message) {
     let sent = false;
-    if (reason) {
-      // Send notification
-      yield notify.sendTextMessage(user, `WaiveCar: ${ reason }`);
-      sent = true;
-    }
+    yield notify.sendTextMessage(user, `WaiveCar: ${ message }`);
+    sent = true;
     return { sent };
   }
 
