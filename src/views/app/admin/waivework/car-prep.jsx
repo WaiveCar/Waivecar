@@ -38,6 +38,27 @@ class CarPrep extends Component {
     });
   }
 
+  sortByItem(item) {
+    let {cars} = this.state;
+    let temp = [...cars];
+    temp.sort((a, b) => {
+      if (a.requiredItems[item] && b.requiredItems[item]) {
+        return 0;
+      }
+      if (a.requiredItems[item]) {
+        return 1;
+      }
+      if (b.requiredItems[item]) {
+        return -1;
+      }
+      return 0;
+    });
+    console.log(temp);
+    this.setState(state => ({
+      cars: temp,
+    }));
+  }
+
   render() {
     let {cars, requiredItems} = this.state;
     return (
@@ -54,7 +75,9 @@ class CarPrep extends Component {
                       <th>In Repair</th>
                       <th>Repair Reason</th>
                       {requiredItems.map((item, i) => (
-                        <th key={i}>{item[0].toUpperCase() + item.slice(1)}</th>
+                        <th key={i} onClick={() => this.sortByItem(item)}>
+                          {item[0].toUpperCase() + item.slice(1)}
+                        </th>
                       ))}
                       <th>Completed Items</th>
                     </tr>
