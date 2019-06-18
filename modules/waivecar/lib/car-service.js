@@ -567,7 +567,7 @@ module.exports = {
         }
       }, 404);
     }
-
+    let device;
     let changes = [];
     for(ix in payload) {
       if(payload[ix] != car[ix]) {
@@ -575,7 +575,7 @@ module.exports = {
       }
     }
     if (!payload.documents) {
-      let device = yield this.getDevice(car.id, _user, 'update');
+      device = yield this.getDevice(car.id, _user, 'update');
     }
     if (payload.tagList) {
       payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
@@ -595,7 +595,7 @@ module.exports = {
       }
       // Notifications may need to be added for changes in groupCar
     }
-    if (!payload.documents) {
+    if (device) {
       yield car.update(Object.assign(device || {}, payload));
       if(yield this.shouldRelay(car)) {
         legacyWorkAround(car);
@@ -604,6 +604,8 @@ module.exports = {
           data : car.toJSON()
         });
       }
+    } else {
+      yield car.update(payload);
     }
 
     if(changes.length > 0) {
