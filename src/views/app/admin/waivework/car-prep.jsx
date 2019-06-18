@@ -41,19 +41,33 @@ class CarPrep extends Component {
   sortByItem(item) {
     let {cars} = this.state;
     let temp = [...cars];
+    let asc = cars[0].requiredItems[item] && true;
     temp.sort((a, b) => {
       if (a.requiredItems[item] && b.requiredItems[item]) {
-        return 0;
+        if (typeof a === 'boolean' && typeof b === 'boolean') {
+          return 0;
+        } else {
+          if (a.requiredItems[item] < b.requiredItems[item]) {
+            return asc ? 1 : -1;
+          }
+          if (b.requiredItems[item] < a.requiredItems[item]) {
+            return asc ? -1 : 1;
+          }
+          return 0;
+        }
       }
       if (a.requiredItems[item]) {
-        return 1;
+        return asc ? 1 : -1;
       }
       if (b.requiredItems[item]) {
-        return -1;
+        return asc ? -1 : 1;
       }
       return 0;
     });
-    console.log(temp);
+    if (item === 'completed') {
+      let asc = cars[0].completedCount < cars[cars.length - 1].completedCount;
+      temp.sort((a, b) => asc ? b.completedCount - a.completedCount : a.completedCount - b.completedCount);
+    }
     this.setState(state => ({
       cars: temp,
     }));
@@ -79,7 +93,9 @@ class CarPrep extends Component {
                           {item[0].toUpperCase() + item.slice(1)}
                         </th>
                       ))}
-                      <th>Completed Items</th>
+                      <th onClick={() => this.sortByItem('completed')}>
+                        Completed Items
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -88,7 +104,13 @@ class CarPrep extends Component {
                         <td>
                           <Link to={`/cars/${car.id}`}>{car.license}</Link>
                         </td>
-                        <td>{car.inRepair ? 'yes' : 'no'}</td>
+                        <td>
+                          {car.inRepair ? (
+                            <input type="checkbox" checked />
+                          ) : (
+                            <input type="checkbox" disabled="disabled" />
+                          )}
+                        </td>
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
                         {requiredItems.map((item, i) => (
                           <td key={i}>
