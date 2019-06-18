@@ -588,14 +588,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       if (registrationFile) {
         requiredItems['registration'] = true;
       }
-      if (registrationFile && moment(registrationFile.comment).diff(moment()) < 0) {
+      if (registrationFile && moment(registrationFile.comment).diff(moment()) > 0) {
         requiredItems['current registration'] = true;
       }
       let inspectionFile = yield File.findById(this.inspectionFileId);
       if (inspectionFile) {
         requiredItems['inspection'] = true;
       }
-      if (inspectionFile && moment(inspectionFile.comment).diff(moment()) < 0) {
+      if (inspectionFile && moment(inspectionFile.comment).diff(moment()) > 0) {
         requiredItems['current inspection'] = true;
       }
       if (this.frontTireWear) {
