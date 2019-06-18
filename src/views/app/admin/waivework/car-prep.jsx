@@ -62,19 +62,27 @@ class CarPrep extends Component {
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
                         {requiredItems.map((item, i) => (
                           <td key={i}>
-                            {typeof car.requiredItems[item] === 'boolean'
-                              ? car.requiredItems[item] ? 'yes' : 'no'
-                              : car.requiredItems[item]}
+                            {typeof car.requiredItems[item] === 'boolean' ? (
+                              car.requiredItems[item] ? (
+                                <input type="checkbox" checked />
+                              ) : (
+                                <input type="checkbox" />
+                              )
+                            ) : (
+                              car.requiredItems[item]
+                            )}
                           </td>
                         ))}
-                        {<td>
-                          {Object.keys(car.requiredItems).reduce(
-                            (acc, item) =>
-                              (acc += car.requiredItems[item] ? 1 : 0),
-                            0,
-                          )}{' '}
-                          / {requiredItems.length}
-                        </td>}
+                        {
+                          <td>
+                            {Object.keys(car.requiredItems).reduce(
+                              (acc, item) =>
+                                (acc += car.requiredItems[item] ? 1 : 0),
+                              0,
+                            )}{' '}
+                            / {requiredItems.length}
+                          </td>
+                        }
                       </tr>
                     ))}
                   </tbody>
