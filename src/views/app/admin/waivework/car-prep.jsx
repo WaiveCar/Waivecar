@@ -32,6 +32,7 @@ class CarPrep extends Component {
 
   render() {
     let {cars, requiredItems} = this.state;
+    console.log('cars', cars);
     return (
       <div id="car-prep" className="container">
         <div className="box full">
@@ -45,7 +46,10 @@ class CarPrep extends Component {
                       <th>License</th>
                       <th>In Repair</th>
                       <th>Repair Reason</th>
-                      {requiredItems.map((item, i) => <th key={i}>{item}</th>)}
+                      {requiredItems.map((item, i) => (
+                        <th key={i}>{item[0].toUpperCase() + item.slice(1)}</th>
+                      ))}
+                      <th>Completed Items</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -57,12 +61,20 @@ class CarPrep extends Component {
                         <td>{car.inRepair ? 'yes' : 'no'}</td>
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
                         {requiredItems.map((item, i) => (
-                          <td>
+                          <td key={i}>
                             {typeof car.requiredItems[item] === 'boolean'
                               ? car.requiredItems[item] ? 'yes' : 'no'
                               : car.requiredItems[item]}
                           </td>
                         ))}
+                        {<td>
+                          {Object.keys(car.requiredItems).reduce(
+                            (acc, item) =>
+                              (acc += car.requiredItems[item] ? 1 : 0),
+                            0,
+                          )}{' '}
+                          / {requiredItems.length}
+                        </td>}
                       </tr>
                     ))}
                   </tbody>
