@@ -23,6 +23,14 @@ class CarPrep extends Component {
       for (let item in response[0].requiredItems) {
         items.push(item);
       }
+      response = response.map(car => {
+        let completedCount = Object.keys(car.requiredItems).reduce(
+          (acc, item) => (acc += car.requiredItems[item] ? 1 : 0),
+          0,
+        );
+        return {...car, completedCount};
+      });
+      response.sort((a, b) => b.completedCount - a.completedCount);
       this.setState(state => ({
         cars: response,
         requiredItems: items,
@@ -32,7 +40,6 @@ class CarPrep extends Component {
 
   render() {
     let {cars, requiredItems} = this.state;
-    console.log('cars', cars);
     return (
       <div id="car-prep" className="container">
         <div className="box full">
@@ -66,7 +73,7 @@ class CarPrep extends Component {
                               car.requiredItems[item] ? (
                                 <input type="checkbox" checked />
                               ) : (
-                                <input type="checkbox" />
+                                <input type="checkbox" disabled="disabled" />
                               )
                             ) : (
                               car.requiredItems[item]
@@ -75,12 +82,7 @@ class CarPrep extends Component {
                         ))}
                         {
                           <td>
-                            {Object.keys(car.requiredItems).reduce(
-                              (acc, item) =>
-                                (acc += car.requiredItems[item] ? 1 : 0),
-                              0,
-                            )}{' '}
-                            / {requiredItems.length}
+                            {car.completedCount} / {requiredItems.length}
                           </td>
                         }
                       </tr>
