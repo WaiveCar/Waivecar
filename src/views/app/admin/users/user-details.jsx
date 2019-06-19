@@ -278,6 +278,28 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  sendText() {
+    let message = prompt('Please enter the message you wish to send:');
+    if (message) {
+      api.post('/notify', {
+        message,
+        type: 'sms',
+        userId: this.state.currentUser.id,
+      }, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
+        }
+        return snackbar.notify({
+          type: 'success',
+          message: 'Text message sent'
+        });
+      });
+    }
+  }
+
 
   fleetToggle = () => {
     let user = this.state.currentUser;
@@ -476,8 +498,8 @@ module.exports = class UserDetails extends React.Component {
                     <button type="submit" className="btn btn-sm">Update Details</button>
                   </div>
                 </div>
-
               </form>
+              <button onClick={() => this.sendText()} className="btn btn-sm btn-primary">Send Text</button>
             </div>
           </div>
 
