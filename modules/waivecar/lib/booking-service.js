@@ -2066,6 +2066,15 @@ module.exports = class BookingService extends Service {
     }
     if (booking.isFlagged('Waivework')) {
       yield user.update({isWaivework: false});
+      let tagsToRemove = ['clean inside', 'clean outside', 'has keys', 'maintenance updated'];
+      for (let tag of tagsToRemove) {
+        yield car.untag(tag);
+      }
+      yield car.update({
+        frontTireWear: null,
+        rearTireWear: null,
+        bodyGrade: null,
+      });
     }
   }
 
