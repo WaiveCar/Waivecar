@@ -103,7 +103,7 @@ Route.get('/chargers/list', 'ChargersController@chargers');
 
 // ### Notifications
 
-Route.post('/notify', [ /*'isAuthenticated',*/ 'NotificationsController@send' ]);
+Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);
 Route.post('/refresh-device-token', [ 'isAuthenticated', 'NotificationsController@refreshDeviceToken' ]);
 Route.get('/send-test-push/:id', 'NotificationsController@sendTestPush');
 
