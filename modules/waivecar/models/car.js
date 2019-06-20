@@ -569,7 +569,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     waiveworkChecklist : function *() {
-      let requiredItems = {
+      let checklistItems = {
         'registration': false,
         'current registration': false,
         'inspection': false,
@@ -586,40 +586,51 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       };
       let registrationFile = yield File.findById(this.registrationFileId);
       if (registrationFile) {
-        requiredItems['registration'] = true;
+        checklistItems['registration'] = true;
       }
       if (registrationFile && moment(registrationFile.comment).diff(moment()) > 0) {
-        requiredItems['current registration'] = true;
+        checklistItems['current registration'] = true;
       }
       let inspectionFile = yield File.findById(this.inspectionFileId);
       if (inspectionFile) {
-        requiredItems['inspection'] = true;
+        checklistItems['inspection'] = true;
       }
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) > 0) {
-        requiredItems['current inspection'] = true;
+        checklistItems['current inspection'] = true;
       }
       if (this.frontTireWear) {
-        requiredItems['front tire grade'] = this.frontTireWear;
+        checklistItems['front tire grade'] = this.frontTireWear;
       }
       if (this.rearTireWear) {
-        requiredItems['rear tire grade'] = this.rearTireWear;
+        checklistItems['rear tire grade'] = this.rearTireWear;
       }
       if (this.bodyGrade) {
-        requiredItems['body grade'] = this.bodyGrade;
+        checklistItems['body grade'] = this.bodyGrade;
       }
       // The level of charge should only be checked on electrics
       if (!this.license.match(/work/gi) && this.charge >= 75) {
-        requiredItems['charge above 75%'] = true;
+        checklistItems['charge above 75%'] = true;
       } else if (this.license.match(/work/gi)) {
-        requiredItems['charge above 75%'] = true;  
+        checklistItems['charge above 75%'] = true;  
       }
       let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
         if (yield this.hasTag(tag)) {
-          requiredItems[tag] = true;
+          checklistItems[tag] = true;
         }
       };
-      return requiredItems;
+      let missingList = [];
+      let requiredList = [];
+      for (let key in checklistItems) {
+        requiredList.push(key);
+        if (!checklistItems[key]) {
+          missingList.push(key);
+        }
+      }
+      checklistItems.requiredList = requiredList;
+      checklistItems.missingList = missingList;
+      checklistItems.completedCount = requiredList.length - requiredList.length;
+      return checklistItems;
     },
 
     removeChecklistFlags : function *() {
