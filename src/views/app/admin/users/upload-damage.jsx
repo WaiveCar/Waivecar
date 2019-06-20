@@ -76,6 +76,7 @@ class UploadDamage extends Component {
       if (window.location.href.includes('bookings')) {
         window.location.reload();
       }
+      this.props.markDamageUploaded();
       this.setState(stateUpdate, () =>
         snackbar.notify({
           type: 'success',
@@ -152,8 +153,7 @@ class UploadDamage extends Component {
                           href={`http://waivecar-prod.s3.amazonaws.com/${
                             this.state[`${type}File`].path
                           }`}
-                          target="_blank"
-                        >
+                          target="_blank">
                           <img
                             style={{width: '100%'}}
                             src={`http://waivecar-prod.s3.amazonaws.com/${
