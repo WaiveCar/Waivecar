@@ -23,8 +23,9 @@ class CarPrep extends Component {
       for (let item in response[0].requiredItems) {
         items.push(item);
       }
-      response.sort((a, b) => b.checklist.completedCount - a.checklist.completedCount);
-      console.log(response);
+      response.sort(
+        (a, b) => b.checklist.completedCount - a.checklist.completedCount,
+      );
       this.setState(state => ({
         cars: response,
         requiredItems: response[0].checklist.requiredList,
@@ -35,32 +36,39 @@ class CarPrep extends Component {
   sortByItem(item) {
     let {cars} = this.state;
     let temp = [...cars];
-    let asc = cars[0].requiredItems[item] && true;
+    let asc = cars[0].checklist[item] && true;
     temp.sort((a, b) => {
-      if (a.requiredItems[item] && b.requiredItems[item]) {
+      if (a.checklist[item] && b.checklist[item]) {
         if (typeof a === 'boolean' && typeof b === 'boolean') {
           return 0;
         } else {
-          if (a.requiredItems[item] < b.requiredItems[item]) {
+          if (a.checklist[item] < b.checklist[item]) {
             return asc ? 1 : -1;
           }
-          if (b.requiredItems[item] < a.requiredItems[item]) {
+          if (b.checklist[item] < a.checklist[item]) {
             return asc ? -1 : 1;
           }
           return 0;
         }
       }
-      if (a.requiredItems[item]) {
+      if (a.checklist[item]) {
         return asc ? 1 : -1;
       }
-      if (b.requiredItems[item]) {
+      if (b.checklist[item]) {
         return asc ? -1 : 1;
       }
       return 0;
     });
     if (item === 'completed') {
-      let asc = cars[0].completedCount < cars[cars.length - 1].completedCount;
-      temp.sort((a, b) => asc ? b.completedCount - a.completedCount : a.completedCount - b.completedCount);
+      let asc =
+        cars[0].checklist.completedCount <
+        cars[cars.length - 1].checklist.completedCount;
+      temp.sort(
+        (a, b) =>
+          asc
+            ? b.checklist.completedCount - a.checklist.completedCount
+            : a.checklist.completedCount - b.checklist.completedCount,
+      );
     }
     this.setState(state => ({
       cars: temp,
@@ -100,7 +108,11 @@ class CarPrep extends Component {
                         </td>
                         <td>
                           {car.inRepair ? (
-                            <input type="checkbox" checked />
+                            <input
+                              type="checkbox"
+                              checked
+                              onChange={() => null}
+                            />
                           ) : (
                             <input type="checkbox" disabled="disabled" />
                           )}
@@ -110,7 +122,11 @@ class CarPrep extends Component {
                           <td key={i}>
                             {typeof car.checklist[item] === 'boolean' ? (
                               car.checklist[item] ? (
-                                <input type="checkbox" checked />
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  onChange={() => null}
+                                />
                               ) : (
                                 <input type="checkbox" disabled="disabled" />
                               )
@@ -121,7 +137,8 @@ class CarPrep extends Component {
                         ))}
                         {
                           <td>
-                            {car.checklist.completedCount} / {requiredItems.length}
+                            {car.checklist.completedCount} /{' '}
+                            {requiredItems.length}
                           </td>
                         }
                       </tr>
