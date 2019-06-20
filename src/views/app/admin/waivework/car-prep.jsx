@@ -23,17 +23,11 @@ class CarPrep extends Component {
       for (let item in response[0].requiredItems) {
         items.push(item);
       }
-      response = response.map(car => {
-        let completedCount = Object.keys(car.requiredItems).reduce(
-          (acc, item) => (acc += car.requiredItems[item] ? 1 : 0),
-          0,
-        );
-        return {...car, completedCount};
-      });
-      response.sort((a, b) => b.completedCount - a.completedCount);
+      response.sort((a, b) => b.checklist.completedCount - a.checklist.completedCount);
+      console.log(response);
       this.setState(state => ({
         cars: response,
-        requiredItems: items,
+        requiredItems: response[0].checklist.requiredList,
       }));
     });
   }
@@ -114,20 +108,20 @@ class CarPrep extends Component {
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
                         {requiredItems.map((item, i) => (
                           <td key={i}>
-                            {typeof car.requiredItems[item] === 'boolean' ? (
-                              car.requiredItems[item] ? (
+                            {typeof car.checklist[item] === 'boolean' ? (
+                              car.checklist[item] ? (
                                 <input type="checkbox" checked />
                               ) : (
                                 <input type="checkbox" disabled="disabled" />
                               )
                             ) : (
-                              car.requiredItems[item]
+                              car.checklist[item]
                             )}
                           </td>
                         ))}
                         {
                           <td>
-                            {car.completedCount} / {requiredItems.length}
+                            {car.checklist.completedCount} / {requiredItems.length}
                           </td>
                         }
                       </tr>
