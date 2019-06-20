@@ -629,7 +629,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       }
       checklistItems.requiredList = requiredList;
       checklistItems.missingList = missingList;
-      checklistItems.completedCount = requiredList.length - requiredList.length;
+      checklistItems.completedCount = requiredList.length - missngList.length;
       return checklistItems;
     },
 
