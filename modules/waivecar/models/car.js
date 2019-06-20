@@ -569,7 +569,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     waiveworkChecklist : function *() {
-      let checklistItems = {
+      let checklist = {
         'current registration': false,
         'current inspection': false,
         'front tire grade': null,
@@ -584,45 +584,47 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       };
       let registrationFile = yield File.findById(this.registrationFileId);
       if (registrationFile && moment(registrationFile.comment).diff(moment()) > 0) {
-        checklistItems['current registration'] = true;
+        checklist['current registration'] = true;
       }
       let inspectionFile = yield File.findById(this.inspectionFileId);
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) > 0) {
-        checklistItems['current inspection'] = true;
+        checklist['current inspection'] = true;
       }
       if (this.frontTireWear) {
-        checklistItems['front tire grade'] = this.frontTireWear;
+        checklist['front tire grade'] = this.frontTireWear;
       }
       if (this.rearTireWear) {
-        checklistItems['rear tire grade'] = this.rearTireWear;
+        checklist['rear tire grade'] = this.rearTireWear;
       }
       if (this.bodyGrade) {
-        checklistItems['body grade'] = this.bodyGrade;
+        checklist['body grade'] = this.bodyGrade;
       }
       // The level of charge should only be checked on electrics
       if (!this.license.match(/work/gi) && this.charge >= 75) {
-        checklistItems['charge above 75%'] = true;
+        checklist['charge above 75%'] = true;
       } else if (this.license.match(/work/gi)) {
-        checklistItems['charge above 75%'] = true;  
+        checklist['charge above 75%'] = true;  
       }
       let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
         if (yield this.hasTag(tag)) {
-          checklistItems[tag] = true;
+          checklist[tag] = true;
         }
       };
       let missingList = [];
       let requiredList = [];
-      for (let key in checklistItems) {
+      for (let key in checklist) {
         requiredList.push(key);
-        if (!checklistItems[key]) {
+        if (!checklist[key]) {
           missingList.push(key);
         }
       }
-      checklistItems.requiredList = requiredList;
-      checklistItems.missingList = missingList;
-      checklistItems.completedCount = requiredList.length - missingList.length;
-      return checklistItems;
+      checklist.registrationExpiration = registrationFile && registrationFile.comment;
+      checklist.inspectionExpiration = inspectionFile && inspectionFile.comment;
+      checklist.requiredList = requiredList;
+      checklist.missingList = missingList;
+      checklist.completedCount = requiredList.length - missingList.length;
+      return checklist;
     },
 
     removeChecklistFlags : function *() {
