@@ -144,11 +144,11 @@ module.exports = class BookingService extends Service {
 
     if (data.isWaivework) {
       // If the booking is Waivework, the checklist of items required before a waivework booking is run
-      let missingItems = yield car.waiveworkMissingItems();
-      if (missingItems.length) {
+      let missingItems = yield car.waiveworkChecklist();
+      if (Object.keys(missingItems).length) {
         throw error.parse({
           code: 'CAR_NOT_READY',
-          message: `This car is not ready to be sent out on WaiveWork. The issues are: ${missingItems.join(', ')}`,
+          message: `This car is not ready to be sent out on WaiveWork. The missing checklist items are: ${Object.keys(missingItems).join(', ')}`,
         }, 400)
       }
     }

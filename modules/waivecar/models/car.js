@@ -610,6 +610,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       // The level of charge should only be checked on electrics
       if (!this.license.match(/work/gi) && this.charge >= 75) {
         requiredItems['charge above 75%'] = true;
+      } else if (this.license.match(/work/gi)) {
+        requiredItems['charge above 75%'] = true;  
       }
       let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of requiredTagsList) {
