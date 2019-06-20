@@ -570,9 +570,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     waiveworkChecklist : function *() {
       let checklistItems = {
-        'registration': false,
         'current registration': false,
-        'inspection': false,
         'current inspection': false,
         'front tire grade': null,
         'rear tire grade': null,
@@ -585,16 +583,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         'maintenance updated': false,
       };
       let registrationFile = yield File.findById(this.registrationFileId);
-      if (registrationFile) {
-        checklistItems['registration'] = true;
-      }
       if (registrationFile && moment(registrationFile.comment).diff(moment()) > 0) {
         checklistItems['current registration'] = true;
       }
       let inspectionFile = yield File.findById(this.inspectionFileId);
-      if (inspectionFile) {
-        checklistItems['inspection'] = true;
-      }
       if (inspectionFile && moment(inspectionFile.comment).diff(moment()) > 0) {
         checklistItems['current inspection'] = true;
       }
