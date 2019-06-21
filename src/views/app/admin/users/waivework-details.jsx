@@ -224,6 +224,7 @@ class WaiveWorkDetails extends Component {
       });
     }
     if (
+      action === 'complete' ||
       confirm(
         'Are you sure you want to end this waivework booking? Automatic Billing will be stopped.',
       )
