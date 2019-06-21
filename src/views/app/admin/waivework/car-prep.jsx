@@ -77,6 +77,7 @@ class CarPrep extends Component {
 
   render() {
     let {cars, requiredItems} = this.state;
+    console.log(cars);
     return (
       <div id="car-prep" className="container">
         <div className="box full">
@@ -90,6 +91,8 @@ class CarPrep extends Component {
                       <th>License</th>
                       <th>In Repair</th>
                       <th>Repair Reason</th>
+                      <th>Registration Expiration</th>
+                      <th>Inspection Expiration</th>
                       {requiredItems.map((item, i) => (
                         <th key={i} onClick={() => this.sortByItem(item)}>
                           {item[0].toUpperCase() + item.slice(1)}
@@ -118,6 +121,8 @@ class CarPrep extends Component {
                           )}
                         </td>
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
+                        <td>{car.checklist.registrationExpiration}</td>
+                        <td>{car.checklist.inspectionExpiration}</td>
                         {requiredItems.map((item, i) => (
                           <td key={i}>
                             {typeof car.checklist[item] === 'boolean' ? (
