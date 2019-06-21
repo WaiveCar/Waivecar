@@ -57,6 +57,14 @@ class UploadDamage extends Component {
   submitReport() {
     let {booking} = this.props;
     let files = [];
+    for (let type of ['left', 'right', 'front', 'rear']) {
+      if (!this.state[`${type}File`]) {
+        return snackbar.notify({
+          type: 'danger',
+          message: 'Please add a picture of each side before submitting',
+        });
+      }
+    }
     types.forEach(type => {
       if (this.state[`${type}File`]) {
         files.push(this.state[`${type}File`]);
