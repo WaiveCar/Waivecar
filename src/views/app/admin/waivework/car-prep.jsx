@@ -10,6 +10,7 @@ class CarPrep extends Component {
     this.state = {
       cars: null,
       requiredItems: null,
+      selected: 'completed',
     };
   }
   componentDidMount() {
@@ -73,6 +74,7 @@ class CarPrep extends Component {
     }
     this.setState(state => ({
       cars: temp,
+      selected: item,
     }));
   }
 
@@ -91,15 +93,33 @@ class CarPrep extends Component {
                       <th>License</th>
                       <th>In Repair</th>
                       <th>Repair Reason</th>
-                      <th>Registration Expiration</th>
-                      <th>Inspection Expiration</th>
+                      <th
+                        onClick={() =>
+                          this.sortByItem('registrationExpiration')
+                        }>
+                        Registration Expiration
+                        <span id={'registrationExpiration'} style={{display: 'none'}}>
+                          ▼
+                        </span>
+                      </th>
+                      <th
+                        onClick={() => this.sortByItem('inspectionExpiration')}>
+                        Inspection Expiration
+                        <span id={'inspectionExpiration'} style={{display: 'none'}}>
+                          ▼
+                        </span>
+                      </th>
                       {requiredItems.map((item, i) => (
                         <th key={i} onClick={() => this.sortByItem(item)}>
                           {item[0].toUpperCase() + item.slice(1)}
+                          <span id={item} style={{display: 'none'}}>
+                            ▼
+                          </span>
                         </th>
                       ))}
                       <th onClick={() => this.sortByItem('completed')}>
                         Completed Items
+                        <span id={'completed'}>▼</span>
                       </th>
                     </tr>
                   </thead>
