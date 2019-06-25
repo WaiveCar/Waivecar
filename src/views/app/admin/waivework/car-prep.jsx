@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import {Link} from 'react-router';
+import moment from 'moment';
 
 class CarPrep extends Component {
   constructor(props) {
@@ -77,7 +78,6 @@ class CarPrep extends Component {
 
   render() {
     let {cars, requiredItems} = this.state;
-    console.log(cars);
     return (
       <div id="car-prep" className="container">
         <div className="box full">
@@ -121,8 +121,18 @@ class CarPrep extends Component {
                           )}
                         </td>
                         <td>{car.repairReason ? car.repairReason : 'no'}</td>
-                        <td>{car.checklist.registrationExpiration}</td>
-                        <td>{car.checklist.inspectionExpiration}</td>
+                        <td>
+                          {car.checklist.registrationExpiration &&
+                            moment(car.checklist.registrationExpiration).format(
+                              'MM/DD/YY',
+                            )}
+                        </td>
+                        <td>
+                          {car.checklist.inspectionExpiration &&
+                            moment(car.checklist.inspectionExpiration).format(
+                              'MM/DD/YYYY',
+                            )}
+                        </td>
                         {requiredItems.map((item, i) => (
                           <td key={i}>
                             {typeof car.checklist[item] === 'boolean' ? (
