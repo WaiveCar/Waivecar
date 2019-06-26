@@ -24,6 +24,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let CarHistory = Bento.model('CarHistory');
+let GroupRole = Bento.model('GroupRole');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
@@ -571,7 +572,14 @@ module.exports = {
     let changes = [];
     for(ix in payload) {
       if(payload[ix] != car[ix]) {
-        changes.push(`${ix}: ${car[ix]} -> ${payload[ix]}`);
+        let oldTags = [];
+        if (ix === 'tagList') {
+          for (let tag of car[ix]) {
+            let groupRole = yield GroupRole.findById(tag.groupRoleId);
+            oldTags.push(groupRole.name);
+          }
+        }
+        changes.push(`${ix}: ${!oldTags ? car[ix] : oldTags} -> ${payload[ix]}`);
       }
     }
     if (!payload.documents) {
@@ -610,7 +618,7 @@ module.exports = {
 
     if(changes.length > 0) {
       changes = "(" + changes.join(', ') + ")";
-      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental-alerts'});
+      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#fleet'});
     } 
 
     return car;
