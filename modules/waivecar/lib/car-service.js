@@ -618,7 +618,7 @@ module.exports = {
 
     if(changes.length > 0) {
       changes = "(" + changes.join(', ') + ")";
-      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#fleet'});
+      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental_alerts'});
     } 
 
     return car;
