@@ -21,6 +21,7 @@ class WaiveWorkDetails extends Component {
       expireDate: null,
       uploading: false,
       payingEarly: false,
+      damageUploaded: false,
     };
     this.fileUpload = null;
   }
@@ -161,10 +162,14 @@ class WaiveWorkDetails extends Component {
     }
     api.post('/bookings', data, (err, booking) => {
       if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
+        if (err.code === 'CAR_NOT_READY') {
+          return alert(err.message);
+        } else {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
       }
       this.setState({currentWaiveworkBooking: booking});
     });
@@ -211,8 +216,15 @@ class WaiveWorkDetails extends Component {
   }
 
   bookingAction(action) {
-    let {currentWaiveworkBooking} = this.state;
+    let {currentWaiveworkBooking, damageUploaded} = this.state;
+    if (!damageUploaded && action === 'complete') {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Uploads of photos are required to complete bookings.',
+      });
+    }
     if (
+      action === 'complete' ||
       confirm(
         'Are you sure you want to end this waivework booking? Automatic Billing will be stopped.',
       )
@@ -333,6 +345,10 @@ class WaiveWorkDetails extends Component {
       });
     }
   }
+
+  markDamageUploaded = () => {
+    this.setState({damageUploaded: true});
+  };
 
   render() {
     let {
@@ -527,7 +543,10 @@ class WaiveWorkDetails extends Component {
                   </button>
                 </div>
               )}
-              <UploadDamage booking={currentWaiveworkBooking} />
+              <UploadDamage
+                markDamageUploaded={this.markDamageUploaded}
+                booking={currentWaiveworkBooking}
+              />
             </div>
           ) : (
             <div>

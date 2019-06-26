@@ -68,7 +68,7 @@ class Documentation extends Component {
             });
           }
           fileRef.value = '';
-          this.updateCar({[`${type}FileId`]: response[0].id}, car =>
+          this.updateCar({[`${type}FileId`]: response[0].id, documents: true}, car =>
             this.setState({
               uploading: false,
               [`${type}File`]: response[0],
@@ -196,7 +196,7 @@ class Documentation extends Component {
                             </div>
                           ) : (
                             <img
-                              style={{maxWidth: '100%'}}
+                              style={{maxWidth: '100%', maxHeight: '300px'}}
                               src={`http://waivecar-prod.s3.amazonaws.com/${
                                 this.state[`${type}File`].path
                               }`}

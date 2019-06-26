@@ -1,11 +1,11 @@
 .help {
   li {
-    list-style: none
+    list-style: none;
   }
 }
 .cars {
   .ride-map {
-    height : 400px;
+    height: 400px;
   }
   .box {
     max-width: 980px;
@@ -14,13 +14,13 @@
     min-width: 270px;
   }
   .loading-panel {
-    position   : relative;
-    min-height : 126.391px;
+    position: relative;
+    min-height: 126.391px;
   }
-  [data-react-toolbox="checkbox"] {
+  [data-react-toolbox='checkbox'] {
     margin: 0;
-    >:last-child {
-      font-size : 1rem;
+    > :last-child {
+      font-size: 1rem;
     }
   }
 }
@@ -71,8 +71,8 @@
 .cars-show {
   .btn-primary-outline {
     border: 0.0625rem solid $brand-primary;
-    line-height: .8rem;
-    margin: .2rem 0;
+    line-height: 0.8rem;
+    margin: 0.2rem 0;
   }
 }
 .magic {
@@ -97,29 +97,29 @@
     padding: 10px 4px;
     text-align: left;
   }
-  i { 
+  i {
     font-size: 12px;
-    margin-right: 0.2em; 
+    margin-right: 0.2em;
   }
   em {
     font-style: normal;
     font-family: monospace;
   }
-  .warning { 
+  .warning {
     color: crimson;
     font-weight: bold;
   }
   .inactive {
-    color: rgba(180,180,180,0.4);
+    color: rgba(180, 180, 180, 0.4);
   }
   .active {
-    color: rgb(0,0,0);
+    color: rgb(0, 0, 0);
   }
   >div, .car-list {
     margin-top: 85px;
   }
 }
- 
+
 .button-holder {
   display: flex;
   flex-direction: row;
@@ -149,10 +149,12 @@
 .dmg-group {
   border-bottom: 1px solid #bbb;
   padding-top: 0.5rem;
-  .booking-link { float: right }
+  .booking-link {
+    float: right;
+  }
   .ts {
     position: absolute;
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
   }
   .offset {
     display: inline-block;
@@ -167,7 +169,7 @@
   flex-direction: row;
   justify-content: start;
   margin: -0.15rem 0 0.75rem;
-  >* {
+  > * {
     width: 25%;
   }
 }
@@ -183,10 +185,27 @@
 }
 
 .before-middle {
-  color: #507C5C;
+  color: #507c5c;
 }
 
 .after-middle {
-  color: #7C5050;
+  color: #7c5050;
 }
 
+#car-prep {
+  background-color: #fafafa;
+  .header-span {
+    display: none;
+  }
+  tr {
+    border-bottom: 1px solid black;
+  }
+  td, th{
+    border-right: 1px solid black;
+  }
+  thead th {
+    position: sticky;
+    top: 100px;
+    background-color: #fafafa;
+  }
+}

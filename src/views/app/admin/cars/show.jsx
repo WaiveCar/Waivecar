@@ -273,7 +273,7 @@ class CarsShowView extends React.Component {
             default   = { car }
             buttons   = {[
               {
-                value : 'Update',
+                value : 'Update Above Info',
                 type  : 'submit',
                 class : 'btn btn-primary btn-profile-submit'
               }
@@ -344,6 +344,30 @@ class CarsShowView extends React.Component {
                   <label>
                     <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
                     WaiveWork
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="clean inside" defaultChecked={ this.hasTag('clean inside') } />
+                    Clean Inside
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="clean outside" defaultChecked={ this.hasTag('clean outside') } />
+                    Clean Outside
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="has keys" defaultChecked={ this.hasTag('has keys') } />
+                    Has Keys
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="maintenance updated" defaultChecked={ this.hasTag('maintenance updated') } />
+                    Maintenance Updated
                   </label>
                 </div>
                 <div className="form-actions text-center">

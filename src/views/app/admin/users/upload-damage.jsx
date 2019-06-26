@@ -57,6 +57,14 @@ class UploadDamage extends Component {
   submitReport() {
     let {booking} = this.props;
     let files = [];
+    for (let type of ['left', 'right', 'front', 'rear']) {
+      if (!this.state[`${type}File`]) {
+        return snackbar.notify({
+          type: 'danger',
+          message: 'Please add a picture of each side before submitting',
+        });
+      }
+    }
     types.forEach(type => {
       if (this.state[`${type}File`]) {
         files.push(this.state[`${type}File`]);
@@ -76,6 +84,7 @@ class UploadDamage extends Component {
       if (window.location.href.includes('bookings')) {
         window.location.reload();
       }
+      this.props.markDamageUploaded();
       this.setState(stateUpdate, () =>
         snackbar.notify({
           type: 'success',
@@ -152,8 +161,7 @@ class UploadDamage extends Component {
                           href={`http://waivecar-prod.s3.amazonaws.com/${
                             this.state[`${type}File`].path
                           }`}
-                          target="_blank"
-                        >
+                          target="_blank">
                           <img
                             style={{width: '100%'}}
                             src={`http://waivecar-prod.s3.amazonaws.com/${
