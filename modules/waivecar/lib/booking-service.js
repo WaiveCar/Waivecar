@@ -141,6 +141,17 @@ module.exports = class BookingService extends Service {
     } catch(err) {
       yield bail(err);
     } 
+
+    if (data.isWaivework) {
+      // If the booking is Waivework, the checklist of items required before a waivework booking is run
+      let checklist = yield car.waiveworkChecklist();
+      if (checklist.missingList.length) {
+        throw error.parse({
+          code: 'CAR_NOT_READY',
+          message: `This car is not ready to be sent out on WaiveWork. The missing checklist items are: ${checklist.missingList.join(', ')}`,
+        }, 400)
+      }
+    }
     // At this point we immediately make the car unavailable to protect
     // against issues that can occur later in the code
     yield car.update({isAvailable: false});
@@ -2055,6 +2066,15 @@ module.exports = class BookingService extends Service {
     }
     if (booking.isFlagged('Waivework')) {
       yield user.update({isWaivework: false});
+      let tagsToRemove = ['clean inside', 'clean outside', 'has keys', 'maintenance updated'];
+      for (let tag of tagsToRemove) {
+        yield car.untag(tag);
+      }
+      yield car.update({
+        frontTireWear: null,
+        rearTireWear: null,
+        bodyGrade: null,
+      });
     }
   }
 

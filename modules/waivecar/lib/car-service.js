@@ -24,6 +24,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let CarHistory = Bento.model('CarHistory');
+let GroupRole = Bento.model('GroupRole');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
@@ -97,6 +98,9 @@ module.exports = {
         // isAvailable: true,
       }
     };
+    if (query.type === 'workprep') {
+      delete opts.where.inRepair;
+    }
 
     if (!isAdmin) {
       opts.where.isAvailable = true;
@@ -234,9 +238,17 @@ module.exports = {
       }
       */
       return cars;
+    } else if (query.type === 'workprep') {
+      opts.where.bookingId = null;
+      opts.where.license = {$notLike: '%csula%'};
+      cars = yield Car.find(opts);
+      for (let i = 0; i < cars.length; i++) {
+        let checklist = yield cars[i].waiveworkChecklist();
+        cars[i] = cars[i].toJSON();
+        cars[i].checklist = checklist;
+      }
     } else {
       cars = yield Car.find(opts);
-
       // console.log(util.inspect(opts, false, null));
     }
 
@@ -249,8 +261,9 @@ module.exports = {
 
         // we want a single reference for this number
         // and not have it be computed in various places
-        car.range = car.milesAvailable(); 
-
+        if (query.type !== 'workprep') {
+          car.range = car.milesAvailable(); 
+        }
         available += car.isAvailable;
 
         // We toggle the car to be "available" for the admin so
@@ -267,7 +280,6 @@ module.exports = {
 
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
     }
-
     return cars;
   },
 
@@ -556,16 +568,23 @@ module.exports = {
         }
       }, 404);
     }
-
+    let device;
     let changes = [];
     for(ix in payload) {
       if(payload[ix] != car[ix]) {
-        changes.push(`${ix}: ${car[ix]} -> ${payload[ix]}`);
+        let oldTags = [];
+        if (ix === 'tagList') {
+          for (let tag of car[ix]) {
+            let groupRole = yield GroupRole.findById(tag.groupRoleId);
+            oldTags.push(groupRole.name);
+          }
+        }
+        changes.push(`${ix}: ${!oldTags ? car[ix] : oldTags} -> ${payload[ix]}`);
       }
     }
-
-    let device = yield this.getDevice(car.id, _user, 'update');
-
+    if (!payload.documents) {
+      device = yield this.getDevice(car.id, _user, 'update');
+    }
     if (payload.tagList) {
       payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
 
@@ -584,19 +603,22 @@ module.exports = {
       }
       // Notifications may need to be added for changes in groupCar
     }
-
-    yield car.update(Object.assign(device || {}, payload));
-    if(yield this.shouldRelay(car)) {
-      legacyWorkAround(car);
-      relay.emit('cars', {
-        type : 'update',
-        data : car.toJSON()
-      });
+    if (device) {
+      yield car.update(Object.assign(device || {}, payload));
+      if(yield this.shouldRelay(car)) {
+        legacyWorkAround(car);
+        relay.emit('cars', {
+          type : 'update',
+          data : car.toJSON()
+        });
+      }
+    } else {
+      yield car.update(payload);
     }
 
     if(changes.length > 0) {
       changes = "(" + changes.join(', ') + ")";
-      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#rental-alerts'});
+      yield notify.notifyAdmins(`:male-technologist: ${ _user.link() } updated info on ${ car.link() } ${ changes }`, ['slack'], {channel: '#fleet'});
     } 
 
     return car;

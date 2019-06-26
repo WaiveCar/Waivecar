@@ -6,6 +6,8 @@ let Booking = Bento.model('Booking');
 let Utils = require('sequelize/lib/utils');
 require('./log');
 let Log = Bento.model('Log');
+let File = Bento.model('File');
+let moment = require('moment');
 
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
@@ -564,8 +566,70 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         userId      : null,
         bookingId   : null
       });
-    }
+    },
 
+    waiveworkChecklist : function *() {
+      let checklist = {
+        'current registration': false,
+        'current inspection': false,
+        'front tire grade': null,
+        'rear tire grade': null,
+        'body grade': null,
+        'charge above 75%': false,
+        'waivework': false, 
+        'clean inside': false, 
+        'clean outside': false, 
+        'has keys': false,
+        'maintenance updated': false,
+      };
+      let registrationFile = yield File.findById(this.registrationFileId);
+      if (registrationFile && moment(registrationFile.comment).diff(moment()) > 0) {
+        checklist['current registration'] = true;
+      }
+      let inspectionFile = yield File.findById(this.inspectionFileId);
+      if (inspectionFile && moment(inspectionFile.comment).diff(moment()) > 0) {
+        checklist['current inspection'] = true;
+      }
+      if (this.frontTireWear) {
+        checklist['front tire grade'] = this.frontTireWear;
+      }
+      if (this.rearTireWear) {
+        checklist['rear tire grade'] = this.rearTireWear;
+      }
+      if (this.bodyGrade) {
+        checklist['body grade'] = this.bodyGrade;
+      }
+      // The level of charge should only be checked on electrics
+      if (!this.license.match(/work/gi) && this.charge >= 75) {
+        checklist['charge above 75%'] = true;
+      } else if (this.license.match(/work/gi)) {
+        checklist['charge above 75%'] = true;  
+      }
+      let requiredTagsList = ['waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated'];
+      for (let tag of requiredTagsList) {
+        if (yield this.hasTag(tag)) {
+          checklist[tag] = true;
+        }
+      };
+      let missingList = [];
+      let requiredList = [];
+      for (let key in checklist) {
+        requiredList.push(key);
+        if (!checklist[key]) {
+          missingList.push(key);
+        }
+      }
+      checklist.registrationExpiration = registrationFile && registrationFile.comment;
+      checklist.inspectionExpiration = inspectionFile && inspectionFile.comment;
+      checklist.requiredList = requiredList;
+      checklist.missingList = missingList;
+      checklist.completedCount = requiredList.length - missingList.length;
+      return checklist;
+    },
+
+    removeChecklistFlags : function *() {
+
+    },
   };
 
   model.attributes = [
