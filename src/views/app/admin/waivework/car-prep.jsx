@@ -72,6 +72,10 @@ class CarPrep extends Component {
             : a.checklist.completedCount - b.checklist.completedCount,
       );
     }
+    let oldNode = document.getElementById(this.state.selected);
+    oldNode.style.display = 'none';
+    let newNode = document.getElementById(item);
+    newNode.style.display = 'inline';
     this.setState(state => ({
       cars: temp,
       selected: item,
