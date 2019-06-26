@@ -36,7 +36,7 @@ class CarPrep extends Component {
   }
 
   sortByItem(item) {
-    let {cars} = this.state;
+    let {cars, selected} = this.state;
     let temp = [...cars];
     let asc = cars[0].checklist[item] && true;
     temp.sort((a, b) => {
@@ -62,7 +62,7 @@ class CarPrep extends Component {
       return 0;
     });
     if (item === 'completed') {
-      let asc =
+      asc =
         cars[0].checklist.completedCount <
         cars[cars.length - 1].checklist.completedCount;
       temp.sort(
@@ -72,10 +72,13 @@ class CarPrep extends Component {
             : a.checklist.completedCount - b.checklist.completedCount,
       );
     }
-    let oldNode = document.getElementById(this.state.selected);
-    oldNode.style.display = 'none';
     let newNode = document.getElementById(item);
-    newNode.style.display = 'inline';
+    if (!(item === selected)) {
+      let oldNode = document.getElementById(selected);
+      oldNode.style.display = 'none';
+      newNode.style.display = 'inline';
+    }
+    newNode.innerText = asc ? '▲' : '▼';
     this.setState(state => ({
       cars: temp,
       selected: item,
@@ -102,14 +105,18 @@ class CarPrep extends Component {
                           this.sortByItem('registrationExpiration')
                         }>
                         Registration Expiration
-                        <span id={'registrationExpiration'} style={{display: 'none'}}>
+                        <span
+                          id={'registrationExpiration'}
+                          style={{display: 'none'}}>
                           ▼
                         </span>
                       </th>
                       <th
                         onClick={() => this.sortByItem('inspectionExpiration')}>
                         Inspection Expiration
-                        <span id={'inspectionExpiration'} style={{display: 'none'}}>
+                        <span
+                          id={'inspectionExpiration'}
+                          style={{display: 'none'}}>
                           ▼
                         </span>
                       </th>
