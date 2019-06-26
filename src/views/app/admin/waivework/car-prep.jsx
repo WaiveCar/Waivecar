@@ -107,30 +107,26 @@ class CarPrep extends Component {
                         Registration Expiration
                         <span
                           id={'registrationExpiration'}
-                          style={{display: 'none'}}>
-                          ▼
-                        </span>
+                          style={{display: 'none'}}
+                        />
                       </th>
                       <th
                         onClick={() => this.sortByItem('inspectionExpiration')}>
                         Inspection Expiration
                         <span
                           id={'inspectionExpiration'}
-                          style={{display: 'none'}}>
-                          ▼
-                        </span>
+                          style={{display: 'none'}}
+                        />
                       </th>
                       {requiredItems.map((item, i) => (
                         <th key={i} onClick={() => this.sortByItem(item)}>
                           {item[0].toUpperCase() + item.slice(1)}
-                          <span id={item} style={{display: 'none'}}>
-                            ▼
-                          </span>
+                          <span id={item} style={{display: 'none'}} />
                         </th>
                       ))}
                       <th onClick={() => this.sortByItem('completed')}>
                         Completed Items
-                        <span id={'completed'}>▼</span>
+                        <span id={'completed'}>▲</span>
                       </th>
                     </tr>
                   </thead>
