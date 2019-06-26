@@ -92,10 +92,10 @@ class CarPrep extends Component {
         <div className="box full">
           <h3>Car Prep</h3>
           {cars && (
-            <div className="box-content">
+            <div>
               <div className="row">
-                <table className="box-table table-striped">
-                  <thead>
+                <table className="box-table">
+                  <thead className="checklist-header">
                     <tr>
                       <th>License</th>
                       <th>In Repair</th>
@@ -107,7 +107,6 @@ class CarPrep extends Component {
                         Registration Expiration
                         <span
                           id={'registrationExpiration'}
-                          style={{display: 'none'}}
                         />
                       </th>
                       <th
@@ -115,13 +114,12 @@ class CarPrep extends Component {
                         Inspection Expiration
                         <span
                           id={'inspectionExpiration'}
-                          style={{display: 'none'}}
                         />
                       </th>
                       {requiredItems.map((item, i) => (
                         <th key={i} onClick={() => this.sortByItem(item)}>
                           {item[0].toUpperCase() + item.slice(1)}
-                          <span id={item} style={{display: 'none'}} />
+                          <span id={item} />
                         </th>
                       ))}
                       <th onClick={() => this.sortByItem('completed')}>
@@ -157,7 +155,7 @@ class CarPrep extends Component {
                         <td>
                           {car.checklist.inspectionExpiration &&
                             moment(car.checklist.inspectionExpiration).format(
-                              'MM/DD/YYYY',
+                              'MM/DD/YY',
                             )}
                         </td>
                         {requiredItems.map((item, i) => (
