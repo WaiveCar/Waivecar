@@ -621,14 +621,10 @@ module.exports = {
     }
 
     if (isUpdatingPlateOrVin) {
-      try {
       car.plateNumberWork = car.plateNumber;
       yield tikd.removeCar(car);
       yield car.untag('tikd');
       yield tikd.addCarIfNeeded(car);
-      }catch(e) {
-        console.log(e);
-      }
     }
 
     if(changes.length > 0) {
