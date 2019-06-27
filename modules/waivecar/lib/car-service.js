@@ -20,6 +20,7 @@ let relay       = Bento.Relay;
 let log         = Bento.Log;
 let config      = Bento.config.waivecar;
 let hooks       = Bento.Hooks;
+let tikd        = require('./tikd-service.js');
 
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
@@ -521,6 +522,8 @@ module.exports = {
   },
 
   *update(id, payload, _user) {
+    console.log('id', id);
+    console.log('payload', payload);
     var ix;
     access.verifyAdmin(_user);
 
@@ -559,6 +562,10 @@ module.exports = {
     }
 
     let car = yield Car.findById(id, { include: [includeCarGroup]});
+
+    let isUpdatingPlateOrVin = (car.plateNumber !== payload.plateNumber) || (car.vin !== payload.vin);
+    console.log(isUpdatingPlateOrVin);
+
     if (!car) {
       throw error.parse({
         code    : 'CAR_SERVICE_NOT_FOUND',
@@ -614,6 +621,17 @@ module.exports = {
       }
     } else {
       yield car.update(payload);
+    }
+
+    if (isUpdatingPlateOrVin) {
+      try {
+      car.plateNumberWork = car.plateNumber;
+      yield tikd.removeCar(car);
+      yield car.untag('tikd');
+      yield tikd.addCarIfNeeded(car);
+      }catch(e) {
+        console.log(e);
+      }
     }
 
     if(changes.length > 0) {

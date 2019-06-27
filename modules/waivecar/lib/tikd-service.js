@@ -17,7 +17,7 @@ module.exports = {
 
   *post(url, payload, opts) {
     if(process.env.NODE_ENV !== 'production') {
-      return;
+      return true;
     }
     var response, responseJSON;
 
@@ -123,7 +123,6 @@ module.exports = {
     if(booking.isFlagged('tikdEnd') || !booking.isFlagged('tikdStart')) {
       return true;
     }
-
     let res = yield this.changeLiability('service-ended', car, booking, user);
     console.log(res);
     if(!res) {

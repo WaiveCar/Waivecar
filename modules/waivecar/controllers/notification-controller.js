@@ -51,7 +51,7 @@ Bento.Register.Controller('NotificationsController', function(controller) {
     yield notify.sendTextMessage(user, `WaiveCar: ${message}`);
     yield notify.slack(
       {text: `${_user.name()} sent the message '${message}' to ${user.link()}`},
-      {channel: '#rental-alerts'},
+      {channel: '#app_support'},
     );
     sent = true;
     return {sent};
