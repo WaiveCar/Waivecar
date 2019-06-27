@@ -562,7 +562,6 @@ module.exports = {
     let car = yield Car.findById(id, { include: [includeCarGroup]});
 
     let isUpdatingPlateOrVin = (car.plateNumber !== payload.plateNumber) || (car.vin !== payload.vin);
-
     if (!car) {
       throw error.parse({
         code    : 'CAR_SERVICE_NOT_FOUND',
@@ -623,8 +622,7 @@ module.exports = {
     if (isUpdatingPlateOrVin) {
       car.plateNumberWork = car.plateNumber;
       yield tikd.removeCar(car);
-      yield car.untag('tikd');
-      yield tikd.addCarIfNeeded(car);
+      yield tikd.addCarIfNeeded(car, true);
     }
 
     if(changes.length > 0) {

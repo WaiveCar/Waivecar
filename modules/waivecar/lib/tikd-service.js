@@ -70,8 +70,8 @@ module.exports = {
     return res;
   },
 
-  *addCarIfNeeded(car) {
-    if (!(yield car.hasTag('tikd'))) {
+  *addCarIfNeeded(car, isUpdate) {
+    if (isUpdate || !(yield car.hasTag('tikd'))) {
       console.log("adding " + car.license);
       let res = yield this.changeCar('subscribe', car);
       if(res) {
