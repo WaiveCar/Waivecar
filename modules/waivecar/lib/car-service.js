@@ -522,8 +522,6 @@ module.exports = {
   },
 
   *update(id, payload, _user) {
-    console.log('id', id);
-    console.log('payload', payload);
     var ix;
     access.verifyAdmin(_user);
 
@@ -564,7 +562,6 @@ module.exports = {
     let car = yield Car.findById(id, { include: [includeCarGroup]});
 
     let isUpdatingPlateOrVin = (car.plateNumber !== payload.plateNumber) || (car.vin !== payload.vin);
-    console.log(isUpdatingPlateOrVin);
 
     if (!car) {
       throw error.parse({
