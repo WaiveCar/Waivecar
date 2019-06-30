@@ -493,6 +493,18 @@ module.exports = {
           }
         ]
       });
+
+      // That's ok ... permit a search by license as well
+      if (!car) {
+        car = yield Car.find({
+          where: {
+            license: {$like: `%${id}` }
+          }
+        });
+        if(car) {
+          car = car[0];
+        }
+      }
     }
 
     if(!car) {
