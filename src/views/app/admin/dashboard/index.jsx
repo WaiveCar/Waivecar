@@ -33,8 +33,7 @@ module.exports = class DashboardIndex extends React.Component {
           currentWaiveworkBookingsCount: data.currentWaiveworkBookingsCount,
           carsInRepairCount: data.carsInRepairCount,
           carsInWaiveworkCount: data.carsInWaiveworkCount,
-        },
-        () => console.log(this.state),
+        }
       );
     });
 
@@ -80,7 +79,7 @@ module.exports = class DashboardIndex extends React.Component {
       <section className="container">
         <div className="row">
           <div className="col-xs-6">
-            <div className="mini-chart2-container chart-pink">
+            <div className="mini-chart2-container chart-bluegray">
               <div className="count">
                 <small>Users</small>
                 {this.renderCount(this.state.usersCount)}
@@ -92,6 +91,30 @@ module.exports = class DashboardIndex extends React.Component {
               <div className="count">
                 <small>Bookings</small>
                 {this.renderCount(this.state.bookingsCount)}
+              </div>
+            </div>
+          </div>
+          <div className="col-xs-6">
+            <div className="mini-chart2-container chart-bluegray">
+              <div className="count">
+                <small>Current WaiveWork Bookings</small>
+                {this.state.currentWaiveworkBookingsCount}
+              </div>
+            </div>
+          </div>
+          <div className="col-xs-6">
+            <div className="mini-chart2-container chart-bluegray">
+              <div className="count">
+                <small>Cars in Repair</small>
+                {this.state.carsInRepairCount}
+              </div>
+            </div>
+          </div>
+          <div className="col-xs-6">
+            <div className="mini-chart2-container chart-bluegray">
+              <div className="count">
+                <small>Cars in WaiveWork</small>
+                {this.state.carsInWaiveworkCount}
               </div>
             </div>
           </div>
