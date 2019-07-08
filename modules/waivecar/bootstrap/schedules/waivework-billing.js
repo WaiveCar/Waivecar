@@ -302,7 +302,7 @@ scheduler.process('waivework-billing', function*(job) {
             let markPaidResponse = (yield request({
               url: `${config.ocpi.url}?key=${config.ocpi.key}`,
               method: 'POST',
-              body: JSON.stringify({data: chargeIdList}),
+              body: JSON.stringify(chargeIdList),
             })).body;
             // If not on production server, these charges need to be unmarked after they are marked as paid
             if (process.env.NODE_ENV !== 'production') {
