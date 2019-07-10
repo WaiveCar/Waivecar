@@ -1198,4 +1198,7 @@ module.exports = class OrderService extends Service {
     }
   }
 
+  static *retryPayment(paymentId, opts) {
+    
+  }
 };
