@@ -1199,6 +1199,14 @@ module.exports = class OrderService extends Service {
   }
 
   static *retryPayment(paymentId, opts) {
-    
+    let oldOrder = yield Order.findById(paymentId);
+    let currentBooking = yield Booking.find({
+      where: {
+        userId: oldOrder.userId,
+        status: {$or: ['reserved', 'ready','started','ended']}
+      }
+    });
+    console.log('currentBooking', currentBooking);
+    // A new BookingPayment must only be created if the user is in the middle of a booking
   }
 };

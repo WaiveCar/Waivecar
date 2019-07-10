@@ -37,8 +37,8 @@ scheduler.process('waivework-billing', function*(job) {
       // Because the mileage is stored once per day, the average mileage per day may be found by
       // dividing the miles since the beginning of the booking by the number of days in the car history
       let averagePerDay =
-        (Number(history[history.length - 1].data) - Number(history[0].data)) /
-        history.length *
+        ((Number(history[history.length - 1].data) - Number(history[0].data)) /
+          history.length) *
         0.621371;
       if (
         averagePerDay < 100 &&
@@ -237,6 +237,11 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: e.shopOrder.id,
             });
+            let bookingPayment = new BookingPayment({
+              bookingId: oldPayment.booking.id,
+              orderId: e.shopOrder.id,
+            });
+            yield bookingPayment.save();
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
             ).toFixed(
@@ -287,9 +292,7 @@ scheduler.process('waivework-billing', function*(job) {
         }
         try {
           let {body} = yield request({
-            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
-              oldPayment.booking.userId
-            }&paid=true`,
+            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${oldPayment.booking.userId}&paid=true`,
             method: 'GET',
           });
           body = JSON.parse(body);
@@ -312,9 +315,7 @@ scheduler.process('waivework-billing', function*(job) {
               }
               let unmarkPaidResponse = (yield request({
                 method: 'DELETE',
-                url: `${config.ocpi.url}?key=${
-                  config.ocpi.key
-                }&id=${deleteString}`,
+                url: `${config.ocpi.url}?key=${config.ocpi.key}&id=${deleteString}`,
               })).body;
             }
 
