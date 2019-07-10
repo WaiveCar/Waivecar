@@ -20,6 +20,10 @@ Bento.Register.Controller('ReportsController', function(controller) {
     return yield service.showMileage(date);
   };
 
+  controller.goodyear = function *(date) {
+    return yield service.goodyear(date);
+  };
+
   controller.delete = function *(id) {
     return yield service.delete(id, this.auth.user);
   };

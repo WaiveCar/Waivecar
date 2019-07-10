@@ -46,6 +46,8 @@ Route.post('/reports', {
 
 Route.get('/reports/mileage/:date', [ 'ReportsController@showMileage' ]);
 Route.get('/reports/mileage', [ 'ReportsController@showMileage' ]);
+Route.get('/reports/goodyear/:date', [ 'ReportsController@goodyear' ]);
+Route.get('/reports/goodyear', [ 'ReportsController@goodyear' ]);
 Route.get('/reports/car/:id', [ 'ReportsController@showForCar' ]);
 Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@delete' ]);
 

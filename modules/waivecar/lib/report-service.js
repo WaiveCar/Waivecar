@@ -8,6 +8,7 @@ let File        = Bento.model('File');
 let Booking     = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let Car         = Bento.model('Car');
+let CarHistory  = Bento.model('CarHistory');
 let User        = Bento.model('User');
 let error       = Bento.Error;
 let log         = Bento.Log;
@@ -177,6 +178,48 @@ module.exports = {
     }
   },
 
+  *goodyear(date) {
+    if(!date) {
+      let yesterday = new Date(new Date() - 86400000);
+
+      // create a YYYY-MM-DD formatted date.
+      date = [1900 + yesterday.getYear(), (101 + yesterday.getMonth()).toString().slice(1), (100 + yesterday.getDate()).toString().slice(1)].join('-'); 
+    }
+    let tomorrow = moment(date).add(1, 'day').format('Y-MM-DD');
+
+    let map = {};
+    let allCars = yield Car.find();
+    let carMap = {};
+    allCars.forEach(row => carMap[row.id] = row);
+
+    let odoList = yield CarHistory.find({
+      where: {
+        $and: [
+          { created_at: {$gt: date }},
+          { created_at: {$lt: tomorrow }}
+        ]
+      }
+    });
+
+    odoList.forEach(row => {
+      let car = carMap[row.carId];
+      if(car.plateNumber && car.plateState && car.license) {
+        map[row.carId] = {
+          odometer: parseInt(row.data, 10) * 0.621371,
+          vin: car.vin,
+          plate_number: car.plateNumber,
+          plate_state: car.plateState,
+          name: car.license
+        }
+      }
+    });
+
+    return {
+      date: date,
+      vehicles: Object.values(map)
+    };
+  },
+
   *showMileage(date) {
     // we have two methods. The first parses the inverse log, using UTC as the reference point. The second
     // looks at the historical bookings. The second method chronically underreports and probably won't be
@@ -200,23 +243,25 @@ module.exports = {
     let agg = (function() {
       let map = {};
       ['log.txt.1', 'log.txt'].forEach(function(file) {
-        var data = fs.readFileSync('/var/log/invers/' + file, 'utf8');
-        var startPoint = data.indexOf(date);
-        if(startPoint >= 0) { 
-          var recordListRaw = data.substr(startPoint).split('\n');
-          recordListRaw.forEach(function(row) {
-            if(row.indexOf(date) !== -1) {
-              try {
-                var data = JSON.parse(row);
-                if( !(data.id in map) ) {
-                  map[data.id] = [ data.mileage, 0 ];
-                } else {
-                  map[data.id][1] = data.mileage;
-                }
-              } catch(ex) { }
-            } 
-          });
-        } 
+        try{ 
+          var data = fs.readFileSync('/var/log/invers/' + file, 'utf8');
+          var startPoint = data.indexOf(date);
+          if(startPoint >= 0) { 
+            var recordListRaw = data.substr(startPoint).split('\n');
+            recordListRaw.forEach(function(row) {
+              if(row.indexOf(date) !== -1) {
+                try {
+                  var data = JSON.parse(row);
+                  if( !(data.id in map) ) {
+                    map[data.id] = [ data.mileage, 0 ];
+                  } else {
+                    map[data.id][1] = data.mileage;
+                  }
+                } catch(ex) { }
+              } 
+            });
+          } 
+        } catch(ex) {}
       });
       for(var car in map) {
         map[car] = map[car][1] - map[car][0];
