@@ -140,6 +140,22 @@ class ChargeList extends Component {
     }
   }
 
+  retryPayment(id, data) {
+    api.post(`/shop/retryPayment/${id}`, {}, (err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error retrying payment: ${err}`,
+        });
+      }
+      console.log('response: ', response);
+      return snackbar.notify({
+        type: 'success',
+        message: 'Payment retried successfully',
+      });
+    });
+  }
+
   charge(data) {
     let isOpen = this.state.details === data.id;
     let isFailed = data.status === 'failed';
@@ -173,6 +189,11 @@ class ChargeList extends Component {
             { helpers.changeCase.toCapital(data.status) }
             { auth.user().hasAccess('admin') && data.status === 'paid' && data.chargeId != "0" &&
               <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
+            }
+            {data.status === 'failed' && 
+              <button onClick = {() => this.retryPayment(data.id, data) } className='btn btn-xs btn-link undo'>
+                <span className="fa fa-undo"></span>
+              </button>
             }
           </td>
         </tr>

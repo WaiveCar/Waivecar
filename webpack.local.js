@@ -9,7 +9,10 @@ new WebpackDevServer(webpack(webpackConfig), {
   publicPath         : '/',
   hot                : true,
   historyApiFallback : true,
-  headers            : { "Access-Control-Allow-Origin" : "*" }
+  headers            : { "Access-Control-Allow-Origin" : "*" },
+  watchOptions: {
+    poll: true,
+  },
 }).listen(config.app.port, '0.0.0.0', function (err, result) {
   if (err) {
     console.log(err);
