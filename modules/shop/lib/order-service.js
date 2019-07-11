@@ -1215,14 +1215,31 @@ module.exports = class OrderService extends Service {
       description:
       `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
     };
+    let orderId;
     try {
-      yield this.quickCharge(data, _user, {
-        subject: "You just topped up $20 for future rides with Waive",
+      let {order} = yield this.quickCharge(data, _user, {
+        subject: data.description,
         nocredit: true, 
         isTopUp: true
-      })
+      });
+      yield order.update({
+        refId: oldOrder.id, 
+      });
+      orderId = order.id,
     }catch(e) {
       console.log('error quickcharging', e);
+      orderId = e.data.order.id;
+      throw error.parse({
+        code    : 'CHARGE_FAILED',
+        message : e.message,
+      }, 400);
+    }
+    if (currentBooking) {
+      let bookingPayment = new BookingPayment.create({
+        bookingId: currentBooking.id,
+        orderId,
+      });
+      yield bookingPayment.save();
     }
     // A new BookingPayment must only be created if the user is in the middle of a booking
   }
