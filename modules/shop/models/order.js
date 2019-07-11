@@ -143,7 +143,7 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
       }
     },
 
-    previousId : {
+    refId : {
       type       : Sequelize.INTEGER,
       allowNull  : true,
       references : {
