@@ -608,7 +608,9 @@ module.exports = class OrderService extends Service {
     let types = [];
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization - refunded');
+      let filteredPayments = payments.filter((row) => {
+        return (row.shopOrder.description !== 'Pre booking authorization - refunded') && !row.shopOrder.refId;
+      });
       totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
