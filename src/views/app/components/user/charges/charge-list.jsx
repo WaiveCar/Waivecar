@@ -148,7 +148,6 @@ class ChargeList extends Component {
           message: `Error retrying payment: ${err.message}`,
         });
       }
-      console.log('response: ', response);
       return snackbar.notify({
         type: 'success',
         message: 'Payment retried successfully',
@@ -187,11 +186,11 @@ class ChargeList extends Component {
           </td>
           <td className={ 'status ' + data.status }>
             { helpers.changeCase.toCapital(data.status) }
-            { auth.user().hasAccess('admin') && data.status === 'paid' && data.chargeId != "0" &&
+            { auth.user().hasAccess('admin') && data.status === 'paid' && data.chargeId != '0' &&
               <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
             }
-            {data.status === 'failed' && 
-              <button onClick = {() => this.retryPayment(data.id, data) } className='btn btn-xs btn-link undo'>
+            {data.status === 'failed' &&  
+              <button onClick = {() => this.retryPayment(data.id, data)} className='btn btn-xs btn-link undo'>
                 <span className="fa fa-undo"></span>
               </button>
             }

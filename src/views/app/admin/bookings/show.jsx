@@ -68,7 +68,7 @@ module.exports = class BookingsView extends React.Component {
       this.setState({
         booking: booking,
         details: booking.details,
-        payments: booking.payments,
+        payments: booking.payments.filter(payment => !payment.refId),
         user: booking.user,
         car: booking.car
       }, () => this.loadCarPath(id));
