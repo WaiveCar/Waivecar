@@ -1198,7 +1198,7 @@ module.exports = class OrderService extends Service {
     }
   }
 
-  static *retryPayment(paymentId, opts) {
+  static *retryPayment(paymentId, opts, _user) {
     let oldOrder = yield Order.findById(paymentId);
     let currentBooking = yield Booking.find({
       where: {
@@ -1206,7 +1206,24 @@ module.exports = class OrderService extends Service {
         status: {$or: ['reserved', 'ready','started','ended']}
       }
     });
+    let lateFees = opts.lateFees ? opts.lateFees : 0;
     console.log('currentBooking', currentBooking);
+    let data = {
+      userId: oldOrder.userId,
+      amount: oldOrder.amount + lateFees,
+      source: 'Payment Retry',
+      description:
+      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
+    };
+    try {
+      yield this.quickCharge(data, _user, {
+        subject: "You just topped up $20 for future rides with Waive",
+        nocredit: true, 
+        isTopUp: true
+      })
+    }catch(e) {
+      console.log('error quickcharging', e);
+    }
     // A new BookingPayment must only be created if the user is in the middle of a booking
   }
 };
