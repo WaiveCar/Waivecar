@@ -108,7 +108,6 @@ module.exports = class OrderService extends Service {
 
     try {
       // this is a dry run that populates the charge with the amount we would like to charge the user
-      order.waivework = true;
       charge = yield this.charge(order, user, Object.assign({dry: true}, opts));
 
       // this is the real one and if successful will override the last value with a real charge, 
@@ -959,7 +958,7 @@ module.exports = class OrderService extends Service {
             yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
             // And finally we tell them (also covered in #670), but only if they are not waivework.
-            if (!order.waivework) {
+            if (!data.waivework) {
               yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
             }
           }
