@@ -1201,7 +1201,8 @@ module.exports = class OrderService extends Service {
   static *retryPayment(paymentId, opts, _user) {
     let oldOrder = yield Order.findById(paymentId);
     if (oldOrder.refId) {
-      oldOrder = yield Order.findById(oldOrder.id);
+      oldOrder = yield Order.findById(oldOrder.refId);
+      console.log(oldOrder);
     }
     let currentBooking = yield Booking.findOne({
       where: {
@@ -1217,7 +1218,6 @@ module.exports = class OrderService extends Service {
       description:
       `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
     };
-    let orderId;
     try {
       let {order} = yield this.quickCharge(data, _user, {
         subject: data.description,
@@ -1227,20 +1227,28 @@ module.exports = class OrderService extends Service {
       yield order.update({
         refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
       });
-      orderId = order.id;
+      if (currentBooking) {
+        let bookingPayment = new BookingPayment({
+          bookingId: currentBooking.id,
+          orderId: order.id,
+        });
+        yield bookingPayment.save();
+      }
     }catch(e) {
-      orderId = e.shopOrder.id;
+      if (currentBooking) {
+        let bookingPayment = new BookingPayment({
+          bookingId: currentBooking.id,
+          orderId: e.shopOrder.id,
+        });
+        yield bookingPayment.save();
+      }
+      yield e.shopOrder.update({
+        refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
+      });
       throw error.parse({
         code    : 'CHARGE_FAILED',
         message : e.message,
       }, 400);
-    }
-    if (currentBooking) {
-      let bookingPayment = new BookingPayment({
-        bookingId: currentBooking.id,
-        orderId,
-      });
-      yield bookingPayment.save();
     }
     // A new BookingPayment must only be created if the user is in the middle of a booking
   }

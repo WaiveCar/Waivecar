@@ -346,6 +346,7 @@ scheduler.process('waivework-billing', function*(job) {
                 )}`,
               );
             } catch (e) {
+              // BookingPayments must be made whether or not the charge is successful
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: e.shopOrder.id,
