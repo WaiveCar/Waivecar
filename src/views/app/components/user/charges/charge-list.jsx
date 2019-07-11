@@ -145,7 +145,7 @@ class ChargeList extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: `Error retrying payment: ${err}`,
+          message: `Error retrying payment: ${err.message}`,
         });
       }
       console.log('response: ', response);
