@@ -1223,12 +1223,12 @@ module.exports = class OrderService extends Service {
         isTopUp: true
       });
       yield order.update({
-        refId: oldOrder.id, 
+        refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
       });
       orderId = order.id;
     }catch(e) {
       console.log('error quickcharging', e);
-      orderId = e.data.order.id;
+      orderId = e.shopOrder.id;
       throw error.parse({
         code    : 'CHARGE_FAILED',
         message : e.message,
