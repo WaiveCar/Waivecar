@@ -1200,14 +1200,13 @@ module.exports = class OrderService extends Service {
 
   static *retryPayment(paymentId, opts, _user) {
     let oldOrder = yield Order.findById(paymentId);
-    let currentBooking = yield Booking.find({
+    let currentBooking = yield Booking.findOne({
       where: {
         userId: oldOrder.userId,
         status: {$or: ['reserved', 'ready','started','ended']}
       }
     });
     let lateFees = opts.lateFees ? opts.lateFees : 0;
-    console.log('currentBooking', currentBooking);
     let data = {
       userId: oldOrder.userId,
       amount: oldOrder.amount + lateFees,
@@ -1227,7 +1226,6 @@ module.exports = class OrderService extends Service {
       });
       orderId = order.id;
     }catch(e) {
-      console.log('error quickcharging', e);
       orderId = e.shopOrder.id;
       throw error.parse({
         code    : 'CHARGE_FAILED',
@@ -1235,7 +1233,7 @@ module.exports = class OrderService extends Service {
       }, 400);
     }
     if (currentBooking) {
-      let bookingPayment = new BookingPayment.create({
+      let bookingPayment = new BookingPayment({
         bookingId: currentBooking.id,
         orderId,
       });
