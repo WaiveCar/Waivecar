@@ -1225,7 +1225,7 @@ module.exports = class OrderService extends Service {
       yield order.update({
         refId: oldOrder.id, 
       });
-      orderId = order.id,
+      orderId = order.id;
     }catch(e) {
       console.log('error quickcharging', e);
       orderId = e.data.order.id;
