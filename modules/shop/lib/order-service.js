@@ -1200,6 +1200,9 @@ module.exports = class OrderService extends Service {
 
   static *retryPayment(paymentId, opts, _user) {
     let oldOrder = yield Order.findById(paymentId);
+    if (oldOrder.refId) {
+      oldOrder = yield Order.findById(oldOrder.id);
+    }
     let currentBooking = yield Booking.findOne({
       where: {
         userId: oldOrder.userId,
