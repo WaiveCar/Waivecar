@@ -603,7 +603,7 @@ module.exports = {
     if (payload.tagList) {
       payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
 
-      let oldTags = yield car.getTagList(['la', 'csula', 'level', 'choice', 'waivework']);      
+      let oldTags = yield car.getTagList(['la', 'csula', 'level', 'choice', 'waivework', 'clean inside', 'clean outside', 'has keys', 'maintenance updated']);      
 
       let toRemove = _.difference(oldTags, payload.tagList);
       for(ix = 0; ix < toRemove.length; ix++) {
