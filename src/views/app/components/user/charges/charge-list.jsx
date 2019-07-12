@@ -189,7 +189,7 @@ class ChargeList extends Component {
             { auth.user().hasAccess('admin') && data.status === 'paid' && data.chargeId != '0' &&
               <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
             }
-            {data.status === 'failed' &&  
+            {data.status === 'failed' && (data.source === 'Waivework auto charge' || data.source === 'Payment Retry') && 
               <button onClick = {() => this.retryPayment(data.id, data)} className='btn btn-xs btn-link undo'>
                 <span className="fa fa-undo"></span>
               </button>
