@@ -1259,12 +1259,12 @@ module.exports = class OrderService extends Service {
   }
 
   static *lateFees(id, query, _user) {
-    let oldOrder = yield ShopOrder.findById(id);
+    let oldOrder = yield Order.findById(id);
     // If the retried order is not the original for the charge, the original must be found
     if (oldOrder.refId) {
       oldOrder = yield Order.findById(oldOrder.refId);
     }
-    let numDays = moment(oldOrder.createdAt).diff(moment(), 'days');
+    let numDays = moment().diff(moment(oldOrder.createdAt), 'days');
     let amountPerDay = (query.percent / 100) * oldOrder.amount;
     return numDays * amountPerDay;
   }
