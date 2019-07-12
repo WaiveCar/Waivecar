@@ -32,7 +32,8 @@ Route.post('/shop/topUp', {
 });
 // This route is for refunding charges. It requires an amount property in the body of the request.
 Route.post('/shop/refund/:id', [ 'isAuthenticated', 'isAdmin', 'Shop/OrdersController@refund' ]);
-Route.post('/shop/retryPayment/:id', [ 'isAuthenticated', 'isAdmin', 'Shop/OrdersController@retryPayment' ]);
+Route.post('/shop/retryPayment/:id', [ 'isAuthenticated', 'Shop/OrdersController@retryPayment' ]);
+Route.get('/shop/lateFees/:id', ['idAuthenticated', 'Shop/OrdersController@lateFees'] );
 
 Route.post('/shop/cards', {
   policy : 'isAuthenticated',

@@ -20,6 +20,10 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.retryPayment(id, this.payload, this.auth.user);
   }
 
+  controller.lateFees = function *(id) {
+    return yield service.lateFees(id, query, this.auth.user);
+  }
+
   // Creates a new order.
   controller.create = function *() {
     return yield service.create(this.payload, this.auth.user);

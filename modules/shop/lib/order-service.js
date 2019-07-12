@@ -1205,6 +1205,7 @@ module.exports = class OrderService extends Service {
 
   static *retryPayment(paymentId, opts, _user) {
     let oldOrder = yield Order.findById(paymentId);
+    // If the retried order is not the original for the charge, the original must be found
     if (oldOrder.refId) {
       oldOrder = yield Order.findById(oldOrder.refId);
     }
@@ -1238,7 +1239,8 @@ module.exports = class OrderService extends Service {
         });
         yield bookingPayment.save();
       }
-    }catch(e) {
+    } catch(e) {
+      // A new BookingPayment must only be created if the user is in the middle of a booking
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
@@ -1254,6 +1256,16 @@ module.exports = class OrderService extends Service {
         message : e.message,
       }, 400);
     }
-    // A new BookingPayment must only be created if the user is in the middle of a booking
+  }
+
+  static *lateFees(id, query, _user) {
+    let oldOrder = yield ShopOrder.findById(id);
+    // If the retried order is not the original for the charge, the original must be found
+    if (oldOrder.refId) {
+      oldOrder = yield Order.findById(oldOrder.refId);
+    }
+    let numDays = moment(oldOrder.createdAt).diff(moment(), 'days');
+    let amountPerDay = (query.percent / 100) * oldOrder.amount;
+    return numDays * amountPerDay;
   }
 };
