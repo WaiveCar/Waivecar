@@ -1100,7 +1100,7 @@ module.exports = class OrderService extends Service {
     if(amountInCents) {
       messageParts.push('cover the $' + amountInDollars + ' in fees disclosed in the previous email');
     }
-    if(creditBeforeCharge) {
+    if(creditBeforeCharge && !extra.advancePayment) {
       messageParts.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
     }
     
