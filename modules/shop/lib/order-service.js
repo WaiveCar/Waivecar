@@ -394,7 +394,7 @@ module.exports = class OrderService extends Service {
     }
 
     // Don't charge the waivework users or admins for going over 2 hours.
-    if(user.isWaivework || user.isAdmin()) {
+    if(user.isAdmin()) {
       return true;
     }
 
@@ -418,72 +418,73 @@ module.exports = class OrderService extends Service {
         minutesOver = Math.max(diff - freeTime, 0);
       }
     }
-
-    if (minutesOver !== 0 || booking.isFlagged('rush')) {
-      billableGroups = Math.ceil(minutesOver / 10);
-      if(!booking.isFlagged('rush')) {
-        let phrase = Math.floor(diff / 60) + "hr " + (diff % 60) + "min";
-        amount = Math.round((billableGroups / 6 * 5.99) * 100);
-        description = `${ phrase } booking ${ booking.id }`;
-      } else {
-        amount = 1499;
-
-        // waiverush is LA exclusive for now (2018-11-08)
-        let startHour = +moment(start.createdAt).tz('America/Los_Angeles').format('H');
-
-        // We need to find out whether we are considering 10AM today or tomorrow
-        let dayToCompute = moment(start.createdAt);
-        if(startHour > 12) {
-          // This means it's 10AM tomorrow.
-          dayToCompute = dayToCompute.add('1','day');
-        }
-
-        let tenAM = dayToCompute.tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
-        minutesOver = Math.ceil(Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0));
+    if (!user.isWaivework) {
+      if (minutesOver !== 0 || booking.isFlagged('rush')) {
         billableGroups = Math.ceil(minutesOver / 10);
-        amount += Math.round((billableGroups / 6 * 5.99) * 100);
-
-        description = [
-          'WaiveRush flat rate ',
-          billableGroups ? `+ ${ minutesOver }min over ` : '',
-          `booking ${ booking.id }`
-        ].join('');
-      }
-
-      let card = yield user.getCard();
-      let cart = yield CartService.createTimeCart(minutesOver, amount, user);
-      let order = new Order({
-        createdBy : user.id,
-        userId    : user.id,
-
-        // User card id
-        source      : card.id,
-        description : description,
-        metadata    : null,
-        currency    : 'usd',
-        amount      : amount
-      });
-
-      yield order.save();
-      yield this.addItems(order, cart.items);
-
-      try {
-        yield this.charge(order, user);
-        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#reservations' });
         if(!booking.isFlagged('rush')) {
-          log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
-        }
-      } catch (err) {
-        yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
-      }
+          let phrase = Math.floor(diff / 60) + "hr " + (diff % 60) + "min";
+          amount = Math.round((billableGroups / 6 * 5.99) * 100);
+          description = `${ phrase } booking ${ booking.id }`;
+        } else {
+          amount = 1499;
 
-      // Regardless of whether we successfully charged the user or not, we need
-      // to associate this booking with the users' order id
-      let payment = new BookingPayment({
-        bookingId : booking.id,
-        orderId   : order.id
-      });
-      yield payment.save();
+          // waiverush is LA exclusive for now (2018-11-08)
+          let startHour = +moment(start.createdAt).tz('America/Los_Angeles').format('H');
+
+          // We need to find out whether we are considering 10AM today or tomorrow
+          let dayToCompute = moment(start.createdAt);
+          if(startHour > 12) {
+            // This means it's 10AM tomorrow.
+            dayToCompute = dayToCompute.add('1','day');
+          }
+
+          let tenAM = dayToCompute.tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
+          minutesOver = Math.ceil(Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0));
+          billableGroups = Math.ceil(minutesOver / 10);
+          amount += Math.round((billableGroups / 6 * 5.99) * 100);
+
+          description = [
+            'WaiveRush flat rate ',
+            billableGroups ? `+ ${ minutesOver }min over ` : '',
+            `booking ${ booking.id }`
+          ].join('');
+        }
+
+        let card = yield user.getCard();
+        let cart = yield CartService.createTimeCart(minutesOver, amount, user);
+        let order = new Order({
+          createdBy : user.id,
+          userId    : user.id,
+
+          // User card id
+          source      : card.id,
+          description : description,
+          metadata    : null,
+          currency    : 'usd',
+          amount      : amount
+        });
+
+        yield order.save();
+        yield this.addItems(order, cart.items);
+
+        try {
+          yield this.charge(order, user);
+          yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#reservations' });
+          if(!booking.isFlagged('rush')) {
+            log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
+          }
+        } catch (err) {
+          yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
+        }
+
+        // Regardless of whether we successfully charged the user or not, we need
+        // to associate this booking with the users' order id
+        let payment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id
+        });
+        yield payment.save();
+      }
     }
     
     // This gets the city of the booking off of the address of the current booking
