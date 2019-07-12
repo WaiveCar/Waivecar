@@ -154,7 +154,7 @@ module.exports = class OrderService extends Service {
         }), user);
       }
       if (!data.waivework) {
-        yield this.failedCharge(data.amount || charge.amount, user, err);
+        yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
       }
       yield this.suspendIfMultipleFailed(user);
 
@@ -609,7 +609,9 @@ module.exports = class OrderService extends Service {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
       // Below, shopOrders with a refId are filtered out because they are replacements for previous payments
       let filteredPayments = payments.filter((row) => 
-        row.shopOrder.description !== 'Pre booking authorization - refunded' && !row.shopOrder.refId && row.shopOrder.amount > 0
+        row.shopOrder.description !== 'Pre booking authorization - refunded' && 
+          !row.shopOrder.refId && row.shopOrder.amount > 0 &&  
+          (row.shopOrder.source === 'Early payment' && row.shopOrder.status !== 'failed')
       );
       totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
@@ -1121,7 +1123,8 @@ module.exports = class OrderService extends Service {
         context  : {
           name   : user.name(),
           charge : amountInDollars,
-          message: message
+          message: message,
+          avanceCharge: extra.advanceCharge
         }
       });
     } catch (err) {

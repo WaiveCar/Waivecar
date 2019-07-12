@@ -4,16 +4,17 @@
   <p>
     Sorry, but we were unable to charge your card {{ message }}.
   </p>
+  {{#if advanceCharge}}
+    <p>
+      You'll be <strong>unable to book</strong> until we can clear this balance.
+    </p>
 
-  <p>
-    You'll be <strong>unable to book</strong> until we can clear this balance.
-  </p>
-
-  <h4>How to fix this issue</h4>
-  <ol>
-    <li> Visit <a href='https://lb.waivecar.com/account/cards'>https://lb.waivecar.com/account/cards</a> and update your payment information.</li>
-    <li> Tap the "ATTEMPT TO CLEAR BALANCE" button at the bottom right-hand corner of the section labeled "Your Cards".
-  </ol>
+    <h4>How to fix this issue</h4>
+    <ol>
+      <li> Visit <a href='https://lb.waivecar.com/account/cards'>https://lb.waivecar.com/account/cards</a> and update your payment information.</li>
+      <li> Tap the "ATTEMPT TO CLEAR BALANCE" button at the bottom right-hand corner of the section labeled "Your Cards".
+    </ol>
+  {{/if}}
   <p>
     Thanks for using Waive.
   </p>

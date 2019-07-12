@@ -621,8 +621,9 @@ module.exports = class BookingService extends Service {
       let data = {
         userId: driver.id,
         amount: paymentToChange.amount,
-        source: 'Waivework Charge',
-        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')}`,
+        advanceCharge: true,
+        source: 'Early Payment',
+        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')} made in advance`,
       };
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
       let bookingPayment = new BookingPayment({
@@ -658,7 +659,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code: 'CHARGE_FAILED',
         message: e.message,
-      }, 404);
+      }, 400);
     }
     return paymentToChange;
   }
