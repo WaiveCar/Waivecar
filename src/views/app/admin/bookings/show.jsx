@@ -68,6 +68,7 @@ module.exports = class BookingsView extends React.Component {
       this.setState({
         booking: booking,
         details: booking.details,
+        // Various types of payments that shouldn't be put in the booking summary are filtered out at this point
         payments: booking.payments.filter(payment => !payment.refId && payment.amount > 0 && 
           !(payment.status === 'failed' && payment.source === 'Early Payment')),
         user: booking.user,
