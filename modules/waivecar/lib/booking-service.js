@@ -558,6 +558,7 @@ module.exports = class BookingService extends Service {
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
     // Currently, the user will just be charged $0 while the prorated charge is still charged manually.
+    // This will need to be changed later on when users can reserve their own cars
     data.amount = 0;
     try {
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
