@@ -1229,9 +1229,12 @@ module.exports = class OrderService extends Service {
         nocredit: true, 
         isTopUp: true
       });
+      // The update below is done to pass the refId from the original payment that the new one replacing 
+      // if users are retying failed payments
       yield order.update({
         refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
       });
+      // A new BookingPayment must only be created if the user is in the middle of a booking
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
@@ -1240,7 +1243,6 @@ module.exports = class OrderService extends Service {
         yield bookingPayment.save();
       }
     } catch(e) {
-      // A new BookingPayment must only be created if the user is in the middle of a booking
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
