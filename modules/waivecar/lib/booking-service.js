@@ -620,7 +620,7 @@ module.exports = class BookingService extends Service {
       let data = {
         userId: driver.id,
         amount: paymentToChange.amount,
-        source: 'Waivework auto charge',
+        source: 'Waivework Charge',
         description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')}`,
       };
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
@@ -641,6 +641,11 @@ module.exports = class BookingService extends Service {
         {channel: '#waivework-charges'},
       );
     } catch(e) {
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: e.shopOrder.id,
+      });
+      yield bookingPayment.save();
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} tried to charge $${(
