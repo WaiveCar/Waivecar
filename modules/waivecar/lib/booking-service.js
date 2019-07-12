@@ -1736,7 +1736,7 @@ module.exports = class BookingService extends Service {
     }
 
     // Handle auto charge for time
-    if (booking.isFlagged('Waivework') || !isAdmin) {
+    if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > freeTime) {
