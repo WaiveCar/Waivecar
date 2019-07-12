@@ -1207,7 +1207,6 @@ module.exports = class OrderService extends Service {
     let oldOrder = yield Order.findById(paymentId);
     if (oldOrder.refId) {
       oldOrder = yield Order.findById(oldOrder.refId);
-      console.log(oldOrder);
     }
     let currentBooking = yield Booking.findOne({
       where: {
