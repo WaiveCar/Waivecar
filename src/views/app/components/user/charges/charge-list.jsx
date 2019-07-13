@@ -140,19 +140,59 @@ class ChargeList extends Component {
     }
   }
 
-  retryPayment(id, data) {
-    api.post(`/shop/retryPayment/${id}`, {}, (err, response) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: `Error retrying payment: ${err.message}`,
+  retryPayment(id, data, percent) {
+    if (data.description.match(/weekly charge for waivework/gi)) {
+      api.get(`/shop/lateFees/${id}?percent=${percent}`, (err, response) => {
+        if (confirm(`The late fees for this payment are $${response.lateFees / 100}. An additional ${percent}% is added on for each day that the payment is late.`
+        )) {
+          api.post(`/shop/retryPayment/${id}`, {lateFees: response.lateFees}, (err, response) => {
+            if (err) {
+              return snackbar.notify({
+                type: 'danger',
+                message: `Error retrying payment: ${err.message}`,
+              });
+            }
+            return snackbar.notify({
+              type: 'success',
+              message: 'Payment retried successfully',
+            });
+          });
+        } else { 
+          if (auth.user().hasAccess('admin')) {
+            let customFees = prompt('Please enter a custom amount for late fees.');
+            if (confirm(`Are you sure you would like to charge a custom fee of $${customFees}?`)) {
+              api.post(`/shop/retryPayment/${id}`, {lateFees: customFees * 100}, (err, response) => {
+                if (err) {
+                  return snackbar.notify({
+                    type: 'danger',
+                    message: `Error retrying payment: ${err.message}`,
+                  });
+                }
+                return snackbar.notify({
+                  type: 'success',
+                  message: 'Payment retried successfully',
+                });
+              });
+            }
+          }
+        }
+      });
+    } else {
+      if (confirm(`Are you sure you would like to retry your payment of $${data.amount / 100}?`)) {
+        api.post(`/shop/retryPayment/${id}`, {}, (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: `Error retrying payment: ${err.message}`,
+            });
+          }
+          return snackbar.notify({
+            type: 'success',
+            message: 'Payment retried successfully',
+          });
         });
       }
-      return snackbar.notify({
-        type: 'success',
-        message: 'Payment retried successfully',
-      });
-    });
+    }
   }
 
   charge(data) {
@@ -190,7 +230,7 @@ class ChargeList extends Component {
               <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
             }
             {data.status === 'failed' && (data.source === 'Waivework auto charge' || data.source === 'Payment Retry') && 
-              <button onClick = {() => this.retryPayment(data.id, data)} className='btn btn-xs btn-link undo'>
+              <button onClick = {() => this.retryPayment(data.id, data, 5)} className='btn btn-xs btn-link undo'>
                 <span className="fa fa-undo"></span>
               </button>
             }
