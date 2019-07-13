@@ -160,7 +160,7 @@ class ChargeList extends Component {
         } else { 
           if (auth.user().hasAccess('admin')) {
             let customFees = prompt('Please enter a custom amount for late fees.');
-            if (confirm(`Are you sure you would like to charge a custom fee of $${customFees}?`)) {
+            if (customFees && confirm(`Are you sure you would like to charge a custom fee of $${customFees}?`)) {
               api.post(`/shop/retryPayment/${id}`, {lateFees: customFees * 100}, (err, response) => {
                 if (err) {
                   return snackbar.notify({
