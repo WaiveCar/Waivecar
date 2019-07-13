@@ -237,17 +237,17 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: e.shopOrder.id,
             });
-            let bookingPayment = new BookingPayment({
-              bookingId: oldPayment.booking.id,
-              orderId: e.shopOrder.id,
-            });
-            yield bookingPayment.save();
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
             ).toFixed(
               2,
             )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized.`;
             toImmobilize.push(oldPayment);
+            let bookingPayment = new BookingPayment({
+              bookingId: oldPayment.booking.id,
+              orderId: e.shopOrder.id,
+            });
+            yield bookingPayment.save();
           }
         }
         let dates = [8, 15, 22, 1, 8];
@@ -346,17 +346,17 @@ scheduler.process('waivework-billing', function*(job) {
                 )}`,
               );
             } catch (e) {
+              failedEvgoChargePayload.push(
+                `${user.link()} had a failed charge of $${(
+                  chargesTotal / 100
+                ).toFixed(2)}. ${e.message}`,
+              );
               // BookingPayments must be made whether or not the charge is successful
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: e.shopOrder.id,
               });
               yield bookingPayment.save();
-              failedEvgoChargePayload.push(
-                `${user.link()} had a failed charge of $${(
-                  chargesTotal / 100
-                ).toFixed(2)}. ${e.message}`,
-              );
             }
           }
         } catch (e) {
