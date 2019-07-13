@@ -176,7 +176,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
           source: 'Waivework auto charge',
           description:
-            'Weekly charge for waivework - automatically on scheduled day',
+            'Weekly charge for WaiveWork - automatically on scheduled day',
         };
         // The line below has been commented out, but can be commented back in to turn automatic charges for waivework payments off
         // It can be toggled in and out for turning on/off charging users
