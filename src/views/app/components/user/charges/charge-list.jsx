@@ -140,57 +140,42 @@ class ChargeList extends Component {
     }
   }
 
+  handleResponse = (err, response) => {
+    if (err) {
+      console.log('e', err);
+      this.setState({charges: [err.data, ...this.state.charges]}, () => {
+        snackbar.notify({
+          type: 'danger',
+          message: `Error retrying payment: ${err.message}`,
+        });
+      });
+    } else {
+      console.log('response: ', response);
+      snackbar.notify({
+        type: 'success',
+        message: 'Payment retried successfully',
+      });
+    }
+  }
+
   retryPayment(id, data, percent) {
     if (data.description.match(/weekly charge for waivework/gi)) {
       api.get(`/shop/lateFees/${id}?percent=${percent}`, (err, response) => {
         if (confirm(`The late fees for this payment are $${response.lateFees / 100}. An additional ${percent}% is added on for each day that the payment is late.`
         )) {
-          api.post(`/shop/retryPayment/${id}`, {lateFees: response.lateFees}, (err, response) => {
-            if (err) {
-              return snackbar.notify({
-                type: 'danger',
-                message: `Error retrying payment: ${err.message}`,
-              });
-            }
-            return snackbar.notify({
-              type: 'success',
-              message: 'Payment retried successfully',
-            });
-          });
+          api.post(`/shop/retryPayment/${id}`, {lateFees: response.lateFees}, this.handleResponse);
         } else { 
           if (auth.user().hasAccess('admin')) {
             let customFees = prompt('Please enter a custom amount for late fees.');
             if (customFees && confirm(`Are you sure you would like to charge a custom fee of $${customFees}?`)) {
-              api.post(`/shop/retryPayment/${id}`, {lateFees: customFees * 100}, (err, response) => {
-                if (err) {
-                  return snackbar.notify({
-                    type: 'danger',
-                    message: `Error retrying payment: ${err.message}`,
-                  });
-                }
-                return snackbar.notify({
-                  type: 'success',
-                  message: 'Payment retried successfully',
-                });
-              });
+              api.post(`/shop/retryPayment/${id}`, {lateFees: customFees * 100}, this.handleResponse);
             }
           }
         }
       });
     } else {
       if (confirm(`Are you sure you would like to retry your payment of $${data.amount / 100}?`)) {
-        api.post(`/shop/retryPayment/${id}`, {}, (err, response) => {
-          if (err) {
-            return snackbar.notify({
-              type: 'danger',
-              message: `Error retrying payment: ${err.message}`,
-            });
-          }
-          return snackbar.notify({
-            type: 'success',
-            message: 'Payment retried successfully',
-          });
-        });
+        api.post(`/shop/retryPayment/${id}`, {}, this.handleResponse);
       }
     }
   }
