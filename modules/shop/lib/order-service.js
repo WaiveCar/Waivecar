@@ -157,7 +157,6 @@ module.exports = class OrderService extends Service {
         yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
       }
       yield this.suspendIfMultipleFailed(user);
-      console.log('err: ', err);
       throw {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
@@ -1246,7 +1245,6 @@ module.exports = class OrderService extends Service {
       }
       return order;
     } catch(e) {
-      console.log('e', e);
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
