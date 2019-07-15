@@ -141,20 +141,23 @@ class ChargeList extends Component {
   }
 
   handleResponse = (err, response) => {
+    let {charges} = this.state;
     if (err) {
-      console.log('e', err);
-      this.setState({charges: [err.data, ...this.state.charges]}, () => {
+      this.setState({charges: [err.data, ...charges]}, () => 
         snackbar.notify({
           type: 'danger',
           message: `Error retrying payment: ${err.message}`,
-        });
-      });
+        })
+      );
     } else {
-      console.log('response: ', response);
-      snackbar.notify({
-        type: 'success',
-        message: 'Payment retried successfully',
-      });
+      this.setState({
+        charges: [response, ...charges], 
+      }, () => 
+        snackbar.notify({
+          type: 'success',
+          message: 'Payment retried successfully',
+        })
+      )
     }
   }
 
