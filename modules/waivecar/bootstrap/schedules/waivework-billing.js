@@ -37,8 +37,8 @@ scheduler.process('waivework-billing', function*(job) {
       // Because the mileage is stored once per day, the average mileage per day may be found by
       // dividing the miles since the beginning of the booking by the number of days in the car history
       let averagePerDay =
-        (Number(history[history.length - 1].data) - Number(history[0].data)) /
-        history.length *
+        ((Number(history[history.length - 1].data) - Number(history[0].data)) /
+          history.length) *
         0.621371;
       if (
         averagePerDay < 100 &&
@@ -176,7 +176,7 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
           source: 'Waivework auto charge',
           description:
-            'Weekly charge for waivework - automatically on scheduled day',
+            'Weekly charge for WaiveWork - automatically on scheduled day',
         };
         // The line below has been commented out, but can be commented back in to turn automatic charges for waivework payments off
         // It can be toggled in and out for turning on/off charging users
@@ -243,6 +243,11 @@ scheduler.process('waivework-billing', function*(job) {
               2,
             )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized.`;
             toImmobilize.push(oldPayment);
+            let bookingPayment = new BookingPayment({
+              bookingId: oldPayment.booking.id,
+              orderId: e.shopOrder.id,
+            });
+            yield bookingPayment.save();
           }
         }
         let dates = [8, 15, 22, 1, 8];
@@ -287,9 +292,7 @@ scheduler.process('waivework-billing', function*(job) {
         }
         try {
           let {body} = yield request({
-            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${
-              oldPayment.booking.userId
-            }&paid=true`,
+            url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${oldPayment.booking.userId}&paid=true`,
             method: 'GET',
           });
           body = JSON.parse(body);
@@ -302,7 +305,7 @@ scheduler.process('waivework-billing', function*(job) {
             let markPaidResponse = (yield request({
               url: `${config.ocpi.url}?key=${config.ocpi.key}`,
               method: 'POST',
-              body: JSON.stringify({data: chargeIdList}),
+              body: JSON.stringify(chargeIdList),
             })).body;
             // If not on production server, these charges need to be unmarked after they are marked as paid
             if (process.env.NODE_ENV !== 'production') {
@@ -312,9 +315,7 @@ scheduler.process('waivework-billing', function*(job) {
               }
               let unmarkPaidResponse = (yield request({
                 method: 'DELETE',
-                url: `${config.ocpi.url}?key=${
-                  config.ocpi.key
-                }&id=${deleteString}`,
+                url: `${config.ocpi.url}?key=${config.ocpi.key}&id=${deleteString}`,
               })).body;
             }
 
@@ -345,16 +346,17 @@ scheduler.process('waivework-billing', function*(job) {
                 )}`,
               );
             } catch (e) {
-              let bookingPayment = new BookingPayment({
-                bookingId: oldPayment.booking.id,
-                orderId: e.shopOrder.id,
-              });
-              yield bookingPayment.save();
               failedEvgoChargePayload.push(
                 `${user.link()} had a failed charge of $${(
                   chargesTotal / 100
                 ).toFixed(2)}. ${e.message}`,
               );
+              // BookingPayments must be made whether or not the charge is successful
+              let bookingPayment = new BookingPayment({
+                bookingId: oldPayment.booking.id,
+                orderId: e.shopOrder.id,
+              });
+              yield bookingPayment.save();
             }
           }
         } catch (e) {

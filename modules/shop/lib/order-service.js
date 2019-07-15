@@ -108,7 +108,6 @@ module.exports = class OrderService extends Service {
 
     try {
       // this is a dry run that populates the charge with the amount we would like to charge the user
-      order.waivework = true;
       charge = yield this.charge(order, user, Object.assign({dry: true}, opts));
 
       // this is the real one and if successful will override the last value with a real charge, 
@@ -155,10 +154,9 @@ module.exports = class OrderService extends Service {
         }), user);
       }
       if (!data.waivework) {
-        yield this.failedCharge(data.amount || charge.amount, user, err);
+        yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
       }
       yield this.suspendIfMultipleFailed(user);
-
       throw {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
@@ -608,7 +606,12 @@ module.exports = class OrderService extends Service {
     let types = [];
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization - refunded');
+      // Below, shopOrders with a refId are filtered out because they are replacements for previous payments
+      let filteredPayments = payments.filter((row) => 
+        row.shopOrder.description !== 'Pre booking authorization - refunded' && 
+          !row.shopOrder.refId && row.shopOrder.amount > 0 &&  
+          (row.shopOrder.source === 'Early payment' && row.shopOrder.status !== 'failed')
+      );
       totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
@@ -806,6 +809,8 @@ module.exports = class OrderService extends Service {
   // order is the core object here. It effectively gets passed
   // through to stripe as-is in shop/lib/stripe/charges.js
   static *charge(order, user, opts) {
+    // The amount needs to be rounded because Stripe will throw an error if it is not an INT
+    order.amount = Math.floor(order.amount);
     let start = new Date();
     function t(what){ 
       console.log(" ", new Date() - start, what);
@@ -956,7 +961,7 @@ module.exports = class OrderService extends Service {
             yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
             // And finally we tell them (also covered in #670), but only if they are not waivework.
-            if (!order.waivework) {
+            if (!opts.waivework) {
               yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
             }
           }
@@ -1096,7 +1101,7 @@ module.exports = class OrderService extends Service {
     if(amountInCents) {
       messageParts.push('cover the $' + amountInDollars + ' in fees disclosed in the previous email');
     }
-    if(creditBeforeCharge) {
+    if(creditBeforeCharge && !extra.advancePayment) {
       messageParts.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
     }
     
@@ -1119,7 +1124,8 @@ module.exports = class OrderService extends Service {
         context  : {
           name   : user.name(),
           charge : amountInDollars,
-          message: message
+          message: message,
+          avanceCharge: extra.advanceCharge
         }
       });
     } catch (err) {
@@ -1198,4 +1204,75 @@ module.exports = class OrderService extends Service {
     }
   }
 
+  static *retryPayment(paymentId, opts, _user) {
+    let oldOrder = yield Order.findById(paymentId);
+    // If the retried order is not the original for the charge, the original must be found
+    if (oldOrder.refId) {
+      oldOrder = yield Order.findById(oldOrder.refId);
+    }
+    let currentBooking = yield Booking.findOne({
+      where: {
+        userId: oldOrder.userId,
+        status: {$or: ['reserved', 'ready','started','ended']}
+      }
+    });
+    let lateFees = opts.lateFees ? opts.lateFees : 0;
+    let data = {
+      userId: oldOrder.userId,
+      amount: oldOrder.amount + lateFees,
+      source: 'Payment Retry',
+      description:
+      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
+    };
+    try {
+      let {order} = yield this.quickCharge(data, _user, {
+        subject: data.description,
+        nocredit: true, 
+        isTopUp: true
+      });
+      // The update below is done to pass the refId from the original payment that the new one replacing 
+      // if users are retying failed payments
+      yield order.update({
+        refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
+      });
+      // A new BookingPayment must only be created if the user is in the middle of a booking
+      if (currentBooking) {
+        let bookingPayment = new BookingPayment({
+          bookingId: currentBooking.id,
+          orderId: order.id,
+        });
+        yield bookingPayment.save();
+      }
+      return order;
+    } catch(e) {
+      if (currentBooking) {
+        let bookingPayment = new BookingPayment({
+          bookingId: currentBooking.id,
+          orderId: e.shopOrder.id,
+        });
+        yield bookingPayment.save();
+      }
+      yield e.shopOrder.update({
+        refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
+      });
+      throw error.parse({
+        code    : 'CHARGE_FAILED',
+        message : e.message,
+        data: e.shopOrder,
+      }, 400);
+    }
+  }
+
+  static *lateFees(id, query, _user) {
+    let oldOrder = yield Order.findById(id);
+    // If the retried order is not the original for the charge, the original must be found
+    if (oldOrder.refId) {
+      oldOrder = yield Order.findById(oldOrder.refId);
+    }
+    // Currently the late fees will start at midnight after the missed payment 
+    let startTime = moment(oldOrder.createdAt).tz('America/Los_Angeles').startOf('day').utc();
+    let numDays = moment().diff(moment(startTime), 'days');
+    let amountPerDay = (query.percent / 100) * oldOrder.amount;
+    return {lateFees: Math.floor(numDays) * amountPerDay};
+  }
 };

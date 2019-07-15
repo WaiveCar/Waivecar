@@ -558,6 +558,7 @@ module.exports = class BookingService extends Service {
     let weeklyAmount = data.amount;
     data.amount = proratedChargeAmount;
     // Currently, the user will just be charged $0 while the prorated charge is still charged manually.
+    // This will need to be changed later on when users can reserve their own cars
     data.amount = 0;
     try {
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
@@ -620,8 +621,9 @@ module.exports = class BookingService extends Service {
       let data = {
         userId: driver.id,
         amount: paymentToChange.amount,
-        source: 'Waivework auto charge',
-        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')}`,
+        advanceCharge: true,
+        source: 'Early Payment',
+        description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')} made in advance`,
       };
       let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
       let bookingPayment = new BookingPayment({
@@ -641,6 +643,11 @@ module.exports = class BookingService extends Service {
         {channel: '#waivework-charges'},
       );
     } catch(e) {
+      let bookingPayment = new BookingPayment({
+        bookingId: booking.id,
+        orderId: e.shopOrder.id,
+      });
+      yield bookingPayment.save();
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} tried to charge $${(
@@ -652,7 +659,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code: 'CHARGE_FAILED',
         message: e.message,
-      }, 404);
+      }, 400);
     }
     return paymentToChange;
   }
