@@ -1242,6 +1242,7 @@ module.exports = class OrderService extends Service {
         });
         yield bookingPayment.save();
       }
+      return order;
     } catch(e) {
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
@@ -1256,6 +1257,7 @@ module.exports = class OrderService extends Service {
       throw error.parse({
         code    : 'CHARGE_FAILED',
         message : e.message,
+        data: e.shopOrder,
       }, 400);
     }
   }
