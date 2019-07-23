@@ -399,7 +399,10 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
-    yield Intercom.addTag(payload, 'WaiveWork');
+    try {
+      yield Intercom.addTag(payload, 'WaiveWork');
+    } catch(e) {
+    }
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
