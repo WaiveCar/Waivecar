@@ -14,7 +14,7 @@ let moment        = require('moment');
 let scheduler = Bento.provider('queue').scheduler;
 let OrderService = require('../../shop/lib/order-service');
 let LicenseService = require('../../license/lib/license-service');
-let Intercom = require('../../user/lib/intercom-service')
+let Intercom = require('../../user/lib/intercom-service');
 
 
 let UserService = require('./user-service');
@@ -402,6 +402,8 @@ module.exports = {
     try {
       yield Intercom.addTag(payload, 'WaiveWork');
     } catch(e) {
+      yield Intercom.addUser(payload);
+      yield Intercom.addTag(payload, 'WaiveWork');
     }
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
