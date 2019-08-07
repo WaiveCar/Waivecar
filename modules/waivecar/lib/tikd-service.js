@@ -143,6 +143,7 @@ module.exports = {
       return yield this.post('fleets', {
         transactionId: 'car-' + car.license,
         eventName: state,
+        serviceType: "streaming",
         vehicleInfo: {
           plateNumber: car.plateNumberWork,
           plateState: car.plateState,
