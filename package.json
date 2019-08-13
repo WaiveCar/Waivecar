@@ -93,6 +93,7 @@
     "cordova": "^8.0.0",
     "cordova-android-support-gradle-release": "1.3.0",
     "cordova-custom-config": "^5.0.2",
+    "cordova-ios": "^4.3.1",
     "cordova-open-native-settings": "~1.4.1",
     "cordova-plugin-app-version": "https://github.com/whiteoctober/cordova-plugin-app-version",
     "cordova-plugin-ble-central": "~1.1.4",
@@ -108,11 +109,11 @@
     "cordova-plugin-hide-home-indicator": "~1.0.0",
     "cordova-plugin-inappbrowser": "^1.5.0",
     "cordova-plugin-intercom": "^5.1.1",
-    "cordova-plugin-ios-camera-permissions": "^1.0.5",
     "cordova-plugin-request-location-accuracy": "^2.2.1",
     "cordova-plugin-splashscreen": "~4.0.1",
     "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git",
     "cordova-plugin-whitelist": "^1.2.2",
+    "cordova-plugin-x-toast": "~2.6.2",
     "cordova.plugins.diagnostic": "^4.0.8",
     "hmacsha1": "^1.0.0",
     "ionic-plugin-keyboard": "^2.2.1",
@@ -168,9 +169,16 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
   },
-  "cordovaPlugins": [],
+  "cordovaPlugins": [
+    "cordova.plugins.diagnostic@4.8.0",
+    "cordova.plugins.diagnostic@4.0.8"
+  ],
   "cordovaPlatforms": [
-    "ios",
+    {
+      "platform": "ios",
+      "version": "4.3.1",
+      "locator": "ios@4.3.1"
+    },
     "android"
   ],
   "cordova": {
@@ -183,18 +191,14 @@
       "cordova-plugin-device": {},
       "cordova-plugin-facebook4": {
         "APP_ID": "1022704731082512",
-        "APP_NAME": "WaiveCar"
+        "APP_NAME": "WaiveCar",
+        "ANDROID_SDK_VERSION": "4.34.0"
       },
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-geolocation": {
         "GEOLOCATION_USAGE_DESCRIPTION": ""
       },
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-ios-camera-permissions": {
-        "CAMERA_USAGE_DESCRIPTION": "",
-        "MICROPHONE_USAGE_DESCRIPTION": "",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": ""
-      },
       "cordova-plugin-request-location-accuracy": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-x-toast": {},
@@ -215,10 +219,12 @@
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
       "cordova-custom-config": {},
-      "cordova.plugins.diagnostic": {},
       "cordova-plugin-intercom": {},
-      "cordova-plugin-statusbar": {}
+      "cordova-plugin-statusbar": {},
+      "cordova.plugins.diagnostic": {}
     },
-    "platforms": []
+    "platforms": [
+      "ios"
+    ]
   }
 }
