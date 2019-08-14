@@ -18,9 +18,11 @@ module.exports = function *() {
 scheduler.process('cache-update', function *(job) {
   let reqPointList = yield Redis.hkeys('cache');
 
+  console.log("< Updating Cache >");
   for(let ix = 0; ix < reqPointList.length; ix++) {
     try {
       let reqJSON = JSON.parse(reqPointList[ix]);
+      console.log(">> " + reqPointList[ix]);
       let reqResponse = yield request(reqJSON);
       if(reqResponse.body && reqResponse.body.length > 1) {
         yield Redis.hset('cache', cache_point, reqResponse.body);
