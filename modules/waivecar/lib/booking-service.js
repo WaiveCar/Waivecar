@@ -625,7 +625,7 @@ module.exports = class BookingService extends Service {
         source: 'Early Payment',
         description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')} made in advance`,
       };
-      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})).order;
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: workCharge.id,
