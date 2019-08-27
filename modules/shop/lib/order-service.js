@@ -1222,7 +1222,7 @@ module.exports = class OrderService extends Service {
       amount: oldOrder.amount + lateFees,
       source: 'Payment Retry',
       description:
-      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
+      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')} with late fees of ${lateFees}.`,
     };
     try {
       let {order} = yield this.quickCharge(data, _user, {
