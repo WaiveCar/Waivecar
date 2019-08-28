@@ -796,7 +796,7 @@ module.exports = class BookingService extends Service {
     if (bookings[0] && query.includeLateFees) {
       bookings[0].payments = bookings[0].payments.map(payment => payment.toJSON());
       for (let payment of bookings[0].payments) {
-        if (payment.status === 'failed') {
+        if (payment.status === 'failed' && !payment.description.match(/evgo/gi)) {
           // caclulate late what late fees should be for failed payments at 5%
           payment.lateFees = (yield OrderService.lateFees(payment.id, {percent: 5})).lateFees;
         }
