@@ -792,6 +792,17 @@ module.exports = class BookingService extends Service {
         bookings[0].waiveworkPayment = bookings[0].waiveworkPayment.toJSON();
       }
     }
+    // This only works when this route is being used to get a single payments and will include late fees for failed ones
+    if (bookings[0] && query.includeLateFees) {
+      bookings[0].payments = bookings[0].payments.map(payment => payment.toJSON());
+      for (let payment of bookings[0].payments) {
+        if (payment.status === 'failed') {
+          // caclulate late what late fees should be for failed payments at 5%
+          payment.lateFees = (yield OrderService.lateFees(payment.id, {percent: 5})).lateFees;
+        }
+      };
+    }
+
     return bookings;
   }
 
