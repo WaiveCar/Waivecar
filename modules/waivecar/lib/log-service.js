@@ -280,6 +280,8 @@ class LogService {
       MAKE_CAR_AVAILABLE   : 'MAKE_CAR_AVAILABLE',
       MAKE_CAR_UNAVAILABLE : 'MAKE_CAR_UNAVAILABLE',
       START_CHARGE         : 'START_CHARGE',
+      IGNITION_ON          : 'IGNITION_ON',
+      IGNITION_OFF         : 'IGNITION_OFF',
       END_CHARGE           : 'END_CHARGE'
     };
   }

@@ -855,11 +855,37 @@ module.exports = {
     return {distance: radius, res: nearest};
   },
 
+  *wsCallback(payload, opts) {
+    var response, responseJSON;
+
+    var startCommand =  {
+      // todo, https
+      url     : 'http://waivescreen.com/api/ignition_status',
+      method  : 'POST',
+      body    : JSON.stringify(payload),
+      headers : opts
+    };
+
+    try {
+      response = yield request(startCommand);
+      responseJSON = JSON.parse(response.body);
+      return responseJSON;
+    } catch(ex) {
+      console.log(ex);
+      if(response) {
+        return response.body;
+      }
+    }
+  },
+
   /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
+   *
+   * The data at this point is already transformed (as in, the fields match)
+   *
    * @param  {Number} id          car Id
-   * @param  {Object} data        update data to persist
-   * @param  {Object} existingCar existing Car to update (optional)
+   * @param  {Object} data        new data for car
+   * @param  {Object} existingCar existing db record for car
    * @param  {Object} _user       user (optional)
    * @return {Object}             updated Car
    */
@@ -957,6 +983,17 @@ module.exports = {
       }
     }
 
+    // see https://github.com/WaiveCar/WaiveScreen/issues/94 and its friend https://github.com/WaiveCar/Waivecar/issues/1570
+    if(data.isIgnitionOn != existingCar.isIgnitionOn) {
+      yield LogService.create({carId: id, action: data.isIgnitionOn ? Actions.IGNITION_ON : Actions.IGNITION_OFF});
+      yield this.wsCallback({
+        name: existingCar.license,
+        id: existingCar.id,
+        ignitionOn: data.isIgnitionOn
+      });
+    }
+
+    // Here's where we update the database with our new stuff.
     yield existingCar.update(data);
 
     if(existingCar.userId) {
