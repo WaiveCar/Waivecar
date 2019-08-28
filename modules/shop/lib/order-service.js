@@ -1228,7 +1228,8 @@ module.exports = class OrderService extends Service {
       let {order} = yield this.quickCharge(data, _user, {
         subject: data.description,
         nocredit: true, 
-        isTopUp: true
+        isTopUp: true,
+        overrideAdminCheck: true,
       });
       // The update below is done to pass the refId from the original payment that the new one replacing 
       // if users are retying failed payments
