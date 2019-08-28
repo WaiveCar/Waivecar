@@ -643,11 +643,15 @@ module.exports = class BookingService extends Service {
         {channel: '#waivework-charges'},
       );
     } catch(e) {
+      /* We are going to at least try not creating a BookingPayment object for this, as we do not want these to show up
+       * in accounting for bookings if they fail and that is generally all BookingPayments are used for. If we get
+       * complaints from users we will change it back
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: e.shopOrder.id,
       });
       yield bookingPayment.save();
+      */
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} tried to charge $${(
