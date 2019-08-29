@@ -1215,7 +1215,7 @@ module.exports = class BookingService extends Service {
       } else {
         let isLevel = yield car.hasTag('level');
         let isCsula = yield car.hasTag('csula');
-        let base = '', freetime = '2';
+        let base = '', freetime = '1';
 
         if(isLevel) {
           base = 'the parking garage';
@@ -1755,7 +1755,7 @@ module.exports = class BookingService extends Service {
       yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > freeTime) {
-      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 1 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
