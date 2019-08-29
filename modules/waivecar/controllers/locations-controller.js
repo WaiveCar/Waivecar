@@ -19,7 +19,6 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     let excludeSet = false;
 
     var opts = this.query;
-    console.log('opts: ', opts);
     var query = {
       // Legacy apps only know about one homebase.
       // We have two now with the addition of level in brooklyn
@@ -44,7 +43,6 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     if (opts.nottype) {
       query.where =  { type : { $notLike : `%${ opts.nottype }%` } } ;
     }              
-    console.log('query', query)
                       
     if(user && !user.isAdmin()) {
       let matchSet = yield user.getTagList('region', 'id');
