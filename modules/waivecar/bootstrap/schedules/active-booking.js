@@ -245,7 +245,7 @@ var checkBooking = co.wrap(function *(booking) {
     */
 
     yield cars.syncUpdate(car.id, device, car);
-  } catch(e) {
+  } catch(err) {
     log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
   }
 });
