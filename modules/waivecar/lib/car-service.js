@@ -169,6 +169,11 @@ module.exports = {
             // repository.
             yield notify.sendTextMessage(_user, `We've put WaiveCar on hold for now. For more information go to https://waive.car/future`);
           }
+        } else if(matchSet.includes(11)) {
+          let check = yield _user.incrFlag('csula-1hr');
+          if(check < 3) {
+            yield notify.sendTextMessage(_user, `As a reminder, WaiveCar is now 1 hour free and $5.99 each hour thereafter. Thanks and enjoy your ride!`);
+          }
         }
 
         // Now we filter them out of the results, thus hiding the LA cars.
