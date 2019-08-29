@@ -1222,13 +1222,14 @@ module.exports = class OrderService extends Service {
       amount: oldOrder.amount + lateFees,
       source: 'Payment Retry',
       description:
-      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}`,
+      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')} with late fees of $${(lateFees / 100).toFixed(2)}.`,
     };
     try {
       let {order} = yield this.quickCharge(data, _user, {
         subject: data.description,
         nocredit: true, 
-        isTopUp: true
+        isTopUp: true,
+        overrideAdminCheck: true,
       });
       // The update below is done to pass the refId from the original payment that the new one replacing 
       // if users are retying failed payments

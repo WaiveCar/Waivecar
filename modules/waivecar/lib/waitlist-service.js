@@ -539,6 +539,11 @@ module.exports = {
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
           } else {
+            // If the user is csula, they need to be put in the user list so that the correct tags can be added to their user 
+            // entry back around line 249
+            if (opts.intro === 'csula') {
+              userList.push(userRecord);
+            }
             // Otherwise, the user is onboarded and we should just continue
             // with the next user and make sure we don't add them to the email
             // list or generate a reset token.

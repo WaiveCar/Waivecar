@@ -95,7 +95,8 @@ class FileService extends Service {
         },
       })
       actualQuery.order = order;
-      return yield File.find(actualQuery);
+      let output = yield File.find(actualQuery);
+      return output;
     }
 
     // ### Prepare Query
@@ -112,11 +113,21 @@ class FileService extends Service {
           userId : _user.id
         }
       ];
+      if (query.userId) {
+        whereQuery.userId = query.userId;
+      }
+      if (query.collectionId) {
+        whereQuery.collectionId = query.collectionId;
+      }
     } else {
       whereQuery.private = false;
     }
 
-    return yield File.find({ where : whereQuery });
+    let queryObj = { where: whereQuery };
+    if (query.collectionId === 'insurance') {
+      queryObj.order = [['created_at', 'asc']];
+    }
+    return yield File.find(queryObj);
   }
 
   /**

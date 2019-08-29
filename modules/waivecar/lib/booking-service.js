@@ -625,7 +625,7 @@ module.exports = class BookingService extends Service {
         source: 'Early Payment',
         description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')} made in advance`,
       };
-      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})).order;
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: workCharge.id,
@@ -643,11 +643,15 @@ module.exports = class BookingService extends Service {
         {channel: '#waivework-charges'},
       );
     } catch(e) {
+      /* We are going to at least try not creating a BookingPayment object for this, as we do not want these to show up
+       * in accounting for bookings if they fail and that is generally all BookingPayments are used for. If we get
+       * complaints from users we will change it back
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: e.shopOrder.id,
       });
       yield bookingPayment.save();
+      */
       yield notify.slack(
         {
           text: `:male_vampire: ${driver.link()} tried to charge $${(
@@ -792,6 +796,17 @@ module.exports = class BookingService extends Service {
         bookings[0].waiveworkPayment = bookings[0].waiveworkPayment.toJSON();
       }
     }
+    // This only works when this route is being used to get a single payments and will include late fees for failed ones
+    if (bookings[0] && query.includeLateFees) {
+      bookings[0].payments = bookings[0].payments.map(payment => payment.toJSON());
+      for (let payment of bookings[0].payments) {
+        if (payment.status === 'failed' && !payment.description.match(/evgo/gi)) {
+          // caclulate late what late fees should be for failed payments at 5%
+          payment.lateFees = (yield OrderService.lateFees(payment.id, {percent: 5})).lateFees;
+        }
+      };
+    }
+
     return bookings;
   }
 
@@ -1200,7 +1215,7 @@ module.exports = class BookingService extends Service {
       } else {
         let isLevel = yield car.hasTag('level');
         let isCsula = yield car.hasTag('csula');
-        let base = '', freetime = '2';
+        let base = '', freetime = '1';
 
         if(isLevel) {
           base = 'the parking garage';
@@ -1740,7 +1755,7 @@ module.exports = class BookingService extends Service {
       yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > freeTime) {
-      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 1 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
