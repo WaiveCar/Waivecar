@@ -101,13 +101,27 @@ class CardList extends React.Component {
     if(opts.nocredit) {
       warn = '\n\nThis bypasses any credit they may have.\n';
     }
-    let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + "." + warn + "\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
+    if (confirm('This feature is not to be used for weekly WaiveWork charges or for WaiveWork late fees. Please use the other provided method for these types of charges')) {
+      let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + "." + warn + "\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
 
-    if (amount) {
-      let reason = prompt('Optionally, give a reason for this charge.\nYou can leave this blank. But you must tap "OK" for the charge to go through.');
+      if (amount) {
+        let reason = prompt('Please give a reason for this charge.\nYou can\'t leave this blank.');
+        if (!reason) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : 'You must provide a reason for charging using this method.'
+          });
+        }
+        if (reason.match(/waivework/gi) || reason.match(/weekly/gi) || reason.match(/late/gi)) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : 'You cannot charge for WaiveWork weekly payments or WaiveWork late fees using this method.'
+          });
+        }
 
-      if (reason !== null) {
-        return this.creditMod(who, amount, cards, reason, opts);
+        if (reason !== null) {
+          return this.creditMod(who, amount, cards, reason, opts);
+        }
       }
     }
     snackbar.notify({
@@ -204,10 +218,13 @@ class CardList extends React.Component {
       <div style={{ textAlign: 'right' }}>
         { 
           auth.user().hasAccess('admin') ? 
-            <span>
-              <a onClick={ this.chargeUser.bind(this, this.props.user, cards, {nocredit: true}) } className='btn btn-link btn-sm'>Bypass Charge</a> 
-              <button onClick={ this.chargeUser.bind(this, this.props.user, cards, {}) } className='btn btn-link btn-sm'>Charge User</button> 
-            </span>
+            <div>
+              <em>The buttons below are not to be used for WaiveWork charges or WaiveWork late fees. Please use the proper avenues for these types of charges.</em>
+              <span>
+                <a onClick={ this.chargeUser.bind(this, this.props.user, cards, {nocredit: true}) } className='btn btn-link btn-sm'>Bypass Damage / Fine Charge</a> 
+                <button onClick={ this.chargeUser.bind(this, this.props.user, cards, {}) } className='btn btn-link btn-sm'>Charge User for Damage / Fine</button> 
+              </span>
+            </div>
             : '' 
         }
         <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
