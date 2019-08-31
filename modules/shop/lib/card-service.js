@@ -66,6 +66,7 @@ module.exports = class Cards extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
+    let showSelected = query.showSelected;
     query = queryParser(query, {
       where : {
         userId   : queryParser.NUMBER,
@@ -87,7 +88,7 @@ module.exports = class Cards extends Service {
     query.where.userId = _user.id;
     let cards = yield Card.find(query);
     
-    if (query.showSelected) {
+    if (showSelected) {
       let currentMax = null;
       let maxIdx = null;
       for (let i = 0; i < cards.length; i++) {
@@ -96,9 +97,9 @@ module.exports = class Cards extends Service {
           maxIdx = i;
         }
       }
-      cards[i].selected = true;
+      cards[maxIdx] = cards[maxIdx].toJSON();
+      cards[maxIdx].selected = true;
     }
-    console.log('cards', cards);
     return cards;
   }
 
