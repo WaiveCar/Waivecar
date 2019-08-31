@@ -112,7 +112,7 @@ class CardList extends React.Component {
             message : 'You must provide a reason for charging using this method.'
           });
         }
-        if (reason.match(/waivework/gi) || reason.match(/weekly/gi) || reason.match(/late/gi)) {
+        if (reason.match(/weekly/gi) || reason.match(/late/gi)) {
           return snackbar.notify({
             type    : 'danger',
             message : 'You cannot charge for WaiveWork weekly payments or WaiveWork late fees using this method.'
