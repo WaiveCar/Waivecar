@@ -55,5 +55,5 @@ scheduler.process('waivework-immobilize', function*(job) {
 });
 
 module.exports = function*() {
-  scheduler('booking-auto-cancel');
+  scheduler('waivework-immobilize');
 };
