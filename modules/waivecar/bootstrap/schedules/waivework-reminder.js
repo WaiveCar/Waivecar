@@ -36,7 +36,7 @@ scheduler.process('waivework-reminder', function*(job) {
     let email = new Email();
     yield email.send({
       to: user.email,
-      cc: 'frank@waive.car',
+      cc: 'work@waive.car',
       from: config.email.sender,
       subject: `${user.firstName} ${
         user.lastName
