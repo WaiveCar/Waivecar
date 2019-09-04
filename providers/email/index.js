@@ -15,7 +15,7 @@ module.exports = class Email {
     this.templates = path.join(Bento.ROOT_PATH, this.config.templateFolder);
     switch (this.config.transportName) {
       case 'mailgun': {
-        this.transporter = nodemailer.createTransport(mailgunTransport(this.config.transport.mailgun));
+        this.transporter = nodemailer.createTransport(mailgunTransport(this.config.transport));
         break;
       }
       default: {

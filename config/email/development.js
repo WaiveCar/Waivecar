@@ -24,7 +24,7 @@ module.exports = {
     transport      : {
       auth : {
         domain: 'waive.com',
-        apiKey : '76d6847773f9514f75c80fd3ff4ec882-4167c382-b53ffbc6'
+        api_key : '76d6847773f9514f75c80fd3ff4ec882-4167c382-b53ffbc6'
       }
     }
   }
