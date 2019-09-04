@@ -2,6 +2,7 @@
 
 let nodemailer        = require('nodemailer');
 let mandrillTransport = require('nodemailer-mandrill-transport');
+let mailgunTransport  = require('nodemailer-mailgun-transport');
 let Template          = require('email-templates').EmailTemplate;
 let path              = require('path');
 let fs                = require('fs');
@@ -13,8 +14,8 @@ module.exports = class Email {
     this.config    = Bento.config.email;
     this.templates = path.join(Bento.ROOT_PATH, this.config.templateFolder);
     switch (this.config.transportName) {
-      case 'mandrill': {
-        this.transporter = nodemailer.createTransport(mandrillTransport(this.config.transport));
+      case 'mailgun': {
+        this.transporter = nodemailer.createTransport(mailgunTransport(this.config.transport.mailgun));
         break;
       }
       default: {
