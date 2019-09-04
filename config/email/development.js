@@ -20,7 +20,7 @@ module.exports = {
     templateFolder : 'templates/email',
     sender         : 'Waive <support@waive.com>',
     transportName  : 'mailgun',
-    recipient      : 'chris@waivecar.com',
+    recipient      : 'alex@waive.com',
     transport      : {
       auth : {
         domain: 'waive.com',
