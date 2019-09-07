@@ -499,7 +499,9 @@ module.exports = {
       // We're doing this in order to get the new status.
       user = yield this.get(id, _user);
     } else {
-      delete payload.password;
+      // I am not deleting the line below in case it breaks anything and needs to be put back in. It may be what 
+      // is currently breaking password updates
+      //delete payload.password;
 
       let data = yield hooks.require('user:update:before', user, payload, _user);
       if (data.password) {
