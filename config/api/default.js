@@ -21,7 +21,7 @@ module.exports = {
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
-      origins : ['https://lb.waivecar.com', 'http://staging.waivecar.com:8080', 'http://staging.waivecar.com:8081', 'http://127.0.0.1:8081'],
+      origins : ['https://amazonaws.com', 'https://lb.waivecar.com', 'http://staging.waivecar.com:8080', 'http://staging.waivecar.com:8081', 'http://127.0.0.1:8081'],
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
     },
     log : {
