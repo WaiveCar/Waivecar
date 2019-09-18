@@ -19,14 +19,4 @@ module.exports = function *() {
   } else {
     log.info(' - Email configuration passed!');
   }
-
-  if (config.email.transportName !== 'mandrill') {
-    throw error.parse({
-      code     : 'EMAIL_BAD_CONFIG',
-      message  : 'Your Email configuration is invalid',
-      solution : 'Only mandrill is available at present'
-    });
-  } else {
-    log.info(' - Transport configuration passed!');
-  }
 };

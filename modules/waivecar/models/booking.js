@@ -158,8 +158,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     getFreeTime(isLevel) {
       // #1159: Level cars get 3 free hours, not 2.
+      // Now switching to just 1 hour free for csula. If we need to switch back to 2 hours, or something else,
+      // here is the place to do it
       // #1151: Add 5 minutes to inspect the vehicle and take pictures.
-      return (isLevel ? 180 : 120) + 5;
+      return (isLevel ? 180 : 60) + 5;
     },
 
     link() {

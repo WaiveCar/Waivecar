@@ -18,12 +18,13 @@ module.exports = {
 
   email : {
     templateFolder : 'templates/email',
-    sender         : 'Waive <support@waivecar.com>',
-    transportName  : 'mandrill',
-    recipient      : 'chris@waivecar.com',
+    sender         : 'Waive <support@waive.com>',
+    transportName  : 'mailgun',
+    recipient      : 'alex@waive.com',
     transport      : {
       auth : {
-        apiKey : 'gHCYiqaKVIzJqfPqbrtPOA'
+        domain: 'waive.com',
+        api_key : '76d6847773f9514f75c80fd3ff4ec882-4167c382-b53ffbc6'
       }
     }
   }
