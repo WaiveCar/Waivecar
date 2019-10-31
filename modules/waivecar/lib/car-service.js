@@ -996,6 +996,8 @@ module.exports = {
       yield this.wsCallback({
         name: existingCar.license,
         id: existingCar.id,
+        lat: existingCar.latitude,
+        lng: existingCar.longitude,
         ignitionOn: data.isIgnitionOn
       });
     }
