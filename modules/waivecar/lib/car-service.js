@@ -992,14 +992,14 @@ module.exports = {
     if(data.isIgnitionOn != existingCar.isIgnitionOn) {
       if (yield redis.shouldProcess('car-ignition-notice-' + data.isIgnitionOn, existingCar.id, 60 * 1000)) {
         yield LogService.create({carId: id, action: data.isIgnitionOn ? Actions.IGNITION_ON : Actions.IGNITION_OFF});
+        yield this.wsCallback({
+          name: existingCar.license,
+          id: existingCar.id,
+          lat: existingCar.latitude,
+          lng: existingCar.longitude,
+          ignitionOn: data.isIgnitionOn
+        });
       }
-      yield this.wsCallback({
-        name: existingCar.license,
-        id: existingCar.id,
-        lat: existingCar.latitude,
-        lng: existingCar.longitude,
-        ignitionOn: data.isIgnitionOn
-      });
     }
 
     // Here's where we update the database with our new stuff.
