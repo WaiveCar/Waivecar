@@ -38,7 +38,7 @@ module.exports = {
 
       // for debugging
       startCommand.body = payload;
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, response.body]) + "\n",function(){});
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([new Date(), url, payload, response.body]) + "\n",function(){});
       return responseJSON;
     } catch(ex) {
       console.log(ex);
