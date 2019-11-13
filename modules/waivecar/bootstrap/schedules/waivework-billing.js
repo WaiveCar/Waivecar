@@ -423,7 +423,7 @@ scheduler.process('waivework-billing', function*(job) {
 });
 
 module.exports = function*() {
-  let timer = {value: 24, type: 'seconds'};
+  let timer = {value: 24, type: 'hours'};
   scheduler.add('waivework-billing', {
     init: true,
     repeat: true,
