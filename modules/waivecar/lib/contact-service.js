@@ -131,14 +131,18 @@ module.exports = {
       if(license.length < 4) {
         license = 'waive' + license;
       }
-      let requestedCar = yield Car.findOne({
+      let qparam = { 
         where: {
-          isAvailable: true,
           license: {
             $like: `${ license }`
           }
         }
-      });
+      };
+      if(!user.hasAccess('admin')) {
+        qparam.where.isAvailable = true;
+      }
+      let requestedCar = yield Car.findOne(qparam);
+
       if(requestedCar) {
         try {
           if(user.hasAccess('admin')) {
