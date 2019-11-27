@@ -990,7 +990,7 @@ module.exports = {
 
     // see https://github.com/WaiveCar/WaiveScreen/issues/94 and its friend https://github.com/WaiveCar/Waivecar/issues/1570
     if(data.isIgnitionOn != existingCar.isIgnitionOn) {
-      if (yield redis.shouldProcess('car-ignition-notice-' + data.isIgnitionOn, existingCar.id, 60 * 1000)) {
+      if (yield redis.shouldProcess('car-ignition-notice-' + data.isIgnitionOn, existingCar.id, 180 * 1000)) {
         yield LogService.create({carId: id, action: data.isIgnitionOn ? Actions.IGNITION_ON : Actions.IGNITION_OFF});
         yield this.wsCallback({
           name: existingCar.license,
