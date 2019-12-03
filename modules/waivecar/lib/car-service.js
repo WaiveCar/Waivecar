@@ -990,7 +990,34 @@ module.exports = {
 
     // see https://github.com/WaiveCar/WaiveScreen/issues/94 and its friend https://github.com/WaiveCar/Waivecar/issues/1570
     if(data.isIgnitionOn != existingCar.isIgnitionOn) {
-      if (yield redis.shouldProcess('car-ignition-notice-' + data.isIgnitionOn, existingCar.id, 180 * 1000)) {
+      // so this thing apparently can get stale data, I'm presuming
+      // since we are getting duplicate on and off calls. We could
+      // put this in the booking loop, but we want to be recording 
+      // these things regardless of whether or not we actually are
+      // in a booking. So instead, we force update our "cache" of 
+      // the record (the point of truth is the database, not our
+      // query of it)
+      existingCar = yield Car.findById(id);
+
+      // and then we check again. 
+      //
+      // Q: Isn't there still a race condition between ^ here and V here?
+      // A: Yes, of course, duh.
+      // 
+      // Q: WTF? That's not a fix!
+      // A: We were getting duplicate records 3-5 minutes apart. Somehow
+      //    some code was probably taking a while to go through some
+      //    synchronous loop and had really old records causing the duplicate
+      //    entries.  I actually do not care about millisecond wide windows.
+      //    That's not the problem this is addressing.
+      //
+      // Q: So when are you going to fix this for real then?
+      // A: Fix only the problems you care about. Use your time wisely.
+      //
+      if( 
+        (data.isIgnitionOn != existingCar.isIgnitionOn) && 
+        (yield redis.shouldProcess('car-ignition-notice-' + data.isIgnitionOn, existingCar.id, 180 * 1000))
+      ) {
         yield LogService.create({carId: id, action: data.isIgnitionOn ? Actions.IGNITION_ON : Actions.IGNITION_OFF});
         yield this.wsCallback({
           name: existingCar.license,

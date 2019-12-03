@@ -65,8 +65,8 @@ var checkBooking = co.wrap(function *(booking) {
         let sitLast = +(yield redis.hget('sitLast', booking.id));
         if(now - sitLast > duration_ms) {
           let minute_count = Math.floor((now - sitStart) / duration_ms) * duration_min;
-          console.log(`${booking.car.license} has been parked for ${minute_count} minutes and is still active. This courtesy message is brought to you to help save you money.`);
           /*
+          console.log(`${booking.car.license} has been parked for ${minute_count} minutes and is still active. This courtesy message is brought to you to help save you money.`);
           yield notify.sendTextMessage(booking.user, 
             `${booking.car.license} has been parked for ${minute_count} minutes and is still active. This courtesy message is brought to you to help save you money.`
           );
