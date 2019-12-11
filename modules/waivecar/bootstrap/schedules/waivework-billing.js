@@ -22,48 +22,61 @@ scheduler.process('waivework-billing', function*(job) {
     where: {
       status: 'started',
     },
+    include: [
+      {
+        model: 'Car',
+        as: 'car',
+      },
+    ],
   })).filter(each => each.isFlagged('Waivework'));
   let dailyMilesPayload = [
-    ':scream_cat: *The following users are not driving 100 miles per day:*\n',
+    ':scream_cat: *Here are the 14-day average mileages for our users:*\n',
   ];
-  for (let booking of currentWaiveworkBookings) {
-    let history = yield CarHistory.find({
-      where: {
-        carId: booking.carId,
-        createdAt: {$gt: booking.createdAt},
-      },
-    });
-    if (history.length) {
-      // Because the mileage is stored once per day, the average mileage per day may be found by
-      // dividing the miles since the beginning of the booking by the number of days in the car history
-      let averagePerDay =
-        ((Number(history[history.length - 1].data) - Number(history[0].data)) /
-          history.length) *
-        0.621371;
-      if (
-        averagePerDay < 100 &&
-        (yield redis.shouldProcess(
-          'waivework-mileage-check',
-          booking.carId,
-          90 * 1000,
-        ))
-      ) {
+  let averages = [];
+  if (yield redis.shouldProcess('waivework-mileage-check', 1, 90 * 1000)) {
+    for (let booking of currentWaiveworkBookings) {
+      let startDate =
+        moment().diff(moment(booking.createdAt), 'days') < 14
+          ? moment(booking.createdAt)
+          : moment().subtract(14, 'days');
+      let history = yield CarHistory.find({
+        where: {
+          carId: booking.carId,
+          createdAt: {$gt: startDate},
+        },
+      });
+      if (history.length) {
+        // Because the mileage is stored once per day, the average mileage per day for the last 14 days may be found by
+        // dividing the miles in the last 14 days by 14 or the number of days, whichever is less
+        let averagePerDay =
+          ((Number(history[history.length - 1].data) -
+            Number(history[0].data)) /
+            14) *
+          0.621371;
         let user = yield User.findById(booking.userId);
-        dailyMilesPayload.push(
-          `${user.link()}'s average mileage is ${Math.floor(
-            averagePerDay,
-          )} per day.`,
-        );
+        averages.push({
+          user,
+          booking,
+          averagePerDay,
+        });
       }
     }
   }
+  averages.sort((a, b) => a.averagePerDay - b.averagePerDay);
+  averages.forEach((bookingObj, idx) => {
+    dailyMilesPayload.push(
+      `${idx +
+        1} | ${bookingObj.user.link()} in ${bookingObj.booking.car.link()}: ${Math.floor(
+        bookingObj.averagePerDay,
+      )} per day.`,
+    );
+  });
   if (dailyMilesPayload.length > 1) {
     yield notify.slack(
       {text: dailyMilesPayload.join('\n')},
       {channel: '#waivework-charges'},
     );
   }
-
   let today = moment();
   let currentDay = today.date();
 
