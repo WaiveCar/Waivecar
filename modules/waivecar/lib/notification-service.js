@@ -63,7 +63,7 @@ module.exports = {
           message : message
         });
       } catch (err) {
-        log.warn(`Failed to send sms to ${ user.name() } > ${ err.message }`);
+        log.warn(`Failed to send sms to ${ user.phone } > ${ err.message }`);
       }
     }
     return user;
