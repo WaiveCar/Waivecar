@@ -86,6 +86,7 @@ module.exports = class Cards extends Service {
     // ### User Query
 
     query.where.userId = _user.id;
+    console.log('q', query)
     let cards = yield Card.find(query);
     if (cards.length && showSelected) {
       let currentMax = null;
