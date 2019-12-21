@@ -98,6 +98,7 @@ module.exports = class Cards extends Service {
       }
       cards[maxIdx] = cards[maxIdx].toJSON();
       cards[maxIdx].selected = true;
+      console.log('cards', cards);
     }
     return cards;
   }
