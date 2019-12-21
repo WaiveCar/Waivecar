@@ -425,7 +425,7 @@ module.exports = {
       console.log("Unable to send email", ex);
     }
     try {
-      yield notify.sendTextMessage(data, `Thanks for signing up for WaiveWork! You will hear back from us regarding your elegability in about 2 business days.`);
+      yield notify.sendTextMessage(data, `Thanks for signing up for WaiveWork! You will hear back from us regarding your eligability in about 2 business days.`);
       let email = new Email();
       yield email.send({
         to       : data.email,

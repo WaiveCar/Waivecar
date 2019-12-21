@@ -66,6 +66,7 @@ module.exports = class Cards extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
+    let showSelected = query.showSelected;
     query = queryParser(query, {
       where : {
         userId   : queryParser.NUMBER,
@@ -85,7 +86,20 @@ module.exports = class Cards extends Service {
     // ### User Query
 
     query.where.userId = _user.id;
-    return yield Card.find(query);
+    let cards = yield Card.find(query);
+    if (cards.length && showSelected) {
+      let currentMax = null;
+      let maxIdx = null;
+      for (let i = 0; i < cards.length; i++) {
+        if (!currentMax || new Date(cards[i].updatedAt) > new Date(currentMax)) {
+          currentMax = cards[i].updatedAt;
+          maxIdx = i;
+        }
+      }
+      cards[maxIdx] = cards[maxIdx].toJSON();
+      cards[maxIdx].selected = true;
+    }
+    return cards;
   }
 
   /**
