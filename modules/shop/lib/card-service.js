@@ -79,14 +79,13 @@ module.exports = class Cards extends Service {
 
     // ### Admin Query
 
-    if (_user.hasAccess('admin')) {
+    if (_user.hasAccess('admin') && !showSelected) {
       return yield Card.find(query);
     }
 
     // ### User Query
 
     query.where.userId = _user.id;
-    console.log('q', query)
     let cards = yield Card.find(query);
     if (cards.length && showSelected) {
       let currentMax = null;
@@ -99,7 +98,6 @@ module.exports = class Cards extends Service {
       }
       cards[maxIdx] = cards[maxIdx].toJSON();
       cards[maxIdx].selected = true;
-      console.log('cards', cards);
     }
     return cards;
   }
