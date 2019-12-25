@@ -9,18 +9,17 @@ let log = Bento.Log;
 
 scheduler.process('waivework-immobilize', function*(job) {
   let slackPayload = [
-    ':violin: *The following users have had their cars immobilized due to their faillure pay in the 24 hours following their failed automatic payment*\n',
+    ':violin: *The following users have had their cars immobilized due to their faillure pay in the 48 hours following their failed automatic payment*\n',
   ];
   for (let oldPayment of job.data.toImmobilize) {
-    // This looks to see if they have successfully paid the weekly charge in the preceeding 24 hours by
+    // This looks to see if they have successfully paid the weekly charge in the preceeding 48 hours by
     // finding any successful charges for the amount of the payment.
     let recentOrder = yield ShopOrder.findOne({
       where: {
         userId: oldPayment.booking.userId,
-        amount: oldPayment.amount,
         createdAt: {
           $gte: moment()
-            .subtract(24, 'hours')
+            .subtract(48, 'hours')
             .format('YYYY-MM-DD'),
         },
         status: 'paid',
@@ -39,7 +38,7 @@ scheduler.process('waivework-immobilize', function*(job) {
       try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
-          'It has been 24 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please contact us to resolve the issue.',
+          'It has been 48 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please contact us to resolve the issue.',
         );
       } catch (e) {
         log.warn('error sending text: ', e);
