@@ -162,7 +162,6 @@ class WaiveWorkDetails extends Component {
     }
     api.post('/bookings', data, (err, booking) => {
       if (err) {
-        console.log('err', err);
         if (err.code === 'CAR_NOT_READY') {
           return alert(err.message);
         } else {
