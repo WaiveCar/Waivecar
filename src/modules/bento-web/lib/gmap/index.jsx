@@ -106,14 +106,15 @@ module.exports = class GMap extends React.Component {
       return;
     }
 
-    let path = this.getPath(rawPath);
 
     if (this.props.heatmap) {
+     let heatData = this.getHeatMap(rawPath);
      var heatmap = new google.maps.visualization.HeatmapLayer(Object.assign(opts || {}, {
-      data: path
+      data: heatData
      }));
      heatmap.setMap(this.map);
     } else {
+     let path = this.getPath(rawPath);
      var polyline = new google.maps.Polyline(Object.assign(opts || {}, {
        path: path,
        geodesic: true,
@@ -168,6 +169,12 @@ module.exports = class GMap extends React.Component {
       }
     })
   }
+
+  getHeatMap(rawPath) {
+   return rawPath.map((val) => {
+     return{new google.maps.LatLng(val[0],val[1])}
+    }); 
+   }
 
   centerPosition(markers) {
     if (markers.length > 1) {
