@@ -108,13 +108,20 @@ module.exports = class GMap extends React.Component {
 
     let path = this.getPath(rawPath);
 
-    var polyline = new google.maps.Polyline(Object.assign(opts || {}, {
-      path: path,
-      geodesic: true,
-      strokeColor: '#0000FF',
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    }));
+    if (this.props.heatmap) {
+     var heatmap = new google.maps.visualization.HeatmapLayer({
+      data: path
+     });
+     heatmap.setMap(mapConfig);
+    } else {
+     var polyline = new google.maps.Polyline(Object.assign(opts || {}, {
+       path: path,
+       geodesic: true,
+       strokeColor: '#0000FF',
+       strokeOpacity: 1.0,
+       strokeWeight: 2
+     }));
+    }
 
     polyline.setMap(this.map);
   }

@@ -218,6 +218,7 @@ module.exports = class RideDetails extends React.Component {
                 }
               ]}
               path      =  {this.props.carPath }
+	      heatmap 	=  {true }
             />
           </div>
           <div className="box-content">
