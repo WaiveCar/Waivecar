@@ -109,10 +109,10 @@ module.exports = class GMap extends React.Component {
     let path = this.getPath(rawPath);
 
     if (this.props.heatmap) {
-     var heatmap = new google.maps.visualization.HeatmapLayer({
+     var heatmap = new google.maps.visualization.HeatmapLayer(Object.assign(opts || {}, {
       data: path
-     });
-     heatmap.setMap(mapConfig);
+     }));
+     heatmap.setMap(this.map);
     } else {
      var polyline = new google.maps.Polyline(Object.assign(opts || {}, {
        path: path,
