@@ -121,9 +121,9 @@ module.exports = class GMap extends React.Component {
        strokeOpacity: 1.0,
        strokeWeight: 2
      }));
+    polyline.setMap(this.map);
     }
 
-    polyline.setMap(this.map);
   }
 
   getUser(next) {
