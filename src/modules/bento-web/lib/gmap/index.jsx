@@ -172,8 +172,8 @@ module.exports = class GMap extends React.Component {
 
   getHeatMap(rawPath) {
    return rawPath.map((val) => {
-     return{new google.maps.LatLng(val[0],val[1])}
-    }); 
+     return(new google.maps.LatLng(val[0],val[1]))
+    }) 
    }
 
   centerPosition(markers) {
