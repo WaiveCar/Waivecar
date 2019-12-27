@@ -144,16 +144,20 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/waivemap',
+        component : require('../../views/app/admin/waivemap'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/waivepark',
         component : require('../../views/app/admin/waivepark'),
         onEnter   : policies.isAdministrator
-      }, 
+      },
       {
         path      : '/waivepark/:id',
         component : require('../../views/app/admin/waivepark/show'),
         onEnter   : policies.isAdministrator
       }
-      
     ].concat(views.getRoutes('app')));
   }
 });
@@ -235,6 +239,14 @@ let order = 2;
     title     : 'Bookings',
     icon      : 'insert_invitation',
     path      : '/bookings',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'WaiveMap',
+    icon      : 'map',
+    path      : '/waivemap',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
