@@ -6,12 +6,13 @@ let fs      = require('fs');
 let Redis   = require('./redis-service.js');
 
 module.exports = function*(params, opts) {
-  let cache_point = JSON.stringify(params), doCache = false;
+  let doCache = false;
+  let key = ['CACHE', md5(JSON.stringify(params))].join(':');
 
   if (!params.method || params.method.toLowerCase() === 'get') {
     // This logic is written in a way to reduce the i/o. sync
     // calls can block (in fact, they've been a problem).
-    let body = yield Redis.hget('cache', cache_point);
+    let body = yield Redis.get(key);
 
     if(body !== null) {
       return { body: body };
@@ -23,7 +24,8 @@ module.exports = function*(params, opts) {
   let reqResponse = yield request(params);
 
   if(doCache) {
-    yield Redis.hset('cache', cache_point, reqResponse.body);
+    // timeout is in miliseconds
+    yield Redis.set(key, reqResponse.body, 'nx', 'px', 1000 * 3600 * 18);
   }
 
   return { body: reqResponse.body };
