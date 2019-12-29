@@ -147,9 +147,9 @@ module.exports = class BookingService extends Service {
       let checklist = yield car.waiveworkChecklist();
       if (checklist.missingList.length) {
         throw error.parse({
-          code: 'CAR_NOT_READY',
+          code: 'CHECKLIST_FAILED',
           message: `This car is not ready to be sent out on WaiveWork. The missing checklist items are: ${checklist.missingList.join(', ')}`,
-        }, 400)
+        }, 400);
       }
     }
     // At this point we immediately make the car unavailable to protect
@@ -800,9 +800,10 @@ module.exports = class BookingService extends Service {
     if (bookings[0] && query.includeLateFees) {
       bookings[0].payments = bookings[0].payments.map(payment => payment.toJSON());
       for (let payment of bookings[0].payments) {
-        if (payment.status === 'failed' && !payment.description.match(/evgo/gi)) {
+        if (payment.status === 'failed' && !payment.description.match(/evgo/gi) && moment().diff(moment(payment.createdAt), 'weeks') <= 2) {
           // caclulate late what late fees should be for failed payments at 5%
           payment.lateFees = (yield OrderService.lateFees(payment.id, {percent: 5})).lateFees;
+          payment.canRetry = true;
         }
       };
     }
