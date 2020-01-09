@@ -227,6 +227,9 @@ module.exports = {
           state: license.state,
           zip: license.zip
         }
+      },
+      metaData: {
+        partnerStripeId: user.stripeId,
       }
     }, { Accept : 'application.vnd.renters.v1+json' });
   }
