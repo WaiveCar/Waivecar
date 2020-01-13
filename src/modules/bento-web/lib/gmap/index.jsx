@@ -241,25 +241,10 @@ module.exports = class GMap extends React.Component {
 
         label = val.license.replace(/[^\d]*/, '');
         if(!val.inRepair) {
-          if (val.charge < 25 && !val.isCharging) {
-            importance++;
-          }
-          if (val.charge < 14 && !val.isCharging) {
-            importance++;
-          }
           if(val.user) {
             label = [val.user.firstName[0], val.user.lastName].join(' ')
-          }
-
-          if(!(val.user && val.user.isWaivework)) {
-            if(lastAction > 5) {
-              importance++;
-            }
-            if(lastAction > 11) {
-              importance++;
-            }
-            if(lastAction > 20) {
-              importance++;
+            if(val.user.isWaivework) {
+              importance = 2;
             }
           }
         }
@@ -306,9 +291,8 @@ module.exports = class GMap extends React.Component {
           if(val.user) {
             content += `<div><a style="color:darkgreen" href=/users/${ val.user.id }>${ val.user.firstName } ${ val.user.lastName }</a></div>`;
           }
-          if(!val.booking) {
-            content += '<em>Available</em>';
-          } else {
+          console.log(val);
+          if(val.booking) {
             if(val.booking.length) {
               let bid = val.booking[0].id;
               content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
