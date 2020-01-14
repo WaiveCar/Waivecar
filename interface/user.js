@@ -88,6 +88,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : 0
     },
 
+    waiveworkCredit : {
+      type         : Sequelize.DECIMAL(10,2),
+      defaultValue : 0
+    },
+
     tested : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
