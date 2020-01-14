@@ -22,6 +22,7 @@ class WaiveWorkDetails extends Component {
       uploading: false,
       payingEarly: false,
       damageUploaded: false,
+      credit: props.user.waiveworkCredit,
     };
     this.fileUpload = null;
   }
@@ -351,7 +352,8 @@ class WaiveWorkDetails extends Component {
   };
 
   addCredit = () => {
-    let {newCredit} = this.state;
+    let {newCredit, credit} = this.state;
+    console.log(newCredit, credit);
     let {user} = this.props
     if (confirm(`Are you sure you want to add $${newCredit} to this user's account`)) {
       api.put(`/users/${user.id}`, {waiveworkCredit: user.waiveworkCredit + (newCredit * 100)}, (err, response) => {
@@ -361,7 +363,7 @@ class WaiveWorkDetails extends Component {
             message: `Error adding credit: ${err.message}`,
           });
         }
-        this.setState({newCredit: 0}, () => {
+        this.setState({newCredit: 0, credit: credit + newCredit * 100}, () => {
           snackbar.notify({
             type: 'success',
             message: `Successfully added $${newCredit}`,
@@ -385,8 +387,8 @@ class WaiveWorkDetails extends Component {
       uploading,
       payingEarly,
       choosingDamage,
+      credit,
     } = this.state;
-    let {user} = this.props;
     return (
       <div className="box">
         <h3>
@@ -425,7 +427,7 @@ class WaiveWorkDetails extends Component {
                 <div>
                   <div>
                     <div>
-                      Current WaiveWork Credit ${(user.waiveworkCredit / 100).toFixed(2)}
+                      Current WaiveWork Credit ${(credit / 100).toFixed(2)}
                     </div>
                     Start Date:{' '}
                     {moment(currentWaiveworkBooking.createdAt).format(
