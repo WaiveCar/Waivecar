@@ -640,7 +640,7 @@ module.exports = class BookingService extends Service {
         {
           text: `:ohyaa: ${driver.link()} charged $${(
             paymentToChange.amount / 100
-          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded.`,
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded. (credit used $${(workCharge.creditUsed / 100).toFixed(2)})`,
         },
         {channel: '#waivework-charges'},
       );
