@@ -23,6 +23,7 @@ class WaiveWorkDetails extends Component {
       payingEarly: false,
       damageUploaded: false,
       credit: props.user.waiveworkCredit,
+      newCredit: 0,
     };
     this.fileUpload = null;
   }
@@ -353,9 +354,9 @@ class WaiveWorkDetails extends Component {
 
   addCredit = () => {
     let {newCredit, credit} = this.state;
-    let {user} = this.props
+    let {user} = this.props;
     if (confirm(`Are you sure you want to add $${newCredit} to this user's account`)) {
-      api.put(`/users/${user.id}`, {waiveworkCredit: user.waiveworkCredit + (newCredit * 100)}, (err, response) => {
+      api.put(`/users/${user.id}`, {waiveworkCredit: credit + (newCredit * 100)}, (err, response) => {
         if (err) {
           return snackbar.notify({
             type: 'danger',
@@ -386,6 +387,7 @@ class WaiveWorkDetails extends Component {
       uploading,
       payingEarly,
       choosingDamage,
+      newCredit,
       credit,
     } = this.state;
     return (
@@ -412,6 +414,7 @@ class WaiveWorkDetails extends Component {
                   <span>
                     <input type="number" className="form-control" 
                       style={{width: '100px', display: 'inline'}} 
+                      value={newCredit}
                       onChange={(e) => this.setState({newCredit: e.target.value})}
                     />
                   </span>
