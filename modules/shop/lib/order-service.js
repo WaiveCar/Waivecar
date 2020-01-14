@@ -1030,6 +1030,7 @@ module.exports = class OrderService extends Service {
         // rest of the code from being confused by this.
         yield order.update({
           service  : config.service,
+          amount: 0,
           chargeId : 0,
           status   : 'paid'
         });

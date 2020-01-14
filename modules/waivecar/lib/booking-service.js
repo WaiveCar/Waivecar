@@ -667,7 +667,7 @@ module.exports = class BookingService extends Service {
         message: e.message,
       }, 400);
     }
-    return paymentToChange;
+    return {waiveworkPayment: paymentToChange, remainingCredit};
   }
 
   /*
