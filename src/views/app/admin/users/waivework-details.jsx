@@ -280,8 +280,9 @@ class WaiveWorkDetails extends Component {
             this.setState({
               currentWaiveworkBooking: {
                 ...currentWaiveworkBooking,
-                waiveworkPayment: response,
+                waiveworkPayment: response.waiveworkPayment,
               },
+              credit: response.remainingCredit,
               payingEarly: false,
             });
           },
