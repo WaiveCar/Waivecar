@@ -350,6 +350,27 @@ class WaiveWorkDetails extends Component {
     this.setState({damageUploaded: true});
   };
 
+  addCredit = () => {
+    let {newCredit} = this.state;
+    let {user} = this.props
+    if (confirm(`Are you sure you want to add $${newCredit} to this user's account`)) {
+      api.put(`/users/${user.id}`, {waiveworkCredit: user.waiveworkCredit + (newCredit * 100)}, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Error adding credit: ${err.message}`,
+          });
+        }
+        this.setState({newCredit: 0}, () => {
+          snackbar.notify({
+            type: 'success',
+            message: `Successfully added $${newCredit}`,
+          });
+        });
+      });
+    }
+  }
+
   render() {
     let {
       currentWaiveworkBooking,
@@ -375,15 +396,30 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {currentWaiveworkBooking ? (
             <div>
-              <h4>
-                Current Booking:{' '}
-                <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
-                  {currentWaiveworkBooking.id}
-                </Link>{' '}
-                in{' '}
-                <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
-                  {currentWaiveworkBooking.car.license}
-                </Link>
+              <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
+                <div>
+                  Current Booking:{' '}
+                  <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
+                    {currentWaiveworkBooking.id}
+                  </Link>{' '}
+                  in{' '}
+                  <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
+                    {currentWaiveworkBooking.car.license}
+                  </Link>
+                </div>
+                <div>
+                  <span>
+                    <input type="number" className="form-control" 
+                      style={{width: '100px', display: 'inline'}} 
+                      onChange={(e) => this.setState({newCredit: e.target.value})}
+                    />
+                  </span>
+                  <span>
+                    <button className="btn btn-primary btn-sm" onClick={() => this.addCredit()}>
+                      Add Credit
+                    </button>
+                  </span>
+                </div>
               </h4>
               {currentWaiveworkBooking.waiveworkPayment && (
                 <div>
