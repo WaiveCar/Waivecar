@@ -880,6 +880,8 @@ module.exports = class OrderService extends Service {
     // condition has to be in there.
     let amountToCharge = order.amount - credit;
     charge.amount = amountToCharge;
+    // This is for passing the amount of credit used to notifications
+    let creditUsed = order.amount - credit <= 0 ? order.amount : credit;
 
     // A "dry-run" basically computes all the values up to the charge amount
     // and then returns the object prior to the charge.  This can be used
@@ -931,6 +933,7 @@ module.exports = class OrderService extends Service {
           t("charges-create");
 
           charge.amount = amountToCharge;
+          charge.creditUsed = creditUsed;
 
           yield order.update({
             service  : config.service,
@@ -991,6 +994,7 @@ module.exports = class OrderService extends Service {
       if (capture) {
         // This is the amount that we actually charged.
         yield order.update({ amount: order.amount - credit });
+        charge.creditUsed = creditUsed;
 
         if(!opts.nocredit) {
           if (opts.useWorkCredit) {
@@ -1016,6 +1020,7 @@ module.exports = class OrderService extends Service {
             yield user.update({ credit: credit - order.amount });
           }
         }
+        charge.creditUsed = creditUsed;
 
         // We now "fake" as if we did a CC charge to keep the
         // rest of the code from being confused by this.
@@ -1026,7 +1031,6 @@ module.exports = class OrderService extends Service {
         });
       }
     }
-
     return charge;
   }
 
