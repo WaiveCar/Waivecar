@@ -365,6 +365,7 @@ class WaiveWorkDetails extends Component {
       payingEarly,
       choosingDamage,
     } = this.state;
+    let {user} = this.props;
     return (
       <div className="box">
         <h3>
@@ -387,6 +388,9 @@ class WaiveWorkDetails extends Component {
               {currentWaiveworkBooking.waiveworkPayment && (
                 <div>
                   <div>
+                    <div>
+                      Current WaiveWork Credit ${(user.waiveworkCredit / 100).toFixed(2)}
+                    </div>
                     Start Date:{' '}
                     {moment(currentWaiveworkBooking.createdAt).format(
                       'MM/DD/YYYY',
