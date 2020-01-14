@@ -113,9 +113,12 @@ module.exports = class OrderService extends Service {
       // this is the real one and if successful will override the last value with a real charge, 
       // otherwise the previous assignment sticks.
       charge = yield this.charge(order, user, opts);
-
+      console.log('credit used', charge.creditUsed);
       if(data.amount > 0) {
         let addendum = user.getCredit(opts.useWorkCredit);
+        if (charge.creditUsed) {
+          addendum += `(used: $${(charge.creditUsed / 100).toFixed(2)}) used.`
+        }
         if(opts.nocredit) {
           addendum += " (credit not used)";
         }
