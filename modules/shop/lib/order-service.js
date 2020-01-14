@@ -115,13 +115,13 @@ module.exports = class OrderService extends Service {
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
-        let addendum = user.getCredit();
+        let addendum = user.getCredit(opts.useWorkCredit);
         if(opts.nocredit) {
           addendum += " (credit not used)";
         }
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }. ${ addendum }`, [ 'slack' ], { channel : '#reservations' });
       } else if(data.amount < 0) {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#reservations' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }. ${ user.getCredit(opts.useWorkCredit) }`, [ 'slack' ], { channel : '#reservations' });
       } else {
         charge.amount = charge.amount || 0;
         charge = `$${ (charge.amount / 100).toFixed(2) }`;
@@ -134,6 +134,7 @@ module.exports = class OrderService extends Service {
       // looking over the template at templates/email/miscellaneous-charge/html.hbs and
       // modules/shop/lib/order-service.js it looks like we need to pass an object with
       // quantity, price, and description defined.
+      // This is not used for notification of weekly waivework payments
       if (!data.waivework) {
         yield this.notifyOfCharge(Object.assign(opts, {
           quantity: 1,

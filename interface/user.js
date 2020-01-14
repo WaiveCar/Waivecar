@@ -166,8 +166,8 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return `<${ apiConfig.uri }/users/${ this.id }|${ this.name() }>`;
     },
 
-    getCredit() {
-      return `(credit: $${ (this.credit / 100).toFixed(2) })`;
+    getCredit(useWorkCredit) {
+      return `(credit: $${ ((useWorkCredit ? this.waiveworkCredit : this.credit) / 100).toFixed(2) })`;
     },
 
     // This is used mostly in slack messages ... it emits the users phone number 
