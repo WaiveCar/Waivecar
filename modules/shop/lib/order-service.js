@@ -856,7 +856,7 @@ module.exports = class OrderService extends Service {
     // the user). We can do this two-step thing where we just see if the
     // CC is valid by specifying an opts.nocapture
     let capture = true;
-    let credit = user.credit;
+    let credit = opts.useWorkCredit ? user.waiveworkCredit : user.credit;
     let charge = {};
     let silentFailure = false;
 
@@ -950,7 +950,11 @@ module.exports = class OrderService extends Service {
           // to buy something, in which case, we don't give it to them and
           // don't charge them.
           if(!(opts.nodebt || opts.nocredit)) {
-            yield user.update({ credit: user.credit - order.amount });
+            if (opts.useWorkCredit) {
+              yield user.update({ credit: user.waiveworkCredit - order.amount });
+            } else {
+              yield user.update({ credit: user.credit - order.amount });
+            }
           }
 
           // A failed charge needs to be marked as such (see #670).
@@ -960,7 +964,7 @@ module.exports = class OrderService extends Service {
             // We need to hold this failed charge against the user. (see #715)
             yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
-            // And finally we tell them (also covered in #670), but only if they are not waivework.
+            // And finally we tell them (also covered in #670), but only if they are not waivework weeklys.
             if (!opts.waivework) {
               yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
             }
@@ -988,7 +992,11 @@ module.exports = class OrderService extends Service {
         yield order.update({ amount: order.amount - credit });
 
         if(!opts.nocredit) {
-          yield user.update({ credit: 0 });
+          if (opts.useWorkCredit) {
+            yield user.update({ waiveworkCredit: 0 });
+          } else {
+            yield user.update({ credit: 0 });
+          }
         }
       }
     } else {
@@ -1001,7 +1009,11 @@ module.exports = class OrderService extends Service {
       // dependency on the parent logic not changing - so we keep it.
       if (capture) {
         if(!opts.nocredit) {
-          yield user.update({ credit: credit - order.amount });
+          if (opts.useWorkCredit) {
+            yield user.update({ waiveworkCredit: credit - order.amount });
+          } else {
+            yield user.update({ credit: credit - order.amount });
+          }
         }
 
         // We now "fake" as if we did a CC charge to keep the

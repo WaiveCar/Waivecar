@@ -617,6 +617,8 @@ module.exports = class BookingService extends Service {
     let paymentDays = [8, 15, 22, 1, 8];
     let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
     let newDate = moment(paymentToChange.date).date(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    let toCharge = paymentToChange.amount - driver.waiveworkCredit;
+    let remainingCredit = toCharge >= 0 ? 0 : Math.abs(toCharge);
     try {
       let data = {
         userId: driver.id,
@@ -625,7 +627,7 @@ module.exports = class BookingService extends Service {
         source: 'Early Payment',
         description: `Weekly charge for Waivework for ${moment(oldDate).format('MM/DD/YYYY')} made in advance`,
       };
-      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})).order;
+      let workCharge = (yield OrderService.quickCharge(data, _user, {useWorkCredit: true, overrideAdminCheck: true})).order;
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: workCharge.id,
