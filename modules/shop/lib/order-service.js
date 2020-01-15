@@ -119,6 +119,9 @@ module.exports = class OrderService extends Service {
           order.creditUsed = charge.creditUsed;
           addendum += `(used: $${(charge.creditUsed / 100).toFixed(2)}) used.`
           yield order.update({description: order.description + `. (credit used: $${(charge.creditUsed / 100).toFixed(2)})`})
+          // This must be done to make sure the amount of credit used is included in the e-mail
+          data.description = order.description;
+          data.amount = order.amount;
         }
         if(opts.nocredit) {
           addendum += " (credit not used)";
@@ -663,10 +666,8 @@ module.exports = class OrderService extends Service {
         amount      : amount
       });
       yield order.save();
-      console.log('order-save');
 
       let charge = yield this.charge(order, _user, {nocapture: true});
-      console.log('charge-made');
       if (charge.status !== 'failed') {
         this.authorize.last.newAuthorization = true;
         yield _user.update({ lastHoldAt: now });
@@ -1157,9 +1158,12 @@ module.exports = class OrderService extends Service {
 
   // Notify user that miscellaneous was added to their booking
   static *notifyOfCharge(item, user, opts={}) {
+    /* The line below is removed due to charges using credit now displaying an amount of 0
     if(item.price === 0) {
       return;
     }
+    */
+    let useWorkCredit = item.useWorkCredit;
     let email = new Email();
     let word = false;
     try {
@@ -1191,7 +1195,7 @@ module.exports = class OrderService extends Service {
             $${charge.total ? (Math.abs(charge.total / 100)).toFixed(2) : (charge.price / 100).toFixed(2)}
           </td>
         <tr>` ).join('');
-      word = item.totalNum > 0 ? 'Charges' : 'credit';
+      word = (item.totalNum > 0 || useWorkCredit) ? 'Charges' : 'credit';
       if (word === 'Charges' && !opts.isTopUp) {
         opts.subject = opts.subject || `$${ item.total } charged to your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
