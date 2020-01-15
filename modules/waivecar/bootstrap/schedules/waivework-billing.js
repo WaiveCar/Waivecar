@@ -184,6 +184,7 @@ scheduler.process('waivework-billing', function*(job) {
         )
       ) {
         let endText;
+        let creditString;
         let data = {
           userId: oldPayment.booking.userId,
           amount: oldPayment.amount,
@@ -238,9 +239,16 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: bookingPayment.id,
             });
+            creditString = `(credit used: ${
+              workCharge.creditUsed
+                ? ` (credit used: $${(workCharge.creditUsed / 100).toFixed(
+                    2,
+                  )}) `
+                : ''
+            }`;
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} was successful!`;
+            ).toFixed(2)} was successful! ${creditString}`;
           } catch (e) {
             failedChargePayload.push(
               `${user.link()} had a failed charge of $${(
@@ -280,27 +288,25 @@ scheduler.process('waivework-billing', function*(job) {
           chargesPayload.push(
             `${user.link()} charged $${(oldPayment.amount / 100).toFixed(
               2,
-            )} automatically.`,
+            )} automatically. ${creditString}`,
           );
           let email = new Email(),
             emailOpts = {};
-          if (data.amount > 0) {
-            try {
-              yield notify.sendTextMessage(user, endText);
-              emailOpts = {
-                to: user.email,
-                from: config.email.sender,
-                subject: 'Your WaiveWork Payment',
-                template: 'waivework-general',
-                context: {
-                  name: `${user.firstName} ${user.lastName}`,
-                  text: endText,
-                },
-              };
-              yield email.send(emailOpts);
-            } catch (e) {
-              log.warn('error sending email', e);
-            }
+          try {
+            yield notify.sendTextMessage(user, endText);
+            emailOpts = {
+              to: user.email,
+              from: config.email.sender,
+              subject: 'Your WaiveWork Payment',
+              template: 'waivework-general',
+              context: {
+                name: `${user.firstName} ${user.lastName}`,
+                text: endText,
+              },
+            };
+            yield email.send(emailOpts);
+          } catch (e) {
+            log.warn('error sending email', e);
           }
         }
         try {
@@ -331,7 +337,6 @@ scheduler.process('waivework-billing', function*(job) {
                 url: `${config.ocpi.url}?key=${config.ocpi.key}&id=${deleteString}`,
               })).body;
             }
-
             try {
               let evgoChargeData = {
                 userId: oldPayment.booking.userId,
@@ -353,10 +358,11 @@ scheduler.process('waivework-billing', function*(job) {
                 orderId: shopOrder.id,
               });
               yield bookingPayment.save();
+              creditString = shopOrder.creditUsed ? ` (credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) ` : '';
               evgoChargePayload.push(
                 `${user.link()} was charged $${(chargesTotal / 100).toFixed(
                   2,
-                )}`,
+                )} ${creditString}`,
               );
             } catch (e) {
               failedEvgoChargePayload.push(
