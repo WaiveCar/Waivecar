@@ -608,10 +608,10 @@ module.exports = class BookingService extends Service {
         bookingPaymentId: null,
       },
     });
+    let order;
     let oldDate = paymentToChange.date;
     let booking = yield Booking.findById(paymentToChange.bookingId);
     let driver = yield User.findById(booking.userId);
-
     let oldDay = moment(paymentToChange.date).date();
     let oldMonth = moment(paymentToChange.date).month();
     let paymentDays = [8, 15, 22, 1, 8];
@@ -632,6 +632,7 @@ module.exports = class BookingService extends Service {
         bookingId: booking.id,
         orderId: workCharge.id,
       });
+      order = workCharge;
       yield bookingPayment.save();
       yield paymentToChange.update({
         date: newDate,  
@@ -667,7 +668,7 @@ module.exports = class BookingService extends Service {
         message: e.message,
       }, 400);
     }
-    return {waiveworkPayment: paymentToChange, remainingCredit};
+    return {waiveworkPayment: paymentToChange, remainingCredit, order};
   }
 
   /*
