@@ -239,9 +239,9 @@ scheduler.process('waivework-billing', function*(job) {
             yield oldPayment.update({
               bookingPaymentId: bookingPayment.id,
             });
-            creditString = `(credit used: ${
-              workCharge.creditUsed
-                ? ` (credit used: $${(workCharge.creditUsed / 100).toFixed(
+            creditString = `${
+              shopOrder.creditUsed
+                ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(
                     2,
                   )}) `
                 : ''
@@ -358,7 +358,7 @@ scheduler.process('waivework-billing', function*(job) {
                 orderId: shopOrder.id,
               });
               yield bookingPayment.save();
-              creditString = shopOrder.creditUsed ? ` (credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) ` : '';
+              creditString = shopOrder.creditUsed ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) ` : '';
               evgoChargePayload.push(
                 `${user.link()} was charged $${(chargesTotal / 100).toFixed(
                   2,
