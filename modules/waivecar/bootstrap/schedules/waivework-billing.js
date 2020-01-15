@@ -214,7 +214,7 @@ scheduler.process('waivework-billing', function*(job) {
           // A dummy shopOrder must be made for inital payments so that the next payments may be made
           data.amount = 0;
           let shopOrder = (yield OrderService.quickCharge(data, null, {
-            nocredit: true,
+            useWorkCredit: true,
           })).order;
 
           let bookingPayment = new BookingPayment({
@@ -228,7 +228,7 @@ scheduler.process('waivework-billing', function*(job) {
         } else {
           try {
             let shopOrder = (yield OrderService.quickCharge(data, null, {
-              nocredit: true,
+              useWorkCredit: true,
             })).order;
             let bookingPayment = new BookingPayment({
               bookingId: oldPayment.booking.id,
@@ -345,7 +345,7 @@ scheduler.process('waivework-billing', function*(job) {
                 evgoChargeData,
                 null,
                 {
-                  nocredit: true,
+                  useWorkCredit: true,
                 },
               )).order;
               let bookingPayment = new BookingPayment({
