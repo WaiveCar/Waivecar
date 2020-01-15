@@ -974,7 +974,7 @@ module.exports = class OrderService extends Service {
             yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
             // And finally we tell them (also covered in #670), but only if they are not waivework weeklys.
-            if (!opts.waivework) {
+            if (!opts.waiveworkWeekly) {
               yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
             }
           }
