@@ -617,6 +617,7 @@ module.exports = class BookingService extends Service {
     let paymentDays = [8, 15, 22, 1, 8];
     let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
     let newDate = moment(paymentToChange.date).date(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    let oldAmount = paymentToChange.amount;
     let toCharge = paymentToChange.amount - driver.waiveworkCredit;
     let remainingCredit = toCharge >= 0 ? 0 : Math.abs(toCharge);
     try {
@@ -637,18 +638,28 @@ module.exports = class BookingService extends Service {
       yield paymentToChange.update({
         date: newDate,  
       });
+      let creditString = workCharge.creditUsed ? ` (credit used: $${(workCharge.creditUsed / 100).toFixed(2)}) ` : '';
       yield notify.slack(
         {
           text: `:ohyaa: ${driver.link()} charged $${(
             paymentToChange.amount / 100
-          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded. (credit used $${(workCharge.creditUsed / 100).toFixed(2)})`,
+          ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, and it succeeded.${creditString}`,
         },
         {channel: '#waivework-charges'},
+      );
+      yield notify.sendTextMessage(
+        driver,
+        `Thanks for covering your weekly payment of $${(
+          oldAmount / 100
+        ).toFixed(
+          2,
+        )} for the week of ${moment(oldDate).format('MM/DD/YYYY')} of WaiveWork in advance!${creditString}`,
       );
     } catch(e) {
       /* We are going to at least try not creating a BookingPayment object for this, as we do not want these to show up
        * in accounting for bookings if they fail and that is generally all BookingPayments are used for. If we get
-       * complaints from users we will change it back
+       * complaints from users we will change it back. We may be able to add this back in using the refId to the old payment, but
+       * it also may not be necessary.
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: e.shopOrder.id,
@@ -662,6 +673,10 @@ module.exports = class BookingService extends Service {
           ).toFixed(2)} by ${_user.name()} in advance for their weekly WaiveWork payment, but it failed. ${e.message}`,
         },
         {channel: '#waivework-charges'},
+      );
+      yield notify.sendTextMessage(
+        driver,
+        `Your attempt to make an advance payment for the week of ${moment(oldDate).format('MM/DD/YYYY')} has failed.`
       );
       throw error.parse({
         code: 'CHARGE_FAILED',
