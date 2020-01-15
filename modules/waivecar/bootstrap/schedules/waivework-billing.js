@@ -197,7 +197,7 @@ scheduler.process('waivework-billing', function*(job) {
         //data.amount = 0;
         //////
 
-        data.waivework = true;
+        data.waiveworkWeekly = true;
         let user = yield User.findById(oldPayment.booking.userId);
         let isFirstPayment =
           (yield WaiveworkPayment.find({

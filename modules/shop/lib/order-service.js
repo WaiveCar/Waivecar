@@ -71,7 +71,7 @@ module.exports = class OrderService extends Service {
       }, 400);
     }
 
-    if(data.amount === 0 && !data.waivework) {
+    if(data.amount === 0 && !data.waiveworkWeekly) {
       data.description = "Clearing outstanding balance";
     }
 
@@ -133,7 +133,7 @@ module.exports = class OrderService extends Service {
         charge.amount = charge.amount || 0;
         charge = `$${ (charge.amount / 100).toFixed(2) }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `cleared the outstanding ${charge} balance of ${ user.link() }`;
-        if (!data.waivework) {
+        if (!data.waiveworkWeekly) {
           yield notify.notifyAdmins(`:scales: ${ _user.link() } ${ phrase }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
@@ -142,7 +142,7 @@ module.exports = class OrderService extends Service {
       // modules/shop/lib/order-service.js it looks like we need to pass an object with
       // quantity, price, and description defined.
       // This is not used for notification of weekly waivework payments
-      if (!data.waivework) {
+      if (!data.waiveworkWeekly) {
         yield this.notifyOfCharge(Object.assign(opts, {
           quantity: 1,
           price: data.amount,
@@ -161,7 +161,7 @@ module.exports = class OrderService extends Service {
           evgoCharges: data.evgoCharges && data.evgoCharges,
         }), user);
       }
-      if (!data.waivework) {
+      if (!data.waiveworkWeekly) {
         yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
       }
       yield this.suspendIfMultipleFailed(user);
