@@ -1283,9 +1283,16 @@ module.exports = class OrderService extends Service {
         },
         {channel: '#waivework-charges'},
       );
+      yield notify.sendTextMessage(
+        driver,
+        `Thanks for covering your missed weekly payment of $${(
+          order.amount / 100
+        ).toFixed(
+          2,
+        )} for the week of ${moment(oldOrder.createdAt).format('MM/DD/YYYY')}. If your vehicle was immobilized, it has been unimmobilized.${creditString}`,
+      );
       return order;
     } catch(e) {
-      console.log(e);
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
