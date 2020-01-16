@@ -1123,11 +1123,12 @@ module.exports = class OrderService extends Service {
     // If the user had $0 in credit before the charge, then this email
     // is about 1 failed charge.
     if(amountInCents) {
-      messageParts.push('cover the $' + amountInDollars + ' in fees disclosed in the previous email');
+      messageParts.push('cover the $' + amountInDollars + ' for your recent attempted payment');
     }
+    /* Currently, we are ignoring balances accrued with WaiveCar, so this does not need to be sent to them
     if(creditBeforeCharge && !extra.advancePayment) {
       messageParts.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
-    }
+    } */
     
     // if there's two parts we show a grand total, otherwise we omit it
     // because it looks redundant.
@@ -1243,6 +1244,7 @@ module.exports = class OrderService extends Service {
         status: {$or: ['reserved', 'ready','started','ended']}
       }
     });
+    let driver = yield User.findById(currentBooking.userId);
     let lateFees = opts.lateFees ? opts.lateFees : 0;
     let data = {
       userId: oldOrder.userId,
@@ -1272,7 +1274,6 @@ module.exports = class OrderService extends Service {
         yield bookingPayment.save();
       }
       yield carService.unlockImmobilizer(currentBooking.carId, null, null, 'computer');
-      let driver = User.findById(currentBooking.id);
       let creditString = order.creditUsed ? ` (credit used: $${(order.creditUsed / 100).toFixed(2)}) ` : '';
       yield notify.slack(
         {
