@@ -20,6 +20,10 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.retryPayment(id, this.payload, this.auth.user);
   }
 
+  controller.advancePayment = function *(bookingId) {
+    return yield service.advanceWorkPayment(bookingId, this.auth.user);
+  }
+
   controller.lateFees = function *(id) {
     return yield service.lateFees(id, this.query, this.auth.user);
   }
