@@ -1150,7 +1150,7 @@ module.exports = class OrderService extends Service {
           name   : user.name(),
           charge : amountInDollars,
           message: message,
-          avanceCharge: extra.advanceCharge
+          advanceCharge: extra.advanceCharge
         }
       });
     } catch (err) {
