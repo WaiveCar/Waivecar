@@ -13,7 +13,7 @@ scheduler.process('waivework-immobilize', function*(job) {
   ];
   for (let oldPayment of job.data.toImmobilize) {
     // This looks to see if they have successfully paid the weekly charge in the preceeding 48 hours by
-    // finding any successful charges for the amount of the payment.
+    // finding any successful charges. This should be able to identify retried payments.
     let recentOrder = yield ShopOrder.findOne({
       where: {
         userId: oldPayment.booking.userId,
@@ -38,7 +38,7 @@ scheduler.process('waivework-immobilize', function*(job) {
       try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
-          'It has been 48 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please contact us to resolve the issue.',
+          'It has been 48 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please visit waivework.com or contact us to clear your balance.',
         );
       } catch (e) {
         log.warn('error sending text: ', e);
