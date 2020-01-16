@@ -1311,6 +1311,14 @@ module.exports = class OrderService extends Service {
         },
         {channel: '#waivework-charges'},
       );
+      yield notify.sendTextMessage(
+        driver,
+        `You retried your missed weekly payment of $${(
+          e.shopOrder.amount / 100
+        ).toFixed(
+          2,
+        )} for the week of ${moment(oldOrder.createdAt).format('MM/DD/YYYY')} but the payment failed. If your payment is not made within 24 hours after it is due, your vehicle may be immobilized.`,
+      );
       throw error.parse({
         code    : 'CHARGE_FAILED',
         message : e.message,
