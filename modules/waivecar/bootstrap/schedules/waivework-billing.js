@@ -241,9 +241,7 @@ scheduler.process('waivework-billing', function*(job) {
             });
             creditString = `${
               shopOrder.creditUsed
-                ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(
-                    2,
-                  )}) `
+                ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) `
                 : ''
             }`;
             endText = `Your weekly payment for WaiveWork of ${(
@@ -349,20 +347,17 @@ scheduler.process('waivework-billing', function*(job) {
               let shopOrder = (yield OrderService.quickCharge(
                 evgoChargeData,
                 null,
-                {
-                  useWorkCredit: true,
-                },
+                {},
               )).order;
               let bookingPayment = new BookingPayment({
                 bookingId: oldPayment.booking.id,
                 orderId: shopOrder.id,
               });
               yield bookingPayment.save();
-              creditString = shopOrder.creditUsed ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) ` : '';
               evgoChargePayload.push(
                 `${user.link()} was charged $${(chargesTotal / 100).toFixed(
                   2,
-                )} ${creditString}`,
+                )}`,
               );
             } catch (e) {
               failedEvgoChargePayload.push(
