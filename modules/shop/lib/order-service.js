@@ -1251,7 +1251,7 @@ module.exports = class OrderService extends Service {
       amount: oldOrder.amount + lateFees,
       source: 'Payment Retry',
       description:
-      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')} with late fees of $${(lateFees / 100).toFixed(2)}.`,
+      `Re-attempt of "${oldOrder.description}" from ${moment(oldOrder.createdAt).format('MM/DD/YYYY')} with late fees of $${(lateFees / 100).toFixed(2)}`,
     };
     try {
       let {order} = yield this.quickCharge(data, _user, {
@@ -1273,7 +1273,7 @@ module.exports = class OrderService extends Service {
         });
         yield bookingPayment.save();
       }
-      yield carService.unlockImmobilizer(currentBooking.carId, null, null, 'computer');
+      yield CarService.unlockImmobilizer(currentBooking.carId, null, null, 'computer');
       let creditString = order.creditUsed ? ` (credit used: $${(order.creditUsed / 100).toFixed(2)}) ` : '';
       yield notify.slack(
         {
@@ -1285,6 +1285,7 @@ module.exports = class OrderService extends Service {
       );
       return order;
     } catch(e) {
+      console.log(e);
       if (currentBooking) {
         let bookingPayment = new BookingPayment({
           bookingId: currentBooking.id,
