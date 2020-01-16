@@ -267,8 +267,9 @@ class WaiveWorkDetails extends Component {
     if (confirm('Are you sure you want to make this payment early?')) {
       this.setState({payingEarly: true}, () => {
         let {currentWaiveworkBooking} = this.state;
-        api.get(
-          `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+        api.post(
+          `/shop/advancePayment/${currentWaiveworkBooking.id}`,
+          {},
           (err, response) => {
             if (err) {
               this.setState({payingEarly: false});
