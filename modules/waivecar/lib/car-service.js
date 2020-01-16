@@ -1371,7 +1371,8 @@ module.exports = {
 
     // If the admin is unimmobilizing it then we can unflag it as such under a number
     // of conditions.
-    if (_user.hasAccess('admin')) {
+    // If fromWhere is computer, it is being called when the server thinks the car must b immobilized
+    if (fromWhere === 'computer' || (_user && _user.hasAccess('admin'))) {
 
       // This means that we are being called from the accessCar wrapper which
       // has replaced the unlock command to address #1438 ... this is 

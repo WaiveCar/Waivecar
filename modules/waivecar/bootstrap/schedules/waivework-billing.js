@@ -120,7 +120,7 @@ scheduler.process('waivework-billing', function*(job) {
               upcomingPayment.amount / 100
             ).toFixed(
               2,
-            )} automatically for the next week of your WaiveWork booking.`,
+            )} automatically for the next week of your WaiveWork booking in 2 days. If you would like to make your payment in advance, please visit waivework.com`,
           );
           emailOpts = {
             to: user.email,
@@ -246,7 +246,7 @@ scheduler.process('waivework-billing', function*(job) {
             }`;
             endText = `Your weekly payment for WaiveWork of ${(
               oldPayment.amount / 100
-            ).toFixed(2)} was successful! ${creditString}`;
+            ).toFixed(2)} was successful! ${creditString}. For more account information, please visit waivework.com.`;
           } catch (e) {
             failedChargePayload.push(
               `${user.link()} had a failed charge of $${(
@@ -260,7 +260,7 @@ scheduler.process('waivework-billing', function*(job) {
               oldPayment.amount / 100
             ).toFixed(
               2,
-            )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized.`;
+            )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized. You can try to make you payment again with our website that can be found at waivework.com.`;
             toImmobilize.push(oldPayment);
             let bookingPayment = new BookingPayment({
               bookingId: oldPayment.booking.id,

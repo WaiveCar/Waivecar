@@ -3,6 +3,7 @@
 let co          = require('co');
 let request     = require('co-request');
 let Service     = require('./classes/service');
+let CarService  = Bento.module('waivecar/lib/car-service');
 let CartService = require('./cart-service');
 let moment      = require('moment-timezone');
 let _           = require('lodash');
@@ -1253,7 +1254,7 @@ module.exports = class OrderService extends Service {
     try {
       let {order} = yield this.quickCharge(data, _user, {
         subject: data.description,
-        nocredit: true, 
+        useWorkCredit: true,
         isTopUp: true,
         overrideAdminCheck: true,
       });
@@ -1270,6 +1271,17 @@ module.exports = class OrderService extends Service {
         });
         yield bookingPayment.save();
       }
+      yield carService.unlockImmobilizer(currentBooking.carId, null, null, 'computer');
+      let driver = User.findById(currentBooking.id);
+      let creditString = order.creditUsed ? ` (credit used: $${(order.creditUsed / 100).toFixed(2)}) ` : '';
+      yield notify.slack(
+        {
+          text: `:innocent: ${driver.link()} retried their charge of $${(
+           order.amount / 100
+          ).toFixed(2)} and was successful.${creditString}`,
+        },
+        {channel: '#waivework-charges'},
+      );
       return order;
     } catch(e) {
       if (currentBooking) {
@@ -1282,6 +1294,14 @@ module.exports = class OrderService extends Service {
       yield e.shopOrder.update({
         refId: oldOrder.refId ? oldOrder.refId : oldOrder.id, 
       });
+      yield notify.slack(
+        {
+          text: `:cow: ${driver.link()} retried their weekly charge of $${(
+           e.shopOrder.amount / 100
+          ).toFixed(2)} by ${_user.name()} and failed.`,
+        },
+        {channel: '#waivework-charges'},
+      );
       throw error.parse({
         code    : 'CHARGE_FAILED',
         message : e.message,
