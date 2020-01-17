@@ -22,6 +22,8 @@ class WaiveWorkDetails extends Component {
       uploading: false,
       payingEarly: false,
       damageUploaded: false,
+      credit: props.user.waiveworkCredit,
+      newCredit: 0,
     };
     this.fileUpload = null;
   }
@@ -55,9 +57,7 @@ class WaiveWorkDetails extends Component {
             },
             () => {
               api.get(
-                `/cars/${bookings[0].car.id}/history?start=${
-                  bookings[0].createdAt
-                }`,
+                `/cars/${bookings[0].car.id}/history?start=${bookings[0].createdAt}`,
                 (err, history) => {
                   if (err) {
                     return snackbar.notify({
@@ -267,8 +267,9 @@ class WaiveWorkDetails extends Component {
     if (confirm('Are you sure you want to make this payment early?')) {
       this.setState({payingEarly: true}, () => {
         let {currentWaiveworkBooking} = this.state;
-        api.get(
-          `/waiveworkPayment/advanceWorkPayment/${currentWaiveworkBooking.id}/`,
+        api.post(
+          `/shop/advancePayment/${currentWaiveworkBooking.id}`,
+          {},
           (err, response) => {
             if (err) {
               this.setState({payingEarly: false});
@@ -280,8 +281,9 @@ class WaiveWorkDetails extends Component {
             this.setState({
               currentWaiveworkBooking: {
                 ...currentWaiveworkBooking,
-                waiveworkPayment: response,
+                waiveworkPayment: response.waiveworkPayment,
               },
+              credit: response.remainingCredit,
               payingEarly: false,
             });
           },
@@ -350,6 +352,38 @@ class WaiveWorkDetails extends Component {
     this.setState({damageUploaded: true});
   };
 
+  addCredit = () => {
+    let {newCredit, credit} = this.state;
+    let {user} = this.props;
+    if (
+      confirm(
+        `Are you sure you want to add $${newCredit} to this user's account`,
+      )
+    ) {
+      api.put(
+        `/users/${user.id}`,
+        {waiveworkCredit: credit + newCredit * 100},
+        (err, response) => {
+          if (err) {
+            return snackbar.notify({
+              type: 'danger',
+              message: `Error adding credit: ${err.message}`,
+            });
+          }
+          this.setState(
+            {newCredit: 0, credit: credit + newCredit * 100},
+            () => {
+              snackbar.notify({
+                type: 'success',
+                message: `Successfully added $${newCredit}`,
+              });
+            },
+          );
+        },
+      );
+    }
+  };
+
   render() {
     let {
       currentWaiveworkBooking,
@@ -364,6 +398,8 @@ class WaiveWorkDetails extends Component {
       uploading,
       payingEarly,
       choosingDamage,
+      newCredit,
+      credit,
     } = this.state;
     return (
       <div className="box">
@@ -371,18 +407,41 @@ class WaiveWorkDetails extends Component {
           WaiveWork Billing
           <small>Setup User's WaiveWork Billing</small>
         </h3>
+        <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div>Current WaiveWork Credit: ${(credit / 100).toFixed(2)}</div>
+          <div>
+            <span>
+              <input
+                type="number"
+                className="form-control"
+                style={{width: '100px', display: 'inline'}}
+                value={newCredit}
+                onChange={e => this.setState({newCredit: e.target.value})}
+              />
+            </span>
+            <span>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => this.addCredit()}>
+                Add Credit
+              </button>
+            </span>
+          </div>
+        </h4>
         <div className="box-content">
           {currentWaiveworkBooking ? (
             <div>
-              <h4>
-                Current Booking:{' '}
-                <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
-                  {currentWaiveworkBooking.id}
-                </Link>{' '}
-                in{' '}
-                <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
-                  {currentWaiveworkBooking.car.license}
-                </Link>
+              <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
+                <div>
+                  Current Booking:{' '}
+                  <Link to={`/bookings/${currentWaiveworkBooking.id}`}>
+                    {currentWaiveworkBooking.id}
+                  </Link>{' '}
+                  in{' '}
+                  <Link to={`/cars/${currentWaiveworkBooking.car.id}`}>
+                    {currentWaiveworkBooking.car.license}
+                  </Link>
+                </div>
               </h4>
               {currentWaiveworkBooking.waiveworkPayment && (
                 <div>
@@ -437,9 +496,9 @@ class WaiveWorkDetails extends Component {
                       <td>
                         {carHistory.length
                           ? (
-                              (Number(carHistory[carHistory.length - 1].data) -
+                              ((Number(carHistory[carHistory.length - 1].data) -
                                 Number(carHistory[0].data)) /
-                              carHistory.length *
+                                carHistory.length) *
                               0.621371
                             ).toFixed(2)
                           : 'Ride not yet over 1 day'}
@@ -447,11 +506,11 @@ class WaiveWorkDetails extends Component {
                       <td>
                         {carHistory[carHistory.length - 31]
                           ? (
-                              (Number(carHistory[carHistory.length - 1].data) -
+                              ((Number(carHistory[carHistory.length - 1].data) -
                                 Number(
                                   carHistory[carHistory.length - 31].data,
                                 )) /
-                              30 *
+                                30) *
                               0.621371
                             ).toFixed(2)
                           : 'Ride not yet over 30 days'}
@@ -459,11 +518,11 @@ class WaiveWorkDetails extends Component {
                       <td>
                         {carHistory[carHistory.length - 8]
                           ? (
-                              (Number(carHistory[carHistory.length - 1].data) -
+                              ((Number(carHistory[carHistory.length - 1].data) -
                                 Number(
                                   carHistory[carHistory.length - 8].data,
                                 )) /
-                              7 *
+                                7) *
                               0.621371
                             ).toFixed(2)
                           : 'Ride not yet over 1 week'}
@@ -670,9 +729,7 @@ class WaiveWorkDetails extends Component {
                   <tr key={i}>
                     <td>
                       <a
-                        href={`http://waivecar-prod.s3.amazonaws.com/${
-                          each.path
-                        }`}
+                        href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
                         target="_blank">
                         {moment(each.comment).format('MM/DD/YYYY')}
                       </a>{' '}

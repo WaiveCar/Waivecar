@@ -243,9 +243,9 @@ class CarsShowView extends React.Component {
     );
   }
 
-  toggleTotalLoss(car) {
-    if(confirm("Are you sure you want to change the salvage status of " + car.license + "?")) {
-      api.put(`/cars/${car.id}/total-loss`, {}, (err, car) => {
+  toggleDanger(car, status) {
+    if(confirm(`Are you sure you want to toggle the ${status} for car.license`)) {
+      api.put(`/cars/${car.id}`, {[status] : !car[status]}, (err, car) => {
         if (err) {
           return snackbar.notify({
             type    : 'danger',
@@ -287,7 +287,10 @@ class CarsShowView extends React.Component {
               </a>
               <div className={this.state.hideDangerZone ? 'hide' : ''}>
                 <div>
-                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button> { car.license } as a total loss.
+                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isTotalLoss')}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button> { car.license } as a total loss.
+                </div>
+                <div>
+                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isOutOfService')}>{car.isOutOfService ? 'Unmark' : 'Mark'}</button> { car.license } out of service.
                 </div>
               </div>
             </div>
