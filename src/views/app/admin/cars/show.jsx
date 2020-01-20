@@ -244,12 +244,12 @@ class CarsShowView extends React.Component {
   }
 
   toggleDanger(car, status) {
-    if(confirm(`Are you sure you want to toggle the ${status} for car.license`)) {
+    if(confirm(`Are you sure you want to toggle the ${status} for ${car.license}`)) {
       api.put(`/cars/${car.id}`, {[status] : !car[status]}, (err, car) => {
         if (err) {
           return snackbar.notify({
             type    : 'danger',
-            message : 'Failed to toggle total loss.',
+            message : `Failed to toggle ${status}.`,
           });
         }
         this.service.update(car);
