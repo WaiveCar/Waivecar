@@ -604,6 +604,8 @@ module.exports = {
     }
     if (!payload.documents && !(payload.hasOwnProperty('isTotalLoss') || payload.hasOwnProperty('isOutOfService'))) {
       device = yield this.getDevice(car.id, _user, 'update');
+    } else {
+      console.log("Skipping over trying to get remote device update.", id, payload);
     }
     if (payload.tagList) {
       payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
