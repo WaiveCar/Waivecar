@@ -602,7 +602,7 @@ module.exports = {
         changes.push(`${ix}: ${!oldTags ? car[ix] : oldTags} -> ${payload[ix]}`);
       }
     }
-    if (!payload.documents) {
+    if (!payload.documents && !(payload.hasOwnProperty('isTotalLoss') || payload.hasOwnProperty('isOutOfService'))) {
       device = yield this.getDevice(car.id, _user, 'update');
     }
     if (payload.tagList) {
