@@ -254,8 +254,8 @@ class CarsShowView extends React.Component {
         }
         this.service.update(car);
         return snackbar.notify({
-          type    : car.isTotalLoss ? 'danger' : 'success',
-          message : `${car.license} marked as ${car.isTotalLoss ? 'a total loss' : '<b>NOT</b> a total loss'}.`,
+          type    : 'success',
+          message : `${car.license}: ${status} toggled'.`,
         });
       });
     }
