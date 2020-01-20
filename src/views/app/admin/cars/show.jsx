@@ -252,10 +252,10 @@ class CarsShowView extends React.Component {
             message : `Failed to toggle ${status}.`,
           });
         }
-        this.service.update(car);
+        window.location.reload();
         return snackbar.notify({
           type    : 'success',
-          message : `${car.license}: ${status} toggled'.`,
+          message : `${car.license}: ${status} toggled.`,
         });
       });
     }
