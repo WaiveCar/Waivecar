@@ -1,4 +1,4 @@
-Bento.Register.Model('InsuranceQuotes', 'sequelize', function(
+Bento.Register.Model('InsuranceQuote', 'sequelize', function(
   model,
   Sequelize,
 ) {

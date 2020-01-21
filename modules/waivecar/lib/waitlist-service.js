@@ -152,7 +152,7 @@ module.exports = {
         // We always update the signup_count regardless
         yield record.update({signupCount: record.signupCount + 1 });
         if(data.accountType == 'waivework') {
-          yield record.update({notes: [JSON.stringify({...data, ...payload})]});
+          yield record.update({notes: JSON.stringify([JSON.stringify({...data, ...payload})])});
         }
       }
 
@@ -198,6 +198,8 @@ module.exports = {
           notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data, ...payload})]),
         });
         let quote = new InsuranceQuote({waitlistId: record.id});
+        console.log('quote', quote);
+        yield quote.save();
       }
 
       // If this is a valid waivework signup
