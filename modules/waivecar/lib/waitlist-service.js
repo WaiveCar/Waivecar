@@ -2,6 +2,7 @@
 
 let error         = Bento.Error;
 let Waitlist      = Bento.model('Waitlist');
+let InsuranceQuote = Bento.model('InsuranceQuote');
 let User          = Bento.model('User');
 let queryParser   = Bento.provider('sequelize/helpers').query;
 let config        = Bento.config;
@@ -150,6 +151,9 @@ module.exports = {
       if (record) {
         // We always update the signup_count regardless
         yield record.update({signupCount: record.signupCount + 1 });
+        if(data.accountType == 'waivework') {
+          yield record.update({notes: [JSON.stringify({...data, ...payload})]});
+        }
       }
 
       // If there's a user id then we've already signed them up
@@ -193,6 +197,7 @@ module.exports = {
         yield toAddNotes.update({
           notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data, ...payload})]),
         });
+        let quote = new InsuranceQuote({waitlistId: record.id});
       }
 
       // If this is a valid waivework signup
