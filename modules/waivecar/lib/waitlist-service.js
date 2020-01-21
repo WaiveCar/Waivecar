@@ -187,18 +187,12 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
-        yield Intercom.addUser(record)
-        let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
-        if (payload.wantsElectric === 'true') {
-          yield toAddNotes.update({
-            notes: JSON.stringify([...JSON.parse(toAddNotes.notes), 'Prefers electric']),
-          });
-        }
-        yield toAddNotes.update({
-          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data, ...payload})]),
+        // I am commenting this out because it may not need to be done at this time
+        //yield Intercom.addUser(record)
+        yield record.update({
+          notes: JSON.stringify([JSON.stringify({...data, ...payload})]),
         });
         let quote = new InsuranceQuote({waitlistId: record.id});
-        console.log('quote', quote);
         yield quote.save();
       }
 
