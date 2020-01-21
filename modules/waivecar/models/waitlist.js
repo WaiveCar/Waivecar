@@ -66,6 +66,12 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       type       : Sequelize.STRING(16),
       defaultValue : 'normal'
     },
+
+    type :{
+      type      : Sequelize.ENUM,
+      values    : ['pending', 'accepted', 'rejected', 'incomplete', 'nonmarket', 'archived'],
+      default: 'pending'
+    },
       
     phone : {
       type       : Sequelize.STRING(32),
