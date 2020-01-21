@@ -58,14 +58,14 @@ class TableIndex extends React.Component {
     });
   }
 
-  letinbyid(id, perWeek) {
-    if (!perWeek) {
+  letinbyid(id, perWeek, expiration, type) {
+    if (!perWeek || !expiration) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'Please enter a weekly amount',
+        message : 'Please enter a weekly amount and quote expiration date',
       });
     }
-    this.letinreal({idList: [id], perWeek});
+    this.letinreal({idList: [id], perWeek, expiration, type});
   }
 
   letin() {
@@ -165,7 +165,7 @@ class TableIndex extends React.Component {
       <div id="waitlist-list" className="container">
         <div className="box full">
           <div className='col-md-12'>
-            <h3>WaiveWork Waitlist</h3>
+            <h3>WaiveWork Signups</h3>
           </div>
           { userSelected ?
             <div className="info-box box-content">
@@ -193,9 +193,10 @@ class TableIndex extends React.Component {
                 </button>
               </span>
               <div>
-                Weekly Amount: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
+                Weekly Amount: <input type="number" style={{width: '80px'}} onchange={(e) => this.setstate({perweek: e.target.value})}/>
+                Quote Expiration: <input type="date" style={{width: '80px'}} onchange={(e) => this.setstate({quoteExpiration: e.target.value})}/>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek) 
+                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration) 
                 }> Let In </a>
               </div>
             </div> : ''
