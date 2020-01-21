@@ -194,10 +194,19 @@ class TableIndex extends React.Component {
               </span>
               <div>
                 Weekly Amount: <input type="number" style={{width: '80px'}} onchange={(e) => this.setstate({perweek: e.target.value})}/>
-                Quote Expiration: <input type="date" style={{width: '80px'}} onchange={(e) => this.setstate({quoteExpiration: e.target.value})}/>
+                Quote Expiration: <input type="date" style={{width: '150px'}} onchange={(e) => this.setstate({quoteExpiration: e.target.value})}/>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration) 
-                }> Let In </a>
+                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'accepted') 
+                }> Accept</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'rejected') 
+                }> Reject Outright</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'incomplete') 
+                }>Incomplete Information</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'nonmarket') 
+                }>Out of Market</a>
               </div>
             </div> : ''
           }
