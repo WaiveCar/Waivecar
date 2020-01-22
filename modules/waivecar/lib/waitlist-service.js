@@ -150,7 +150,6 @@ module.exports = {
 
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
-
     // If a legacy user which never appeared in the waitlist is trying to rejoin
     // we should be able to find them as well.
     if (!record) {
@@ -161,6 +160,7 @@ module.exports = {
       if (record) {
         // We always update the signup_count regardless
         yield record.update({signupCount: record.signupCount + 1 });
+        payload.waitlistId = record.id;
         if(data.accountType == 'waivework') {
           yield record.update({notes: JSON.stringify([JSON.stringify({...data, ...payload})])});
         }
@@ -202,8 +202,7 @@ module.exports = {
         yield record.update({
           notes: JSON.stringify([JSON.stringify({...data, ...payload})]),
         });
-        let quote = new InsuranceQuote({waitlistId: record.id});
-        yield quote.save();
+        payload.waitlistId = record.id;
       }
 
       // If this is a valid waivework signup
@@ -418,12 +417,15 @@ module.exports = {
       yield Intercom.addTag(payload, 'WaiveWork');
     }
     */
-    let oldQuote = yield InsuranceQuote.findOne({where: {userId: payload.userId, expiresAt: {$or: [{$gt: moment()}, null] }}});
+    let oldQuote = yield InsuranceQuote.findOne({where: {$or: [{userId: payload.userId}, {waitlistId: payload.waitlistId}], expiresAt: {$or: [{$gt: moment()}, null] }}});
+    console.log('oldQuote', oldQuote);
     if (!oldQuote) {
       // this should only be created if there is not already a saved quote
       let quote = new InsuranceQuote({
         userId: payload.userId,
+        waitlistId: payload.waitlistId,
       });
+      console.log('newQuote', quote);
       yield quote.save();
     }
 
