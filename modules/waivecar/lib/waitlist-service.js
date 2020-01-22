@@ -575,6 +575,15 @@ module.exports = {
       // They'd be able to reset their password and that's about it.
       yield record.update({userId: userRecord.id, status: opts.status ? opts.status : record.status});
       userList.push(userRecord);
+      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
+      // If a quote was not previously created, it must be created here
+      if (!quote) {
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perWeek, expiration: opts.quoteExpiration});
+        yield quote.save();
+      } else {
+        yield quote.update({userId: userRecord.id, amount: opts.perWeek, expiration: opts.quoteExpiration});
+      }
+
 
       let context = Object.assign({}, params || {}, {
         name: fullName
