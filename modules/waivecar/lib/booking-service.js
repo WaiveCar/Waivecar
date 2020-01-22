@@ -2021,7 +2021,6 @@ module.exports = class BookingService extends Service {
       throw errorAtEnd;
     }
     if (booking.isFlagged('Waivework')) {
-      yield user.update({isWaivework: false});
       let tagsToRemove = ['clean inside', 'clean outside', 'has keys', 'maintenance updated'];
       for (let tag of tagsToRemove) {
         yield car.untag(tag);
