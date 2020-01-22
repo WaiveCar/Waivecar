@@ -410,12 +410,23 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
+    /* Users should now be added to intercom, but if they are not, this may need to be put back in
     try {
       yield Intercom.addTag(payload, 'WaiveWork');
     } catch(e) {
       yield Intercom.addUser(payload);
       yield Intercom.addTag(payload, 'WaiveWork');
     }
+    */
+    let oldQuote = yield InsuranceQuote.findOne({where: {userId: payload.userId, expiresAt: {$or: [{$gt: moment()}, null] }}});
+    if (!oldQuote) {
+      // this should only be created if there is not already a saved quote
+      let quote = new InsuranceQuote({
+        userId: payload.userId,
+      });
+      yield quote.save();
+    }
+
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
