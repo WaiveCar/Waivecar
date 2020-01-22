@@ -103,14 +103,16 @@ class WaiveWorkDetails extends Component {
     );
   }
 
-  sendEmail() {
+  sendEmail(status) {
     let {user} = this.props;
-    let {perWeek} = this.state;
+    let {insuranceQuote, quoteExpiration} = this.state;
     let opts = {
       user,
-      perWeek,
+      perMonth: insuranceQuote,
+      quoteExpiration,
+      status,
     };
-    if (perWeek) {
+    if (insuranceQuote && quoteExpiration) {
       api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -126,7 +128,8 @@ class WaiveWorkDetails extends Component {
     } else {
       return snackbar.notify({
         type: 'danger',
-        message: 'Please enter a daily amount.',
+        message:
+          'Please enter a an insurance quote amount and an insurance quote expiration .',
       });
     }
   }
@@ -612,18 +615,40 @@ class WaiveWorkDetails extends Component {
               <h4>Not currently booked into WaiveWork</h4>
               <div className="row" style={{marginTop: '4px'}}>
                 <input
-                  className="col-xs-6"
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                  style={{width: '80px'}}
                   type="number"
                   placeholder="Amount Per Week"
                   value={perWeek}
                   onChange={e => this.setState({perWeek: e.target.value})}
                 />
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.sendEmail()}>
-                  Send Quote
-                </button>
+                Insurance Quote:{' '}
+                <input
+                  type="number"
+                  style={{width: '80px'}}
+                  onChange={e => this.setState({insuranceQuote: e.target.value})}
+                />
+                Quote Expiration:{' '}
+                <input
+                  type="date"
+                  style={{width: '150px'}}
+                  onChange={e =>
+                    this.setState({quoteExpiration: e.target.value})
+                  }
+                />
+              </div>
+              <div className="row">
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.sendEmail('accepted') 
+                }> Accept</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.sendEmail('rejected') 
+                }> Reject Outright</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.sendEmail('incomplete') 
+                }>Incomplete Information</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.sendEmail('nonmarket') 
+                }>Out of Market</a>
               </div>
               <div className="row" style={{marginTop: '4px'}}>
                 <input
