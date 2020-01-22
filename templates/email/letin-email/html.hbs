@@ -13,11 +13,7 @@
       The next steps are to give yourself a password, log in and set up your account.
     </p>
   {{/unless}}
-  {{#if isWaivework}} 
-    <p>
-      Please click <a href="https://calendly.com/waivework/pickup/">here</a> to schedule your appointment.
-    </p>
-  {{/if}}
+  {{#if accepted}}
   <p>
     <a href={{ passwordlink }}><b>Click here to set up your password</b></a>.
   </p>
@@ -25,7 +21,7 @@
     <em>Important:</em> This is a secret, exclusive, private and personal link connected to your email address. <b>It is only good for the next 3 days.</b>
     Please do not share it. Thanks!
   </p>
-
+  {{/if}}
   <p>
     Best regards,<br>
     Waive
