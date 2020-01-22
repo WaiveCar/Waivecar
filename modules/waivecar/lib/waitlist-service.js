@@ -418,14 +418,12 @@ module.exports = {
     }
     */
     let oldQuote = yield InsuranceQuote.findOne({where: {$or: [{userId: payload.userId}, {waitlistId: payload.waitlistId}], expiresAt: {$or: [{$gt: moment()}, null] }}});
-    console.log('oldQuote', oldQuote);
     if (!oldQuote) {
       // this should only be created if there is not already a saved quote
       let quote = new InsuranceQuote({
         userId: payload.userId,
         waitlistId: payload.waitlistId,
       });
-      console.log('newQuote', quote);
       yield quote.save();
     }
 
@@ -592,10 +590,10 @@ module.exports = {
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
-        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
         yield quote.save();
       } else {
-        yield quote.update({userId: userRecord.id, amount: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        yield quote.update({userId: userRecord.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
       }
 
 
@@ -724,6 +722,7 @@ module.exports = {
   },
 
   *sendWaiveWorkEmail(opts) {
+    console.log('opts', opts);
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
@@ -738,6 +737,15 @@ module.exports = {
       },
     });
     */
+    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id}});
+    // If a quote was not previously created, it must be created here
+    if (!quote) {
+      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+      yield quote.save();
+    } else {
+      yield quote.update({userId: opts.user.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+    }
+
     try {
       /* This text needs to be reworked
       yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
