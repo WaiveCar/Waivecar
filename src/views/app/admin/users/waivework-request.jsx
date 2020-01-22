@@ -73,13 +73,12 @@ export default class WaiveWorkRequest extends Component {
                 });
               });
             }
-            return snackbar.notify(
-              {
+            return this.setState({disabled: false}, () => {
+              return snackbar.notify({
                 type: 'success',
                 message: 'Quote for WaiveWork insurance requested',
-              },
-              () => this.setState({disabled: false}),
-            );
+              });
+            });
           });
         },
       );
