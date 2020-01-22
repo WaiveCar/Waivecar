@@ -30,6 +30,16 @@ let _pri = {
   'high':    2,
 };
 
+let introMap = {
+  waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
+  accepted: `Accepted to waivework text`,
+  rejected: `Rejected from waivework text`,
+  incomplete: `Not all info provided`,
+  nonmarket: `User is in a city we may come to in the future`,
+  csula: "Welcome aboard Waive's CSULA program.",
+  vip: "You've been fast-tracked and skipped the waitlist!"
+}
+
 function inside(obj) {
   if ('latitude' in obj && 'longitude' in obj) {
     // see https://github.com/WaiveCar/Waivecar/issues/943
@@ -455,15 +465,6 @@ module.exports = {
     let userList = [];
     let template = 'letin-email';
 
-    let introMap = {
-      waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      accepted: `Accepted to waivework text`,
-      rejected: `Rejected from waivework text`,
-      incomplete: `Not all info provided`,
-      nonmarket: `User is in a city we may come to in the future`,
-      csula: "Welcome aboard Waive's CSULA program.",
-      vip: "You've been fast-tracked and skipped the waitlist!"
-    }
     if (recordList[0].accountType === 'waivework') {
       opts.intro = opts.status;
       params.isWaivework = true;
@@ -713,7 +714,7 @@ module.exports = {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perMonth} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`;
+    context.intro = introMap[opts.status];
     scheduler.add('waivework-reminder', {
       uid   : `waivework-reminder-${opts.user.id}`,
       unique: true,
@@ -727,7 +728,7 @@ module.exports = {
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
-        subject  : 'Welcome to WaiveWork',
+        subject  : 'WaiveWork Status Update',
         template : 'letin-email-nopass',
         context  : context,
       };
