@@ -457,18 +457,23 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perWeek} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`,
+      accepted: `Accepted to waivework text`,
+      rejected: `Rejected from waivework text`,
+      incomplete: `Not all info provided`,
+      nonmarket: `User is in a city we may come to in the future`,
       csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
     if (recordList[0].accountType === 'waivework') {
-      opts.intro = 'waivework'
+      opts.intro = opts.status;
       params.isWaivework = true;
+      /* They will now be added to intercom only when they login to waivework.com
       try {
         yield Intercom.addTag(recordList[0], 'WaiveWork');
       } catch(e) {
         console.log('error tagging user', e);
       }
+      */
     }
 
     opts.intro = opts.intro || 'waitlist';
@@ -500,65 +505,67 @@ module.exports = {
       if (record.phone) {
         userOpts.phone = record.phone;
       }
-
-      // We create their user account.
-      try {
-        //
-        // The issue with this method is that it's orchestrated by the
-        // admin and calls a function that sends them a text message
-        // to verify their phone number. Stupid. We're adding an option
-        // to avoid that nonsense.
-        //
-        userRecord = yield UserService.store(userOpts, _user, {nosms: true});
-        if (opts.promo === 'high5') {
-          yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
-        }
-
-      } catch(ex) {
-        userRecord = yield User.findOne({ 
-          where: { 
-            $or: [
-              { email: record.email },
-              { phone: record.phone } 
-            ]
+      
+      // We create their user account, but only if it is not one of the statuses to skip letting in.
+      if (!['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
+        try {
+          //
+          // The issue with this method is that it's orchestrated by the
+          // admin and calls a function that sends them a text message
+          // to verify their phone number. Stupid. We're adding an option
+          // to avoid that nonsense.
+          //
+          userRecord = yield UserService.store(userOpts, _user, {nosms: true});
+          if (opts.promo === 'high5') {
+            yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
           }
-        });
 
-        if (userRecord) {
-          // Even if we've seen the user before, and they are
-          // trying to sign up again, we send them another invite 
-          // in good faith, going through the entire process again,
-          // presuming that they didn't receive or lost the previous. 
-          log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
-          if (params.isWaivework) {
-            throw error.parse({
-              code    : 'Already signed up',
-              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
-            }, 400);
-          }
-          yield record.update({userId: userRecord.id});
-          if(userRecord.status === 'waitlist') {
-            yield userRecord.update({status: 'active'});
-          } else {
-            // If the user is csula, they need to be put in the user list so that the correct tags can be added to their user 
-            // entry back around line 249
-            if (opts.intro === 'csula') {
-              userList.push(userRecord);
+        } catch(ex) {
+          userRecord = yield User.findOne({ 
+            where: { 
+              $or: [
+                { email: record.email },
+                { phone: record.phone } 
+              ]
             }
-            // Otherwise, the user is onboarded and we should just continue
-            // with the next user and make sure we don't add them to the email
-            // list or generate a reset token.
+          });
+
+          if (userRecord) {
+            // Even if we've seen the user before, and they are
+            // trying to sign up again, we send them another invite 
+            // in good faith, going through the entire process again,
+            // presuming that they didn't receive or lost the previous. 
+            log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
+            if (params.isWaivework) {
+              throw error.parse({
+                code    : 'Already signed up',
+                message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+              }, 400);
+            }
+            yield record.update({userId: userRecord.id});
+            if(userRecord.status === 'waitlist') {
+              yield userRecord.update({status: 'active'});
+            } else {
+              // If the user is csula, they need to be put in the user list so that the correct tags can be added to their user 
+              // entry back around line 249
+              if (opts.intro === 'csula') {
+                userList.push(userRecord);
+              }
+              // Otherwise, the user is onboarded and we should just continue
+              // with the next user and make sure we don't add them to the email
+              // list or generate a reset token.
+              continue;
+            }
+          } else {
+            log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
+            if (params.isWaivework) {
+              throw error.parse({
+                code    : 'Already signed up',
+                message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
+              }, 400);
+            }
             continue;
           }
-        } else {
-          log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
-          if (params.isWaivework) {
-            throw error.parse({
-              code    : 'Already signed up',
-              message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
-            }, 400);
-          }
-          continue;
         }
       }
 
@@ -681,7 +688,7 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user, {perWeek: payload.perWeek});
+      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, quoteExpiration: payload.quoteExpiration, status: payload.status});
       for(var ix = 0; ix < userList.length; ix++) {
         yield userList[ix].addTag('la');
       }
@@ -692,7 +699,7 @@ module.exports = {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perWeek} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`;
+    context.intro = `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perMonth} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`;
     scheduler.add('waivework-reminder', {
       uid   : `waivework-reminder-${opts.user.id}`,
       unique: true,
