@@ -613,19 +613,20 @@ class WaiveWorkDetails extends Component {
           ) : (
             <div>
               <h4>Not currently booked into WaiveWork</h4>
-              <div className="row" style={{marginTop: '4px'}}>
-                <input
-                  style={{width: '80px'}}
-                  type="number"
-                  placeholder="Amount Per Week"
-                  value={perWeek}
-                  onChange={e => this.setState({perWeek: e.target.value})}
-                />
+              <div
+                className="row"
+                style={{
+                  marginTop: '4px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}>
                 Insurance Quote:{' '}
                 <input
                   type="number"
-                  style={{width: '80px'}}
-                  onChange={e => this.setState({insuranceQuote: e.target.value})}
+                  style={{width: '140px'}}
+                  onChange={e =>
+                    this.setState({insuranceQuote: e.target.value})
+                  }
                 />
                 Quote Expiration:{' '}
                 <input
@@ -637,18 +638,37 @@ class WaiveWorkDetails extends Component {
                 />
               </div>
               <div className="row">
-                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.sendEmail('accepted') 
-                }> Accept</a>
-                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.sendEmail('rejected') 
-                }> Reject Outright</a>
-                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.sendEmail('incomplete') 
-                }>Incomplete Information</a>
-                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.sendEmail('nonmarket') 
-                }>Out of Market</a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('accepted')}>
+                  {' '}
+                  Accept
+                </a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('rejected')}>
+                  {' '}
+                  Reject Outright
+                </a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('incomplete')}>
+                  Incomplete Information
+                </a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('nonmarket')}>
+                  Out of Market
+                </a>
+              </div>
+              <div className="row">
+                <input
+                  style={{width: '80px'}}
+                  type="number"
+                  placeholder="Amount Per Week"
+                  value={perWeek}
+                  onChange={e => this.setState({perWeek: e.target.value})}
+                />
               </div>
               <div className="row" style={{marginTop: '4px'}}>
                 <input

@@ -7,7 +7,6 @@ export default class WaiveWorkRequest extends Component {
     super(props);
     this.state = {
       rideshare: 'true',
-      wantsElectric: 'true',
       offerPerWeek: null,
       disabled: false,
     };
@@ -58,12 +57,12 @@ export default class WaiveWorkRequest extends Component {
           }
           api.post('/waitlist/requestWorkQuote', body, (err, response) => {
             if (err) {
-              this.setState({disabled: false});
               return snackbar.notify({
                 type: 'danger',
                 message: err.message,
               });
             }
+            this.setState({disabled: false});
             return snackbar.notify({
               type: 'success',
               message: 'Quote for WaiveWork insurance requested',
@@ -101,29 +100,6 @@ export default class WaiveWorkRequest extends Component {
             />{' '}
             No
           </div>
-          <div onChange={e => this.setState({wantsElectric: e.target.value})}>
-            <label>Prefers Electric</label>
-            <input
-              style={{marginLeft: '0.7rem'}}
-              type="radio"
-              value="true"
-              name="wantsElectric"
-              defaultChecked
-            />{' '}
-            Yes
-            <input
-              style={{marginLeft: '0.7rem'}}
-              type="radio"
-              value="false"
-              name="wantsElectric"
-            />{' '}
-            No
-          </div>
-          <label style={{marginRight: '0.7rem'}}>Offer Per Week: </label>
-          <input
-            type="number"
-            onChange={e => this.setState({offerPerWeek: e.target.value})}
-          />
           <div>
             <button
               type="button"
