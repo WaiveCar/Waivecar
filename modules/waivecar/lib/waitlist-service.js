@@ -578,10 +578,10 @@ module.exports = {
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
-        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perWeek, expiration: opts.quoteExpiration});
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perWeek, expiresAt: opts.quoteExpiration});
         yield quote.save();
       } else {
-        yield quote.update({userId: userRecord.id, amount: opts.perWeek, expiration: opts.quoteExpiration});
+        yield quote.update({userId: userRecord.id, amount: opts.perWeek, expiresAt: opts.quoteExpiration});
       }
 
 
