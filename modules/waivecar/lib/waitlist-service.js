@@ -715,6 +715,7 @@ module.exports = {
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
     context.intro = introMap[opts.status];
+    /* This will be used for follow up, but currently needs reworking
     scheduler.add('waivework-reminder', {
       uid   : `waivework-reminder-${opts.user.id}`,
       unique: true,
@@ -723,8 +724,11 @@ module.exports = {
         userId: opts.user.id,
       },
     });
+    */
     try {
+      /* This text needs to be reworked
       yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
+      */
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
