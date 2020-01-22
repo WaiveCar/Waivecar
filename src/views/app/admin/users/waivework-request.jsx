@@ -27,6 +27,14 @@ export default class WaiveWorkRequest extends Component {
               message: err.message,
             });
           }
+          if (!licenses[0]) {
+            return this.setState({disabled: false}, () => {
+              return snackbar.notify({
+                type: 'danger',
+                message: 'No license information entered.',
+              });
+            });
+          }
           let body = {
             ...this.props.user,
             ...licenses[0],
@@ -48,25 +56,30 @@ export default class WaiveWorkRequest extends Component {
                 item !== 'offerPerWeek'
                   ? 'Please make sure that the all necessary license fields are entered into our system'
                   : 'Please enter the amount that the user is offering per week';
-              this.setState({disabled: false});
-              return snackbar.notify({
-                type: 'danger',
-                message,
+              return this.setState({disabled: false}, () => {
+                return snackbar.notify({
+                  type: 'danger',
+                  message,
+                });
               });
             }
           }
           api.post('/waitlist/requestWorkQuote', body, (err, response) => {
             if (err) {
-              return snackbar.notify({
-                type: 'danger',
-                message: err.message,
+              return this.setState({disabled: false}, () => {
+                return snackbar.notify({
+                  type: 'danger',
+                  message: err.message,
+                });
               });
             }
-            this.setState({disabled: false});
-            return snackbar.notify({
-              type: 'success',
-              message: 'Quote for WaiveWork insurance requested',
-            });
+            return snackbar.notify(
+              {
+                type: 'success',
+                message: 'Quote for WaiveWork insurance requested',
+              },
+              () => this.setState({disabled: false}),
+            );
           });
         },
       );
