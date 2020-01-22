@@ -573,7 +573,7 @@ module.exports = {
 
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
-      yield record.update({userId: userRecord.id});
+      yield record.update({userId: userRecord.id, status: opts.status ? opts.status : record.status});
       userList.push(userRecord);
 
       let context = Object.assign({}, params || {}, {
