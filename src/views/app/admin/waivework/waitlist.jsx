@@ -58,16 +58,17 @@ class TableIndex extends React.Component {
     });
   }
 
-  letinbyid(id, perWeek, expiration, type) {
-    if (!perWeek || !expiration) {
+  letinbyid(id, status) {
+    let {perMonth, quoteExpiration} = this.state;
+    if (!perMonth || !quoteExpiration) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'Please enter a weekly amount and quote expiration date',
+        message : 'Please enter an insurance quote amount and quote expiration date',
       });
     }
-    this.letinreal({idList: [id], perWeek, expiration, type});
+    this.letinreal({idList: [id], perMonth, quoteExpiration, status});
   }
-
+  /* Not currently used
   letin() {
     let amount = prompt('How many people do you want to let in?');
     if(amount) {
@@ -83,6 +84,7 @@ class TableIndex extends React.Component {
       });
     }
   }
+  */
 
   isMobile() {
     return window.getComputedStyle(document.getElementById('isMobile')).display === 'none';
@@ -172,10 +174,11 @@ class TableIndex extends React.Component {
               <div> <b>Name:</b> { userSelected.firstName } { userSelected.lastName }</div>
               <div> <b>Phone:</b> { userSelected.phone } </div>
               <div> <b>Email:</b> <a href={'mailto:' + userSelected.email }>{ userSelected.email }</a> </div>
+              {/*
               <div> <b>Priority:</b> { userSelected.priority } </div>
               <button className='btn btn-primary' onClick={() => this.priority(userSelected.id, userSelected.priority > 0 ? -userSelected.priority - 1 : -1, userSelected)}>
                 Deprioritize
-              </button>  
+              </button>*/}  
               <span>
                 <div className="container-fluid notes"> <b>Notes:</b> { this.state.currentNotes && this.state.currentNotes.map((note, i) => {
                   return (
@@ -193,19 +196,19 @@ class TableIndex extends React.Component {
                 </button>
               </span>
               <div>
-                Weekly Amount: <input type="number" style={{width: '80px'}} onchange={(e) => this.setstate({perweek: e.target.value})}/>
-                Quote Expiration: <input type="date" style={{width: '150px'}} onchange={(e) => this.setstate({quoteExpiration: e.target.value})}/>
+                Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
+                Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'accepted') 
+                  () => this.letinbyid(userSelected.id, 'accepted') 
                 }> Accept</a>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'rejected') 
+                  () => this.letinbyid(userSelected.id, 'rejected') 
                 }> Reject Outright</a>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'incomplete') 
+                  () => this.letinbyid(userSelected.id, 'incomplete') 
                 }>Incomplete Information</a>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek, this.state.quoteExpiration, 'nonmarket') 
+                  () => this.letinbyid(userSelected.id, 'nonmarket') 
                 }>Out of Market</a>
               </div>
             </div> : ''
