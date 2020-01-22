@@ -690,7 +690,9 @@ module.exports = {
     if(recordList.length) {
       let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, quoteExpiration: payload.quoteExpiration, status: payload.status});
       for(var ix = 0; ix < userList.length; ix++) {
-        yield userList[ix].addTag('la');
+        if (userList[ix]) {
+          yield userList[ix].addTag('la');
+        }
       }
     }
   },
