@@ -330,11 +330,12 @@ module.exports = {
     // 
     // Only return users that we haven't let in already
     //
-    if (queryIn.search) {
+    if (queryIn.search || queryIn.newStatus) {
       query.where = { $and: [
         {user_id: null },
-        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes, status) like '%${queryIn.search}%'`),
-      ] };
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`),
+        queryIn.status && {status: queryIn.status}
+      ]};
       query.order = [ ['created_at', 'asc'] ];
     } else {
       query.where = { user_id: null };
