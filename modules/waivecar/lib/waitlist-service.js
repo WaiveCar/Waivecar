@@ -333,7 +333,7 @@ module.exports = {
     if (queryIn.search) {
       query.where = { $and: [
         {user_id: null },
-        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`)
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes, status) like '%${queryIn.search}%'`),
       ] };
       query.order = [ ['created_at', 'asc'] ];
     } else {
@@ -344,12 +344,11 @@ module.exports = {
     }
     if(queryIn.type === 'waivework') {
       query.order = [ 
-        [ 'priority', 'desc' ] ,
-        [ 'hours', 'desc' ],
-        [ 'days', 'desc', ],
         [ 'experience', 'desc' ],
         [ 'created_at', 'asc' ]
       ];
+      // The waivework waitlist should only send
+      query.status = queryIn.status;
     }
 
     query.limit = parseInt(queryIn.limit, 10);
