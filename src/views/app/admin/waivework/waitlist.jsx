@@ -59,11 +59,11 @@ class TableIndex extends React.Component {
   }
 
   letinbyid(id, status) {
-    let {perMonth, quoteExpiration} = this.state;
-    if (!perMonth || !quoteExpiration) {
+    let {perWeek, perMonth, quoteExpiration} = this.state;
+    if (!perWeek || !perMonth || !quoteExpiration) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'Please enter an insurance quote amount and quote expiration date',
+        message : 'Please enter a weekly payment, an insurance quote amount and quote expiration date',
       });
     }
     this.letinreal({idList: [id], perMonth, quoteExpiration, status});

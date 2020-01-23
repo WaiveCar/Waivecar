@@ -105,14 +105,15 @@ class WaiveWorkDetails extends Component {
 
   sendEmail(status) {
     let {user} = this.props;
-    let {insuranceQuote, quoteExpiration} = this.state;
+    let {perWeek, insuranceQuote, quoteExpiration} = this.state;
     let opts = {
       user,
       perMonth: insuranceQuote,
+      perWeek,
       quoteExpiration,
       status,
     };
-    if (insuranceQuote && quoteExpiration) {
+    if (perWeek && insuranceQuote && quoteExpiration) {
       api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -129,7 +130,7 @@ class WaiveWorkDetails extends Component {
       return snackbar.notify({
         type: 'danger',
         message:
-          'Please enter a an insurance quote amount and an insurance quote expiration .',
+          'Please enter a a weekly payment, an insurance quote amount and an insurance quote expiration .',
       });
     }
   }
