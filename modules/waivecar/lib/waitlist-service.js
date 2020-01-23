@@ -587,7 +587,7 @@ module.exports = {
       // They'd be able to reset their password and that's about it.
       yield record.update({userId: userRecord.id, status: opts.status ? opts.status : record.status});
       userList.push(userRecord);
-      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
+      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment()}}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
         quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
@@ -736,7 +736,7 @@ module.exports = {
       },
     });
     */
-    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id}});
+    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expirationDate: {$gt: moment()}}});
     // If a quote was not previously created, it must be created here
     if (!quote) {
       quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
