@@ -12,7 +12,7 @@ class TableIndex extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework');
+    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework&status=pending');
     this.state = {
       search : null,
       sort : {
@@ -220,7 +220,7 @@ class TableIndex extends React.Component {
               type="text" 
               className="box-table-search" 
               ref={(input) => { this.textInput = input; }}
-              placeholder="Enter search text [name, email]" 
+              placeholder="Enter search text [name, email, status]" 
               onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <table className="box-table table-striped">
