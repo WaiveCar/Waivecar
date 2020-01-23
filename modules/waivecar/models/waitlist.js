@@ -107,7 +107,7 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
     'InsuranceQuote',
     function(User, InsuranceQuote) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
-      this.hasMany(InsuranceQuote, { as : 'insuranceQuote', foreignKey : 'waitlistId'});
+      this.hasMany(InsuranceQuote, { as : 'insuranceQuotes', foreignKey : 'waitlistId'});
     }
   ];
 

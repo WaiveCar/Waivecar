@@ -348,7 +348,6 @@ module.exports = {
     }
     if(queryIn.type === 'waivework') {
       query.order = [ 
-        [ 'experience', 'desc' ],
         [ 'created_at', 'asc' ]
       ];
       // The waivework waitlist should only send
@@ -357,8 +356,9 @@ module.exports = {
       }
       query.include = [{
         model: 'InsuranceQuote',
-        as: 'insuranceQuote',
+        as: 'insuranceQuotes',
         required: false,
+        order: [['created_at', 'asc']],
       }];
     }
 
@@ -366,6 +366,12 @@ module.exports = {
     query.offset = parseInt(queryIn.offset, 10);
 
     return yield Waitlist.find(query);
+  },
+
+  *insuranceQuotes(queryIn) {
+    
+
+    return yield InsuranceQuote.find();
   },
 
   *FBletIn(idList, _user) {
