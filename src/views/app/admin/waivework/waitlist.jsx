@@ -227,7 +227,7 @@ class TableIndex extends React.Component {
               placeholder="Enter search text [name, email, status]" 
               onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
-            <div className="status-options">
+            <div className="status-options" style={{display: 'flex', justifyContent: 'space-between'}}>
               {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived', 'all'].map((status, i) => 
                 <div key={i}>
                   <input type="radio" value={status} name="selectCategory" onInput={() => this.changeStatus(status)} defaultChecked={selectedStatus === status}/>
