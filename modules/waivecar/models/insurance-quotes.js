@@ -29,6 +29,12 @@ Bento.Register.Model('InsuranceQuote', 'sequelize', function(
       default: null,
     },
 
+    weeklyPayment: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      default: null,
+    },
+
     accepted: {
       type: Sequelize.BOOLEAN,
       default: false,
