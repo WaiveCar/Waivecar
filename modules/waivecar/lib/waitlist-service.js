@@ -369,9 +369,34 @@ module.exports = {
   },
 
   *insuranceQuotes(queryIn) {
-    
+    let query = {};
+    /*
+    if (queryIn.search) {
+      query.where = { $and: [
+        {user_id: null },
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`),
+      ]};
+      query.order = [ ['created_at', 'asc'] ];
+    } else {
+      query.where = { user_id: null };
+    }
+    */
+    query.order = [ 
+      [ 'created_at', 'asc' ]
+    ];
+    query.include = [{
+      model: 'User',
+      as: 'user',
+      required: false,
+    }, {
+      model: 'Waitlist',
+      as: 'waitlist',
+      required: false,
+    }];
 
-    return yield InsuranceQuote.find();
+    query.limit = parseInt(queryIn.limit, 10);
+    query.offset = parseInt(queryIn.offset, 10);
+    return yield InsuranceQuote.find(query);
   },
 
   *FBletIn(idList, _user) {
