@@ -30,7 +30,7 @@ class TableIndex extends React.Component {
 
   componentDidMount() {
     this.table.init({status: 'pending'});
-    dom.setTitle('Waivework Waitlist');
+    dom.setTitle('Waivework Signups');
     this.setState({
       sort : {
         key   : 'priority',
@@ -231,7 +231,7 @@ class TableIndex extends React.Component {
               className="box-table-search" 
               ref={(input) => { this.textInput = input; }}
               placeholder="Enter search text [name, email]" 
-              onChange={ (e) => { this.table.search(false, this.textInput.value || ' ', this.textInput) }  } />
+              onChange={ (e) => { this.table.search(false, this.textInput.value || ' ', this.textInput, {status: selectedStatus}) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <div className="status-options" style={{display: 'flex', justifyContent: 'space-between'}}>
               {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived', 'all'].map((status, i) => 
