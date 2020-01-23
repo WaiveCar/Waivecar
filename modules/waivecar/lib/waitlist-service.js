@@ -355,6 +355,11 @@ module.exports = {
       if (queryIn.status && queryIn.status !== 'all') {
         query.where.status = queryIn.status;
       }
+      query.include = [{
+        model: 'InsuranceQuote',
+        as: 'insuranceQuote',
+        required: false,
+      }];
     }
 
     query.limit = parseInt(queryIn.limit, 10);
