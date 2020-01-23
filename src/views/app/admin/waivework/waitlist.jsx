@@ -161,7 +161,7 @@ class TableIndex extends React.Component {
   }
 
   changeStatus(status) {
-    this.setState({selectedStatus: status}, () => console.log(this.state.selectedStatus));
+    this.setState({selectedStatus: status}, () => this.table.search(false, status !== 'all' ? status : ''));
   }
 
   render() {
@@ -228,7 +228,7 @@ class TableIndex extends React.Component {
               onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <div className="status-options">
-              {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived'].map((status, i) => 
+              {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived', 'all'].map((status, i) => 
                 <div key={i}>
                   <input type="radio" value={status} name="selectCategory" onInput={() => this.changeStatus(status)} defaultChecked={selectedStatus === status}/>
                   <label htmlFor={status}>{status}</label>
