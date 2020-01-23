@@ -12,7 +12,6 @@ class TableIndex extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework&status=pending');
     this.state = {
       search : null,
       sort : {
@@ -23,7 +22,9 @@ class TableIndex extends React.Component {
       offset : 0,
       noteValue: null,
       currentNotes: [],
+      selectedStatus: 'pending',
     };
+    this.table = new Table(this, 'waitlist', null, `/waitlist?type=waivework&status=${this.state.selectedStatus}`);
     relay.subscribe(this, 'waitlist');
   }
 
@@ -159,8 +160,12 @@ class TableIndex extends React.Component {
     });
   }
 
+  changeStatus(status) {
+    this.setState({selectedStatus: status}, () => console.log(this.state.selectedStatus));
+  }
+
   render() {
-    let {userSelected} = this.state;
+    let {userSelected, selectedStatus} = this.state;
     return (
       <div id="waitlist-list" className="container">
         <div className="box full">
@@ -222,6 +227,14 @@ class TableIndex extends React.Component {
               placeholder="Enter search text [name, email, status]" 
               onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
+            <div className="status-options">
+              {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived'].map((status, i) => 
+                <div key={i}>
+                  <input type="radio" value={status} name="selectCategory" onInput={() => this.changeStatus(status)} defaultChecked={selectedStatus === status}/>
+                  <label htmlFor={status}>{status}</label>
+                </div>
+              )}
+            </div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
