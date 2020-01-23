@@ -103,11 +103,13 @@ templates.register('app', {
         component : require('../../views/app/admin/cars/magic'),
         onEnter   : policies.isAdministrator
       },
+      /*
       {
         path      : '/admin/waitlist',
         component : require('../../views/app/admin/waitlist'),
         onEnter   : policies.isAdministrator
       },
+      */
       {
         path      : '/admin/waivework/signups',
         component : require('../../views/app/admin/waivework/waitlist'),
@@ -239,6 +241,7 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  /*
   {
     title     : 'Waitlist',
     icon      : 'list',
@@ -247,6 +250,7 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  */
   {
     title     : 'WaiveWork Signups',
     icon      : 'building',
