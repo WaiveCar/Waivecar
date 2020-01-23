@@ -8,8 +8,8 @@ module.exports = class ThSort extends React.Component {
    * @return {Void}
    */
   sort(field) {
-    console.log(field);
     let { key, order } = this.state.sort;
+    console.log(key, order);
     this.setState({
       sort : {
         key   : field,
@@ -45,7 +45,6 @@ module.exports = class ThSort extends React.Component {
    */
   render() {
     let { value, className, style, sort, ctx } = this.props;
-    console.log(this.props)
     return (
       <th id={ sort } className={ `${ className }${ sort ? ' sortable' : '' }` } style={ style } onClick={ this.sort.bind(ctx, sort) }>
         <span>{ value }</span>

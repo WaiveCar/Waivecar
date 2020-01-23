@@ -33,8 +33,8 @@ class TableIndex extends React.Component {
     dom.setTitle('Waivework Signups');
     this.setState({
       sort : {
-        key   : 'priority',
-        order : 'ASC'
+        key   : 'createdAt',
+        order : 'DESC'
       },
       searchObj: {
         order: 'id,DESC',
@@ -121,7 +121,6 @@ class TableIndex extends React.Component {
   }
 
   row(waitlist) {
-    console.log(waitlist);
     return (
       <tr key={ waitlist.id }>
         <td>{ waitlist.firstName } { waitlist.lastName }</td>
