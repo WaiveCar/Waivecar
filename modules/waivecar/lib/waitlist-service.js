@@ -352,7 +352,7 @@ module.exports = {
         [ 'created_at', 'asc' ]
       ];
       // The waivework waitlist should only send
-      if (queryIn.status) {
+      if (queryIn.status && queryIn.status !== 'all') {
         query.where.status = queryIn.status;
       }
     }
