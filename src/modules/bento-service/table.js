@@ -29,7 +29,7 @@ module.exports = class Table {
       order  : 'created_at,DESC',
       offset : this.ctx.state.offset,
       limit  : 20,
-      ...initialQuery,
+      ...(initialQuery || {}),
     }, (err, data) => {
       if (err) {
         return snackbar.notify({

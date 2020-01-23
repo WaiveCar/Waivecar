@@ -198,12 +198,18 @@ class TableIndex extends React.Component {
                   Add Note
                 </button>
               </span>
-              <div>
-                Weekly Payment: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
-                Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
-                Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>
+              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
+                <div>
+                  Weekly Payment: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
+                </div>
+                <div>
+                  Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
+                </div>
+                <div>
+                  Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>
+                </div>
               </div>
-              <div>
+              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
                   () => this.letinbyid(userSelected.id, 'accepted') 
                 }> Accept</a>
