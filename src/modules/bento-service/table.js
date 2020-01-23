@@ -24,11 +24,12 @@ module.exports = class Table {
    * Initiates index request against API and populates the state and relay.
    * @return {Void}
    */
-  init() {
+  init(initialQuery) {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
       offset : this.ctx.state.offset,
-      limit  : 20
+      limit  : 20,
+      ...initialQuery,
     }, (err, data) => {
       if (err) {
         return snackbar.notify({
@@ -155,7 +156,6 @@ module.exports = class Table {
   // counter-intuitive format.
   search = (e, value, dom, opts) => {
     clearTimeout(this.timer);
-    console.log('value', value);
     this.timer = setTimeout(() => {
       let query = '';
       if(value) {

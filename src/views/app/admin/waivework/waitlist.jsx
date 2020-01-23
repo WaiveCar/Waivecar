@@ -29,7 +29,7 @@ class TableIndex extends React.Component {
   }
 
   componentDidMount() {
-    this.table.init();
+    this.table.init({status: 'pending'});
     dom.setTitle('Waivework Waitlist');
     this.setState({
       sort : {
