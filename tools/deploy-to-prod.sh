@@ -23,7 +23,7 @@ deployscript() {
   # this code, with any argument, makes dry not the empty string which is what
   # test(1) uses as the qualifier in [ ] bare testing.
   echo -n "Last was: "; cat .last-deploy
-  version=`git describe`
+  version=$(git describe)-$(git rev-parse --abbrev-ref HEAD)
   echo $version > .last-deploy
 
   # we make a log of the deploy history
