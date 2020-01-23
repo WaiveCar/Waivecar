@@ -24,7 +24,7 @@ class TableIndex extends React.Component {
       currentNotes: [],
       selectedStatus: 'pending',
     };
-    this.table = new Table(this, 'waitlist', null, `/waitlist?type=waivework&status=${this.state.selectedStatus}`);
+    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework');
     relay.subscribe(this, 'waitlist');
   }
 
@@ -37,7 +37,7 @@ class TableIndex extends React.Component {
         order : 'ASC'
       },
       searchObj: {
-        order: 'id,DESC'
+        order: 'id,DESC',
       }
     });
   }
@@ -161,7 +161,7 @@ class TableIndex extends React.Component {
   }
 
   changeStatus(status) {
-    this.setState({selectedStatus: status}, () => this.table.search(false, status !== 'all' ? status : ''));
+    this.setState({selectedStatus: status}, () => this.table.search(false, this.textInput.value || ' ', this.textInput, {status: status}));
   }
 
   render() {
@@ -224,8 +224,8 @@ class TableIndex extends React.Component {
               type="text" 
               className="box-table-search" 
               ref={(input) => { this.textInput = input; }}
-              placeholder="Enter search text [name, email, status]" 
-              onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
+              placeholder="Enter search text [name, email]" 
+              onChange={ (e) => { this.table.search(false, this.textInput.value || ' ', this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <div className="status-options" style={{display: 'flex', justifyContent: 'space-between'}}>
               {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived', 'all'].map((status, i) => 

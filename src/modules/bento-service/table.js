@@ -106,7 +106,6 @@ module.exports = class Table {
       // object.assign
       queryObj
     );
-
     let query = queryObj.search;
     if(! ('offset' in queryObj) ) {
       queryObj.offset = this.ctx.state.offset;
@@ -154,8 +153,9 @@ module.exports = class Table {
   // always call search_handler directly. Please
   // note the documentation on the likely 
   // counter-intuitive format.
-  search = (e, value, dom) => {
+  search = (e, value, dom, opts) => {
     clearTimeout(this.timer);
+    console.log('value', value);
     this.timer = setTimeout(() => {
       let query = '';
       if(value) {
@@ -166,7 +166,9 @@ module.exports = class Table {
       this.search_handler({
         offset: 0,
         limit: this.limit || 20,
-        search: query}, false, dom);
+        search: query,
+        ...opts,
+      }, false, dom);
     }, 700);
   }
 
@@ -180,7 +182,6 @@ module.exports = class Table {
     let queryObj = this.ctx.state.searchObj;
     queryObj.offset = this.ctx.state.offset;
     queryObj.limit = this.limit;
-
     api.get(this.endpoint, queryObj, (err, data) => {
       if (err) {
         return snackbar.notify({
