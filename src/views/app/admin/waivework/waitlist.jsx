@@ -66,7 +66,7 @@ class TableIndex extends React.Component {
         message : 'Please enter a weekly payment, an insurance quote amount and quote expiration date',
       });
     }
-    this.letinreal({idList: [id], perMonth, quoteExpiration, status});
+    this.letinreal({idList: [id], perMonth, perWeek, quoteExpiration, status});
   }
   /* Not currently used
   letin() {
@@ -124,9 +124,8 @@ class TableIndex extends React.Component {
       <tr key={ waitlist.id }>
         <td>{ waitlist.firstName } { waitlist.lastName }</td>
         <td className="hidden-sm-down">{ waitlist.placeName }</td> 
-        <td className="hidden-sm-down">{ waitlist.hours}</td> 
+        <td className="hidden-sm-down">{ waitlist.status}</td> 
         <td className="hidden-sm-down">{ waitlist.experience}</td> 
-        <td >{ waitlist.priority }</td>
         <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
         <td>
           <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
@@ -196,8 +195,11 @@ class TableIndex extends React.Component {
                 </button>
               </span>
               <div>
+                Weekly Payment: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
                 Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
                 Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>
+              </div>
+              <div>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
                   () => this.letinbyid(userSelected.id, 'accepted') 
                 }> Accept</a>
@@ -226,9 +228,8 @@ class TableIndex extends React.Component {
                 <tr ref="sort">
                   <ThSort sort="name"     value="Name"     ctx={ this } />
                   <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="hours"    value="Hours" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="status"    value="Status" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="experience" value="Experience" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="priority" value="Priority" ctx={ this } />
                   <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>

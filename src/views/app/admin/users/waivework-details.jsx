@@ -621,10 +621,18 @@ class WaiveWorkDetails extends Component {
                   display: 'flex',
                   justifyContent: 'space-between',
                 }}>
+                Weekly Amount:{' '}
+                <input
+                  type="number"
+                  style={{width: '80px'}}
+                  onChange={e =>
+                    this.setState({perWeek: e.target.value})
+                  }
+                />
                 Insurance Quote:{' '}
                 <input
                   type="number"
-                  style={{width: '140px'}}
+                  style={{width: '80px'}}
                   onChange={e =>
                     this.setState({insuranceQuote: e.target.value})
                   }
@@ -632,7 +640,7 @@ class WaiveWorkDetails extends Component {
                 Quote Expiration:{' '}
                 <input
                   type="date"
-                  style={{width: '150px'}}
+                  style={{width: '170px'}}
                   onChange={e =>
                     this.setState({quoteExpiration: e.target.value})
                   }
@@ -661,15 +669,6 @@ class WaiveWorkDetails extends Component {
                   onClick={() => this.sendEmail('nonmarket')}>
                   Out of Market
                 </a>
-              </div>
-              <div className="row">
-                <input
-                  style={{width: '80px'}}
-                  type="number"
-                  placeholder="Amount Per Week"
-                  value={perWeek}
-                  onChange={e => this.setState({perWeek: e.target.value})}
-                />
               </div>
               <div className="row" style={{marginTop: '4px'}}>
                 <input
