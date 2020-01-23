@@ -121,11 +121,13 @@ class TableIndex extends React.Component {
   }
 
   row(waitlist) {
+    console.log(waitlist);
     return (
       <tr key={ waitlist.id }>
         <td>{ waitlist.firstName } { waitlist.lastName }</td>
         <td className="hidden-sm-down">{ waitlist.placeName }</td> 
         <td className="hidden-sm-down">{ waitlist.status}</td> 
+        <td className="hidden-sm-down">{ waitlist.insuranceQuotes[0] ? (waitlist.insuranceQuotes[0].amount / 100).toFixed(2) : 0 }</td> 
         <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
         <td>
           <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
@@ -247,7 +249,8 @@ class TableIndex extends React.Component {
                   <ThSort sort="name"     value="Name"     ctx={ this } />
                   <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="status"    value="Status" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
+                  <ThSort value="Insurance Quote" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="createdAt"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>
               </thead>

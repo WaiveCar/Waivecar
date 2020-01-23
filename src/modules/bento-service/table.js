@@ -87,7 +87,6 @@ module.exports = class Table {
 
     // Paginate here...
     // this.ctx.state.offset === page
-
     return list.map(item => this.ctx.row(item));
   }
 
