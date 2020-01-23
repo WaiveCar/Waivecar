@@ -9,7 +9,6 @@ module.exports = class ThSort extends React.Component {
    */
   sort(field) {
     let { key, order } = this.state.sort;
-    console.log(key, order);
     this.setState({
       sort : {
         key   : field,

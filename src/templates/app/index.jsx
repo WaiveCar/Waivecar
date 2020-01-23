@@ -116,6 +116,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/admin/waivework/insurance',
+        component : require('../../views/app/admin/waivework/insurance-quotes'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/admin/waivework/car-prep',
         component : require('../../views/app/admin/waivework/car-prep'),
         onEnter   : policies.isAdministrator
@@ -255,6 +260,14 @@ let order = 2;
     title     : 'WaiveWork Signups',
     icon      : 'building',
     path      : '/admin/waivework/signups',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Insurance Quotes',
+    icon      : 'building',
+    path      : '/admin/waivework/insurance',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
