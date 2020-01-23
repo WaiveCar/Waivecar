@@ -590,10 +590,10 @@ module.exports = {
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
-        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
         yield quote.save();
       } else {
-        yield quote.update({userId: userRecord.id, amount: opts.perMonth, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        yield quote.update({userId: userRecord.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
       }
 
 
@@ -712,7 +712,7 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, quoteExpiration: payload.quoteExpiration, status: payload.status});
+      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, perWeek: payload.perWeek, quoteExpiration: payload.quoteExpiration, status: payload.status});
       for(var ix = 0; ix < userList.length; ix++) {
         if (userList[ix]) {
           yield userList[ix].addTag('la');
@@ -722,7 +722,6 @@ module.exports = {
   },
 
   *sendWaiveWorkEmail(opts) {
-    console.log('opts', opts);
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
