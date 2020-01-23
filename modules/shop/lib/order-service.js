@@ -1423,6 +1423,6 @@ module.exports = class OrderService extends Service {
     let startTime = moment(oldOrder.createdAt).tz('America/Los_Angeles').startOf('day').utc();
     let numDays = moment().diff(moment(startTime), 'days');
     let amountPerDay = (query.percent / 100) * oldOrder.amount;
-    return {lateFees: Math.floor(numDays) * amountPerDay};
+    return {lateFees: numDays > 0 ? amountPerDay : 0};
   }
 };
