@@ -590,10 +590,10 @@ module.exports = {
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
-        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
         yield quote.save();
       } else {
-        yield quote.update({userId: userRecord.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        yield quote.update({userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
       }
 
 
@@ -739,10 +739,10 @@ module.exports = {
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id}});
     // If a quote was not previously created, it must be created here
     if (!quote) {
-      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
       yield quote.save();
     } else {
-      yield quote.update({userId: opts.user.id, amount: opts.perMonth, weeklyPayment: opts.perWeek, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+      yield quote.update({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
     }
 
     try {
