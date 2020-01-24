@@ -40,6 +40,12 @@ Bento.Register.Model('InsuranceQuote', 'sequelize', function(
       default: false,
     },
 
+    priority: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      default: null,
+    }
+
     expiresAt: {
       type: Sequelize.DATE,
       default: null,
