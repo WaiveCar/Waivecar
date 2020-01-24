@@ -246,7 +246,7 @@ class TableIndex extends React.Component {
               <thead>
                 <tr ref="sort">
                   <ThSort sort="name"     value="Name"     ctx={ this } />
-                  <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="placeName" value="Location" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="status"    value="Status" ctx={ this } className="hidden-sm-down"/>
                   <ThSort value="Insurance Quote" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="createdAt"     value="Date"     ctx={ this } className="hidden-sm-down"/>
