@@ -47,6 +47,7 @@ class InsuranceQuotes extends Component {
         <td>{moment(quote.expiresAt).format('MM-DD-YYYY')}</td>
         <td>${(quote.amount / 100).toFixed(2)}</td>
         <td>${(quote.weeklyPayment / 100).toFixed(2)}</td>
+        <td>{quote.priority}</td>
         <td>{quote.accepted ? 'yes' : 'no'}</td>
       </tr>
     );
@@ -84,6 +85,7 @@ class InsuranceQuotes extends Component {
                     <ThSort sort="expiresAt" value="Expiration" ctx={this} />
                     <ThSort sort="amount" value="Amount" ctx={this} />
                     <ThSort sort="weeklyPayment" value="Weekly Payment" ctx={this} />
+                    <ThSort sort="priority" value="priority" ctx={this} />
                     <ThSort sort="accepted" value="Accepted" ctx={this} />
                   </tr>
                 </thead>
