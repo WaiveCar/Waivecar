@@ -3,6 +3,7 @@ import {api, relay} from 'bento';
 import {Link} from 'react-router';
 import Table from 'bento-service/table';
 import ThSort from '../components/table-th';
+import moment from 'moment';
 
 class InsuranceQuotes extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class InsuranceQuotes extends Component {
     });
   }
   row(quote) {
+    console.log(quote.accepted);
     return (
       <tr key={quote.id}>
         <td>
@@ -43,6 +45,10 @@ class InsuranceQuotes extends Component {
             `${quote.waitlist.firstName} ${quote.waitlist.lastName}`
           )}
         </td>
+        <td>{moment(quote.expiresAt).format('MM-DD-YYYY')}</td>
+        <td>${(quote.amount / 100).toFixed(2)}</td>
+        <td>${(quote.weeklyPayment / 100).toFixed(2)}</td>
+        <td>{quote.accepted ? 'yes' : 'no'}</td>
       </tr>
     );
   }
@@ -76,6 +82,10 @@ class InsuranceQuotes extends Component {
                 <thead>
                   <tr ref="sort">
                     <ThSort sort="name" value="Name" ctx={this} />
+                    <ThSort sort="expiresAt" value="Expiration" ctx={this} />
+                    <ThSort sort="amount" value="Amount" ctx={this} />
+                    <ThSort sort="weeklyPayment" value="Weekly Payment" ctx={this} />
+                    <ThSort sort="accepted" value="Accepted" ctx={this} />
                   </tr>
                 </thead>
                 <tbody>{this.table.index()}</tbody>
