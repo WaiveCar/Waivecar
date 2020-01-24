@@ -393,6 +393,9 @@ module.exports = {
       as: 'waitlist',
       required: false,
     }];
+    query.where = {
+      amount: {$not: null},
+    };
 
     query.limit = parseInt(queryIn.limit, 10);
     query.offset = parseInt(queryIn.offset, 10);
