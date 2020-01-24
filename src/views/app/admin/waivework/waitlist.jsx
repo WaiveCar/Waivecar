@@ -60,14 +60,14 @@ class TableIndex extends React.Component {
   }
 
   letinbyid(id, status) {
-    let {perWeek, perMonth, quoteExpiration} = this.state;
-    if (!perWeek || !perMonth || !quoteExpiration) {
+    let {perWeek, perMonth, priority, quoteExpiration} = this.state;
+    if (!perWeek || !perMonth || !priority || !quoteExpiration) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'Please enter a weekly payment, an insurance quote amount and quote expiration date',
+        message : 'Please enter a weekly payment, an insurance quote amount, a priority and quote expiration date',
       });
     }
-    this.letinreal({idList: [id], perMonth, perWeek, quoteExpiration, status});
+    this.letinreal({idList: [id], perMonth, perWeek, quoteExpiration, priority, status});
   }
   /* Not currently used
   letin() {
@@ -129,14 +129,8 @@ class TableIndex extends React.Component {
         <td className="hidden-sm-down">{ waitlist.insuranceQuotes[0] ? (waitlist.insuranceQuotes[0].amount / 100).toFixed(2) : 0 }</td> 
         <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
         <td>
-          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
-            &#9660;
-          </a>
           <a style={{ cursor: 'pointer' }} onClick={() => this.moreinfo(waitlist.id)}>
             More Info 
-          </a>
-          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, 1, waitlist)}>
-            &#9650;
           </a>
         </td>
       </tr>
@@ -205,6 +199,9 @@ class TableIndex extends React.Component {
                 </div>
                 <div>
                   Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
+                </div>
+                <div>
+                  Priority (based on location): <input type="number" placeholder="1 - 5" style={{width: '150px'}} onChange={(e) => this.setState({priority: e.target.value})}/>
                 </div>
                 <div>
                   Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>

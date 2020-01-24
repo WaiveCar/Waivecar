@@ -105,15 +105,16 @@ class WaiveWorkDetails extends Component {
 
   sendEmail(status) {
     let {user} = this.props;
-    let {perWeek, insuranceQuote, quoteExpiration} = this.state;
+    let {perWeek, insuranceQuote, priority, quoteExpiration} = this.state;
     let opts = {
       user,
       perMonth: insuranceQuote,
       perWeek,
       quoteExpiration,
       status,
+      priority,
     };
-    if (perWeek && insuranceQuote && quoteExpiration) {
+    if (perWeek && insuranceQuote && priority && quoteExpiration) {
       api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -130,7 +131,7 @@ class WaiveWorkDetails extends Component {
       return snackbar.notify({
         type: 'danger',
         message:
-          'Please enter a a weekly payment, an insurance quote amount and an insurance quote expiration .',
+          'Please enter a a weekly payment, an insurance quote amount, a priority and an insurance quote expiration .',
       });
     }
   }
@@ -625,9 +626,7 @@ class WaiveWorkDetails extends Component {
                 <input
                   type="number"
                   style={{width: '80px'}}
-                  onChange={e =>
-                    this.setState({perWeek: e.target.value})
-                  }
+                  onChange={e => this.setState({perWeek: e.target.value})}
                 />
                 Insurance Quote:{' '}
                 <input
@@ -637,6 +636,15 @@ class WaiveWorkDetails extends Component {
                     this.setState({insuranceQuote: e.target.value})
                   }
                 />
+                <div>
+                  Priority (based on location):{' '}
+                  <input
+                    type="number"
+                    placeholder="1 - 5"
+                    style={{width: '150px'}}
+                    onChange={e => this.setState({priority: e.target.value})}
+                  />
+                </div>
                 Quote Expiration:{' '}
                 <input
                   type="date"

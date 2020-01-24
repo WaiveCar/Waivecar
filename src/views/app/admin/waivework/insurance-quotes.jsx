@@ -34,7 +34,6 @@ class InsuranceQuotes extends Component {
     });
   }
   row(quote) {
-    console.log(quote.accepted);
     return (
       <tr key={quote.id}>
         <td>
