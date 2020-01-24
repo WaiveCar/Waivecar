@@ -25,7 +25,7 @@ class InsuranceQuotes extends Component {
     this.table.init();
     this.setState({
       sort: {
-        key: 'createdAt',
+        key: 'expiresAt',
         order: 'DESC',
       },
       searchObj: {
