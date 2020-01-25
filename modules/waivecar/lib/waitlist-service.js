@@ -382,7 +382,7 @@ module.exports = {
     }
     */
     query.order = [ 
-      [ 'created_at', 'asc' ]
+      /*[ 'priority', 'asc' ],*/ ['expiresAt', 'desc']
     ];
     query.include = [{
       model: 'User',
@@ -395,6 +395,8 @@ module.exports = {
     }];
     query.where = {
       amount: {$not: null},
+      expiresAt: {$gt: moment()},
+      accepted: true,
     };
 
     query.limit = parseInt(queryIn.limit, 10);
@@ -636,10 +638,10 @@ module.exports = {
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment()}}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
-        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
         yield quote.save();
       } else {
-        yield quote.update({userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+        yield quote.update({userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
       }
 
 
@@ -758,7 +760,7 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, perWeek: payload.perWeek, quoteExpiration: payload.quoteExpiration, status: payload.status});
+      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, perWeek: payload.perWeek, quoteExpiration: payload.quoteExpiration, status: payload.status, priority: payload.priority});
       for(var ix = 0; ix < userList.length; ix++) {
         if (userList[ix]) {
           yield userList[ix].addTag('la');
@@ -786,10 +788,10 @@ module.exports = {
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expirationDate: {$gt: moment()}}});
     // If a non-expired quote already exists, it must be created here
     if (!quote) {
-      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
       yield quote.save();
     } else {
-      yield quote.update({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted'});
+      yield quote.update({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
     }
 
     try {
