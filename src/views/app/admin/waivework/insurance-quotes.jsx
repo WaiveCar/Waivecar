@@ -25,7 +25,7 @@ class InsuranceQuotes extends Component {
     this.table.init();
     this.setState({
       sort: {
-        key: 'expiresAt',
+        key: 'priority',
         order: 'DESC',
       },
       searchObj: {
@@ -48,7 +48,6 @@ class InsuranceQuotes extends Component {
         <td>${(quote.amount / 100).toFixed(2)}</td>
         <td>${(quote.weeklyPayment / 100).toFixed(2)}</td>
         <td>{quote.priority}</td>
-        <td>{quote.accepted ? 'yes' : 'no'}</td>
       </tr>
     );
   }
@@ -86,7 +85,6 @@ class InsuranceQuotes extends Component {
                     <ThSort sort="amount" value="Amount" ctx={this} />
                     <ThSort sort="weeklyPayment" value="Weekly Payment" ctx={this} />
                     <ThSort sort="priority" value="priority" ctx={this} />
-                    <ThSort sort="accepted" value="Accepted" ctx={this} />
                   </tr>
                 </thead>
                 <tbody>{this.table.index()}</tbody>

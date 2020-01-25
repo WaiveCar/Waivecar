@@ -636,15 +636,6 @@ class WaiveWorkDetails extends Component {
                     this.setState({insuranceQuote: e.target.value})
                   }
                 />
-                <div>
-                  Priority (based on location):{' '}
-                  <input
-                    type="number"
-                    placeholder="1 - 5"
-                    style={{width: '150px'}}
-                    onChange={e => this.setState({priority: e.target.value})}
-                  />
-                </div>
                 Quote Expiration:{' '}
                 <input
                   type="date"
@@ -655,6 +646,15 @@ class WaiveWorkDetails extends Component {
                 />
               </div>
               <div className="row">
+                <div>
+                  Priority (based on location):{' '}
+                  <input
+                    type="number"
+                    placeholder="1 - 5"
+                    style={{width: '150px', margin: '10px'}}
+                    onChange={e => this.setState({priority: e.target.value})}
+                  />
+                </div>
                 <a
                   style={{cursor: 'pointer', marginLeft: '30px'}}
                   onClick={() => this.sendEmail('accepted')}>
