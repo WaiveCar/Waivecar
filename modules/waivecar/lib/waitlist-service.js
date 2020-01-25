@@ -395,7 +395,7 @@ module.exports = {
     }];
     query.where = {
       amount: {$not: null},
-      expiresAt: {$gt: moment()},
+      expiresAt: {$gt: moment().format('YYYY-MM-DD')},
       accepted: true,
     };
 
@@ -464,7 +464,7 @@ module.exports = {
     }
     */
     // This looks for an old quote that is not expired yet
-    let oldQuote = yield InsuranceQuote.findOne({where: {$or: [{userId: payload.userId}, {waitlistId: payload.waitlistId}], expiresAt: {$or: [{$gt: moment()}, null] }}});
+    let oldQuote = yield InsuranceQuote.findOne({where: {$or: [{userId: payload.userId}, {waitlistId: payload.waitlistId}], expiresAt: {$or: [{$gt: moment().format('YYYY-MM-DD')}, null] }}});
     if (!oldQuote) {
       // this should only be created if there is not already a valid saved quote
       let quote = new InsuranceQuote({
@@ -635,7 +635,7 @@ module.exports = {
       yield record.update({userId: userRecord.id, status: opts.status ? opts.status : record.status});
       userList.push(userRecord);
       // This looks for a quote that is not yet expired
-      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment()}}});
+      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
       // If a quote was not previously created, it must be created here
       if (!quote) {
         quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
@@ -785,7 +785,8 @@ module.exports = {
     });
     */
     // This searches for a quote that has not yet expired
-    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expirationDate: {$gt: moment()}}});
+    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expirationDate: {$gt: moment().format('YYYY-MM-DD')}}});
+    console.log('quote', quote);
     // If a non-expired quote already exists, it must be created here
     if (!quote) {
       quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});

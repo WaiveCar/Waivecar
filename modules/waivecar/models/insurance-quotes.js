@@ -44,7 +44,7 @@ Bento.Register.Model('InsuranceQuote', 'sequelize', function(
       type: Sequelize.INTEGER,
       allowNull: true,
       default: null,
-    }
+    },
 
     expiresAt: {
       type: Sequelize.DATE,
