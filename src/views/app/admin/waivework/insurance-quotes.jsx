@@ -61,7 +61,7 @@ class InsuranceQuotes extends Component {
           </div>
           <div>
             <div className="box-content">
-              <input
+              {/* Search to be added later <input
                 type="text"
                 className="box-table-search"
                 ref={input => {
@@ -75,14 +75,14 @@ class InsuranceQuotes extends Component {
                     this.textInput,
                   );
                 }}
-              />
+              />*/}
               <div id="isMobile" className="hidden-sm-down"></div>
               <table className="box-table table-striped">
                 <thead>
                   <tr ref="sort">
                     <ThSort sort="name" value="Name" ctx={this} />
                     <ThSort sort="expiresAt" value="Expiration" ctx={this} />
-                    <ThSort sort="amount" value="Amount" ctx={this} />
+                    <ThSort sort="amount" value="Quote Amount" ctx={this} />
                     <ThSort sort="weeklyPayment" value="Weekly Payment" ctx={this} />
                     <ThSort sort="priority" value="priority" ctx={this} />
                   </tr>
