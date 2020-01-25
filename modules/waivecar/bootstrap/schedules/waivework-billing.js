@@ -382,7 +382,7 @@ scheduler.process('waivework-billing', function*(job) {
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
-        timer: {value: 48, type: 'hours'},
+        timer: {value: 72, type: 'hours'},
         data: {
           toImmobilize,
         },

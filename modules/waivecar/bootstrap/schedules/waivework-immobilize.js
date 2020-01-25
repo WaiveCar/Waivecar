@@ -9,17 +9,17 @@ let log = Bento.Log;
 
 scheduler.process('waivework-immobilize', function*(job) {
   let slackPayload = [
-    ':violin: *The following users have had their cars immobilized due to their faillure pay in the 48 hours following their failed automatic payment*\n',
+    ':violin: *The following users have had their cars immobilized due to their faillure pay in the 72 hours following their failed automatic payment*\n',
   ];
   for (let oldPayment of job.data.toImmobilize) {
-    // This looks to see if they have successfully paid the weekly charge in the preceeding 48 hours by
+    // This looks to see if they have successfully paid the weekly charge in the preceeding 72 hours by
     // finding any successful charges. This should be able to identify retried payments.
     let recentOrder = yield ShopOrder.findOne({
       where: {
         userId: oldPayment.booking.userId,
         createdAt: {
           $gte: moment()
-            .subtract(48, 'hours')
+            .subtract(72, 'hours')
             .format('YYYY-MM-DD'),
         },
         status: 'paid',
@@ -38,7 +38,7 @@ scheduler.process('waivework-immobilize', function*(job) {
       try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
-          'It has been 48 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please visit waivework.com or contact us to clear your balance.',
+          'It has been 72 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please visit waivework.com or contact us to clear your balance.',
         );
       } catch (e) {
         log.warn('error sending text: ', e);
