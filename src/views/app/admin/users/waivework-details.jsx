@@ -669,16 +669,11 @@ class WaiveWorkDetails extends Component {
                 </a>
                 <a
                   style={{cursor: 'pointer', marginLeft: '30px'}}
-                  onClick={() => this.sendEmail('incomplete')}>
-                  Incomplete Information
-                </a>
-                <a
-                  style={{cursor: 'pointer', marginLeft: '30px'}}
                   onClick={() => this.sendEmail('nonmarket')}>
                   Out of Market
                 </a>
               </div>
-              <div className="row" style={{marginTop: '4px'}}>
+              <div className="row" style={{marginTop: '0.5rem'}}>
                 <input
                   className="col-xs-6"
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}
