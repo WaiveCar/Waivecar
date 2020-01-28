@@ -649,6 +649,7 @@ module.exports = {
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
       try {
+        // This should only happen if we are actually letting them in and not just updating their waitlist status
         if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
           context.accepted = true;
           yield userRecord.update({isWaivework: true});
@@ -689,6 +690,18 @@ module.exports = {
               }
             };
           }
+        } else if (opts.status && opts.status === 'incomplete') {
+          scheduler.add('waivework-reminder', {
+            uid   : `waivework-reminder-${record.id}`,
+            unique: true,
+            timer : {value: 3, type: 'days'},
+            data  : {
+              waitlistId: record.id,
+              initialSignupCount: record.signupCount
+              reminderCount: 0,
+              type: 'incomplete',
+            }
+          });
         }
         emailOpts = {
           to       : record.email,
@@ -779,16 +792,18 @@ module.exports = {
       /* This text needs to be reworked
       yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
       */
-      scheduler.add('waivework-reminder', {
-        uid   : `waivework-reminder-${opts.user.id}`,
-        unique: true,
-        timer : {value: 3, type: 'days'},
-        data  : {
-          userId: opts.user.id,
-          reminderCount: 0,
-          type: 'accepted',
-        }
-      });
+      if (opts.status === 'accepted') {
+        scheduler.add('waivework-reminder', {
+          uid   : `waivework-reminder-${opts.user.id}`,
+          unique: true,
+          timer : {value: 3, type: 'days'},
+          data  : {
+            userId: opts.user.id,
+            reminderCount: 0,
+            type: opts.status,
+          }
+        });
+      }
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
@@ -798,7 +813,6 @@ module.exports = {
       };
       yield email.send(emailOpts);
     } catch(err) {
-      console.log('err', err);
       log.warn('Failed to deliver notification email: ', emailOpts, err);      
     }
   }

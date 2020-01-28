@@ -29,7 +29,7 @@ let nextTimeMapper = {
       nextTry: null,
     },
   },
-  missingInfo: {
+  incomplete: {
     '0': {
       nextTry: 3,
     },
@@ -46,7 +46,6 @@ let nextTimeMapper = {
 };
 
 scheduler.process('waivework-reminder', function*(job) {
-  console.log('job data', job.data);
   let userId = job.data.userId;
   let user;
   let waitlist;
@@ -57,43 +56,34 @@ scheduler.process('waivework-reminder', function*(job) {
   }
   let name = '';
   let text = '';
-  if (
-    job.data.type === 'accepted' &&
-    !user.bookingId /*or other reason to know they have signed up */
-  ) {
+  // We will follow up with accepted users until they are actually in a booking
+  if (job.data.type === 'accepted' && !user.bookingId) {
+    // An accepted user should always have a user record by this point
     name = `${user.firstName} ${user.lastName}`;
-    text = '<p>Thanks for signing up for WaiveWork! ';
-    if (!user.verifiedPhone || !user.stripeId || !user.password) {
-      text += ' To coninue with th signup process you will need to: <ul>';
-      if (!user.password) {
-        text += '<li>Set up your password for your online account</li>';
-      }
-      if (!user.verifiedPhone) {
-        text += '<li>Add a phone number</li>';
-      }
-      if (!user.stripeId) {
-        text += '<li>Add a valid payment method to your account</li>';
-      }
-      text += '</ul>';
-    } else {
-      text +=
-        'Thanks for already having set up your account. The only remaining step to complete if you have already set up a pickup appointment is to make sure you have received and esigned the WaiveWork agreement.';
-    }
-    text += '</p>';
+    text = 'regular follow up email'
+  } else if (
+    // When a person has given inaccurate info, we check if they have either signed up again (if on the waitlist)
+    job.data.type === 'incomplete' &&
+    (waitlist && waitlist.signupCount === job.data.initialSignupCount)
+  ) {
+    text = 'incomplete email text';
+    name = user
+      ? `${user.firstName} ${user.lastName}`
+      : `${waitlist.firstName} ${waitlist.lastName}`;
   }
   try {
-    /* Don't put this text back in until a new message has been created
+    /* Once a new message is created, this text should be put back in
     yield notify.sendTextMessage(
       user,
       `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
     );*/
     let email = new Email();
     yield email.send({
-      to: user.email,
+      to: user ? user.email : waitlist.email,
       cc: 'work@waive.car',
       from: config.email.sender,
-      subject: `${user.firstName} ${user.lastName} - WaiveWork`,
-      template: 'waivework-appointment-reminder',
+      subject: `${name} - WaiveWork Follow Up`,
+      template: 'waivework-follow-up',
       context: {
         name,
         text,
@@ -104,14 +94,15 @@ scheduler.process('waivework-reminder', function*(job) {
       nextTimeMapper[job.data.type][job.data.reminderCount].nextTry
     ) {
       scheduler.add('waivework-reminder', {
-        uid: `waivework-reminder-${user.id}`,
+        uid: `waivework-reminder-${user ? user.id : waitlist.id}`,
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
-          type: 'seconds',
+          type: 'days',
         },
         data: {
           userId: job.data.userId,
+          waitlistId: job.data.waitlistId,
           reminderCount: job.data.reminderCount + 1,
           type: job.data.type,
         },
