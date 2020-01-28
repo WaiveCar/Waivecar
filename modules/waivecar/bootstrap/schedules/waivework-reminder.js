@@ -42,6 +42,7 @@ let nextTimeMapper = {
 };
 
 scheduler.process('waivework-reminder', function*(job) {
+  console.log('job data', job.data);
   let userId = job.data.userId;
   let user = yield User.findById(userId);
   if (!user.bookingId /*or other reason to know they have signed up */) {
@@ -82,17 +83,27 @@ scheduler.process('waivework-reminder', function*(job) {
           text,
         },
       });
-      scheduler.add('waivework-reminder', {
-        uid: `waivework-reminder-${userRecord.id}`,
-        unique: true,
-        timer: {value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry, type: 'days'},
-        data: {
-          userId: job.data.userId,
-          reminderCount: job.data.reminderCount + 1,
-        },
-      });
+      if (
+        nextTimeMapper[job.data.type][job.data.reminderCount] &&
+        nextTimeMapper[job.data.type][job.data.reminderCount].nextTry
+      ) {
+        scheduler.add('waivework-reminder', {
+          uid: `waivework-reminder-${user.id}`,
+          unique: true,
+          timer: {
+            value:
+              nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
+            type: 'days',
+          },
+          data: {
+            userId: job.data.userId,
+            reminderCount: job.data.reminderCount + 1,
+            type: job.data.type,
+          },
+        });
+      }
     } catch (e) {
-      console.log('Error sending email: ', e);
+      console.log('Error sending follow-up email: ', e);
     }
   }
 });

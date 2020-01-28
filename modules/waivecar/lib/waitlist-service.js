@@ -676,7 +676,7 @@ module.exports = {
                   try {
                     yield LicenseService.store({
                       ...note, 
-                      expirationDate: moment(note.expirationDate).format(),
+                      expiresAt: moment(note.expirationDate).format(),
                       birthDate: moment(note.birthDate).format(),
                       userId: userRecord.id, 
                       fromComputer: true,
@@ -765,19 +765,8 @@ module.exports = {
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
     context.intro = introMap[opts.status];
-    /* This will be used for follow up, but currently needs reworking
-    scheduler.add('waivework-reminder', {
-      uid   : `waivework-reminder-${opts.user.id}`,
-      unique: true,
-      timer : {value: 8, type: 'hours'},
-      data  : {
-        userId: opts.user.id,
-      },
-    });
-    */
     // This searches for a quote that has not yet expired
-    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expirationDate: {$gt: moment().format('YYYY-MM-DD')}}});
-    console.log('quote', quote);
+    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
     // If a non-expired quote already exists, it must be created here
     if (!quote) {
       quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
@@ -790,6 +779,16 @@ module.exports = {
       /* This text needs to be reworked
       yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
       */
+      scheduler.add('waivework-reminder', {
+        uid   : `waivework-reminder-${opts.user.id}`,
+        unique: true,
+        timer : {value: 3, type: 'days'},
+        data  : {
+          userId: opts.user.id,
+          reminderCount: 0,
+          type: 'accepted',
+        }
+      });
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
@@ -799,6 +798,7 @@ module.exports = {
       };
       yield email.send(emailOpts);
     } catch(err) {
+      console.log('err', err);
       log.warn('Failed to deliver notification email: ', emailOpts, err);      
     }
   }
