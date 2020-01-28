@@ -44,44 +44,55 @@ let nextTimeMapper = {
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
   let user = yield User.findById(userId);
-  let name = `${user.firstName} ${user.lastName}`;
-  let text = '<p>Thanks for signing up for WaiveWork! ';
-  if (!user.verifiedPhone || !user.stripeId || !user.password) {
-    text += ' To coninue with th signup process you will need to: <ul>';
-    if (!user.password) {
-      text += '<li>Set up your password for your online account</li>';
+  if (!user.bookingId /*or other reason to know they have signed up */) {
+    let name = `${user.firstName} ${user.lastName}`;
+    let text = '<p>Thanks for signing up for WaiveWork! ';
+    if (!user.verifiedPhone || !user.stripeId || !user.password) {
+      text += ' To coninue with th signup process you will need to: <ul>';
+      if (!user.password) {
+        text += '<li>Set up your password for your online account</li>';
+      }
+      if (!user.verifiedPhone) {
+        text += '<li>Add a phone number</li>';
+      }
+      if (!user.stripeId) {
+        text += '<li>Add a valid payment method to your account</li>';
+      }
+      text += '</ul>';
+    } else {
+      text +=
+        'Thanks for already having set up your account. The only remaining step to complete if you have already set up a pickup appointment is to make sure you have received and esigned the WaiveWork agreement.';
     }
-    if (!user.verifiedPhone) {
-      text += '<li>Add a phone number</li>';
-    }
-    if (!user.stripeId) {
-      text += '<li>Add a valid payment method to your account</li>';
-    }
-    text += '</ul>';
-  } else {
-    text +=
-      'Thanks for already having set up your account. The only remaining step to complete if you have already set up a pickup appointment is to make sure you have received and esigned the WaiveWork agreement.';
-  }
-  text += '</p>';
-  try {
-    /* Don't put this text back in until a new message has been created
+    text += '</p>';
+    try {
+      /* Don't put this text back in until a new message has been created
     yield notify.sendTextMessage(
       user,
       `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
     );*/
-    let email = new Email();
-    yield email.send({
-      to: user.email,
-      cc: 'work@waive.car',
-      from: config.email.sender,
-      subject: `${user.firstName} ${user.lastName} - Upcoming WaiveWork Pickup Appointment`,
-      template: 'waivework-appointment-reminder',
-      context: {
-        name,
-        text,
-      },
-    });
-  } catch (e) {
-    console.log('Error sending email: ', e);
+      let email = new Email();
+      yield email.send({
+        to: user.email,
+        cc: 'work@waive.car',
+        from: config.email.sender,
+        subject: `${user.firstName} ${user.lastName} - WaiveWork`,
+        template: 'waivework-appointment-reminder',
+        context: {
+          name,
+          text,
+        },
+      });
+      scheduler.add('waivework-reminder', {
+        uid: `waivework-reminder-${userRecord.id}`,
+        unique: true,
+        timer: {value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry, type: 'days'},
+        data: {
+          userId: job.data.userId,
+          reminderCount: job.data.reminderCount + 1,
+        },
+      });
+    } catch (e) {
+      console.log('Error sending email: ', e);
+    }
   }
 });

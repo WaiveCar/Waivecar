@@ -654,15 +654,17 @@ module.exports = {
           yield userRecord.update({isWaivework: true});
           /* These notifications are commented out for now, but should be utilized later 
           yield notify.sendTextMessage(record, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
+          */
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
             unique: true,
-            timer : {value: 8, type: 'hours'},
+            timer : {value: 3, type: 'days'},
             data  : {
               userId: userRecord.id,
+              reminderCount: 0,
+              type: 'accepted',
             }
           });
-          */
           if (record.notes) {
             // The way that I have stored user info in Waitlist not ideal, but should be able to copy 
             // provided license info to our system when they are let in
