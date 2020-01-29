@@ -626,6 +626,7 @@ module.exports = {
       // This looks for a quote that is not yet expired
       let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
       // If a quote was not previously created, it must be created here
+      // This is done for backwards compatablility for people who previously signed up and do not have empty quotes initialized for them
       if (!quote) {
         quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
         yield quote.save();
@@ -781,6 +782,7 @@ module.exports = {
     // This searches for a quote that has not yet expired
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
     // If a non-expired quote already exists, it must be created here
+    // This is done for backwards compatablility for people who previously signed up and do not have empty quotes initialized for them
     if (!quote) {
       quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
       yield quote.save();
