@@ -31,13 +31,13 @@ let _pri = {
 };
 
 let introMap = {
-  waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-  accepted: `Accepted to waivework text`,
-  rejected: `Rejected from waivework text`,
-  incomplete: `Not all info provided`,
-  nonmarket: `User is in a city we may come to in the future`,
-  csula: "Welcome aboard Waive's CSULA program.",
-  vip: "You've been fast-tracked and skipped the waitlist!"
+  waitlist: {email: "Thanks for your patience. It's paid off because you are next in line and we've created your account."},
+  accepted: {email: `Accepted to waivework text`},
+  rejected: {email: `Rejected from waivework text`},
+  incomplete: {email: `Not all info provided`},
+  nonmarket: {email: `User is in a city we may come to in the future`},
+  csula: {email: "Welcome aboard Waive's CSULA program."},
+  vip: {email: "You've been fast-tracked and skipped the waitlist!"},
 }
 
 function inside(obj) {
@@ -528,7 +528,7 @@ module.exports = {
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
     }
-    params.intro = introMap[opts.intro];
+    params.intro = introMap[opts.intro].email;
 
     if(opts.promo === 'high5') {
       params.intro += ' Your account is now active with $5.00 in credit. It only gets better from here.';
@@ -654,9 +654,7 @@ module.exports = {
         if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
           context.accepted = true;
           yield userRecord.update({isWaivework: true});
-          /* These notifications are commented out for now, but should be utilized later 
-          yield notify.sendTextMessage(record, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
-          */
+          yield notify.sendTextMessage(record, `Congratulations! You have been approved for WaiveWork Please check your e-mail for further details.`);
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
             unique: true,
@@ -692,6 +690,7 @@ module.exports = {
             };
           }
         } else if (opts.status && opts.status === 'incomplete') {
+          yield notify.sendTextMessage(record, `Thanks for signing up for WaiveWork. To process your request, we need some further information. Please check your e-mail for more details.`);
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${record.id}`,
             unique: true,
@@ -703,6 +702,9 @@ module.exports = {
               type: 'incomplete',
             }
           });
+        } else {
+          // If the user is rejected outright or for being out of the service area
+          yield notify.sendTextMessage(record, 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details');
         }
         emailOpts = {
           to       : record.email,
@@ -778,7 +780,7 @@ module.exports = {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
     context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = introMap[opts.status];
+    context.intro = introMap[opts.status].email;
     // This searches for a quote that has not yet expired
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
     // If a non-expired quote already exists, it must be created here
