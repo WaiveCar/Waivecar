@@ -628,7 +628,6 @@ module.exports = {
           }
         }
       }
-
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
 
       // X-ref it back so that we don't do this again.
@@ -714,7 +713,7 @@ module.exports = {
           });
         } 
         if (params.isWaivework) {
-          yield notify.sendTextMessage(record, introMap[opts.status]);
+          yield notify.sendTextMessage(record, introMap[opts.status].sms);
         }
         emailOpts = {
           to       : record.email,
@@ -728,7 +727,7 @@ module.exports = {
         log.warn('Failed to deliver notification email: ', emailOpts, err);      
       }
     }
-    if (_user) {
+    if (_user && !params.isWaiveWork) {
       let list = nameList.slice(0, -2).join(', ') + (nameList.length > 2 ? ', ' : ' ') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
@@ -803,7 +802,7 @@ module.exports = {
     }
 
     try {
-      yield notify.sendTextMessage(record, introMap[opts.status]);
+      yield notify.sendTextMessage(opts.user, introMap[opts.status].sms);
       if (opts.status === 'accepted') {
         scheduler.add('waivework-reminder', {
           uid   : `waivework-reminder-${opts.user.id}`,
