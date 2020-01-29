@@ -32,10 +32,22 @@ let _pri = {
 
 let introMap = {
   waitlist: {email: "Thanks for your patience. It's paid off because you are next in line and we've created your account."},
-  accepted: {email: `Accepted to waivework text`},
-  rejected: {email: `Rejected from waivework text`},
-  incomplete: {email: `Not all info provided`},
-  nonmarket: {email: `User is in a city we may come to in the future`},
+  accepted: {
+    email: `Accepted to waivework text`,
+    sms: `Congratulations! You have been approved for WaiveWork Please check your e-mail for further details.` 
+  },
+  rejected: {
+    email: `Rejected from waivework text`,
+    sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
+  },
+  incomplete: {
+    email: `Not all info provided`,
+    sms: `Thanks for signing up for WaiveWork. To process your request, we need some further information. Please check your e-mail for more details.`
+  },
+  nonmarket: {
+    email: `User is in a city we may come to in the future`, 
+    sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
+  },
   csula: {email: "Welcome aboard Waive's CSULA program."},
   vip: {email: "You've been fast-tracked and skipped the waitlist!"},
 }
@@ -654,7 +666,6 @@ module.exports = {
         if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
           context.accepted = true;
           yield userRecord.update({isWaivework: true});
-          yield notify.sendTextMessage(record, `Congratulations! You have been approved for WaiveWork Please check your e-mail for further details.`);
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
             unique: true,
@@ -690,7 +701,6 @@ module.exports = {
             };
           }
         } else if (opts.status && opts.status === 'incomplete') {
-          yield notify.sendTextMessage(record, `Thanks for signing up for WaiveWork. To process your request, we need some further information. Please check your e-mail for more details.`);
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${record.id}`,
             unique: true,
@@ -702,9 +712,9 @@ module.exports = {
               type: 'incomplete',
             }
           });
-        } else {
-          // If the user is rejected outright or for being out of the service area
-          yield notify.sendTextMessage(record, 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details');
+        } 
+        if (params.isWaivework) {
+          yield notify.sendTextMessage(record, introMap[opts.status]);
         }
         emailOpts = {
           to       : record.email,
@@ -793,9 +803,7 @@ module.exports = {
     }
 
     try {
-      /* This text needs to be reworked
-      yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
-      */
+      yield notify.sendTextMessage(record, introMap[opts.status]);
       if (opts.status === 'accepted') {
         scheduler.add('waivework-reminder', {
           uid   : `waivework-reminder-${opts.user.id}`,

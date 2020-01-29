@@ -48,16 +48,19 @@ let nextTimeMapper = {
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
   let name = '';
-  let text = '';
+  let emailText = '';
   let user;
   let waitlist;
+  let textMsg;
   // We will follow up with accepted users until they are actually in a booking
   if (job.data.type === 'accepted') {
     user = yield User.findById(job.data.userId);
     if (!user.bookingId) {
+      // TODO : if !user.password, put in password link
       // An accepted user should always have a user record by this point
       name = `${user.firstName} ${user.lastName}`;
-      text = 'regular follow up email';
+      emailText = 'regular follow up email';
+      textMsg = '';
     }
   } else if (
     // When a person has given inaccurate info, we check if they have either signed up again (if on the waitlist)
@@ -65,12 +68,12 @@ scheduler.process('waivework-reminder', function*(job) {
   ) {
     waitlist = yield Waitlist.findById(job.data.waitlistId);
     if (waitlist.signupCount === job.data.initialSignupCount) {
-      text = 'incomplete email text';
+      emailText = 'incomplete email text';
       name = `${waitlist.firstName} ${waitlist.lastName}`;
     }
   }
   try {
-    /* Once a new message is created, this text should be put back in
+    /* Once a new message is created, this text should be put back in. It should be different for accepted and incomplete
     yield notify.sendTextMessage(
       user,
       `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
@@ -84,7 +87,7 @@ scheduler.process('waivework-reminder', function*(job) {
       template: 'waivework-follow-up',
       context: {
         name,
-        text,
+        emailText,
       },
     });
     if (
