@@ -697,7 +697,7 @@ module.exports = {
             timer : {value: 3, type: 'days'},
             data  : {
               waitlistId: record.id,
-              initialSignupCount: record.signupCount
+              initialSignupCount: record.signupCount,
               reminderCount: 0,
               type: 'incomplete',
             }

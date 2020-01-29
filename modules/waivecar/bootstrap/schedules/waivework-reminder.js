@@ -47,29 +47,27 @@ let nextTimeMapper = {
 
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
-  let user;
-  let waitlist;
-  if (userId) {
-    user = yield User.findById(userId);
-  } else {
-    waitlist = yield Waitlist.findById(job.data.waitlistId);
-  }
   let name = '';
   let text = '';
+  let user;
+  let waitlist;
   // We will follow up with accepted users until they are actually in a booking
-  if (job.data.type === 'accepted' && !user.bookingId) {
-    // An accepted user should always have a user record by this point
-    name = `${user.firstName} ${user.lastName}`;
-    text = 'regular follow up email'
+  if (job.data.type === 'accepted') {
+    user = yield User.findById(job.data.userId);
+    if (!user.bookingId) {
+      // An accepted user should always have a user record by this point
+      name = `${user.firstName} ${user.lastName}`;
+      text = 'regular follow up email';
+    }
   } else if (
     // When a person has given inaccurate info, we check if they have either signed up again (if on the waitlist)
-    job.data.type === 'incomplete' &&
-    (waitlist && waitlist.signupCount === job.data.initialSignupCount)
+    job.data.type === 'incomplete'
   ) {
-    text = 'incomplete email text';
-    name = user
-      ? `${user.firstName} ${user.lastName}`
-      : `${waitlist.firstName} ${waitlist.lastName}`;
+    waitlist = yield Waitlist.findById(job.data.waitlistId);
+    if (waitlist.signupCount === job.data.initialSignupCount) {
+      text = 'incomplete email text';
+      name = `${waitlist.firstName} ${waitlist.lastName}`;
+    }
   }
   try {
     /* Once a new message is created, this text should be put back in
