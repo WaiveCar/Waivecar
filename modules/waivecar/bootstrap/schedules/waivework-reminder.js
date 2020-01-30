@@ -73,7 +73,7 @@ let nextTimeMapper = {
       nextTry: null,
       subject: 'Your WaiveWork offer expires tomorrow',
       text: (amount, passwordlink) => `
-        <p>Tomorrow is the last day to continue with WaiveWork. Your WaiveWork offer includes a car rental for $${amount} per week with insurance and maintenance included. Due to high demand, we can only extend this offer until tomorrow. After tomorrow, your WaiveWork offer will no longer be valid. <a href="${passwordlink ? passwordlink: 'https://waivework.com/login'}"Click here to finish setting up your account</a>.</p> 
+        <p>Tomorrow is the last day to continue with WaiveWork. Your WaiveWork offer includes a car rental for $${amount} per week with insurance and maintenance included. Due to high demand, we can only extend this offer until tomorrow. After tomorrow, your WaiveWork offer will no longer be valid.</p> 
         <p>Any questions? Just respond to this email and our friendly support staff will be happy to assist you.</p>
         <p><a href="${
           passwordlink ? passwordlink : 'https://waivework.com/login'
