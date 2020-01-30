@@ -54,7 +54,10 @@ class TableIndex extends React.Component {
           message : err.message
         });
       } else {
-        location.reload();
+        return snackbar.notify({
+          type    : 'success',
+          message : `User status changed to ${opts.status}`,
+        });
       }
     });
   }
