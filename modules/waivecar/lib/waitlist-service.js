@@ -479,7 +479,7 @@ module.exports = {
       let email = new Email();
       yield email.send({
         to       : 'dennis.mata.t7h8@statefarm.com',
-        cc       : 'work@waive.car',
+        cc       : 'work@waive.com',
         from     : config.email.sender,
         subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
         template : 'waivework-signup',
@@ -666,7 +666,7 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${opts.status}-${userRecord.id}`,
             unique: true,
-            timer : {value: 3, type: 'days'},
+            timer : {value: 3, type: 'seconds'},
             data  : {
               userId: userRecord.id,
               reminderCount: 0,
@@ -702,7 +702,7 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${opts.status}-${record.id}`,
             unique: true,
-            timer : {value: 3, type: 'days'},
+            timer : {value: 3, type: 'seconds'},
             data  : {
               waitlistId: record.id,
               initialSignupCount: record.signupCount,
@@ -808,7 +808,7 @@ module.exports = {
         scheduler.add('waivework-reminder', {
           uid   : `waivework-reminder-${opts.status}-${opts.user.id}`,
           unique: true,
-          timer : {value: 3, type: 'days'},
+          timer : {value: 3, type: 'seconds'},
           data  : {
             userId: opts.user.id,
             reminderCount: 0,

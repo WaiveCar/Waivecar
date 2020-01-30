@@ -50,7 +50,7 @@ let nextTimeMapper = {
         <p>Any questions? Just respond to this email and our friendly support staff will be happy to assist you.</p>
         <p><a href="${
           passwordlink ? passwordlink : 'https://waivework.com/login'
-        }">Click here to finish your account</a></p>
+        }">Click here to finish your account</a>.</p>
       `,
     },
     '3': {
@@ -65,7 +65,7 @@ let nextTimeMapper = {
       }">You can finish setting up your account here</a></p>If you have questions, respond to this email and our friendly support staff will be happy to assist you.</p>
         <p><a href="${
           passwordlink ? passwordlink : 'https://waivework.com/login'
-        }">Click here to finish your account</a></p>
+        }">Click here to finish your account</a>.</p>
       `,
     },
     '4': {
@@ -189,7 +189,7 @@ scheduler.process('waivework-reminder', function*(job) {
     let email = new Email();
     yield email.send({
       to: user ? user.email : waitlist.email,
-      cc: 'work@waive.car',
+      cc: 'work@waive.com',
       from: config.email.sender,
       subject: subject,
       template: 'waivework-follow-up',
@@ -213,7 +213,7 @@ scheduler.process('waivework-reminder', function*(job) {
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
-          type: 'days',
+          type: 'seconds',
         },
         data: {
           userId: job.data.userId,
