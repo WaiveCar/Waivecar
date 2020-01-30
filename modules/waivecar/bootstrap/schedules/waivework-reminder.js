@@ -107,7 +107,7 @@ let nextTimeMapper = {
 
 function moreInfoEmail(amount, passwordlink, record) {
   let note = JSON.parse(record.notes);
-  note = JSON.parse(note[note.length - 1]);
+  note = note && JSON.parse(note[note.length - 1]);
   return `
     <p>Your WaiveWork application has been submitted and it seems we don’t have all the information we need to give you an accurate quote. This can happen for a number of reasons, including:</p
     <ul>
@@ -120,7 +120,7 @@ function moreInfoEmail(amount, passwordlink, record) {
     The information that you signed up with was: 
       <ul>
       ${
-        note.notes
+        note && note.notes
           ? `
         <li>Name: ${note.firstName} ${note.lastName}</li>
         <li>License Number: ${note.number}</li>
