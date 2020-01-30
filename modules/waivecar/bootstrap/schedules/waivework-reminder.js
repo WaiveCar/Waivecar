@@ -61,12 +61,12 @@ let nextTimeMapper = {
         <p>Your WaiveWork offer is expiring in less than a week.</p> 
 
         <p>This includes a car rental for one weekly price of $${amount} with insurance and maintenance included. <a href="${
-          passwordlink ? passwordlink : 'https://waivework.com/login'
-        }">You can finish setting up your account here</a></p>If you have questions, respond to this email and our friendly support staff will be happy to assist you.</p>
+        passwordlink ? passwordlink : 'https://waivework.com/login'
+      }">You can finish setting up your account here</a></p>If you have questions, respond to this email and our friendly support staff will be happy to assist you.</p>
         <p><a href="${
           passwordlink ? passwordlink : 'https://waivework.com/login'
         }">Click here to finish your account</a></p>
-      `
+      `,
     },
     '4': {
       daysRemaining: 1,
@@ -84,18 +84,63 @@ let nextTimeMapper = {
   incomplete: {
     '0': {
       nextTry: 3,
+      subject: 'Your WaiveWork Application',
+      text: moreInfoEmail,
     },
     '1': {
       nextTry: 6,
+      subject: 'Your WaiveWork Application',
+      text: moreInfoEmail,
     },
     '2': {
       nextTry: 12,
+      subject: 'Your WaiveWork Application',
+      text: moreInfoEmail,
     },
     '3': {
       nextTry: null,
+      subject: 'Your WaiveWork Application',
+      text: moreInfoEmail,
     },
   },
 };
+
+function moreInfoEmail(record) {
+  return `
+    <p>Your WaiveWork application has been submitted and it seems we don’t have all the information we need to give you an accurate quote. This can happen for a number of reasons, including:</p
+    <ul>
+      <li>An incorrectly entered driver’s license number on your application.</li>
+      <li>A driver’s license with too short of driving history (include your driver’s license with a longer history if you have one).</li>
+      <li>An incorrectly entered date of birth on your application (make sure to use your birth year).</li>
+      <li>A P.O. Box or business address on your application. All applications must use a residential address in their application.</li>
+    </ul>
+    <p>
+    The information that you signed up with was: 
+      <ul>
+      ${
+        record.notes
+          ? `
+        <li>Name: ${record.firstName} ${record.lastName}</li>
+        <li>License Number: ${record.number}</li>
+        <li>License State: ${record.licenseState}</li>
+        <li>Birthday: ${record.birthDate}</li>
+        <li>Expiration: ${record.expirationDate}</li>
+        <li>Address: </li>
+        <ul>
+          <li>${record.street1}</li>
+          ${record.street2 ? `<li>${record.street2}</li>` : ''}
+          <li>${record.city}, ${record.state} ${record.zip}</li>
+        </ul>
+        <li>Email: ${record.email}</li>
+        <li>Phone: ${record.phone}</li>
+      `
+          : `<li>Information not available</li>`
+      }
+      </ul>
+    </p>
+  <p>If you have questions or need more information, respond to this email and we will be happy to assist you. Additionally, you can call us at 855-924-8355. You can try signing up again <a href="https://waivework.com/signup">here</a>.
+  `;
+}
 
 scheduler.process('waivework-reminder', function*(job) {
   let userId = job.data.userId;
@@ -159,7 +204,9 @@ scheduler.process('waivework-reminder', function*(job) {
       nextTimeMapper[job.data.type][job.data.reminderCount].nextTry
     ) {
       scheduler.add('waivework-reminder', {
-        uid: `waivework-reminder-${job.data.type}-${user ? user.id : waitlist.id}`,
+        uid: `waivework-reminder-${job.data.type}-${
+          user ? user.id : waitlist.id
+        }`,
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
