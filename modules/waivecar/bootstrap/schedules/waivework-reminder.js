@@ -120,7 +120,7 @@ function moreInfoEmail(amount, passwordlink, record) {
     The information that you signed up with was: 
       <ul>
       ${
-        note && note.notes
+        note
           ? `
         <li>Name: ${note.firstName} ${note.lastName}</li>
         <li>License Number: ${note.number}</li>
