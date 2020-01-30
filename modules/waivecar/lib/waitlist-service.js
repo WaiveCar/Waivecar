@@ -645,7 +645,7 @@ module.exports = {
       let context = Object.assign({}, params || {}, {
         name: record.firstName,
         price: opts.perWeek,
-        notes: JSON.parse(notes[notes.length - 1]),
+        notes: notes && JSON.parse(notes[notes.length - 1]),
       });
       // If a user set their password through signup then we transfer it over
       if(record.password) {
