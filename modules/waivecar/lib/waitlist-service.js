@@ -666,11 +666,12 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
             unique: true,
-            timer : {value: 3, type: 'days'},
+            timer : {value: 3, type: 'seconds'},
             data  : {
               userId: userRecord.id,
               reminderCount: 0,
               type: 'accepted',
+              price: opts.perWeek,
             }
           });
           if (record.notes) {
@@ -701,7 +702,7 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${record.id}`,
             unique: true,
-            timer : {value: 3, type: 'days'},
+            timer : {value: 3, type: 'seconds'},
             data  : {
               waitlistId: record.id,
               initialSignupCount: record.signupCount,
@@ -807,11 +808,12 @@ module.exports = {
         scheduler.add('waivework-reminder', {
           uid   : `waivework-reminder-${opts.user.id}`,
           unique: true,
-          timer : {value: 3, type: 'days'},
+          timer : {value: 3, type: 'seconds'},
           data  : {
             userId: opts.user.id,
             reminderCount: 0,
             type: opts.status,
+            price: opts.perWeek,
           }
         });
       }
