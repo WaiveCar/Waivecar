@@ -113,10 +113,9 @@ class TableIndex extends React.Component {
         return row.id === id;
       })[0]
     }, () => {
-      this.table.init()
       this.setState({
         currentNotes: JSON.parse(this.state.userSelected.notes)
-      }, () => this.table.init());
+      });
     });
   }
 
