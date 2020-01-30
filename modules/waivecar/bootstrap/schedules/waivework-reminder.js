@@ -140,7 +140,7 @@ function moreInfoEmail(amount, passwordlink, record) {
       }
       </ul>
     </p>
-  <p>If you have questions or need more information, respond to this email and we will be happy to assist you. Additionally, you can call us at 855-924-8355. You can try signing up again <a href="https://waivework.com/signup">here</a>.
+  <p>If you have questions or need more information, respond to this email and we will be happy to assist you. Additionally, you can call us at 855-924-8355. If you see a mistake in the information above, you can try signing up again <a href="https://waivework.com/signup">here</a>.
   `;
 }
 
@@ -213,7 +213,7 @@ scheduler.process('waivework-reminder', function*(job) {
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
-          type: 'seconds',
+          type: 'days',
         },
         data: {
           userId: job.data.userId,
