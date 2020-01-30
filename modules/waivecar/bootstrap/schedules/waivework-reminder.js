@@ -105,7 +105,9 @@ let nextTimeMapper = {
   },
 };
 
-function moreInfoEmail(record) {
+function moreInfoEmail(amount, passwordlink, record) {
+  let note = JSON.parse(record.notes);
+  note = JSON.parse(note[note.length - 1]);
   return `
     <p>Your WaiveWork application has been submitted and it seems we don’t have all the information we need to give you an accurate quote. This can happen for a number of reasons, including:</p
     <ul>
@@ -118,21 +120,21 @@ function moreInfoEmail(record) {
     The information that you signed up with was: 
       <ul>
       ${
-        record.notes
+        note.notes
           ? `
-        <li>Name: ${record.firstName} ${record.lastName}</li>
-        <li>License Number: ${record.number}</li>
-        <li>License State: ${record.licenseState}</li>
-        <li>Birthday: ${record.birthDate}</li>
-        <li>Expiration: ${record.expirationDate}</li>
+        <li>Name: ${note.firstName} ${note.lastName}</li>
+        <li>License Number: ${note.number}</li>
+        <li>License State: ${note.licenseState}</li>
+        <li>Birthday: ${note.birthDate}</li>
+        <li>Expiration: ${note.expirationDate}</li>
         <li>Address: </li>
         <ul>
-          <li>${record.street1}</li>
-          ${record.street2 ? `<li>${record.street2}</li>` : ''}
-          <li>${record.city}, ${record.state} ${record.zip}</li>
+          <li>${note.street1}</li>
+          ${note.street2 ? `<li>${note.street2}</li>` : ''}
+          <li>${note.city}, ${note.state} ${note.zip}</li>
         </ul>
-        <li>Email: ${record.email}</li>
-        <li>Phone: ${record.phone}</li>
+        <li>Email: ${note.email}</li>
+        <li>Phone: ${note.phone}</li>
       `
           : `<li>Information not available</li>`
       }
@@ -196,6 +198,7 @@ scheduler.process('waivework-reminder', function*(job) {
         text: nextTimeMapper[job.data.type][job.data.reminderCount].text(
           job.data.price,
           passwordlink,
+          waitlist,
         ),
       },
     });
