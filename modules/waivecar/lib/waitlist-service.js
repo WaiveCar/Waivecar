@@ -647,7 +647,7 @@ module.exports = {
 
 
       let context = Object.assign({}, params || {}, {
-        name: fullName
+        name: record.firstName,
       });
       // If a user set their password through signup then we transfer it over
       if(record.password) {
@@ -661,9 +661,9 @@ module.exports = {
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
       try {
+        context[opts.status] = true;
         // This should only happen if we are actually letting them in and not just updating their waitlist status
         if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
-          context.accepted = true;
           yield userRecord.update({isWaivework: true});
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${userRecord.id}`,
@@ -718,7 +718,7 @@ module.exports = {
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
-          subject  : 'WaiveWork Status Update',
+          subject  : 'Your WaiveWork Application',
           template : opts.template || template,
           context  : context
         };
@@ -788,8 +788,9 @@ module.exports = {
   *sendWaiveWorkEmail(opts) {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
-    context.name = `${opts.user.firstName} ${opts.user.lastName}`;
+    context.name = opts.user.firstName;
     context.intro = introMap[opts.status].email;
+    context[opts.status] = true;
     // This searches for a quote that has not yet expired
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
     // If a non-expired quote already exists, it must be created here
@@ -818,8 +819,8 @@ module.exports = {
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
-        subject  : 'WaiveWork Status Update',
-        template : 'letin-email-nopass',
+        subject  : 'Your WaiveWork Application',
+        template : 'letin-email',
         context  : context,
       };
       yield email.send(emailOpts);
