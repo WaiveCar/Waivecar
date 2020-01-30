@@ -1,18 +1,20 @@
 <div class="main"><h3>Hi {{ name }},</h3>
-  <p>
-    {{{ intro }}}
-  </p>
-  {{#unless isWaivework}}
-    <p>Remember, to drive with Waive you'll need:
-      <ul>
-        <li>A very clean driving record</li>
-        <li>A valid credit card</li>
-      </ul>
-    </p>
-    <p>
-      The next steps are to give yourself a password, log in and set up your account.
-    </p>
-  {{/unless}}
+  {{#if accepted}}
+    <p>Congratulations, you’ve been accepted into our WaiveWork program. We are excited to offer your car rental that includes insurance and maintenance for just ${{price}} per week. Before you can get into your car, head over to your account page and fill in your information. After you’ve filled in your information, call us at 855-924-8355 and we will finish the process. If you’ve already created your account and filled in your account information, call us at 855-924-8355.</p>
+
+    <p>Any questions? Just respond to this email.</p>
+
+    <p>Due to high demand, this offer is only valid for 30 days.</p>
+
+    <p>Click here to finish your account</p>
+  {{else if rejected}}
+  
+  {{else if incomplete}}
+  
+  {{else if nonmarket}}
+  
+  {{/if}}  
+
   {{#if passwordlink}}
   <p>
     <a href={{ passwordlink }}><b>Click here to set up your password</b></a>.
@@ -23,7 +25,6 @@
   </p>
   {{/if}}
   <p>
-    Best regards,<br>
     Waive
   </p>
 </div>

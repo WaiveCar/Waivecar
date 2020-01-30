@@ -33,19 +33,15 @@ let _pri = {
 let introMap = {
   waitlist: {email: "Thanks for your patience. It's paid off because you are next in line and we've created your account."},
   accepted: {
-    email: `Accepted to waivework text`,
     sms: `Congratulations! You have been approved for WaiveWork Please check your e-mail for further details.` 
   },
   rejected: {
-    email: `Rejected from waivework text`,
     sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
   },
   incomplete: {
-    email: `Not all info provided`,
     sms: `Thanks for signing up for WaiveWork. To process your request, we need some further information. Please check your e-mail for more details.`
   },
   nonmarket: {
-    email: `User is in a city we may come to in the future`, 
     sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
   },
   csula: {email: "Welcome aboard Waive's CSULA program."},
@@ -648,6 +644,7 @@ module.exports = {
 
       let context = Object.assign({}, params || {}, {
         name: record.firstName,
+        price: opts.perWeek,
       });
       // If a user set their password through signup then we transfer it over
       if(record.password) {
@@ -791,6 +788,7 @@ module.exports = {
     context.name = opts.user.firstName;
     context.intro = introMap[opts.status].email;
     context[opts.status] = true;
+    context.price = opts.perWeek;
     // This searches for a quote that has not yet expired
     let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
     // If a non-expired quote already exists, it must be created here
