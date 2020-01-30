@@ -641,10 +641,11 @@ module.exports = {
         yield quote.update({userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
       }
 
-
+      let notes = JSON.parse(record.notes);
       let context = Object.assign({}, params || {}, {
         name: record.firstName,
         price: opts.perWeek,
+        notes: JSON.parse(notes[notes.length - 1]),
       });
       // If a user set their password through signup then we transfer it over
       if(record.password) {
