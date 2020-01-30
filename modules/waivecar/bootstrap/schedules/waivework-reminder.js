@@ -159,7 +159,7 @@ scheduler.process('waivework-reminder', function*(job) {
       nextTimeMapper[job.data.type][job.data.reminderCount].nextTry
     ) {
       scheduler.add('waivework-reminder', {
-        uid: `waivework-reminder-${user ? user.id : waitlist.id}`,
+        uid: `waivework-reminder-${job.data.type}-${user ? user.id : waitlist.id}`,
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,

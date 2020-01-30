@@ -664,7 +664,7 @@ module.exports = {
         if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
           yield userRecord.update({isWaivework: true});
           scheduler.add('waivework-reminder', {
-            uid   : `waivework-reminder-${userRecord.id}`,
+            uid   : `waivework-reminder-${opts.status}-${userRecord.id}`,
             unique: true,
             timer : {value: 3, type: 'seconds'},
             data  : {
@@ -700,7 +700,7 @@ module.exports = {
           }
         } else if (opts.status && opts.status === 'incomplete') {
           scheduler.add('waivework-reminder', {
-            uid   : `waivework-reminder-${record.id}`,
+            uid   : `waivework-reminder-${opts.status}-${record.id}`,
             unique: true,
             timer : {value: 3, type: 'seconds'},
             data  : {
@@ -806,7 +806,7 @@ module.exports = {
       yield notify.sendTextMessage(opts.user, introMap[opts.status].sms);
       if (opts.status === 'accepted') {
         scheduler.add('waivework-reminder', {
-          uid   : `waivework-reminder-${opts.user.id}`,
+          uid   : `waivework-reminder-${opts.status}-${opts.user.id}`,
           unique: true,
           timer : {value: 3, type: 'seconds'},
           data  : {
