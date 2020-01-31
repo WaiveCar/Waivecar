@@ -508,10 +508,19 @@ module.exports = class BookingService extends Service {
   }
 
   static *calculateProratedCharge(weeklyAmount, startDate) {
-    // If th startDate is defined, it is used to calculate the prorated amount. If it 
-    // is not provided, the current time in Los Angeles needs to be used so that the
-    // calculation is based on the correct day.
-    let today = startDate ? moment(startDate) : moment().tz('America/Los_Angeles');
+    //let today = startDate ? moment(startDate) : moment().tz('America/Los_Angeles');
+    let dayINeed = 2; // for tuesday
+    let today = moment().tz('America/Los_Angeles').weekday();
+    function getNextTuesday(today) { 
+      if (today <= dayINeed) {
+        return moment().tz('America/Los_Angeles').weekday(dayINeed);
+      } else {
+        return moment().tz('America/Los_Angeles').add(1, 'weeks').weekday(dayINeed);
+      }
+    }
+    let nextDate = getNextTuesday();
+    console.log(nextDate);
+    /*
     let daysInMonth = today.daysInMonth();
     let currentDay = today.date();
     let nextDate;
@@ -536,8 +545,8 @@ module.exports = class BookingService extends Service {
     let dates = [1, 8, 15, 22, 1]
     if (prorating === 0) {
       nextDate = dates[dates.indexOf(nextDate) + 1];
-    }
-    return {today, daysInMonth, currentDay, nextDate, proratedChargeAmount}; 
+    }*/
+    return {today, currentDay, nextDate, proratedChargeAmount}; 
   }
     
   static *handleWaivework(booking, data, _user, driver) {
@@ -547,7 +556,6 @@ module.exports = class BookingService extends Service {
     // this prorated amount + the first weekly payment, and automatic billing will start two Tuesdays later
     let {
       today, 
-      daysInMonth, 
       currentDay, 
       nextDate, 
       daysLeft, 
