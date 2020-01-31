@@ -157,7 +157,7 @@ scheduler.process('waivework-billing', function*(job) {
   ];
 
   let toImmobilize = [];
-  // Users will only be billed on the 1st, 8th 15th and 22nd of each month.
+  // Legacy users will only be billed on the 1st, 8th 15th and 22nd of each month. This whole section should be removed once
   if ([1, 8, 15, 22].includes(currentDay)) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -167,6 +167,7 @@ scheduler.process('waivework-billing', function*(job) {
             .format('YYYY-MM-DD'),
         },
         bookingPaymentId: null,
+        legacy: true,
       },
       include: [
         {
@@ -280,6 +281,7 @@ scheduler.process('waivework-billing', function*(job) {
           date: nextDate,
           bookingPaymentId: null,
           amount: oldPayment.amount,
+          legacy: oldPayment.legacy,
         });
         yield newPayment.save();
         if (!isFirstPayment) {
