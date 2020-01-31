@@ -508,9 +508,8 @@ module.exports = class BookingService extends Service {
   }
 
   static *calculateProratedCharge(weeklyAmount, startDate) {
-    //let today = startDate ? moment(startDate) : moment().tz('America/Los_Angeles');
     let dayINeed = 2; // for tuesday
-    let today = moment().tz('America/Los_Angeles').weekday();
+    let today = moment(startDate || undefined).tz('America/Los_Angeles');
     function getNextTuesday(today) { 
       if (today <= dayINeed) {
         return moment().tz('America/Los_Angeles').weekday(dayINeed);
@@ -518,35 +517,9 @@ module.exports = class BookingService extends Service {
         return moment().tz('America/Los_Angeles').add(1, 'weeks').weekday(dayINeed);
       }
     }
-    let nextDate = getNextTuesday();
-    console.log(nextDate);
-    /*
-    let daysInMonth = today.daysInMonth();
-    let currentDay = today.date();
-    let nextDate;
-    switch(true) {
-      case currentDay <= 8:
-        nextDate = 8;
-        break;
-      case currentDay <= 15:
-        nextDate = 15;
-        break;
-      case currentDay <= 22:
-        nextDate = 22;
-        break;
-      default:
-        nextDate = 1;
-        break;
-    }
-    let numDays = nextDate !== 1 ? 7 : daysInMonth + 1 - 22;
-    let daysLeft = (nextDate !== 1 ? nextDate : daysInMonth + nextDate) - currentDay;
-    let prorating = daysLeft / numDays;
-    let proratedChargeAmount = Math.floor(Number(weeklyAmount) * (prorating > 0 ? prorating : 1));
-    let dates = [1, 8, 15, 22, 1]
-    if (prorating === 0) {
-      nextDate = dates[dates.indexOf(nextDate) + 1];
-    }*/
-    return {today, currentDay, nextDate, proratedChargeAmount}; 
+    let nextDate = getNextTuesday(today.weekday());
+    let proratedChargeAmount = (Math.abs(today.diff(nextDate, 'days') / 7) * Number(weeklyAmount)).toFixed(2);
+    return {today, nextDate, proratedChargeAmount}; 
   }
     
   static *handleWaivework(booking, data, _user, driver) {
@@ -556,7 +529,6 @@ module.exports = class BookingService extends Service {
     // this prorated amount + the first weekly payment, and automatic billing will start two Tuesdays later
     let {
       today, 
-      currentDay, 
       nextDate, 
       daysLeft, 
       proratedChargeAmount
