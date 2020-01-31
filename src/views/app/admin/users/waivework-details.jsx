@@ -224,7 +224,7 @@ class WaiveWorkDetails extends Component {
       });
     }
     if (
-      action === 'complete' ||
+      (action === 'complete' || action === 'ready') ||
       confirm(
         'Are you sure you want to end this waivework booking? Automatic Billing will be stopped.',
       )
@@ -566,9 +566,20 @@ class WaiveWorkDetails extends Component {
                         type="button"
                         className="btn btn-primary"
                         onClick={() =>
-                          this.bookingAction(ended ? 'complete' : 'end')
+                          this.bookingAction(
+                            currentWaiveworkBooking.status === 'reserved'
+                              ? 'ready'
+                              : ended
+                              ? 'complete'
+                              : 'end',
+                          )
                         }>
-                        {ended ? 'Complete' : 'End'} Booking
+                        {currentWaiveworkBooking.status === 'reserved'
+                          ? 'start'
+                          : ended
+                          ? 'complete'
+                          : 'end'}{' '}
+                        Booking
                       </button>
                       <button
                         type="button"
