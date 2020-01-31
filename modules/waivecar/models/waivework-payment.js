@@ -41,11 +41,6 @@ Bento.Register.Model('WaiveworkPayment', 'sequelize', function(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-
-    legacy: {
-      type: Sequelize.BOOLEAN,
-      default: false,
-    },
   };
 
   model.relations = [

@@ -281,7 +281,6 @@ scheduler.process('waivework-billing', function*(job) {
           date: nextDate,
           bookingPaymentId: null,
           amount: oldPayment.amount,
-          legacy: oldPayment.legacy,
         });
         yield newPayment.save();
         if (!isFirstPayment) {
