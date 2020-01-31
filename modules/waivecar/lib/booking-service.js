@@ -408,8 +408,10 @@ module.exports = class BookingService extends Service {
       timerMap = config.booking.timers.aid;
     }
 
-    // careful careful... we first set the cancel timer, always.
-    yield booking.setCancelTimer(timerMap);
+    // careful careful... we first set the cancel timer, unless this is a WaiveWork booking.
+    if (!data.isWaivework) {
+      yield booking.setCancelTimer(timerMap);
+    }
 
     // if the user is autoextended then we do an infinite extension
     // without sending an extra message
@@ -470,8 +472,9 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     booking.relay('store', driver);
-
-    yield notify.sendTextMessage(driver, msg);
+    if (!data.isWaivework) {
+      yield notify.sendTextMessage(driver, msg);
+    }
 
     let message = yield this.updateState('created', _user, driver);
     if(isRush) {
@@ -538,10 +541,10 @@ module.exports = class BookingService extends Service {
   }
     
   static *handleWaivework(booking, data, _user, driver) {
-    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur on the 1st,
-    // 8th, 15th and 22nd of each month. When the booking is started on a day that is not one of those days, they will 
-    // be charged a prorated amount for the amount of time before that date
-    yield this.ready(booking.id, _user);
+    // This function is for starting automatic billing for WaiveWork bookings. Currently, booking will occur each Tuesday. 
+    // When the booking is started on a day that is not one of those days, they will 
+    // be charged a prorated amount for the amount of time before that date. When the car is reserved, they will be charged for 
+    // this prorated amount + the first weekly payment, and automatic billing will start two Tuesdays later
     let {
       today, 
       daysInMonth, 
