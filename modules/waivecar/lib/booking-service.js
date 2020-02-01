@@ -518,7 +518,7 @@ module.exports = class BookingService extends Service {
       }
     }
     let nextDate = getNextTuesday(today.weekday());
-    let proratedChargeAmount = (Math.abs(today.diff(nextDate, 'days') / 7) * Number(weeklyAmount)).toFixed(2);
+    let proratedChargeAmount = ((Math.abs(today.diff(nextDate, 'days') + 1) / 7 )* Number(weeklyAmount)).toFixed(2);
     return {today, nextDate, proratedChargeAmount}; 
   }
     
@@ -532,19 +532,17 @@ module.exports = class BookingService extends Service {
       nextDate, 
       daysLeft, 
       proratedChargeAmount
-    } = (yield this.calculateProratedCharge(data.amount));
+    } = (yield this.calculateProratedCharge(data.amount, data.startDate));
     // Here, we will need to charge the user the correct amount, create a BookingPayment and create a 
     // WaiveworkPayment for auto payement. QuickCharge should be used for the charge.
     data.source = 'WaiveWork Intial Payment';
-    data.description = 'Initial Payment For WaiveWork';
+    data.description = `Initial Payment For WaiveWork - First weekly payment of $${(data.amount / 100).toFixed(2)} + prorated charge of $${(proratedChargeAmount / 100).toFixed(2)} for booking starting ${data.startDate}`;
     data.waivework = true;
     let weeklyAmount = data.amount;
-    data.amount = proratedChargeAmount;
-    // Currently, the user will just be charged $0 while the prorated charge is still charged manually.
-    // This will need to be changed later on when users can reserve their own cars
-    data.amount = 0;
+    data.amount = Math.floor(data.amount + Number(proratedChargeAmount));
+    // Users are charged first weekly + prorated when the car is reserved
     try {
-      let workCharge = (yield OrderService.quickCharge(data, _user, {nocredit: true})).order;
+      let workCharge = (yield OrderService.quickCharge(data, _user, {useWorkCredit: true})).order;
       let bookingPayment = new BookingPayment({
         bookingId: booking.id,
         orderId: workCharge.id,
@@ -566,9 +564,7 @@ module.exports = class BookingService extends Service {
     }
     let waiveworkPayment = new WaiveworkPayment({
       bookingId: booking.id,
-      date: moment().date(nextDate).month(nextDate !== 1 ? 
-        moment().tz('America/Los_Angeles').month() : 
-        moment().tz('America/Los_Angeles').month() + 1).format('YYYY-MM-DD'),
+      date: nextDate.add(1, 'weeks'), 
       bookingPaymentId: null,
       amount: weeklyAmount,
     });
