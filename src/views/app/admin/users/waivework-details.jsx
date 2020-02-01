@@ -153,6 +153,7 @@ class WaiveWorkDetails extends Component {
       carId,
       isWaivework: true,
       amount: this.state.perWeek * 100,
+      startDate: this.state.startDate,
     };
     if (!data.amount) {
       return snackbar.notify({
