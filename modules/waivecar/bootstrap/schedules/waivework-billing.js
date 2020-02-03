@@ -80,12 +80,6 @@ scheduler.process('waivework-billing', function*(job) {
   let today = moment();
   let currentDay = today.day();
 
-  // The unpaid WaiveworkPayments that are created on the previous billing date
-  // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
-  // works by making the charge that was scheduled on the previous billing date and
-  // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
-  // This is a payment reminder to be sent out before payment day
-  let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
   if (currentDay === 0) {
     let todaysPayments = yield WaiveworkPayment.find({
@@ -145,9 +139,6 @@ scheduler.process('waivework-billing', function*(job) {
   let failedChargePayload = [
     ":male_vampire: *The following users's weekly automatic charges have failed:* \n",
   ];
-  let firstChargePayload = [
-    ':one: *The following users are making their first full payment this week. Please manually review them before chargng:* \n',
-  ];
   let evgoChargePayload = [
     ':zap: *The following users were successfully charged for EVgo charging this week:* \n',
   ];
@@ -157,7 +148,10 @@ scheduler.process('waivework-billing', function*(job) {
   ];
 
   let toImmobilize = [];
-  // Legacy users will only be billed on the 1st, 8th 15th and 22nd of each month. This whole section should be removed once
+  // The unpaid WaiveworkPayments that are created on the previous billing date
+  // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
+  // works by making the charge that was scheduled on the previous billing date and
+  // then schdeduling a new (unpaid) WaiveworkPayment for the next billing date.
   if (currentDay === 2) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -221,7 +215,7 @@ scheduler.process('waivework-billing', function*(job) {
             oldPayment.amount / 100
           ).toFixed(
             2,
-          )} was successful! ${creditString}. For more account information, please visit waivework.com.`;
+          )} was successful! ${creditString}. For account information, please visit waivework.com.`;
         } catch (e) {
           failedChargePayload.push(
             `${user.link()} had a failed charge of $${(
@@ -235,7 +229,7 @@ scheduler.process('waivework-billing', function*(job) {
             oldPayment.amount / 100
           ).toFixed(
             2,
-          )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized. You can try to make you payment again with our website that can be found at waivework.com.`;
+          )} has failed. If it is not paid in a timely manner, your car may be immobilized. You can try to make you payment again with our website found at waivework.com.`;
           toImmobilize.push(oldPayment);
           let bookingPayment = new BookingPayment({
             bookingId: oldPayment.booking.id,
@@ -244,12 +238,8 @@ scheduler.process('waivework-billing', function*(job) {
           yield bookingPayment.save();
         }
 
-        let dates = [8, 15, 22, 1, 8];
-        let nextDay = dates[dates.indexOf(currentDay) + 1];
-        let toAddMonth = currentDay === 22;
-        let nextDate = moment()
-          .month(toAddMonth ? moment().month() + 1 : moment().month())
-          .date(nextDay);
+        let nextDate = today.add(1, 'weeks');
+
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
           date: nextDate,
@@ -372,12 +362,6 @@ scheduler.process('waivework-billing', function*(job) {
     if (failedChargePayload.length > 1) {
       yield notify.slack(
         {text: failedChargePayload.join('\n')},
-        {channel: '#waivework-charges'},
-      );
-    }
-    if (firstChargePayload.length > 1) {
-      yield notify.slack(
-        {text: firstChargePayload.join('\n')},
         {channel: '#waivework-charges'},
       );
     }
