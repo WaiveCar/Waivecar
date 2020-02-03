@@ -78,7 +78,7 @@ scheduler.process('waivework-billing', function*(job) {
     );
   }
   let today = moment();
-  let currentDay = today.date();
+  let currentDay = today.day();
 
   // The unpaid WaiveworkPayments that are created on the previous billing date
   // are the ones that are queried for (where the bookingPaymentId is null). Automatic billing
@@ -87,7 +87,7 @@ scheduler.process('waivework-billing', function*(job) {
   // This is a payment reminder to be sent out before payment day
   let lastReminder = moment().daysInMonth() - 1;
   // If the current day is two days before the current payment date, a reminder will need to be sent out
-  if ([6, 13, 20, lastReminder].includes(currentDay)) {
+  if (currentDay === 0) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
         date: {
@@ -120,7 +120,7 @@ scheduler.process('waivework-billing', function*(job) {
               upcomingPayment.amount / 100
             ).toFixed(
               2,
-            )} automatically for the next week of your WaiveWork booking in 2 days. If you would like to make your payment in advance, please visit waivework.com`,
+            )} automatically for your next week of WaiveWork booking on Tuesday. If you would like to make your payment in advance, please visit waivework.com.`,
           );
           emailOpts = {
             to: user.email,
@@ -128,7 +128,7 @@ scheduler.process('waivework-billing', function*(job) {
             subject: 'Your Upcoming WaiveWork Payment',
             template: 'waivework-payment-reminder',
             context: {
-              name: `${user.firstName} ${user.lastName}`,
+              name: `${user.firstName}`,
               amount: (upcomingPayment.amount / 100).toFixed(2),
             },
           };
@@ -158,7 +158,7 @@ scheduler.process('waivework-billing', function*(job) {
 
   let toImmobilize = [];
   // Legacy users will only be billed on the 1st, 8th 15th and 22nd of each month. This whole section should be removed once
-  if ([1, 8, 15, 22].includes(currentDay)) {
+  if (currentDay === 2) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
         date: {
@@ -167,7 +167,6 @@ scheduler.process('waivework-billing', function*(job) {
             .format('YYYY-MM-DD'),
         },
         bookingPaymentId: null,
-        legacy: true,
       },
       include: [
         {
@@ -201,24 +200,10 @@ scheduler.process('waivework-billing', function*(job) {
 
         data.waiveworkWeekly = true;
         let user = yield User.findById(oldPayment.booking.userId);
-        let isFirstPayment =
-          (yield WaiveworkPayment.find({
-            where: {
-              bookingId: oldPayment.bookingId,
-            },
-          })).length === 1;
-        if (isFirstPayment) {
-          firstChargePayload.push(
-            `${user.link()}'s charge of $${(oldPayment.amount / 100).toFixed(
-              2,
-            )}.`,
-          );
-          // A dummy shopOrder must be made for inital payments so that the next payments may be made
-          data.amount = 0;
+        try {
           let shopOrder = (yield OrderService.quickCharge(data, null, {
             useWorkCredit: true,
           })).order;
-
           let bookingPayment = new BookingPayment({
             bookingId: oldPayment.booking.id,
             orderId: shopOrder.id,
@@ -227,49 +212,38 @@ scheduler.process('waivework-billing', function*(job) {
           yield oldPayment.update({
             bookingPaymentId: bookingPayment.id,
           });
-        } else {
-          try {
-            let shopOrder = (yield OrderService.quickCharge(data, null, {
-              useWorkCredit: true,
-            })).order;
-            let bookingPayment = new BookingPayment({
-              bookingId: oldPayment.booking.id,
-              orderId: shopOrder.id,
-            });
-            yield bookingPayment.save();
-            yield oldPayment.update({
-              bookingPaymentId: bookingPayment.id,
-            });
-            creditString = `${
-              shopOrder.creditUsed
-                ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) `
-                : ''
-            }`;
-            endText = `Your weekly payment for WaiveWork of ${(
+          creditString = `${
+            shopOrder.creditUsed
+              ? `(credit used: $${(shopOrder.creditUsed / 100).toFixed(2)}) `
+              : ''
+          }`;
+          endText = `Your weekly payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(
+            2,
+          )} was successful! ${creditString}. For more account information, please visit waivework.com.`;
+        } catch (e) {
+          failedChargePayload.push(
+            `${user.link()} had a failed charge of $${(
               oldPayment.amount / 100
-            ).toFixed(2)} was successful! ${creditString}. For more account information, please visit waivework.com.`;
-          } catch (e) {
-            failedChargePayload.push(
-              `${user.link()} had a failed charge of $${(
-                oldPayment.amount / 100
-              ).toFixed(2)}. ${e.message}`,
-            );
-            yield oldPayment.update({
-              bookingPaymentId: e.shopOrder.id,
-            });
-            endText = `Your weekly payment for WaiveWork of ${(
-              oldPayment.amount / 100
-            ).toFixed(
-              2,
-            )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized. You can try to make you payment again with our website that can be found at waivework.com.`;
-            toImmobilize.push(oldPayment);
-            let bookingPayment = new BookingPayment({
-              bookingId: oldPayment.booking.id,
-              orderId: e.shopOrder.id,
-            });
-            yield bookingPayment.save();
-          }
+            ).toFixed(2)}. ${e.message}`,
+          );
+          yield oldPayment.update({
+            bookingPaymentId: e.shopOrder.id,
+          });
+          endText = `Your weekly payment for WaiveWork of ${(
+            oldPayment.amount / 100
+          ).toFixed(
+            2,
+          )} has failed. Please contact us about paying it. If it is not paid in a timely manner, your car may be immobilized. You can try to make you payment again with our website that can be found at waivework.com.`;
+          toImmobilize.push(oldPayment);
+          let bookingPayment = new BookingPayment({
+            bookingId: oldPayment.booking.id,
+            orderId: e.shopOrder.id,
+          });
+          yield bookingPayment.save();
         }
+
         let dates = [8, 15, 22, 1, 8];
         let nextDay = dates[dates.indexOf(currentDay) + 1];
         let toAddMonth = currentDay === 22;
@@ -283,30 +257,28 @@ scheduler.process('waivework-billing', function*(job) {
           amount: oldPayment.amount,
         });
         yield newPayment.save();
-        if (!isFirstPayment) {
-          chargesPayload.push(
-            `${user.link()} charged $${(oldPayment.amount / 100).toFixed(
-              2,
-            )} automatically. ${creditString}`,
-          );
-          let email = new Email(),
-            emailOpts = {};
-          try {
-            yield notify.sendTextMessage(user, endText);
-            emailOpts = {
-              to: user.email,
-              from: config.email.sender,
-              subject: 'Your WaiveWork Payment',
-              template: 'waivework-general',
-              context: {
-                name: `${user.firstName} ${user.lastName}`,
-                text: endText,
-              },
-            };
-            yield email.send(emailOpts);
-          } catch (e) {
-            log.warn('error sending email', e);
-          }
+        chargesPayload.push(
+          `${user.link()} charged $${(oldPayment.amount / 100).toFixed(
+            2,
+          )} automatically. ${creditString}`,
+        );
+        let email = new Email(),
+          emailOpts = {};
+        try {
+          yield notify.sendTextMessage(user, endText);
+          emailOpts = {
+            to: user.email,
+            from: config.email.sender,
+            subject: 'Your WaiveWork Payment',
+            template: 'waivework-general',
+            context: {
+              name: `${user.firstName}`,
+              text: endText,
+            },
+          };
+          yield email.send(emailOpts);
+        } catch (e) {
+          log.warn('error sending email', e);
         }
         try {
           let {body} = yield request({
