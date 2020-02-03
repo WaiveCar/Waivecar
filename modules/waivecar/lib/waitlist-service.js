@@ -666,7 +666,7 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${opts.status}-${userRecord.id}`,
             unique: true,
-            timer : {value: 3, type: 'seconds'},
+            timer : {value: 3, type: 'days'},
             data  : {
               userId: userRecord.id,
               reminderCount: 0,
@@ -702,7 +702,7 @@ module.exports = {
           scheduler.add('waivework-reminder', {
             uid   : `waivework-reminder-${opts.status}-${record.id}`,
             unique: true,
-            timer : {value: 3, type: 'seconds'},
+            timer : {value: 3, type: 'days'},
             data  : {
               waitlistId: record.id,
               initialSignupCount: record.signupCount,
@@ -808,7 +808,7 @@ module.exports = {
         scheduler.add('waivework-reminder', {
           uid   : `waivework-reminder-${opts.status}-${opts.user.id}`,
           unique: true,
-          timer : {value: 3, type: 'seconds'},
+          timer : {value: 3, type: 'days'},
           data  : {
             userId: opts.user.id,
             reminderCount: 0,

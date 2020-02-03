@@ -9,6 +9,8 @@ let notify = Bento.module('waivecar/lib/notification-service');
 // Maps current number of attempts at outreach to the number of days before the next one
 let nextTimeMapper = {
   accepted: {
+    sms:
+      'Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.',
     '0': {
       daysRemaining: 27,
       nextTry: 7,
@@ -82,6 +84,8 @@ let nextTimeMapper = {
     },
   },
   incomplete: {
+    sms:
+      'Just as a reminder: you have signed up for WaiveWork, but we need further info to process your signup. Please check your e-mail for details',
     '0': {
       nextTry: 3,
       subject: 'Your WaiveWork Application',
@@ -181,11 +185,8 @@ scheduler.process('waivework-reminder', function*(job) {
     }
   }
   try {
-    /* Once a new message is created, this text should be put back in. It should be different for accepted and incomplete
-    yield notify.sendTextMessage(
-      user,
-      `Just as a reminder: you have been accepted to WaiveWork! Please check your e-mail for further details.`,
-    );*/
+    ///Once a new message is created, this text should be put back in. It should be different for accepted and incomplete
+    yield notify.sendTextMessage(user || waitlist, nextTimeMapper[job.data.type].sms);
     let email = new Email();
     yield email.send({
       to: user ? user.email : waitlist.email,
@@ -213,7 +214,7 @@ scheduler.process('waivework-reminder', function*(job) {
         unique: true,
         timer: {
           value: nextTimeMapper[job.data.type][job.data.reminderCount].nextTry,
-          type: 'seconds',
+          type: 'days',
         },
         data: {
           userId: job.data.userId,
