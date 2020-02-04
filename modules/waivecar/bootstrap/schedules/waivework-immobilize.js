@@ -38,7 +38,7 @@ scheduler.process('waivework-immobilize', function*(job) {
       try {
         yield notify.sendTextMessage(
           {id: oldPayment.booking.userId},
-          'It has been 48 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please visit waivework.com or contact us to clear your balance.',
+          'It has been 72 hours since your payment for WaiveWork failed. Your car has been immobilized until you have successfully paid. Please visit waivework.com or contact us to clear your balance.',
         );
       } catch (e) {
         log.warn('error sending text: ', e);

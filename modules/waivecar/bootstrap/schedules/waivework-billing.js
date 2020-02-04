@@ -10,7 +10,7 @@ let BookingPayment = Bento.model('BookingPayment');
 let WaiveworkPayment = Bento.model('WaiveworkPayment');
 let CarHistory = Bento.model('CarHistory');
 let config = Bento.config;
-let moment = require('moment');
+let moment = require('moment-timezone');
 let log = Bento.Log;
 let uuid = require('uuid');
 let request = require('co-request');
@@ -77,7 +77,7 @@ scheduler.process('waivework-billing', function*(job) {
       {channel: '#waivework-charges'},
     );
   }
-  let today = moment();
+  let today = moment().tz('America/Los_Angeles');
   let currentDay = today.day();
 
   // If the current day is two days before the current payment date, a reminder will need to be sent out
@@ -101,7 +101,7 @@ scheduler.process('waivework-billing', function*(job) {
         yield redis.shouldProcess(
           'waivework-auto-charge',
           upcomingPayment.id,
-          90 * 1000,
+          450 * 1000,
         )
       ) {
         let user = yield User.findById(upcomingPayment.booking.userId);
@@ -237,8 +237,7 @@ scheduler.process('waivework-billing', function*(job) {
           });
           yield bookingPayment.save();
         }
-
-        let nextDate = today.add(1, 'weeks');
+        let nextDate = moment(today).add(1, 'weeks');
 
         let newPayment = new WaiveworkPayment({
           bookingId: oldPayment.booking.id,
@@ -345,7 +344,7 @@ scheduler.process('waivework-billing', function*(job) {
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
-        timer: {value: 48, type: 'hours'},
+        timer: {value: 72, type: 'hours'},
         data: {
           toImmobilize,
         },
