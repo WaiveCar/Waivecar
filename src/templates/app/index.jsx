@@ -103,14 +103,21 @@ templates.register('app', {
         component : require('../../views/app/admin/cars/magic'),
         onEnter   : policies.isAdministrator
       },
+      /*
       {
         path      : '/admin/waitlist',
         component : require('../../views/app/admin/waitlist'),
         onEnter   : policies.isAdministrator
       },
+      */
       {
-        path      : '/admin/waivework/waitlist',
+        path      : '/admin/waivework/signups',
         component : require('../../views/app/admin/waivework/waitlist'),
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/admin/waivework/insurance',
+        component : require('../../views/app/admin/waivework/insurance-quotes'),
         onEnter   : policies.isAdministrator
       },
       {
@@ -239,6 +246,7 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  /*
   {
     title     : 'Waitlist',
     icon      : 'list',
@@ -247,10 +255,19 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  */
   {
-    title     : 'WaiveWork Waitlist',
+    title     : 'WaiveWork Signups',
     icon      : 'building',
-    path      : '/admin/waivework/waitlist',
+    path      : '/admin/waivework/signups',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Insurance Quotes',
+    icon      : 'building',
+    path      : '/admin/waivework/insurance',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++

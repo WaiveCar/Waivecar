@@ -103,14 +103,18 @@ class WaiveWorkDetails extends Component {
     );
   }
 
-  sendEmail() {
+  sendEmail(status) {
     let {user} = this.props;
-    let {perWeek} = this.state;
+    let {perWeek, insuranceQuote, priority, quoteExpiration} = this.state;
     let opts = {
       user,
+      perMonth: insuranceQuote,
       perWeek,
+      quoteExpiration,
+      status,
+      priority,
     };
-    if (perWeek) {
+    if (perWeek && insuranceQuote && priority && quoteExpiration) {
       api.post('/waitlist/waiveWorkEmail', opts, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -126,7 +130,8 @@ class WaiveWorkDetails extends Component {
     } else {
       return snackbar.notify({
         type: 'danger',
-        message: 'Please enter a daily amount.',
+        message:
+          'Please enter a a weekly payment, an insurance quote amount, a priority and an insurance quote expiration .',
       });
     }
   }
@@ -622,22 +627,65 @@ class WaiveWorkDetails extends Component {
           ) : (
             <div>
               <h4>Not currently booked into WaiveWork</h4>
-              <div className="row" style={{marginTop: '4px'}}>
+              <div
+                className="row"
+                style={{
+                  marginTop: '4px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}>
+                Weekly Amount:{' '}
                 <input
-                  className="col-xs-6"
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
                   type="number"
-                  placeholder="Amount Per Week"
-                  value={perWeek}
+                  style={{width: '80px'}}
                   onChange={e => this.setState({perWeek: e.target.value})}
                 />
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.sendEmail()}>
-                  Send Quote
-                </button>
+                Insurance Quote:{' '}
+                <input
+                  type="number"
+                  style={{width: '80px'}}
+                  onChange={e =>
+                    this.setState({insuranceQuote: e.target.value})
+                  }
+                />
+                Quote Expiration:{' '}
+                <input
+                  type="date"
+                  style={{width: '170px'}}
+                  onChange={e =>
+                    this.setState({quoteExpiration: e.target.value})
+                  }
+                />
               </div>
-              <div className="row" style={{marginTop: '4px'}}>
+              <div className="row">
+                <div>
+                  Priority (based on location):{' '}
+                  <input
+                    type="number"
+                    placeholder="1 - 5"
+                    style={{width: '150px', margin: '10px'}}
+                    onChange={e => this.setState({priority: e.target.value})}
+                  />
+                </div>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('accepted')}>
+                  {' '}
+                  Accept
+                </a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('rejected')}>
+                  {' '}
+                  Reject Outright
+                </a>
+                <a
+                  style={{cursor: 'pointer', marginLeft: '30px'}}
+                  onClick={() => this.sendEmail('nonmarket')}>
+                  Out of Market
+                </a>
+              </div>
+              <div className="row" style={{marginTop: '0.5rem'}}>
                 <input
                   className="col-xs-6"
                   style={{marginTop: '1px', padding: '2px', height: '40px'}}

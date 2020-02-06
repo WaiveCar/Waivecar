@@ -12,7 +12,6 @@ class TableIndex extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework');
     this.state = {
       search : null,
       sort : {
@@ -23,20 +22,22 @@ class TableIndex extends React.Component {
       offset : 0,
       noteValue: null,
       currentNotes: [],
+      selectedStatus: 'pending',
     };
+    this.table = new Table(this, 'waitlist', null, '/waitlist?type=waivework');
     relay.subscribe(this, 'waitlist');
   }
 
   componentDidMount() {
-    this.table.init();
-    dom.setTitle('Waivework Waitlist');
+    this.table.init({status: 'pending'});
+    dom.setTitle('Waivework Signups');
     this.setState({
       sort : {
-        key   : 'priority',
-        order : 'ASC'
+        key   : 'createdAt',
+        order : 'DESC'
       },
       searchObj: {
-        order: 'id,DESC'
+        order: 'id,DESC',
       }
     });
   }
@@ -53,21 +54,25 @@ class TableIndex extends React.Component {
           message : err.message
         });
       } else {
-        location.reload();
+        return snackbar.notify({
+          type    : 'success',
+          message : `User status changed to ${opts.status}`,
+        });
       }
     });
   }
 
-  letinbyid(id, perWeek) {
-    if (!perWeek) {
+  letinbyid(id, status) {
+    let {perWeek, perMonth, priority, quoteExpiration} = this.state;
+    if (!perWeek || !perMonth || !priority || !quoteExpiration) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'Please enter a weekly amount',
+        message : 'Please enter a weekly payment, an insurance quote amount, a priority and quote expiration date',
       });
     }
-    this.letinreal({idList: [id], perWeek});
+    this.letinreal({idList: [id], perMonth, perWeek, quoteExpiration, priority, status});
   }
-
+  /* Not currently used
   letin() {
     let amount = prompt('How many people do you want to let in?');
     if(amount) {
@@ -83,6 +88,7 @@ class TableIndex extends React.Component {
       });
     }
   }
+  */
 
   isMobile() {
     return window.getComputedStyle(document.getElementById('isMobile')).display === 'none';
@@ -110,10 +116,9 @@ class TableIndex extends React.Component {
         return row.id === id;
       })[0]
     }, () => {
-      this.table.init()
       this.setState({
         currentNotes: JSON.parse(this.state.userSelected.notes)
-      }, () => this.table.init());
+      });
     });
   }
 
@@ -122,19 +127,12 @@ class TableIndex extends React.Component {
       <tr key={ waitlist.id }>
         <td>{ waitlist.firstName } { waitlist.lastName }</td>
         <td className="hidden-sm-down">{ waitlist.placeName }</td> 
-        <td className="hidden-sm-down">{ waitlist.hours}</td> 
-        <td className="hidden-sm-down">{ waitlist.experience}</td> 
-        <td >{ waitlist.priority }</td>
+        <td className="hidden-sm-down">{ waitlist.status}</td> 
+        <td className="hidden-sm-down">{ waitlist.insuranceQuotes[0] ? (waitlist.insuranceQuotes[0].amount / 100).toFixed(2) : 0 }</td> 
         <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
         <td>
-          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
-            &#9660;
-          </a>
           <a style={{ cursor: 'pointer' }} onClick={() => this.moreinfo(waitlist.id)}>
             More Info 
-          </a>
-          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, 1, waitlist)}>
-            &#9650;
           </a>
         </td>
       </tr>
@@ -159,23 +157,28 @@ class TableIndex extends React.Component {
     });
   }
 
+  changeStatus(status) {
+    this.setState({selectedStatus: status}, () => this.table.search(false, this.textInput.value || ' ', this.textInput, {status: status}));
+  }
+
   render() {
-    let {userSelected} = this.state;
+    let {userSelected, selectedStatus} = this.state;
     return (
       <div id="waitlist-list" className="container">
         <div className="box full">
           <div className='col-md-12'>
-            <h3>WaiveWork Waitlist</h3>
+            <h3>WaiveWork Signups</h3>
           </div>
           { userSelected ?
             <div className="info-box box-content">
               <div> <b>Name:</b> { userSelected.firstName } { userSelected.lastName }</div>
               <div> <b>Phone:</b> { userSelected.phone } </div>
               <div> <b>Email:</b> <a href={'mailto:' + userSelected.email }>{ userSelected.email }</a> </div>
+              {/*
               <div> <b>Priority:</b> { userSelected.priority } </div>
               <button className='btn btn-primary' onClick={() => this.priority(userSelected.id, userSelected.priority > 0 ? -userSelected.priority - 1 : -1, userSelected)}>
                 Deprioritize
-              </button>  
+              </button>*/}  
               <span>
                 <div className="container-fluid notes"> <b>Notes:</b> { this.state.currentNotes && this.state.currentNotes.map((note, i) => {
                   return (
@@ -192,11 +195,33 @@ class TableIndex extends React.Component {
                   Add Note
                 </button>
               </span>
-              <div>
-                Weekly Amount: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
+              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
+                <div>
+                  Weekly Payment: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perWeek: e.target.value})}/>
+                </div>
+                <div>
+                  Insurance Quote: <input type="number" style={{width: '80px'}} onChange={(e) => this.setState({perMonth: e.target.value})}/>
+                </div>
+                <div>
+                  Priority (based on location): <input type="number" placeholder="1 - 5" style={{width: '150px'}} onChange={(e) => this.setState({priority: e.target.value})}/>
+                </div>
+                <div>
+                  Quote Expiration: <input type="date" style={{width: '150px'}} onChange={(e) => this.setState({quoteExpiration: e.target.value})}/>
+                </div>
+              </div>
+              <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '1rem'}}>
                 <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
-                  () => this.letinbyid(userSelected.id, this.state.perWeek) 
-                }> Let In </a>
+                  () => this.letinbyid(userSelected.id, 'accepted') 
+                }> Accept</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, 'rejected') 
+                }> Reject Outright</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, 'incomplete') 
+                }>Incomplete Information</a>
+                <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ 
+                  () => this.letinbyid(userSelected.id, 'nonmarket') 
+                }>Out of Market</a>
               </div>
             </div> : ''
           }
@@ -206,17 +231,24 @@ class TableIndex extends React.Component {
               className="box-table-search" 
               ref={(input) => { this.textInput = input; }}
               placeholder="Enter search text [name, email]" 
-              onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
+              onChange={ (e) => { this.table.search(false, this.textInput.value || ' ', this.textInput, {status: selectedStatus}) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
+            <div className="status-options" style={{display: 'flex', justifyContent: 'space-between'}}>
+              {['pending', 'rejected', 'incomplete', 'nonmarket', 'archived', 'all'].map((status, i) => 
+                <div key={i}>
+                  <input type="radio" value={status} name="selectCategory" onInput={() => this.changeStatus(status)} defaultChecked={selectedStatus === status}/>
+                  <label htmlFor={status}>{status}</label>
+                </div>
+              )}
+            </div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
                   <ThSort sort="name"     value="Name"     ctx={ this } />
-                  <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="hours"    value="Hours" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="experience" value="Experience" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="priority" value="Priority" ctx={ this } />
-                  <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="placeName" value="Location" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="status"    value="Status" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort value="Insurance Quote" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="createdAt"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>
               </thead>

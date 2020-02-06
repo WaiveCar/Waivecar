@@ -24,11 +24,12 @@ module.exports = class Table {
    * Initiates index request against API and populates the state and relay.
    * @return {Void}
    */
-  init() {
+  init(initialQuery) {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
       offset : this.ctx.state.offset,
-      limit  : 20
+      limit  : 20,
+      ...(initialQuery || {}),
     }, (err, data) => {
       if (err) {
         return snackbar.notify({
@@ -86,7 +87,6 @@ module.exports = class Table {
 
     // Paginate here...
     // this.ctx.state.offset === page
-
     return list.map(item => this.ctx.row(item));
   }
 
@@ -106,7 +106,6 @@ module.exports = class Table {
       // object.assign
       queryObj
     );
-
     let query = queryObj.search;
     if(! ('offset' in queryObj) ) {
       queryObj.offset = this.ctx.state.offset;
@@ -154,7 +153,7 @@ module.exports = class Table {
   // always call search_handler directly. Please
   // note the documentation on the likely 
   // counter-intuitive format.
-  search = (e, value, dom) => {
+  search = (e, value, dom, opts) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       let query = '';
@@ -166,7 +165,9 @@ module.exports = class Table {
       this.search_handler({
         offset: 0,
         limit: this.limit || 20,
-        search: query}, false, dom);
+        search: query,
+        ...opts,
+      }, false, dom);
     }, 700);
   }
 
@@ -180,7 +181,6 @@ module.exports = class Table {
     let queryObj = this.ctx.state.searchObj;
     queryObj.offset = this.ctx.state.offset;
     queryObj.limit = this.limit;
-
     api.get(this.endpoint, queryObj, (err, data) => {
       if (err) {
         return snackbar.notify({
