@@ -145,8 +145,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
   model.relations = [
     'GroupUser',
-    function(GroupUser) {
+    'InsuranceQuote',
+    function(GroupUser, InsuranceQuote) {
       this.hasMany(GroupUser, { as: 'tagList', foreignKey: 'userId' });
+      this.hasMany(InsuranceQuote, { as : 'insuranceQuote', foreignKey : 'userId'});
     }
   ];
 

@@ -1,33 +1,49 @@
 <div class="main"><h3>Hi {{ name }},</h3>
-  <p>
-    {{{ intro }}}
-  </p>
-  {{#unless isWaivework}}
-    <p>Remember, to drive with Waive you'll need:
+  {{#if accepted}}
+    <p>Congratulations, you’ve been accepted into our WaiveWork program. We are excited to offer your car rental that includes insurance and maintenance for just ${{price}} per week. Before you can get into your car, head over to <a href="{{#if passwordlink}}{{passwordlink}}{{else}}https://waivework.com/login{{/if}}">your account page</a> and fill in your information. After you’ve filled in your information, call us at 855-924-8355 and we will finish the process. If you’ve already created your account and filled in your account information, call us at 855-924-8355.</p>
+    <p>Any questions? Just respond to this email.</p>
+    <p>Due to high demand, this offer is only valid for 30 days.</p>
+    <p><a href="{{#if passwordlink}}{{passwordlink}}{{else}}https://waivework.com/login{{/if}}">Clikc here to finish your account</a></p>
+  {{else if rejected}}
+    <p>Thank you for your interest in WaiveWork. Unfortunately we can’t move forward with your application right now. This could be due to a number of reasons, including not having cars available for booking. You have been added to our info list and you will be the first to know when opportunities with WaiveWork are available in the future.</p>
+  {{else if incomplete}}
+    <p>Your WaiveWork application has been submitted and it seems we don’t have all the information we need to give you an accurate quote. This can happen for a number of reasons, including:</p
+    <ul>
+      <li>An incorrectly entered driver’s license number on your application.</li>
+      <li>A driver’s license with too short of driving history (include your driver’s license with a longer history if you have one).</li>
+      <li>An incorrectly entered date of birth on your application (make sure to use your birth year).</li>
+      <li>A P.O. Box or business address on your application. All applications must use a residential address in their application.</li>
+    </ul>
+    <p>
+    The information that you signed up with was: 
       <ul>
-        <li>A very clean driving record</li>
-        <li>A valid credit card</li>
+      {{#if notes}}
+        <li>Name: {{notes.firstName}} {{notes.lastName}}</li>
+        <li>License Number: {{notes.number}}</li>
+        <li>License State: {{notes.licenseState}}</li>
+        <li>Birthday: {{notes.birthDate}}</li>
+        <li>Expiration: {{notes.expirationDate}}</li>
+        <li>Address: </li>
+        <ul>
+          <li>{{notes.street1}}</li>
+          {{#if notes.street2}}
+            <li>{{notes.street2}}</li>
+          {{/if}}
+          <li>{{notes.city}}, {{notes.state}} {{notes.zip}}</li>
+        </ul>
+        <li>Email: {{notes.email}}</li>
+        <li>Phone: {{notes.phone}}</li>
+        {{else}}
+          <li>Information not available</li>
+        {{/if}}
       </ul>
     </p>
-    <p>
-      The next steps are to give yourself a password, log in and set up your account.
-    </p>
-  {{/unless}}
-  {{#if isWaivework}} 
-    <p>
-      Please click <a href="https://calendly.com/waivework/pickup/">here</a> to schedule your appointment.
-    </p>
-  {{/if}}
+  <p>If you have questions or need more information, respond to this email and we will be happy to assist you. Additionally, you can call us at 855-924-8355. If you see a mistake in the information above, you can try signing up again <a href="https://waivework.com/signup">here</a>.
+  {{else if nonmarket}}
+    <p>Thank you for your interest in WaiveWork. Unfortunately we aren’t live in your location just yet. You have been added to our info list and you will be the first to know when we launch in your area!  Inquiries like yours help us prioritize as we expand into new areas.</p>
+    <p>If you are driving in the Los Angeles area and believe this was an error, please <a href="https://waivework.com/signup">sign up again here</a> using a Los Angeles address.</p>
+  {{/if}}  
   <p>
-    <a href={{ passwordlink }}><b>Click here to set up your password</b></a>.
-  </p>
-  <p>
-    <em>Important:</em> This is a secret, exclusive, private and personal link connected to your email address. <b>It is only good for the next 3 days.</b>
-    Please do not share it. Thanks!
-  </p>
-
-  <p>
-    Best regards,<br>
     Waive
   </p>
 </div>

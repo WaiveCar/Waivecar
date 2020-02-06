@@ -66,6 +66,12 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       type       : Sequelize.STRING(16),
       defaultValue : 'normal'
     },
+
+    status :{
+      type      : Sequelize.ENUM,
+      values    : ['pending', 'accepted', 'rejected', 'incomplete', 'nonmarket', 'archived'],
+      default: 'pending'
+    },
       
     phone : {
       type       : Sequelize.STRING(32),
@@ -98,8 +104,10 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
 
   model.relations = [
     'User',
-    function(User, Car) {
+    'InsuranceQuote',
+    function(User, InsuranceQuote) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+      this.hasMany(InsuranceQuote, { as : 'insuranceQuotes', foreignKey : 'waitlistId'});
     }
   ];
 

@@ -131,6 +131,7 @@ Route.post('/tickets', [ 'isAuthenticated', 'isAdmin', 'TicketController@create'
 Route.post('/tickets/:id/:action', [ 'isAuthenticated', 'isAdmin', 'TicketController@update' ]);
 
 Route.get('/waitlist', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@index' ]);
+Route.get('/insuranceQuotes', ['isAuthenticated', 'isAdmin', 'WaitlistController@insuranceQuotes']);
 Route.post('/waitlist/letIn', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@letIn' ]);
 Route.post('/waitlist/FBletIn', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@FBletIn' ]);
 Route.post('/waitlist/add', ['WaitlistController@add' ]);

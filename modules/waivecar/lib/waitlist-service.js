@@ -2,6 +2,7 @@
 
 let error         = Bento.Error;
 let Waitlist      = Bento.model('Waitlist');
+let InsuranceQuote = Bento.model('InsuranceQuote');
 let User          = Bento.model('User');
 let queryParser   = Bento.provider('sequelize/helpers').query;
 let config        = Bento.config;
@@ -28,6 +29,24 @@ let _pri = {
   'default': 1,
   'high':    2,
 };
+
+let introMap = {
+  waitlist: {email: "Thanks for your patience. It's paid off because you are next in line and we've created your account."},
+  accepted: {
+    sms: `Congratulations! You have been approved for WaiveWork Please check your e-mail for further details.` 
+  },
+  rejected: {
+    sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
+  },
+  incomplete: {
+    sms: `Thanks for signing up for WaiveWork. To process your request, we need some further information. Please check your e-mail for more details.`
+  },
+  nonmarket: {
+    sms: 'Unfortunately, you have not been approved for WaiveWork. Please check your e-mail for further details'
+  },
+  csula: {email: "Welcome aboard Waive's CSULA program."},
+  vip: {email: "You've been fast-tracked and skipped the waitlist!"},
+}
 
 function inside(obj) {
   if ('latitude' in obj && 'longitude' in obj) {
@@ -139,7 +158,6 @@ module.exports = {
 
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne(searchOpts);
-
     // If a legacy user which never appeared in the waitlist is trying to rejoin
     // we should be able to find them as well.
     if (!record) {
@@ -150,6 +168,10 @@ module.exports = {
       if (record) {
         // We always update the signup_count regardless
         yield record.update({signupCount: record.signupCount + 1 });
+        payload.waitlistId = record.id;
+        if(data.accountType == 'waivework') {
+          yield record.update({notes: JSON.stringify([JSON.stringify({...data, ...payload})])});
+        }
       }
 
       // If there's a user id then we've already signed them up
@@ -183,16 +205,12 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
-        yield Intercom.addUser(record)
-        let toAddNotes = yield this.addNote({id: record.id, note: `Offer per week: ${payload.offerPerWeek}`});
-        if (payload.wantsElectric === 'true') {
-          yield toAddNotes.update({
-            notes: JSON.stringify([...JSON.parse(toAddNotes.notes), 'Prefers electric']),
-          });
-        }
-        yield toAddNotes.update({
-          notes: JSON.stringify([...JSON.parse(toAddNotes.notes), JSON.stringify({...data, ...payload})]),
+        // I am commenting this out because it may not need to be done at this time
+        //yield Intercom.addUser(record)
+        yield record.update({
+          notes: JSON.stringify([JSON.stringify({...data, ...payload})]),
         });
+        payload.waitlistId = record.id;
       }
 
       // If this is a valid waivework signup
@@ -323,8 +341,12 @@ module.exports = {
     if (queryIn.search) {
       query.where = { $and: [
         {user_id: null },
-        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`)
-      ] };
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`),
+      ]};
+
+      if (queryIn.status && queryIn.status !== 'all') { 
+        query.where.$and.push({status: queryIn.status}) 
+      }
       query.order = [ ['created_at', 'asc'] ];
     } else {
       query.where = { user_id: null };
@@ -334,18 +356,49 @@ module.exports = {
     }
     if(queryIn.type === 'waivework') {
       query.order = [ 
-        [ 'priority', 'desc' ] ,
-        [ 'hours', 'desc' ],
-        [ 'days', 'desc', ],
-        [ 'experience', 'desc' ],
         [ 'created_at', 'asc' ]
       ];
+      // The waivework waitlist should only send
+      if (queryIn.status && queryIn.status !== 'all') {
+        query.where.status = queryIn.status;
+      }
+      query.include = [{
+        model: 'InsuranceQuote',
+        as: 'insuranceQuotes',
+        required: false,
+        order: [['created_at', 'asc']],
+      }];
     }
 
     query.limit = parseInt(queryIn.limit, 10);
     query.offset = parseInt(queryIn.offset, 10);
 
     return yield Waitlist.find(query);
+  },
+
+  *insuranceQuotes(queryIn) {
+    let query = {};
+    query.order = [ 
+      ['expiresAt', 'desc']
+    ];
+    query.include = [{
+      model: 'User',
+      as: 'user',
+      required: false,
+    }, {
+      model: 'Waitlist',
+      as: 'waitlist',
+      required: false,
+    }];
+    query.where = {
+      amount: {$not: null},
+      expiresAt: {$gt: moment().format('YYYY-MM-DD')},
+      accepted: true,
+    };
+
+    query.limit = parseInt(queryIn.limit, 10);
+    query.offset = parseInt(queryIn.offset, 10);
+    return yield InsuranceQuote.find(query);
   },
 
   *FBletIn(idList, _user) {
@@ -399,12 +452,25 @@ module.exports = {
   },
 
   *requestWorkQuote(payload, data) {
+    /* Users should now be added to intercom, but if they are not, this may need to be put back in
     try {
       yield Intercom.addTag(payload, 'WaiveWork');
     } catch(e) {
       yield Intercom.addUser(payload);
       yield Intercom.addTag(payload, 'WaiveWork');
     }
+    */
+    // This looks for an old quote that is not expired yet
+    let oldQuote = yield InsuranceQuote.findOne({where: {$or: [{userId: payload.userId}, {waitlistId: payload.waitlistId}], expiresAt: {$or: [{$gt: moment().format('YYYY-MM-DD')}, null] }}});
+    if (!oldQuote) {
+      // this should only be created if there is not already a valid saved quote
+      let quote = new InsuranceQuote({
+        userId: payload.userId,
+        waitlistId: payload.waitlistId,
+      });
+      yield quote.save();
+    }
+
     data = {...payload, ...data};
     data.rideshare = payload.rideshare === 'true' ? 'yes' : 'no';
     data.birthDate = moment(payload.birthDate).format('MM/DD/YYYY'); 
@@ -413,7 +479,7 @@ module.exports = {
       let email = new Email();
       yield email.send({
         to       : 'dennis.mata.t7h8@statefarm.com',
-        cc       : 'work@waive.car',
+        cc       : 'work@waive.com',
         from     : config.email.sender,
         subject  : `${data['firstName']} ${data['lastName']} - WaiveWork Signup`,
         template : 'waivework-signup',
@@ -454,27 +520,23 @@ module.exports = {
     let userList = [];
     let template = 'letin-email';
 
-    let introMap = {
-      waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      waivework: `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perWeek} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`,
-      csula: "Welcome aboard Waive's CSULA program.",
-      vip: "You've been fast-tracked and skipped the waitlist!"
-    }
     if (recordList[0].accountType === 'waivework') {
-      opts.intro = 'waivework'
+      opts.intro = opts.status;
       params.isWaivework = true;
+      /* They will now be added to intercom only when they login to waivework.com
       try {
         yield Intercom.addTag(recordList[0], 'WaiveWork');
       } catch(e) {
         console.log('error tagging user', e);
       }
+      */
     }
 
     opts.intro = opts.intro || 'waitlist';
     if(! (opts.intro in introMap) )  {
       opts.intro = 'waitlist';
     }
-    params.intro = introMap[opts.intro];
+    params.intro = introMap[opts.intro].email;
 
     if(opts.promo === 'high5') {
       params.intro += ' Your account is now active with $5.00 in credit. It only gets better from here.';
@@ -499,77 +561,91 @@ module.exports = {
       if (record.phone) {
         userOpts.phone = record.phone;
       }
-
-      // We create their user account.
-      try {
-        //
-        // The issue with this method is that it's orchestrated by the
-        // admin and calls a function that sends them a text message
-        // to verify their phone number. Stupid. We're adding an option
-        // to avoid that nonsense.
-        //
-        userRecord = yield UserService.store(userOpts, _user, {nosms: true});
-        if (opts.promo === 'high5') {
-          yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
-        }
-
-      } catch(ex) {
-        userRecord = yield User.findOne({ 
-          where: { 
-            $or: [
-              { email: record.email },
-              { phone: record.phone } 
-            ]
+      
+      // We create their user account, but only if it is not one of the statuses to skip letting in.
+      if (!['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
+        try {
+          //
+          // The issue with this method is that it's orchestrated by the
+          // admin and calls a function that sends them a text message
+          // to verify their phone number. Stupid. We're adding an option
+          // to avoid that nonsense.
+          //
+          userRecord = yield UserService.store(userOpts, _user, {nosms: true});
+          if (opts.promo === 'high5') {
+            yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
           }
-        });
 
-        if (userRecord) {
-          // Even if we've seen the user before, and they are
-          // trying to sign up again, we send them another invite 
-          // in good faith, going through the entire process again,
-          // presuming that they didn't receive or lost the previous. 
-          log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
-          if (params.isWaivework) {
-            throw error.parse({
-              code    : 'Already signed up',
-              message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
-            }, 400);
-          }
-          yield record.update({userId: userRecord.id});
-          if(userRecord.status === 'waitlist') {
-            yield userRecord.update({status: 'active'});
-          } else {
-            // If the user is csula, they need to be put in the user list so that the correct tags can be added to their user 
-            // entry back around line 249
-            if (opts.intro === 'csula') {
-              userList.push(userRecord);
+        } catch(ex) {
+          userRecord = yield User.findOne({ 
+            where: { 
+              $or: [
+                { email: record.email },
+                { phone: record.phone } 
+              ]
             }
-            // Otherwise, the user is onboarded and we should just continue
-            // with the next user and make sure we don't add them to the email
-            // list or generate a reset token.
+          });
+
+          if (userRecord) {
+            // Even if we've seen the user before, and they are
+            // trying to sign up again, we send them another invite 
+            // in good faith, going through the entire process again,
+            // presuming that they didn't receive or lost the previous. 
+            log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
+            if (params.isWaivework) {
+              throw error.parse({
+                code    : 'Already signed up',
+                message: 'The user is already an active WaiveCar user. Please add them to WaiveWork from their profile.',
+              }, 400);
+            }
+            yield record.update({userId: userRecord.id});
+            if(userRecord.status === 'waitlist') {
+              yield userRecord.update({status: 'active'});
+            } else {
+              // If the user is csula, they need to be put in the user list so that the correct tags can be added to their user 
+              // entry back around line 249
+              if (opts.intro === 'csula') {
+                userList.push(userRecord);
+              }
+              // Otherwise, the user is onboarded and we should just continue
+              // with the next user and make sure we don't add them to the email
+              // list or generate a reset token.
+              continue;
+            }
+          } else {
+            log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
+            if (params.isWaivework) {
+              throw error.parse({
+                code    : 'Already signed up',
+                message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
+              }, 400);
+            }
             continue;
           }
-        } else {
-          log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
-          if (params.isWaivework) {
-            throw error.parse({
-              code    : 'Already signed up',
-              message: 'There was an error letting user into WaiveWork. Their email and/or phone number may already be associated with an active account.',
-            }, 400);
-          }
-          continue;
         }
       }
-
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
 
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
-      yield record.update({userId: userRecord.id});
+      yield record.update({userId: userRecord.id, status: opts.status ? opts.status : record.status});
       userList.push(userRecord);
+      // This looks for a quote that is not yet expired
+      let quote = yield InsuranceQuote.findOne({where: {waitlistId: record.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
+      // If a quote was not previously created, it must be created here
+      // This is done for backwards compatablility for people who previously signed up and do not have empty quotes initialized for them
+      if (!quote) {
+        quote = new InsuranceQuote({waitlistId: record.id, userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
+        yield quote.save();
+      } else {
+        yield quote.update({userId: userRecord.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
+      }
 
+      let notes = JSON.parse(record.notes);
       let context = Object.assign({}, params || {}, {
-        name: fullName
+        name: record.firstName,
+        price: opts.perWeek,
+        notes: notes && JSON.parse(notes[notes.length - 1]),
       });
       // If a user set their password through signup then we transfer it over
       if(record.password) {
@@ -583,15 +659,19 @@ module.exports = {
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
       try {
-        if (params.isWaivework) {
+        context[opts.status] = true;
+        // This should only happen if we are actually letting them in and not just updating their waitlist status
+        if (params.isWaivework && !['rejected', 'incomplete', 'nonmarket'].includes(opts.status)) {
           yield userRecord.update({isWaivework: true});
-          yield notify.sendTextMessage(record, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
           scheduler.add('waivework-reminder', {
-            uid   : `waivework-reminder-${userRecord.id}`,
+            uid   : `waivework-reminder-${opts.status}-${userRecord.id}`,
             unique: true,
-            timer : {value: 8, type: 'hours'},
+            timer : {value: 3, type: 'days'},
             data  : {
               userId: userRecord.id,
+              reminderCount: 0,
+              type: 'accepted',
+              price: opts.perWeek,
             }
           });
           if (record.notes) {
@@ -605,7 +685,7 @@ module.exports = {
                   try {
                     yield LicenseService.store({
                       ...note, 
-                      expirationDate: moment(note.expirationDate).format(),
+                      expiresAt: moment(note.expirationDate).format(),
                       birthDate: moment(note.birthDate).format(),
                       userId: userRecord.id, 
                       fromComputer: true,
@@ -618,11 +698,26 @@ module.exports = {
               }
             };
           }
+        } else if (opts.status && opts.status === 'incomplete') {
+          scheduler.add('waivework-reminder', {
+            uid   : `waivework-reminder-${opts.status}-${record.id}`,
+            unique: true,
+            timer : {value: 3, type: 'days'},
+            data  : {
+              waitlistId: record.id,
+              initialSignupCount: record.signupCount,
+              reminderCount: 0,
+              type: 'incomplete',
+            }
+          });
+        } 
+        if (params.isWaivework) {
+          yield notify.sendTextMessage(record, introMap[opts.status].sms);
         }
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
-          subject  : 'Welcome to Waive',
+          subject  : 'Your WaiveWork Application',
           template : opts.template || template,
           context  : context
         };
@@ -631,7 +726,7 @@ module.exports = {
         log.warn('Failed to deliver notification email: ', emailOpts, err);      
       }
     }
-    if (_user) {
+    if (_user && !params.isWaiveWork) {
       let list = nameList.slice(0, -2).join(', ') + (nameList.length > 2 ? ', ' : ' ') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
@@ -680,9 +775,11 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      let userList = yield this.letInByRecord(recordList, _user, {perWeek: payload.perWeek});
+      let userList = yield this.letInByRecord(recordList, _user, {perMonth: payload.perMonth, perWeek: payload.perWeek, quoteExpiration: payload.quoteExpiration, status: payload.status, priority: payload.priority});
       for(var ix = 0; ix < userList.length; ix++) {
-        yield userList[ix].addTag('la');
+        if (userList[ix]) {
+          yield userList[ix].addTag('la');
+        }
       }
     }
   },
@@ -690,23 +787,41 @@ module.exports = {
   *sendWaiveWorkEmail(opts) {
     let email = new Email(), emailOpts = {};
     let context = {...opts, isWaivework: true};
-    context.name = `${opts.user.firstName} ${opts.user.lastName}`;
-    context.intro = `<p>Welcome to our WaiveWork program! If you're receiving this email, it means you've been approved and are ready to set next steps. Congrats! Ready to ride the Waive? Here's what happens next!</p><p>Your weekly payment will be $${opts.perWeek} and includes scheduled maintenance, insurance and the car. We will need to process your first weeks payment, and send you over the 30-day contract once it goes through. You will receive a copy of the contract for you to completely review and discuss any questions you have before receiving the actual Docusign and signing. Please keep in mind our billing days are the 1st, 8th, 15th and the 22nd. If you are starting on a different date, a prorated payment will be due based off the number of days left until the next billing day. If you don't have a payment method on file, you will need to add one. This will be due prior to picking up the vehicle, as well as the signed contract. Without both, you will not have a confirmed reservation for vehicle pick-up.</p><p>Once the contract is signed, you will need to schedule your pick-up appointment for a weekday during our pick-up hours (9am-6:30pm). Once scheduled, you will be required to set-up your account and password.</p><p>Please don't hesitate to reach out to customer service with any questions you may have     at <a href="mailto:support@waive.car">support@waive.car</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>`;
-    scheduler.add('waivework-reminder', {
-      uid   : `waivework-reminder-${opts.user.id}`,
-      unique: true,
-      timer : {value: 8, type: 'hours'},
-      data  : {
-        userId: opts.user.id,
-      },
-    });
+    context.name = opts.user.firstName;
+    context.intro = introMap[opts.status].email;
+    context[opts.status] = true;
+    context.price = opts.perWeek;
+    // This searches for a quote that has not yet expired
+    let quote = yield InsuranceQuote.findOne({where: {userId: opts.user.id, expiresAt: {$gt: moment().format('YYYY-MM-DD')}}});
+    // If a non-expired quote already exists, it must be created here
+    // This is done for backwards compatablility for people who previously signed up and do not have empty quotes initialized for them
+    if (!quote) {
+      quote = new InsuranceQuote({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
+      yield quote.save();
+    } else {
+      yield quote.update({userId: opts.user.id, amount: opts.perMonth * 100, weeklyPayment: opts.perWeek * 100, expiresAt: opts.quoteExpiration, accepted: opts.status === 'accepted', priority: opts.priority});
+    }
+
     try {
-      yield notify.sendTextMessage(opts.user, `Congratulations on your acceptance to WaiveWork! Please check your e-mail for further details. Please don't hesitate to reach out with any questions here!`);
+      yield notify.sendTextMessage(opts.user, introMap[opts.status].sms);
+      if (opts.status === 'accepted') {
+        scheduler.add('waivework-reminder', {
+          uid   : `waivework-reminder-${opts.status}-${opts.user.id}`,
+          unique: true,
+          timer : {value: 3, type: 'days'},
+          data  : {
+            userId: opts.user.id,
+            reminderCount: 0,
+            type: opts.status,
+            price: opts.perWeek,
+          }
+        });
+      }
       emailOpts = {
         to       : opts.user.email,
         from     : config.email.sender,
-        subject  : 'Welcome to WaiveWork',
-        template : 'letin-email-nopass',
+        subject  : 'Your WaiveWork Application',
+        template : 'letin-email',
         context  : context,
       };
       yield email.send(emailOpts);

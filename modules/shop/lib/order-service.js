@@ -1419,8 +1419,8 @@ module.exports = class OrderService extends Service {
     if (oldOrder.refId) {
       oldOrder = yield Order.findById(oldOrder.refId);
     }
-    // Currently the late fees will start at midnight after the missed payment 
-    let startTime = moment(oldOrder.createdAt).tz('America/Los_Angeles').startOf('day').utc();
+    // Currently the late fees will start 24 hours after the missed payment 
+    let startTime = moment(oldOrder.createdAt);
     let numDays = moment().diff(moment(startTime), 'days');
     let amountPerDay = (query.percent / 100) * oldOrder.amount;
     return {lateFees: numDays > 0 ? amountPerDay : 0};

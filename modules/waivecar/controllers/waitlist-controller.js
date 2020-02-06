@@ -44,5 +44,9 @@ Bento.Register.Controller('WaitlistController', function(controller) {
     return yield waitlist.requestWorkQuote(this.payload, {});
   }
 
+  controller.insuranceQuotes = function *() {
+    return yield waitlist.insuranceQuotes(this.query, this.auth.user);
+  }
+
   return controller;
 });
