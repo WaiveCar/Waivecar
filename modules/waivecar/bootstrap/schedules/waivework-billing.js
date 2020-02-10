@@ -81,7 +81,6 @@ scheduler.process('waivework-billing', function*(job) {
   let currentDay = today.day();
 
   // If the current day is two days before the current payment date, a reminder will need to be sent out
-  /*
   if (currentDay === 0) {
     let todaysPayments = yield WaiveworkPayment.find({
       where: {
@@ -134,7 +133,7 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
   }
-  */
+
   let chargesPayload = [
     ':watch: *The following users are to be charged automatically this week:* \n',
   ];
