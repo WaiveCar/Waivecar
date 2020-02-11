@@ -223,9 +223,6 @@ scheduler.process('waivework-billing', function*(job) {
               oldPayment.amount / 100
             ).toFixed(2)}. ${e.message}`,
           );
-          yield oldPayment.update({
-            bookingPaymentId: e.shopOrder.id,
-          });
           endText = `Your weekly payment for WaiveWork of ${(
             oldPayment.amount / 100
           ).toFixed(
@@ -237,6 +234,9 @@ scheduler.process('waivework-billing', function*(job) {
             orderId: e.shopOrder.id,
           });
           yield bookingPayment.save();
+          yield oldPayment.update({
+            bookingPaymentId: bookingPayment.id,
+          });
         }
         let nextDate = moment(today).add(1, 'weeks');
 
