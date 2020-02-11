@@ -1339,11 +1339,7 @@ module.exports = class OrderService extends Service {
     let oldDate = paymentToChange.date;
     let booking = yield Booking.findById(paymentToChange.bookingId);
     let driver = yield User.findById(booking.userId);
-    let oldDay = moment(paymentToChange.date).date();
-    let oldMonth = moment(paymentToChange.date).month();
-    let paymentDays = [8, 15, 22, 1, 8];
-    let newDay = paymentDays[paymentDays.indexOf(oldDay) + 1];
-    let newDate = moment(paymentToChange.date).date(newDay).month(newDay === 1 ? oldMonth + 1 : oldMonth);
+    let newDate = moment(paymentToChange.date).add(1, 'weeks');
     let oldAmount = paymentToChange.amount;
     let toCharge = paymentToChange.amount - driver.waiveworkCredit;
     let remainingCredit = toCharge >= 0 ? 0 : Math.abs(toCharge);
