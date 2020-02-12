@@ -117,7 +117,7 @@ hooks.set('user:store:after', function *(user, _user, opts) {
   if(!user.email) {
     user.email = 'Unknown_email_' + user.id + '@waivecar.com';
   }
-  let res = yield intercom.addUser(user);
+  //let res = yield intercom.addUser(user);
 
 });
 
@@ -228,6 +228,6 @@ hooks.set('user:update:after', function *(user, _user) {
 });
 
 hooks.set('user:delete:before', function *(user, query, _user) {
-  let res = yield intercom.removeUser(user);
+  //let res = yield intercom.removeUser(user);
   return true;
 });
