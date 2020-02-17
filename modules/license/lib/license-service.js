@@ -59,7 +59,7 @@ module.exports = class LicenseService extends Service {
 
     // Check that birthdate is over the minimum
     var minimumAge = (yield user.hasTag('csula')) ? 18 : 21;
-
+    /* For now, we have no minimum age, and want users to always store their license
     var age = moment().diff(data.birthDate, 'years');
     if (age < minimumAge) {
       throw error.parse({
@@ -71,7 +71,7 @@ module.exports = class LicenseService extends Service {
         code    : `INVALID_LICENSE`,
         message : `Your date of birth appears to have some errors. Are you really ${age} years old?`
       }, 400);
-    }
+    }*/
     let license = new License(data);
 
     if (license.birthDate) {
