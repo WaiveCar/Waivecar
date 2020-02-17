@@ -685,7 +685,7 @@ module.exports = {
                   try {
                     yield LicenseService.store({
                       ...note, 
-                      expiresAt: moment(note.expirationDate).format(),
+                      expirationDate: moment(note.expirationDate).format(),
                       birthDate: moment(note.birthDate).format(),
                       userId: userRecord.id, 
                       fromComputer: true,
