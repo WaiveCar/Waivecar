@@ -279,6 +279,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         key   : 'id'
       }
     },
+
+    isInvers : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false,
+    }
   };
 
   model.methods = {

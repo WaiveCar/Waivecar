@@ -41,7 +41,7 @@ var checkBooking = co.wrap(function *(booking) {
     }
 
     let car = booking.car;
-    let device = yield cars.getDevice(car.id, null, 'booking-loop');
+    let device = yield cars.getDevice(car.id, null, 'booking-loop', car.isInvers);
     let user = booking.user;
     let duration = 0;
     let isLevel = yield car.hasTag('level');

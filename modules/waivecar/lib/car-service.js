@@ -603,7 +603,7 @@ module.exports = {
       }
     }
     if (!payload.documents && !(payload.hasOwnProperty('isTotalLoss') || payload.hasOwnProperty('isOutOfService'))) {
-      device = yield this.getDevice(car.id, _user, 'update');
+      device = yield this.getDevice(car.id, _user, 'update', car.isInvers);
     } else {
       console.log("Skipping over trying to get remote device update.", id, payload);
     }
@@ -793,8 +793,9 @@ module.exports = {
 
   *refresh(deviceId) {
     // sometimes this will throw an error and cause issues with the booking ending
+    let car = yield Car.findById(deviceId);
     try { 
-      let updatedCar = yield this.getDevice(deviceId, null, 'refresh');
+      let updatedCar = yield this.getDevice(deviceId, null, 'refresh', car.isInvers);
       if (updatedCar) {
         //log.debug(`Cars : Refresh : updating ${ deviceId }.`);
         yield this.syncUpdate(deviceId, updatedCar);
@@ -1016,7 +1017,7 @@ module.exports = {
     return existingCar;
   },
 
-  // Does sync operations against all cars in the invers fleet.
+  // Does sync operations against all cars in the invers fleet as well as our in house telematics.
   *syncCars() {
     //log.debug('CarService : syncCars : start');
     let refreshAfter = config.car.staleLimit || 15;
@@ -1045,6 +1046,7 @@ module.exports = {
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getAllDevices();
+    console.log(devices);
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
@@ -1059,7 +1061,7 @@ module.exports = {
     try {
       let existingCar = carList.find(c => c.id === device.id);
       if (existingCar) {
-        let updatedCar = yield this.getDevice(device.id, null, 'sync');
+        let updatedCar = yield this.getDevice(device.id, null, 'sync', existingCar.isInvers);
         if (updatedCar) {
           // log.debug(`Cars : Sync : updating ${ device.id }.`);
           yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
@@ -1123,7 +1125,8 @@ module.exports = {
       deviceList = deviceList.concat(partial.data);
       offset = deviceList.length;
     } while(offset < total);
-
+    let fromAws = yield this.request('/shadows', {notInvers: true});
+    deviceList = deviceList.concat(fromAws.data);
     if(deviceList.length) {
       return deviceList;
     }
@@ -1137,7 +1140,7 @@ module.exports = {
     fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n", function(){});
   },
 
-  *getDevice(id, _user, source) {
+  *getDevice(id, _user, source, isInvers = false) {
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
@@ -1592,7 +1595,7 @@ module.exports = {
     // ### Request Payload
 
     let payload = {
-      url     : config.invers.uri + resource,
+      url     : options.notInvers ? 'http://127.0.0.1:3080/' : config.invers.uri + resource,
       method  : options.method || 'GET',
       headers : config.invers.headers,
       timeout : options.timeout || 60000

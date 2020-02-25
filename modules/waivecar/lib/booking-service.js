@@ -1243,7 +1243,7 @@ module.exports = class BookingService extends Service {
   static *endCheck(id, _user, query, payload) {
     var booking = yield this.getBooking(id);
     var car     = yield this.getCar(booking.carId);
-    let device  = yield cars.getDevice(car.id, _user, 'booking.complete');
+    let device  = yield cars.getDevice(car.id, _user, 'booking.complete', car.isInvers);
     if(device) {
       yield car.update( device );
     } else {
@@ -1393,7 +1393,7 @@ module.exports = class BookingService extends Service {
 
     // if we haven't updated the car's location in the past minute, we try to get it again.
     if(lastUpdate > 0.5) {
-      let data = yield cars.getDevice(car.id, _user, 'booking.canend');
+      let data = yield cars.getDevice(car.id, _user, 'booking.canend', car.isInvers);
       if(data) {
         yield car.update(data);
       }
@@ -1441,7 +1441,7 @@ module.exports = class BookingService extends Service {
     var isCarReachable = true;
     if(process.env.NODE_ENV === 'production' && car.isIgnitionOn) {
       try {
-        Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
+        Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end', car.isInvers));
       } catch (err) {
         // BUGBUG: This is disabled until the new version of the app goes out
         // that can handle the pending end issue (#892).
@@ -1810,7 +1810,7 @@ module.exports = class BookingService extends Service {
       // if it looks like we'd fail this, then and only then do we probe the device one final time.
       if(res) {
         try {
-          yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+          yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete', car.isInvers) );
         } catch (err) {
           log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
         }
