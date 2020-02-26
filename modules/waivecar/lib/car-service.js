@@ -1048,10 +1048,10 @@ module.exports = {
     let devices = yield this.getAllDevices();
     console.log(devices);
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
-
+    /*
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
     let result   = yield parallel(syncList);
-
+    */
     return yield Car.find();
   },
 
@@ -1115,7 +1115,7 @@ module.exports = {
     var partial;
     let offset = 0;
     let total = 0;
-
+    /*
     do {
       partial = yield this.request('/devices?active=true&limit=100&offset=' + offset);
       total = partial.count || partial.data.length;
@@ -1125,8 +1125,9 @@ module.exports = {
       deviceList = deviceList.concat(partial.data);
       offset = deviceList.length;
     } while(offset < total);
+    */
     let fromAws = yield this.request('/shadows', {notInvers: true});
-    deviceList = deviceList.concat(fromAws.data);
+    deviceList = deviceList.concat(fromAws);
     if(deviceList.length) {
       return deviceList;
     }
@@ -1593,9 +1594,8 @@ module.exports = {
     options = options || {};
 
     // ### Request Payload
-
     let payload = {
-      url     : options.notInvers ? 'http://127.0.0.1:3080/' : config.invers.uri + resource,
+      url     : (options.notInvers ? config.telem.uri : config.invers.uri) + resource,
       method  : options.method || 'GET',
       headers : config.invers.headers,
       timeout : options.timeout || 60000
