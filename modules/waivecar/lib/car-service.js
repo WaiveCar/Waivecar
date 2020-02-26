@@ -1046,12 +1046,10 @@ module.exports = {
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getAllDevices();
-    console.log(devices);
+    console.log('devices', devices);
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
-    /*
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
     let result   = yield parallel(syncList);
-    */
     return yield Car.find();
   },
 
@@ -1072,7 +1070,7 @@ module.exports = {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let newCar = yield this.getDevice(device.id);
+          let newCar = yield this.getDevice(device.id, null, null, device.type !== 'homeGrown');
           if (newCar) {
             let car = new Car(newCar);
             let meta = config.car.meta[car.id];
@@ -1126,7 +1124,7 @@ module.exports = {
       offset = deviceList.length;
     } while(offset < total);
     */
-    let fromAws = yield this.request('/shadows', {notInvers: true});
+    let fromAws = yield this.request('/shadows', {isInvers: false});
     deviceList = deviceList.concat(fromAws);
     if(deviceList.length) {
       return deviceList;
@@ -1146,7 +1144,7 @@ module.exports = {
       return false;
     }
     try {
-      let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
+      let status = yield this.request(isInvers ? `/devices/${ id }/status` : `/shadow/${id}`, { timeout : 30000, isInvers });
       this._errors[id] = 0;
       if (status) {
         this.logStatus(status, id, source);
@@ -1595,7 +1593,7 @@ module.exports = {
 
     // ### Request Payload
     let payload = {
-      url     : (options.notInvers ? config.telem.uri : config.invers.uri) + resource,
+      url     : (!options.isInvers ? config.telem.uri : config.invers.uri) + resource,
       method  : options.method || 'GET',
       headers : config.invers.headers,
       timeout : options.timeout || 60000
