@@ -1046,9 +1046,11 @@ module.exports = {
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getAllDevices();
-    console.log('devices', devices);
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
-    let syncList = devices.map(device => this.syncCar(device, cars, allCars));
+    let syncList = devices.map(device => {
+      device.id = device.thingName || device.id;
+      return this.syncCar(device, cars, allCars)
+    });
     let result   = yield parallel(syncList);
     return yield Car.find();
   },
@@ -1058,6 +1060,7 @@ module.exports = {
   *syncCar(device, carList, allCars) {
     try {
       let existingCar = carList.find(c => c.id === device.id);
+
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync', existingCar.isInvers);
         if (updatedCar) {
@@ -1071,6 +1074,8 @@ module.exports = {
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let newCar = yield this.getDevice(device.id, null, null, device.type !== 'homeGrown');
+          console.log('newCar');
+          return;
           if (newCar) {
             let car = new Car(newCar);
             let meta = config.car.meta[car.id];
@@ -1140,11 +1145,11 @@ module.exports = {
   },
 
   *getDevice(id, _user, source, isInvers = false) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && isInvers) {
       return false;
     }
     try {
-      let status = yield this.request(isInvers ? `/devices/${ id }/status` : `/shadow/${id}`, { timeout : 30000, isInvers });
+      let status = yield this.request(isInvers ? `/devices/${ id }/status` : `/shadows/${id}`, { timeout : 30000, isInvers });
       this._errors[id] = 0;
       if (status) {
         this.logStatus(status, id, source);
@@ -1520,6 +1525,7 @@ module.exports = {
    * @return {Object}      WaiveCar car model
    */
   transformDeviceToCar(id, data) {
+    console.log(id, data);
 
     // if we don't have a fuel level, we default to 89 ... this should
     // be eventually removed 
@@ -1605,7 +1611,6 @@ module.exports = {
     try {
       let res = yield request(payload);
       if (res.statusCode !== 200) {
-        //console.log(payload, res.body);
         throw error.parse({
           code    : 'CAR_SERVICE',
           message : "The server can't contact the car, please try again.",
