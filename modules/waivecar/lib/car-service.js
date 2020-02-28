@@ -1074,7 +1074,6 @@ module.exports = {
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let newCar = yield this.getDevice(device.id, null, null, device.type !== 'homeGrown');
-          return;
           if (newCar) {
             let car = new Car(newCar);
             let meta = config.car.meta[car.id];
@@ -1095,6 +1094,7 @@ module.exports = {
             log.debug(`Cars : Sync : adding ${ device.id }.`);
             car = yield car.upsert();
             yield car.addTag('la');
+            console.log('car at end', car);
           } else {
             log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
@@ -1552,6 +1552,7 @@ module.exports = {
         isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
         isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false }),
         isDoorOpen                    : this.convertToBoolean(data, 'doors', { open : true, closed : false }),
+        isInvers                      : true,
       };
 
       if (data['rfid_tag_states']) {
@@ -1606,6 +1607,7 @@ module.exports = {
         hdop: heartbeat.hdop, // currently not on car model
         positionUpdatedAt: heartbeat.datetime,
         locationQuality: 1, // defaulting to one because we are not measuring this
+        isInvers: false,
       };
 
     }
