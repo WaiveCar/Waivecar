@@ -1177,6 +1177,7 @@ module.exports = {
   },
 
   *ble(id, _user) {
+    // Currently, this section will not work for our in-house telematics
     let car = yield Car.findById(id);
     
     if(!_user.isAdmin() && (!car || car.userId !== _user.id)) {
@@ -1425,6 +1426,7 @@ module.exports = {
     });
     let status = yield this.request(`/devices/${ id }/status`, {
       method : 'PATCH'
+      isInvers: existingCar.isInvers,
     }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     if (_user) yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
@@ -1481,6 +1483,7 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       let status     = yield this.request(`/devices/${ id }/status`, {
         method : 'PATCH'
+        isInvers: existingCar.isInvers,
       }, payload);
       this.logStatus(status, id, payload);
       updatedCar = this.transformDeviceToCar(id, status);
