@@ -1119,7 +1119,7 @@ module.exports = {
     let total = 0;
     /*
     do {
-      partial = yield this.request('/devices?active=true&limit=100&offset=' + offset);
+      partial = yield this.request('/devices?active=true&limit=100&offset=' + offset, {isInvers: true});
       total = partial.count || partial.data.length;
       if(!partial.data || !partial.data.length) {
         break;
