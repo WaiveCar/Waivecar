@@ -1074,7 +1074,6 @@ module.exports = {
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let newCar = yield this.getDevice(device.id, null, null, device.type !== 'homeGrown');
-          console.log('newCar');
           return;
           if (newCar) {
             let car = new Car(newCar);
@@ -1169,6 +1168,8 @@ module.exports = {
           yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ], { channel : '#api-errors' });
           this._errors[id] = 0;
         }
+      } else if (err.code === 'ResourceNotFoundException') {
+        // this must be done for thingNames that currently do not have a shadow
         return null;
       }
       throw err;
@@ -1525,9 +1526,8 @@ module.exports = {
    * @return {Object}      WaiveCar car model
    */
   transformDeviceToCar(id, data) {
-    console.log(id, data);
     let car;
-    if (!data.canbus) { // this section should cover the invers boxes
+    if (!data.reported) { // this section should cover the invers boxes
       // if we don't have a fuel level, we default to 89 ... this should
       // be eventually removed 
       if (! ('fuel_level' in data) ) {
@@ -1582,27 +1582,29 @@ module.exports = {
     } else {
       // This happens if our telematics are being used. There may be some info missing initially that will need
       // to be handled later. Specifically the electric car specific properties
+      let {desired, reported} = data;
+      let {canbus, heartbeat} = data.reported;
       car = {
         id: data.id,
-        lockLastCommand: data.desired.lock === 'close' ? 'locked' : unlocked,
-        totalMileage: data.reported.canbus.mileage,
-        boardVoltage: data.heartbeat.lastVin,
+        lockLastCommand: desired.lock === 'close' ? 'locked' : 'unlocked',
+        totalMileage: canbus.mileage,
+        boardVoltage: heartbeat.lastVin,
         charge: 60, // set to this as default for now. New telems are not currently collecting this
-        isIgnitionOn: data.reported.canbus.ignition,
-        calculatedSpeed: data.reported.heartbeat.speed,
-        currentSpeed: data.reported.canbus.car_speed,
-        isImmobilized: data.reported.immo !== 'unlock' ? true : false,
-        isLocked: data.reported.lock === 'close' ? 'locked' : 'unlocked',
+        isIgnitionOn: canbus.ignition, // need to figure out which is on and which is off
+        calculatedSpeed: heartbeat.speed,
+        currentSpeed: canbus.car_speed,
+        isImmobilized: reported.immo !== 'unlock' ? true : false,
+        isLocked: reported.lock === 'close' ? true : false,
         isDoorOpen: [
-          data.reported.canbus.door_front_left,
-          data.reported.canbus.door_front_right,
-          data.reported.canbus.door_back_left,
-          data.reported.canbus.door_back_right
-        ].any(item => item === 1),
-        latitude: data.heartbeat.lat,
-        longitude: data.heartbeat.long,
-        hdop: data.heartbeat.hdop, // currently not on car model
-        positionUpdatedAt: data.hearbeat.datetime,
+          canbus.door_front_left,
+          canbus.door_front_right,
+          canbus.door_back_left,
+          canbus.door_back_right
+        ].every(item => item === 1),
+        latitude: heartbeat.lat,
+        longitude: heartbeat.long,
+        hdop: heartbeat.hdop, // currently not on car model
+        positionUpdatedAt: heartbeat.datetime,
         locationQuality: 1, // defaulting to one because we are not measuring this
       };
 
