@@ -1526,61 +1526,90 @@ module.exports = {
    */
   transformDeviceToCar(id, data) {
     console.log(id, data);
-
-    // if we don't have a fuel level, we default to 89 ... this should
-    // be eventually removed 
-    if (! ('fuel_level' in data) ) {
-      data['fuel_level'] = 89;
-    }
-    if (! ('keyfob' in data) ) {
-      data['keyfob'] = 'in';
-    }
-
-    let car = {
-      id                            : id,
-      lockLastCommand               : data['central_lock_last_command'],
-      isKeySecure                   : this.convertToBoolean(data, 'keyfob', { in : true, out : false }),
-      bluetooth                     : data['bluetooth_connection'],
-      alarmInput                    : data['alarm_input'],
-      mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
-      totalMileage                  : data['mileage'],
-      boardVoltage                  : data['board_voltage'],
-      charge                        : data['fuel_level'],
-      isIgnitionOn                  : this.convertToBoolean(data, 'ignition', { on : true, off : false }),
-      currentSpeed                  : data['speed'],
-      isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
-      isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false }),
-      isDoorOpen                    : this.convertToBoolean(data, 'doors', { open : true, closed : false }),
-    };
-
-    if (data['rfid_tag_states']) {
-      let cards = data['rfid_tag_states'];
-      car.isChargeCardSecure = this.convertToBoolean(cards, '1', { in : true, out : false });
-    }
-
-    if (data['position']) {
-      let position = data['position'];
-      if (position['lat']) {
-        car.latitude  = position['lat'];
-        car.longitude = position['lon'];
-        car.hdop = position['hdop'];
-        car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
-        car.locationQuality       = position['quality'];
-        car.calculatedSpeed       = position['speed_over_ground'];
-        car.positionUpdatedAt     = position['timestamp'];
+    let car;
+    if (!data.canbus) { // this section should cover the invers boxes
+      // if we don't have a fuel level, we default to 89 ... this should
+      // be eventually removed 
+      if (! ('fuel_level' in data) ) {
+        data['fuel_level'] = 89;
       }
-    }
+      if (! ('keyfob' in data) ) {
+        data['keyfob'] = 'in';
+      }
 
-    if (data['electric_vehicle_state']) {
-      let elec = data['electric_vehicle_state'];
-      car.isCharging        = this.convertToBoolean(elec, 'charge', { on : true, off : false });
-      car.isQuickCharging   = this.convertToBoolean(elec, 'quick_charge', { on : true, off : false });
-      car.isOnChargeAdapter = this.convertToBoolean(elec, 'charge_adapter', { in : true, out : false });
-      car.range             = elec['cruising_range'];
+      car = {
+        id                            : id,
+        lockLastCommand               : data['central_lock_last_command'],
+        isKeySecure                   : this.convertToBoolean(data, 'keyfob', { in : true, out : false }),
+        bluetooth                     : data['bluetooth_connection'],
+        alarmInput                    : data['alarm_input'],
+        mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
+        totalMileage                  : data['mileage'],
+        boardVoltage                  : data['board_voltage'],
+        charge                        : data['fuel_level'],
+        isIgnitionOn                  : this.convertToBoolean(data, 'ignition', { on : true, off : false }),
+        currentSpeed                  : data['speed'],
+        isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
+        isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false }),
+        isDoorOpen                    : this.convertToBoolean(data, 'doors', { open : true, closed : false }),
+      };
+
+      if (data['rfid_tag_states']) {
+        let cards = data['rfid_tag_states'];
+        car.isChargeCardSecure = this.convertToBoolean(cards, '1', { in : true, out : false });
+      }
+
+      if (data['position']) {
+        let position = data['position'];
+        if (position['lat']) {
+          car.latitude  = position['lat'];
+          car.longitude = position['lon'];
+          car.hdop = position['hdop'];
+          car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
+          car.locationQuality       = position['quality'];
+          car.calculatedSpeed       = position['speed_over_ground'];
+          car.positionUpdatedAt     = position['timestamp'];
+        }
+      }
+      // We are not currently not collecting ev info with new telematics
+      if (data['electric_vehicle_state']) {
+        let elec = data['electric_vehicle_state'];
+        car.isCharging        = this.convertToBoolean(elec, 'charge', { on : true, off : false });
+        car.isQuickCharging   = this.convertToBoolean(elec, 'quick_charge', { on : true, off : false });
+        car.isOnChargeAdapter = this.convertToBoolean(elec, 'charge_adapter', { in : true, out : false });
+        car.range             = elec['cruising_range'];
+      }
+    } else {
+      // This happens if our telematics are being used. There may be some info missing initially that will need
+      // to be handled later. Specifically the electric car specific properties
+      car = {
+        id: data.id,
+        lockLastCommand: data.desired.lock === 'close' ? 'locked' : unlocked,
+        totalMileage: data.reported.canbus.mileage,
+        boardVoltage: data.heartbeat.lastVin,
+        charge: 60, // set to this as default for now. New telems are not currently collecting this
+        isIgnitionOn: data.reported.canbus.ignition,
+        calculatedSpeed: data.reported.heartbeat.speed,
+        currentSpeed: data.reported.canbus.car_speed,
+        isImmobilized: data.reported.immo !== 'unlock' ? true : false,
+        isLocked: data.reported.lock === 'close' ? 'locked' : 'unlocked',
+        isDoorOpen: [
+          data.reported.canbus.door_front_left,
+          data.reported.canbus.door_front_right,
+          data.reported.canbus.door_back_left,
+          data.reported.canbus.door_back_right
+        ].any(item => item === 1),
+        latitude: data.heartbeat.lat,
+        longitude: data.heartbeat.long,
+        hdop: data.heartbeat.hdop, // currently not on car model
+        positionUpdatedAt: data.hearbeat.datetime,
+        locationQuality: 1, // defaulting to one because we are not measuring this
+      };
+
     }
 
     car.updatedAt = new Date();
-
+    
     return car;
   },
 
