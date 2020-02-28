@@ -1013,7 +1013,6 @@ module.exports = {
         data: existingCar.toJSON()
       });
     }
-
     return existingCar;
   },
 
@@ -1094,7 +1093,6 @@ module.exports = {
             log.debug(`Cars : Sync : adding ${ device.id }.`);
             car = yield car.upsert();
             yield car.addTag('la');
-            console.log('car at end', car);
           } else {
             log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
@@ -1425,7 +1423,7 @@ module.exports = {
       immobilizer : 'locked'
     });
     let status = yield this.request(`/devices/${ id }/status`, {
-      method : 'PATCH'
+      method : 'PATCH',
       isInvers: existingCar.isInvers,
     }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
@@ -1482,7 +1480,7 @@ module.exports = {
     //
     if (process.env.NODE_ENV === 'production') {
       let status     = yield this.request(`/devices/${ id }/status`, {
-        method : 'PATCH'
+        method : 'PATCH',
         isInvers: existingCar.isInvers,
       }, payload);
       this.logStatus(status, id, payload);
