@@ -1527,7 +1527,7 @@ module.exports = {
    */
   transformDeviceToCar(id, data) {
     let car;
-    if (!data.desired) { // this section should cover the invers boxes
+    if (!(data.desired || data.reported)) { // this section should cover the invers boxes
       // if we don't have a fuel level, we default to 89 ... this should
       // be eventually removed 
       if (! ('fuel_level' in data) ) {
@@ -1587,7 +1587,7 @@ module.exports = {
       let {canbus, heartbeat} = data.reported;
       car = {
         id: data.id,
-        lockLastCommand: desired.lock === 'close' ? 'locked' : 'unlocked',
+        lockLastCommand: desired && desired.lock === 'close' ? 'locked' : 'unlocked',
         totalMileage: canbus.mileage,
         boardVoltage: heartbeat.lastVin,
         charge: 60, // set to this as default for now. New telems are not currently collecting this
@@ -1609,7 +1609,6 @@ module.exports = {
         locationQuality: 1, // defaulting to one because we are not measuring this
         isInvers: false,
       };
-
     }
 
     car.updatedAt = new Date();
