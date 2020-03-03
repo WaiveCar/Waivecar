@@ -1478,7 +1478,7 @@ module.exports = {
     // https://github.com/WaiveCar/Waivecar/issues/739
     //
     if (process.env.NODE_ENV === 'production') {
-      let status = yield this.request(!existingCar.isInvers ? `/shadows/${id}/${command}` : `/devices/${ id }/status`, {
+      let status = yield this.request(!existingCar.isInvers ? `/shadows/${id}/${part}-${command}` : `/devices/${ id }/status`, {
         method : !existingCar.isInvers ? 'PUT': 'PATCH',
         isInvers: existingCar.isInvers,
       }, payload);
