@@ -850,7 +850,6 @@ module.exports = {
       responseJSON = JSON.parse(response.body);
       return responseJSON;
     } catch(ex) {
-      console.log(ex);
       if(response) {
         return response.body;
       }
@@ -1423,7 +1422,7 @@ module.exports = {
       immobilizer : 'locked'
     });
     let status = yield this.request(`/devices/${ id }/status`, {
-      method : 'PATCH',
+      method : !existingCar.isInvers ? 'PUT': 'PATCH',
       isInvers: existingCar.isInvers,
     }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
@@ -1479,8 +1478,8 @@ module.exports = {
     // https://github.com/WaiveCar/Waivecar/issues/739
     //
     if (process.env.NODE_ENV === 'production') {
-      let status     = yield this.request(`/devices/${ id }/status`, {
-        method : 'PATCH',
+      let status = yield this.request(!existingCar.isInvers ? `/shadows/${id}/${command}` : `/devices/${ id }/status`, {
+        method : !existingCar.isInvers ? 'PUT': 'PATCH',
         isInvers: existingCar.isInvers,
       }, payload);
       this.logStatus(status, id, payload);
@@ -1528,7 +1527,7 @@ module.exports = {
    */
   transformDeviceToCar(id, data) {
     let car;
-    if (!data.reported) { // this section should cover the invers boxes
+    if (!data.desired) { // this section should cover the invers boxes
       // if we don't have a fuel level, we default to 89 ... this should
       // be eventually removed 
       if (! ('fuel_level' in data) ) {
