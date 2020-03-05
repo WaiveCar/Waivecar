@@ -1114,7 +1114,6 @@ module.exports = {
     var partial;
     let offset = 0;
     let total = 0;
-    /*
     do {
       partial = yield this.request('/devices?active=true&limit=100&offset=' + offset, {isInvers: true});
       total = partial.count || partial.data.length;
@@ -1124,7 +1123,6 @@ module.exports = {
       deviceList = deviceList.concat(partial.data);
       offset = deviceList.length;
     } while(offset < total);
-    */
     let fromAws = yield this.request('/shadows', {isInvers: false});
     deviceList = deviceList.concat(fromAws);
     if(deviceList.length) {
