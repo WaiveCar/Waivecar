@@ -1511,11 +1511,12 @@ module.exports = {
     }
     return res;
   },
-
+  /*
   *getEvents(id, _user) {
     let events = yield this.request(`/events?device=${ id }&timeout=0`);
     return events.data;
   },
+  */
 
   /**
    * Helper Function to transform an Invers Car object in to a Waivecar Car
