@@ -2,6 +2,7 @@
 
 let Email   = Bento.provider('email');
 let User    = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication');
 let Booking = Bento.model('Booking');
 let Car     = Bento.model('Car');
 let config  = Bento.config;
@@ -597,7 +598,15 @@ module.exports = {
       yield notify.sendTextMessage({_phone: phone}, `_number: ${phone}`);
       return true;
     }
-
+    if (user) {
+      let communication = new UserCommunication({
+        userId: user.id,
+        creatorId: user.id,
+        content: params.query.Body,
+        type: 'sms',
+      });
+      yield communication.save();
+    }
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.
     if(user && (yield this.attemptAction(user, smstext, {raw: params.query.Body, phone: phone}))) {

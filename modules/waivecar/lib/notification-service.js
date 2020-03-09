@@ -58,7 +58,7 @@ module.exports = {
 
     let communication = new UserCommunication({
       userId: user.id,
-      creator_id: _user.id,
+      creatorId: _user.id,
       content: message,
       type: 'sms',
     });
