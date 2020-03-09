@@ -5,6 +5,7 @@ let Slack       = Bento.provider('slack');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication');
 let GroupUser   = Bento.model('GroupUser');
 let error       = Bento.Error;
 let config      = Bento.config;
@@ -55,7 +56,15 @@ module.exports = {
 
     log_message('sms', {phone: user.phone, text: message});
 
-    //if (user.phone && process.env.NODE_ENV === 'production') {
+    let communication = new UserCommunication({
+      userId: user.id,
+      creator_id: _user.id,
+      content: message,
+      type: 'sms',
+    });
+    yield communication.save();
+
+    if (user.phone && process.env.NODE_ENV === 'production') {
       try {
         let sms = new Sms(user, _user);
         yield sms.send({
@@ -65,7 +74,7 @@ module.exports = {
       } catch (err) {
         log.warn(`Failed to send sms to ${ user.phone } > ${ err.message }`);
       }
-    //}
+    }
     return user;
   },
 
