@@ -32,7 +32,7 @@ function log_message(type, what) {
 let fcm = new FCM(config.push.serverKey);
 
 module.exports = {
-  *sendTextMessage(query, message) {
+  *sendTextMessage(query, message, _user) {
     // this allows us to send messages to whomever
     // regardless of whether we've contacted them prior
     if(query._phone) {
@@ -55,9 +55,9 @@ module.exports = {
 
     log_message('sms', {phone: user.phone, text: message});
 
-    if (user.phone && process.env.NODE_ENV === 'production') {
+    //if (user.phone && process.env.NODE_ENV === 'production') {
       try {
-        let sms = new Sms();
+        let sms = new Sms(user, _user);
         yield sms.send({
           to      : user.phone,
           message : message
@@ -65,7 +65,7 @@ module.exports = {
       } catch (err) {
         log.warn(`Failed to send sms to ${ user.phone } > ${ err.message }`);
       }
-    }
+    //}
     return user;
   },
 

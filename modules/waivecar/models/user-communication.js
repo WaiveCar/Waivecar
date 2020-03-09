@@ -1,4 +1,4 @@
-Bento.Register.Model('UserCommunications', 'sequelize', function register(
+Bento.Register.Model('UserCommunication', 'sequelize', function register(
   model,
   Sequelize,
 ) {
@@ -26,10 +26,11 @@ Bento.Register.Model('UserCommunications', 'sequelize', function register(
       },
     },
 
-    status: {
+    type: {
       type: Sequelize.ENUM('sms', 'email'),
       defaultValue: 'sms',
     },
+
     content: {
       type: Sequelize.TEXT,
     },

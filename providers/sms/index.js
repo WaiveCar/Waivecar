@@ -1,15 +1,17 @@
 'use strict';
 
 let error = Bento.Error;
-
+let UserCommunication = Bento.model('UserCommunication');
 module.exports = class SMS {
 
   /**
    * Sets up the configuration and internal transporter.
    * @return {Void}
    */
-  constructor() {
+  constructor(user, sender = null) {
     this.config = Bento.config.sms;
+    this.user = user;
+    this.sender = sender;
     try {
       this.transporter = require(this.config.transportName)(this.config.transport.sid, this.config.transport.token);
     } catch(err) {
@@ -38,6 +40,14 @@ module.exports = class SMS {
         solution : 'Add a valid Transport in to SMS configuration'
       }, 400);
     }
+
+    let communication = new UserCommunication({
+      userId: this.user.id,
+      creator_id: this.sender.id,
+      content: sms.message,
+      type: 'sms',
+    });
+    yield communication.save();
 
     let data = {
       to   : sms.to,

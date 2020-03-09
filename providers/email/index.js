@@ -7,6 +7,8 @@ let Template          = require('email-templates').EmailTemplate;
 let path              = require('path');
 let fs                = require('fs');
 let error             = Bento.Error;
+let User = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication')
 
 module.exports = class Email {
 
@@ -34,6 +36,8 @@ module.exports = class Email {
   }
 
   *send(email) {
+    // email.to is referenced here as a workaround for when in development
+    let to = email.to;
     email._t = new Date();
     // This is an exceptionally magical mode
     // where all the mail gets funneled off to
@@ -46,7 +50,6 @@ module.exports = class Email {
       email.subject += " DBG:" + email.to;
       email.to = this.config.recipient;
     }
-
     fs.appendFile('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n', function(){});
 
     if (!this.transporter) {
@@ -58,6 +61,15 @@ module.exports = class Email {
     let content = yield this.renderTemplate(email.template, email.context);
     email.html  = content.html ? content.html.trim() : email.html.trim();
     email.text  = content.text ? context.text : email.text;
+
+    let user = yield User.findOne({where: {email: to}});
+    let communication = new UserCommunication({
+      userId: user.id,
+      type: 'email',
+      content: JSON.stringify(email),
+    });
+    yield communication.save();
+
     return yield (done) => {
       this.transporter.sendMail(email, done);
     };
