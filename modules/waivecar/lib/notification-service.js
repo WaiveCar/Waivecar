@@ -55,14 +55,17 @@ module.exports = {
     }
 
     log_message('sms', {phone: user.phone, text: message});
-
-    let communication = new UserCommunication({
-      userId: user.id,
-      creatorId: _user.id,
-      content: message,
-      type: 'sms',
-    });
-    yield communication.save();
+    // User communications will only be saved for users that have already been let in
+    if (user && !user.accountType) {
+      console.log(user);
+      let communication = new UserCommunication({
+        userId: user.id,
+        creatorId: _user ? _user.id : null,
+        content: message,
+        type: 'sms',
+      });
+        yield communication.save();
+    }
 
     if (user.phone && process.env.NODE_ENV === 'production') {
       try {

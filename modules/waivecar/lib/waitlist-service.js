@@ -826,6 +826,7 @@ module.exports = {
       };
       yield email.send(emailOpts);
     } catch(err) {
+      console.log('err', err);
       log.warn('Failed to deliver notification email: ', emailOpts, err);      
     }
   }
