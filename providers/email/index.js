@@ -62,12 +62,14 @@ module.exports = class Email {
     email.html  = content.html ? content.html.trim() : email.html.trim();
     email.text  = content.text ? context.text : email.text;
     let user = yield User.findOne({where: {email: to}});
-    let communication = new UserCommunication({
-      userId: user.id,
-      type: 'email',
-      content: JSON.stringify(email),
-    });
-    yield communication.save();
+    if (user) {
+      let communication = new UserCommunication({
+        userId: user.id,
+        type: 'email',
+        content: JSON.stringify(email),
+      });
+      yield communication.save();
+    }
     return yield (done) => {
       this.transporter.sendMail(email, done);
     };
