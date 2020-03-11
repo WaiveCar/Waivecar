@@ -120,11 +120,11 @@ module.exports = {
     }
   },
 
-  *removeLiability(car, booking, user) {
+  *removeLiability(car, booking, user, noslack) {
     if(booking.isFlagged('tikdEnd')) {
       return true;
     }
-    let res = yield this.changeLiability('service-ended', car, booking, user);
+    let res = yield this.changeLiability('service-ended', car, booking, user, noslack);
     if(!res) {
       yield booking.flag('tikdFailedEnd');
       console.log(`Can't remove liability for booking ${booking.id}`);
@@ -178,7 +178,7 @@ module.exports = {
 
   *changeLiability(state, car, booking, user, noslack) {
     let license = yield user.getLicense(), 
-        err = false;
+        err = '';
 
     if(!license) {
       err = `${ user.link() } does not have a license on file. ${ booking.link() } cannot be added to tikd`;
