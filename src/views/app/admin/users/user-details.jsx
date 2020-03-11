@@ -11,6 +11,7 @@ import RideList       from '../../components/user/rides/ride-list';
 import ChargeList     from '../../components/user/charges/charge-list';
 import WaiveWorkDetails from './waivework-details'; 
 import WaiveWorkRequest from './waivework-request';
+import UserCommunications from './user-communications.jsx';
 
 
 module.exports = class UserDetails extends React.Component {
@@ -510,6 +511,7 @@ module.exports = class UserDetails extends React.Component {
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
           <WaiveWorkRequest user={user} />
           <WaiveWorkDetails user={user} />
+          <UserCommunications user={user} />
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
             <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
