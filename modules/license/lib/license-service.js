@@ -30,6 +30,9 @@ module.exports = class LicenseService extends Service {
     // First we normalize the data
     data.number = data.number.toUpperCase();
     // Check if user already has license
+    // For now we are just going to allow creation of duplicate license objects because this is causing
+    // bugs elsewhere. We will put it back in later if this ends up being a problem
+    /*
     if (yield License.findOne({ where : { 
       state : data.state,
       number: data.number
@@ -39,6 +42,7 @@ module.exports = class LicenseService extends Service {
         message : `This license has already been registered. Please use the contact form for questions if you believe this is an error.`
       }, 400);
     }
+    */
     if (!data.fromComputer) {
       this.hasAccess(user, _user);
     }
@@ -55,7 +59,7 @@ module.exports = class LicenseService extends Service {
 
     // Check that birthdate is over the minimum
     var minimumAge = (yield user.hasTag('csula')) ? 18 : 21;
-
+    /* For now, we have no minimum age, and want users to always store their license
     var age = moment().diff(data.birthDate, 'years');
     if (age < minimumAge) {
       throw error.parse({
@@ -67,7 +71,7 @@ module.exports = class LicenseService extends Service {
         code    : `INVALID_LICENSE`,
         message : `Your date of birth appears to have some errors. Are you really ${age} years old?`
       }, 400);
-    }
+    }*/
     let license = new License(data);
 
     if (license.birthDate) {
