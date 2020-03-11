@@ -14,3 +14,4 @@ Route.resource('users', 'UsersController', {
 });
 
 Route.get('/users/:id/stats', [ 'isAuthenticated', 'isAdmin', 'UsersController@stats']);
+Route.get('/users/:id/communications', [ 'isAuthenticated', 'isAdmin', 'UsersController@communications']);

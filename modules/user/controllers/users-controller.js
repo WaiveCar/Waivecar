@@ -89,5 +89,9 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.stats(id);
   };
 
+  controller.communcations = function *(id) {
+    return yield service.communications(id);
+  }
+
   return controller;
 });

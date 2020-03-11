@@ -8,7 +8,7 @@ let path              = require('path');
 let fs                = require('fs');
 let error             = Bento.Error;
 let User = Bento.model('User');
-let UserCommunication = Bento.model('UserCommunication')
+let UserCommunication = Bento.model('UserCommunication');
 
 module.exports = class Email {
 

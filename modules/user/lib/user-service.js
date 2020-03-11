@@ -18,6 +18,7 @@ let moment      = require('moment');
 // ### Models
 
 let User      = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication');
 let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
@@ -620,5 +621,9 @@ module.exports = {
         bookings: allBookings.filter(booking => booking.createdAt > dayAgo),
       }
     }
+  },
+
+  *communications(userId) {
+    return yield UserCommunication.find({where: {userId}});
   }
 };
