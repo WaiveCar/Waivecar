@@ -1889,6 +1889,7 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.removeDriver();
+    yield Tikd.removeLiability(car, booking, user);
 
     if (user.isProbation()){
       yield user.setActive();
@@ -2724,5 +2725,38 @@ module.exports = class BookingService extends Service {
       console.log('error sending email', e);
     }
     return;
+  }
+
+  static *fixTikd() {
+    let bookingList = yield Booking.find({
+      where: {
+        $and: [
+          { id: { $gt: 140000 }},
+          { status: { $in : [ 'completed', 'closed', 'ended' ] } },
+          { flags: { $notLike: '%tikdEnd%' } },
+          { flags: { $notLike: '%tikdFailedEnd%' } }
+        ]
+      },
+      include: [
+        {
+          model: 'BookingDetails',
+          as: 'details',
+        }
+      ],
+      order: [ ['created_at', 'desc'] ],
+      limit: 500
+    });
+
+    var res = [];
+    for(var booking of bookingList) {
+      if(booking.isFinished()) {
+        let user = yield booking.getUser();
+        let car = yield booking.getCar();
+        yield Tikd.removeLiability(car, booking, user, true);
+        res.push(booking.id);
+      }
+    }
+    res.push(res.length);
+    return res;
   }
 };

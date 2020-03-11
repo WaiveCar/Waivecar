@@ -116,6 +116,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.signIssue(adjective, this.payload, this.auth.user);
   }
 
+  controller.fixTikd = function*() {
+    return yield booking.fixTikd();
+  }
+
   /**
    * Initiates the booking and starts the ride.
    * @param  {Number} id

@@ -17,6 +17,7 @@ module.exports = {
 
   *post(url, payload, opts) {
     if(process.env.NODE_ENV !== 'production') {
+      console.log([url,payload]);
       return true;
     }
     var response, responseJSON;
@@ -120,12 +121,12 @@ module.exports = {
   },
 
   *removeLiability(car, booking, user) {
-    if(booking.isFlagged('tikdEnd') || !booking.isFlagged('tikdStart')) {
+    if(booking.isFlagged('tikdEnd')) {
       return true;
     }
     let res = yield this.changeLiability('service-ended', car, booking, user);
-    console.log(res);
     if(!res) {
+      yield booking.flag('tikdFailedEnd');
       console.log(`Can't remove liability for booking ${booking.id}`);
     } else {
       yield redis.hdel('tikd', car.license);
@@ -175,23 +176,17 @@ module.exports = {
     }
   },
 
-  *changeLiability(state, car, booking, user) {
-    let license = yield user.getLicense();
-    if(!license) {
-      yield notify.slack(
-        { text: `:genie: ${ user.link() } does not have a license on file. ${ booking.link() } cannot be added to tikd` },
-        { channel: '#rental-alerts' },
-      );
-      return;
-    }
+  *changeLiability(state, car, booking, user, noslack) {
+    let license = yield user.getLicense(), 
+        err = false;
 
-    let missing = ['street1', 'city', 'state', 'zip'].filter(row => !license[row]).join(', ');
-    if(missing) {
-      yield notify.slack(
-        { text: `:genie: ${ user.link() } is missing the following fields in their license: ${missing}. ${ booking.link() } cannot be added to tikd.` },
-        { channel: '#rental-alerts' },
-      );
-      return;
+    if(!license) {
+      err = `${ user.link() } does not have a license on file. ${ booking.link() } cannot be added to tikd`;
+    } else {
+      let missing = ['street1', 'city', 'state', 'zip'].filter(row => !license[row]).join(', ');
+      if(missing) {
+        err += `${ user.link() } is missing the following fields in their license: ${missing}. ${ booking.link() } cannot be added to tikd.`;
+      }
     }
 
     let plateNumber = car.plateNumber || car.plateNumberWork;
@@ -200,16 +195,24 @@ module.exports = {
       plateNumber = newCar.plateNumber;
 
       if(!plateNumber) {
+        err += `A booking with ${ car.link() } started which CANNOT be ended in tikd because some plate number issue. Chris should probably fix this.`;
+      }
+    }
+
+    if(err) {
+      if(!noslack) {
         yield notify.slack(
-          { text: `:beers: A booking with ${ car.link() } started which CANNOT be ended in tikd because some plate number issue. Chris should probably fix this.` },
+          { text: `:genie: ${ err } ` },
           { channel: '#rental-alerts' },
         );
       }
+      return;
     }
+
     return yield this.post('renters', {
       rentalId : "booking-" + booking.id,
       eventName : state,
-      transactionDate : new Date().toISOString(),
+      transactionDate : booking.getEndTime() || new Date().toISOString(),
       rentalVehicle : {
         plateNumber : car.plateNumber,
         plateState : car.plateState
