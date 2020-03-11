@@ -624,6 +624,14 @@ module.exports = {
   },
 
   *communications(userId) {
-    return yield UserCommunication.find({where: {userId}});
+    return yield UserCommunication.find({where: {userId}, 
+      include: [
+        {
+          model: 'User',
+          as: 'creator',
+          allowNull: true,
+        }
+      ]
+    });
   }
 };
