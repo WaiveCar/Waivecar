@@ -2731,7 +2731,7 @@ module.exports = class BookingService extends Service {
     let bookingList = yield Booking.find({
       where: {
         $and: [
-          { id: { $gt: 140000 }},
+          { id: { $gt: 110000 }},
           { status: { $in : [ 'completed', 'closed', 'ended' ] } },
           { flags: { $notLike: '%tikdEnd%' } },
           { flags: { $notLike: '%tikdFailedEnd%' } }
