@@ -178,14 +178,15 @@ module.exports = {
 
   *changeLiability(state, car, booking, user, noslack) {
     let license = yield user.getLicense(), 
+        verb = state === 'service-started' ? 'added': 'ended',
         err = '';
 
     if(!license) {
-      err = `${ user.link() } does not have a license on file. ${ booking.link() } cannot be added to tikd`;
+      err = `${ user.link() } does not have a license on file. ${ booking.link() } cannot be ${verb} to tikd`;
     } else {
       let missing = ['street1', 'city', 'state', 'zip'].filter(row => !license[row]).join(', ');
       if(missing) {
-        err += `${ user.link() } is missing the following fields in their license: ${missing}. ${ booking.link() } cannot be added to tikd.`;
+        err += `${ user.link() } is missing the following fields in their license: ${missing}. ${ booking.link() } cannot be ${verb} to tikd.`;
       }
     }
 
