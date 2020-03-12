@@ -279,7 +279,7 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
-  sendText(input, user) {
+  sendText(input, user, cb) {
     let message = input ? input : prompt('Please enter the message you wish to send:');
     if (message) {
       api.post('/notify', {
@@ -293,10 +293,13 @@ module.exports = class UserDetails extends React.Component {
             message : err.message
           });
         }
-        return snackbar.notify({
+        snackbar.notify({
           type: 'success',
           message: 'Text message sent'
         });
+        if (cb) {
+          cb();
+        }
       });
     }
   }

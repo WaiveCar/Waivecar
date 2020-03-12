@@ -14,6 +14,10 @@ export default class UserCommunications extends Component {
   }
 
   componentDidMount() {
+    this.getComs();
+  }
+
+  getComs() {
     api.get(`/users/${this.props.user.id}/communications`, (err, res) => {
       if (err) {
         return;
@@ -28,7 +32,11 @@ export default class UserCommunications extends Component {
   render() {
     let {category, inputText, sms, email} = this.state;
     let {user, sendText} = this.props;
-    console.log(sms);
+    let centerStyle = {
+      display: 'flex',
+      justifyContent: 'center',
+      marginTop: '1rem',
+    };
     return (
       <div className="box">
         <h3>
@@ -62,8 +70,9 @@ export default class UserCommunications extends Component {
                 <h4>
                   {user.firstName} {user.lastName}: {user.phone}
                 </h4>
-                {sms.map(message => (
+                {sms.map((message, i) => (
                   <div
+                    key={i}
                     style={{
                       display: 'flex',
                       justifyContent:
@@ -78,21 +87,26 @@ export default class UserCommunications extends Component {
                           : message.creator
                           ? `${message.creator.firstName} ${message.creator.lastName}`
                           : 'The Computer'}
+                        :
                       </div>
                       <div>{message.content}</div>
                     </div>
                   </div>
                 ))}
-                <div className="row">
+                <div className="row" style={centerStyle}>
                   <textarea
+                    style={{width: '80%'}}
+                    value={inputText}
                     onChange={e => this.setState({inputText: e.target.value})}
                   />
                 </div>
-                <div className="row">
+                <div className="row" style={centerStyle}>
                   <button
                     type="button"
                     className="btn btn-primary"
-                    onClick={() => sendText(inputText, user)}>
+                    onClick={() =>
+                      sendText(inputText, user, () => this.getComs())
+                    }>
                     Send Message
                   </button>
                 </div>
