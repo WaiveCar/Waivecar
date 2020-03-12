@@ -10,7 +10,6 @@ export default class UserCommunications extends Component {
       email: [],
       category: 'sms',
       textInput: '',
-      user: props.user,
     };
   }
 
@@ -27,8 +26,8 @@ export default class UserCommunications extends Component {
   }
 
   render() {
-    let {category} = this.state;
-    let {user} = this.props;
+    let {category, inputText} = this.state;
+    let {user, sendText} = this.props;
     return (
       <div className="box">
         <h3>
@@ -63,10 +62,15 @@ export default class UserCommunications extends Component {
                   {user.firstName} {user.lastName}: {user.phone}
                 </h4>
                 <div className="row">
-                  <textarea />
+                  <textarea
+                    onChange={e => this.setState({inputText: e.target.value})}
+                  />
                 </div>
                 <div className="row">
-                  <button type="button" className="btn btn-primary">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => sendText(inputText, user)}>
                     Send Message
                   </button>
                 </div>
