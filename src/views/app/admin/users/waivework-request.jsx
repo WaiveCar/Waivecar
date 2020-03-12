@@ -112,15 +112,6 @@ export default class WaiveWorkRequest extends Component {
             />{' '}
             No
           </div>
-          <div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={disabled}
-              onClick={() => this.requestQuote()}>
-              Request Quote
-            </button>
-          </div>
         </div>
       </div>
     );

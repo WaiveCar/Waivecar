@@ -279,13 +279,13 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
-  sendText() {
-    let message = prompt('Please enter the message you wish to send:');
+  sendText(input, user) {
+    let message = input ? input : prompt('Please enter the message you wish to send:');
     if (message) {
       api.post('/notify', {
         message,
         type: 'sms',
-        userId: this.state.currentUser.id,
+        userId: user.id,
       }, (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -362,7 +362,6 @@ module.exports = class UserDetails extends React.Component {
   render() {
     let user = this.state.currentUser;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
-
     if (!user) {
       return (
         <div className="box-empty">
@@ -500,7 +499,7 @@ module.exports = class UserDetails extends React.Component {
                   </div>
                 </div>
               </form>
-              <button onClick={() => this.sendText()} className="btn btn-sm btn-primary">Send Text</button>
+              <button onClick={() => this.sendText(null, user)} className="btn btn-sm btn-primary">Send Text</button>
             </div>
           </div>
 
@@ -511,7 +510,7 @@ module.exports = class UserDetails extends React.Component {
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
           <WaiveWorkRequest user={user} />
           <WaiveWorkDetails user={user} />
-          <UserCommunications user={user} />
+          <UserCommunications user={user} sendText={this.sendText}/>
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
             <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>

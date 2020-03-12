@@ -9,6 +9,8 @@ export default class UserCommunications extends Component {
       sms: [],
       email: [],
       category: 'sms',
+      textInput: '',
+      user: props.user,
     };
   }
 
@@ -26,6 +28,7 @@ export default class UserCommunications extends Component {
 
   render() {
     let {category} = this.state;
+    let {user} = this.props;
     return (
       <div className="box">
         <h3>
@@ -53,8 +56,24 @@ export default class UserCommunications extends Component {
               Email
             </button>
           </div>
-          <div className="row">
-            {category === 'sms' ? <div>sms</div> : <div>email</div>}
+          <div className="row" style={{marginTop: '0.5rem'}}>
+            {category === 'sms' ? (
+              <div>
+                <h4>
+                  {user.firstName} {user.lastName}: {user.phone}
+                </h4>
+                <div className="row">
+                  <textarea />
+                </div>
+                <div className="row">
+                  <button type="button" className="btn btn-primary">
+                    Send Message
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>email</div>
+            )}
           </div>
         </div>
       </div>
