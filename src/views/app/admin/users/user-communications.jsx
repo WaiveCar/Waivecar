@@ -35,6 +35,25 @@ export default class UserCommunications extends Component {
     });
   }
 
+  openEmail(idx, content) {
+    let {email} = this.state;
+    content.isExpansion = true;
+    let temp = [...email];
+    temp.splice(idx + 1, 0, content);
+    this.setState({
+      email: temp,
+    }, () => console.log(this.refs));
+  }
+
+  closeEmail(idx) {
+    let {email} = this.state;
+    let temp = [...email];
+    temp.splice(idx + 1, 1);
+    this.setState({
+      email: temp,
+    });
+  }
+
   render() {
     let {category, inputText, sms, email} = this.state;
     let {user, sendText} = this.props;
@@ -43,7 +62,6 @@ export default class UserCommunications extends Component {
       justifyContent: 'center',
       marginTop: '1rem',
     };
-    console.log(email);
     return (
       <div className="rides">
         <div className="box">
@@ -58,11 +76,7 @@ export default class UserCommunications extends Component {
                 className={`btn btn-${
                   category === 'sms' ? 'primary' : 'secondary'
                 }`}
-                onClick={() =>
-                  this.setState({category: 'sms'}, () =>
-                    console.log(this.state),
-                  )
-                }>
+                onClick={() => this.setState({category: 'sms'})}>
                 SMS
               </button>
               <button
@@ -144,9 +158,24 @@ export default class UserCommunications extends Component {
                         </tr>
                       </thead>
                       <tbody>
-                        {email.map((message, i) => (
-                          <Email key={i} message={message} />
-                        ))}
+                        {email.map((message, i) =>
+                          !message.isExpansion ? (
+                            <Email
+                              key={i}
+                              idx={i}
+                              ref={`ref-${i}`}
+                              message={message}
+                              openEmail={(idx, content) =>
+                                this.openEmail(idx, content)
+                              }
+                              closeEmail={idx => this.closeEmail(idx)}
+                            />
+                          ) : (
+                            <tr key={i} ref={`ref-${i}`}>
+                              <td>Expansion</td>
+                            </tr>
+                          ),
+                        )}
                       </tbody>
                     </table>
                   </div>
