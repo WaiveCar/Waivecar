@@ -77,10 +77,12 @@ export default class UserCommunications extends Component {
                       display: 'flex',
                       justifyContent:
                         message.userId === message.creatorId
-                          ? 'flex-start'
-                          : 'flex-end',
+                          ? 'flex-end'
+                          : 'flex-start',
+                      textAlign:
+                        message.userId === message.creatorId ? 'right' : 'left'
                     }}>
-                    <div style={{width: '45%'}}>
+                    <div style={{maxWidth: '45%'}}>
                       <div>
                         {message.userId === message.creatorId
                           ? `${user.firstName} ${user.lastName}`
@@ -108,6 +110,12 @@ export default class UserCommunications extends Component {
                       sendText(inputText, user, () => this.getComs())
                     }>
                     Send Message
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={() => this.getComs()}>
+                    Update Thread
                   </button>
                 </div>
               </div>
