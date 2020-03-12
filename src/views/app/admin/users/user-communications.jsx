@@ -26,8 +26,9 @@ export default class UserCommunications extends Component {
   }
 
   render() {
-    let {category, inputText} = this.state;
+    let {category, inputText, sms, email} = this.state;
     let {user, sendText} = this.props;
+    console.log(sms);
     return (
       <div className="box">
         <h3>
@@ -61,6 +62,27 @@ export default class UserCommunications extends Component {
                 <h4>
                   {user.firstName} {user.lastName}: {user.phone}
                 </h4>
+                {sms.map(message => (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent:
+                        message.userId === message.creatorId
+                          ? 'flex-start'
+                          : 'flex-end',
+                    }}>
+                    <div style={{width: '45%'}}>
+                      <div>
+                        {message.userId === message.creatorId
+                          ? `${user.firstName} ${user.lastName}`
+                          : message.creator
+                          ? `${message.creator.firstName} ${message.creator.lastName}`
+                          : 'The Computer'}
+                      </div>
+                      <div>{message.content}</div>
+                    </div>
+                  </div>
+                ))}
                 <div className="row">
                   <textarea
                     onChange={e => this.setState({inputText: e.target.value})}
