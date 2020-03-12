@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
+import Email from './email.jsx';
 
 export default class UserCommunications extends Component {
   constructor(props) {
@@ -144,12 +145,7 @@ export default class UserCommunications extends Component {
                       </thead>
                       <tbody>
                         {email.map((message, i) => (
-                          <tr key={i}>
-                            <td></td>
-                            <td>{message.createdAt}</td>
-                            <td>{message.content.subject}</td>
-                            <td></td>
-                          </tr>
+                          <Email key={i} message={message} />
                         ))}
                       </tbody>
                     </table>
