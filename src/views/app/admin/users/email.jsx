@@ -13,9 +13,9 @@ export default class Email extends Component {
     let {open} = this.state;
     let {openEmail, closeEmail, idx, message} = this.props;
     if (open) {
-      this.setState({open: false} , () => closeEmail(idx));
+      this.setState({open: false}, () => closeEmail(idx));
     } else {
-      this.setState({open: true} , () => openEmail(idx, message.content));
+      this.setState({open: true}, () => openEmail(idx, message.content));
     }
   }
 
@@ -24,7 +24,9 @@ export default class Email extends Component {
     let {open} = this.state;
     return (
       <tr ref="row">
-        <td onClick={() => this.toggle()}>{open ? <div>open</div> : <div>closed</div>}</td>
+        <td onClick={() => this.toggle()}>
+          {open ? <div>open</div> : <div>closed</div>}
+        </td>
         <td>{moment(message.createdAt).format('MM/DD/YYYY')}</td>
         <td>{message.content.subject}</td>
         <td></td>
