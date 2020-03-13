@@ -43,6 +43,7 @@ export default class UserCommunications extends Component {
     this.setState({
       email: temp,
     });
+    console.log(content);
   }
 
   closeEmail(idx) {
@@ -173,9 +174,11 @@ export default class UserCommunications extends Component {
                             <tr key={i}>
                               <td
                                 colSpan="4"
+                                style={{fontSize: '10px'}}
                                 dangerouslySetInnerHTML={{
                                   __html: message.html,
-                                }}></td>
+                                }}
+                              />
                             </tr>
                           ),
                         )}
