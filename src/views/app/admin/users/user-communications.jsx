@@ -4,6 +4,8 @@ import {snackbar} from 'bento-web';
 import Email from './email.jsx';
 import moment from 'moment';
 
+const limit = 20;
+
 export default class UserCommunications extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ export default class UserCommunications extends Component {
   }
 
   componentDidMount() {
-    this.getComs();
+    this.getComs(true);
   }
 
   getComs(isStart) {
@@ -26,25 +28,24 @@ export default class UserCommunications extends Component {
     api.get(
       `/users/${user.id}/communications?offset=${
         isStart ? 0 : offset
-      }&type=${category}&limit=20`,
+      }&type=${category}&limit=${limit}`,
       (err, res) => {
         if (err) {
           return;
         }
         if (category === 'sms') {
           this.setState({
-            sms: [...res.reverse(), ...(!isStart ? sms : [])],
+            sms: res.length ? res.reverse() : sms,
             offset: isStart ? 0 : offset,
           });
         } else {
           this.setState({
-            email: [
-              ...(!isStart ? email : []),
-              ...res.map(item => {
-                item.content = JSON.parse(item.content);
-                return item;
-              }),
-            ],
+            email: res.length
+              ? res.map(item => {
+                  item.content = JSON.parse(item.content);
+                  return item;
+                })
+              : email,
             offset: isStart ? 0 : offset,
           });
         }
@@ -52,8 +53,16 @@ export default class UserCommunications extends Component {
     );
   }
 
-  showEarlier() {
-    this.setState({offset: this.state.offset + 20}, () => this.getComs());
+  showOlder() {
+    let {offset} = this.state;
+    this.setState({offset: offset + limit}, () => this.getComs());
+  }
+
+  showNewer() {
+    let {offset} = this.state;
+    this.setState({offset: offset - limit >= 0 ? offset - limit : offset}, () =>
+      this.getComs(),
+    );
   }
 
   openEmail(idx, content) {
@@ -117,8 +126,14 @@ export default class UserCommunications extends Component {
               <button
                 type="button"
                 className={'btn btn-primary'}
-                onClick={() => this.showEarlier()}>
-                Show Earlier
+                onClick={() => this.showNewer()}>
+                Show Newer
+              </button>
+              <button
+                type="button"
+                className={'btn btn-primary'}
+                onClick={() => this.showOlder()}>
+                Show Older
               </button>
               {category === 'sms' ? (
                 <div>
