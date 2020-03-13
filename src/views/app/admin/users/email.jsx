@@ -40,8 +40,8 @@ export default class Email extends Component {
     let {message} = this.props;
     let {open} = this.state;
     return (
-      <tr ref="row">
-        <td onClick={() => this.toggle()}>
+      <tr className="ride-details">
+        <td className="text-center" onClick={() => this.toggle()}>
           {open ? (
             <i className="material-icons primary">keyboard_arrow_down</i>
           ) : (

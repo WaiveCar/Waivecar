@@ -91,7 +91,7 @@ export default class UserCommunications extends Component {
             <div className="row" style={{marginTop: '0.5rem'}}>
               {category === 'sms' ? (
                 <div>
-                  <h4>
+                  <h4 style={{marginBottom: '1rem'}}>
                     {user.firstName} {user.lastName}: {user.phone}
                   </h4>
                   {sms.map((message, i) => (
@@ -99,16 +99,20 @@ export default class UserCommunications extends Component {
                       key={i}
                       style={{
                         display: 'flex',
-                        ...(message.userId === message.creatorId ? {
-                          justifyContent: 'flex-end',
-                          textAlign: 'right',
-                        } : {
-                          justifyContent: 'flex-start',
-                          textAlgin: 'left',
-                        }),
+                        textAlign: 'left',
+                        ...(message.userId === message.creatorId
+                          ? {
+                              justifyContent: 'flex-end',
+                            }
+                          : {
+                              justifyContent: 'flex-start',
+                            }),
                       }}>
-                      <div style={{maxWidth: '45%'}}>
-                        <div>
+                      <div
+                        style={{
+                          width: '45%',
+                        }}>
+                        <div style={{textDecoration: 'underline'}}>
                           {message.userId === message.creatorId
                             ? `${user.firstName} ${user.lastName}`
                             : message.creator
@@ -116,7 +120,15 @@ export default class UserCommunications extends Component {
                             : 'The Computer'}
                           :
                         </div>
-                        <div>{message.content}</div>
+                        <div
+                          style={{
+                            border: '1px solid black',
+                            borderRadius: '5px',
+                            padding: '0.5rem 1rem',
+                            marginBottom: '0.5rem',
+                          }}>
+                          {message.content}
+                        </div>
                       </div>
                     </div>
                   ))}
