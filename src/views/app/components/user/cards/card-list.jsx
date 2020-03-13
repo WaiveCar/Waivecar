@@ -202,7 +202,7 @@ class CardList extends React.Component {
     }
 
     let header = (
-      <div className='credit'>Current Credit:<sup>*</sup> { this.amount(credit) }
+      <div className='credit'>{auth.user().hasAccess('admin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
       {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
       {
         auth.user().hasAccess('admin') ? 
@@ -227,7 +227,9 @@ class CardList extends React.Component {
             </div>
             : '' 
         }
-        <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
+        {/*
+            This is not currently used, so it is being commented out to avoid confusion
+            <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>*/} 
       </div>
     );
 
@@ -266,6 +268,7 @@ class CardList extends React.Component {
           </table>
         }
         { footer }
+        {/* we are not currently using this
         <div>
           <button onClick={() => this.topUp(this.props.user, 20, cards)} className={`btn btn-primary ${this.state.topUpDisabled}`}>
             Add $20 Credit
@@ -277,6 +280,7 @@ class CardList extends React.Component {
         <div className='credit-info'>
           * Credit is automatically used for any fees originating from Waive such as reservation extensions and overtime usage. Other liabilities such as a red light ticket cannot be paid for with credits.
         </div>
+        */}
       </div>
     );
   }
