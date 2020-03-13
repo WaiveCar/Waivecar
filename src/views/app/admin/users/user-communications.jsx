@@ -20,26 +20,34 @@ export default class UserCommunications extends Component {
     this.getComs();
   }
 
-  getComs() {
-    let {sms, email} = this.state;
+  getComs(isStart) {
+    let {sms, email, offset, category} = this.state;
+    let {user} = this.props;
     api.get(
-      `/users/${this.props.user.id}/communications?offset=${this.state.offset}&limit=20`,
+      `/users/${user.id}/communications?offset=${
+        isStart ? 0 : offset
+      }&type=${category}&limit=20`,
       (err, res) => {
         if (err) {
           return;
         }
-        this.setState({
-          sms: [...res.filter(each => each.type === 'sms').reverse(), ...sms],
-          email: [
-            ...email,
-            ...res
-              .filter(each => each.type === 'email')
-              .map(item => {
+        if (category === 'sms') {
+          this.setState({
+            sms: [...res.reverse(), ...(!isStart ? sms : [])],
+            offset: isStart ? 0 : offset,
+          });
+        } else {
+          this.setState({
+            email: [
+              ...(!isStart ? email : []),
+              ...res.map(item => {
                 item.content = JSON.parse(item.content);
                 return item;
               }),
-          ],
-        });
+            ],
+            offset: isStart ? 0 : offset,
+          });
+        }
       },
     );
   }
@@ -89,7 +97,9 @@ export default class UserCommunications extends Component {
                 className={`btn btn-${
                   category === 'sms' ? 'primary' : 'secondary'
                 }`}
-                onClick={() => this.setState({category: 'sms'})}>
+                onClick={() =>
+                  this.setState({category: 'sms'}, () => this.getComs(true))
+                }>
                 SMS
               </button>
               <button
@@ -97,7 +107,9 @@ export default class UserCommunications extends Component {
                 className={`btn btn-${
                   category === 'email' ? 'primary' : 'secondary'
                 }`}
-                onClick={() => this.setState({category: 'email'})}>
+                onClick={() =>
+                  this.setState({category: 'email'}, () => this.getComs(true))
+                }>
                 Email
               </button>
             </div>
@@ -110,7 +122,7 @@ export default class UserCommunications extends Component {
               </button>
               {category === 'sms' ? (
                 <div>
-                  <h4 style={{marginBottom: '1rem'}}>
+                  <h4 style={{marginBottom: '1rem', marginTop: '1rem'}}>
                     {user.firstName} {user.lastName}: {user.phone}
                   </h4>
                   {sms.map((message, i) => (
@@ -164,14 +176,14 @@ export default class UserCommunications extends Component {
                       type="button"
                       className="btn btn-primary"
                       onClick={() =>
-                        sendText(inputText, user, () => this.getComs())
+                        sendText(inputText, user, () => this.getComs(true))
                       }>
                       Send Message
                     </button>
                     <button
                       type="button"
                       className="btn btn-warning"
-                      onClick={() => this.getComs()}>
+                      onClick={() => this.getComs(true)}>
                       Update Thread
                     </button>
                   </div>
