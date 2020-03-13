@@ -634,5 +634,22 @@ module.exports = {
         },
       ],
     });
+  },
+  
+  *resendEmail(id) {
+    let record = yield UserCommunication.findById(id);
+    let email = new Email();
+    let ctx = JSON.parse(record.content);
+    let user = yield User.findById(record.userId);
+    // The lines below exist to make sure that the correct information is changed in the email if a user has updated their 
+    // personal info
+    if (user.email !== ctx.to) {
+      ctx.to = user.email;
+    }
+    Object.assign(ctx.context, user);
+    if (ctx.context.user) {
+      Object.assign(ctx.context.user, user);
+    }
+    yield email.send(ctx)
   }
 };
