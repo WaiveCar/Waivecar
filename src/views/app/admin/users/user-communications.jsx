@@ -4,7 +4,7 @@ import {snackbar} from 'bento-web';
 import Email from './email.jsx';
 import moment from 'moment';
 
-const limit = 20;
+const limit = 2;
 
 export default class UserCommunications extends Component {
   constructor(props) {
@@ -36,7 +36,7 @@ export default class UserCommunications extends Component {
         if (category === 'sms') {
           this.setState({
             sms: res.length ? res.reverse() : sms,
-            offset: isStart ? 0 : offset,
+            offset: isStart ? 0 : res.length ? offset : offset - limit,
           });
         } else {
           this.setState({
@@ -46,7 +46,7 @@ export default class UserCommunications extends Component {
                   return item;
                 })
               : email,
-            offset: isStart ? 0 : offset,
+            offset: isStart ? 0 : res.length ? offset : offset - limit,
           });
         }
       },
@@ -60,7 +60,7 @@ export default class UserCommunications extends Component {
 
   showNewer() {
     let {offset} = this.state;
-    this.setState({offset: offset - limit >= 0 ? offset - limit : offset}, () =>
+    this.setState({offset: offset - limit >= 0 ? offset - limit : 0}, () =>
       this.getComs(),
     );
   }
@@ -126,14 +126,14 @@ export default class UserCommunications extends Component {
               <button
                 type="button"
                 className={'btn btn-primary'}
-                onClick={() => this.showNewer()}>
-                Show Newer
+                onClick={() => this.showOlder()}>
+                Show Older
               </button>
               <button
                 type="button"
                 className={'btn btn-primary'}
-                onClick={() => this.showOlder()}>
-                Show Older
+                onClick={() => this.showNewer()}>
+                Show Newer
               </button>
               {category === 'sms' ? (
                 <div>
