@@ -43,7 +43,6 @@ export default class UserCommunications extends Component {
     this.setState({
       email: temp,
     });
-    console.log(content);
   }
 
   closeEmail(idx) {
@@ -100,14 +99,13 @@ export default class UserCommunications extends Component {
                       key={i}
                       style={{
                         display: 'flex',
-                        justifyContent:
-                          message.userId === message.creatorId
-                            ? 'flex-end'
-                            : 'flex-start',
-                        textAlign:
-                          message.userId === message.creatorId
-                            ? 'right'
-                            : 'left',
+                        ...(message.userId === message.creatorId ? {
+                          justifyContent: 'flex-end',
+                          textAlign: 'right',
+                        } : {
+                          justifyContent: 'flex-start',
+                          textAlgin: 'left',
+                        }),
                       }}>
                       <div style={{maxWidth: '45%'}}>
                         <div>
