@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import Email from './email.jsx';
+import moment from 'moment';
 
 export default class UserCommunications extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ export default class UserCommunications extends Component {
       email: [],
       category: 'sms',
       textInput: '',
+      offset: 0,
     };
   }
 
@@ -19,20 +21,31 @@ export default class UserCommunications extends Component {
   }
 
   getComs() {
-    api.get(`/users/${this.props.user.id}/communications`, (err, res) => {
-      if (err) {
-        return;
-      }
-      this.setState({
-        sms: res.filter(each => each.type === 'sms'),
-        email: res
-          .filter(each => each.type === 'email')
-          .map(item => {
-            item.content = JSON.parse(item.content);
-            return item;
-          }),
-      });
-    });
+    let {sms, email} = this.state;
+    api.get(
+      `/users/${this.props.user.id}/communications?offset=${this.state.offset}&limit=20`,
+      (err, res) => {
+        if (err) {
+          return;
+        }
+        this.setState({
+          sms: [...res.filter(each => each.type === 'sms').reverse(), ...sms],
+          email: [
+            ...email,
+            ...res
+              .filter(each => each.type === 'email')
+              .map(item => {
+                item.content = JSON.parse(item.content);
+                return item;
+              }),
+          ],
+        });
+      },
+    );
+  }
+
+  showEarlier() {
+    this.setState({offset: this.state.offset + 20}, () => this.getComs());
   }
 
   openEmail(idx, content) {
@@ -89,6 +102,12 @@ export default class UserCommunications extends Component {
               </button>
             </div>
             <div className="row" style={{marginTop: '0.5rem'}}>
+              <button
+                type="button"
+                className={'btn btn-primary'}
+                onClick={() => this.showEarlier()}>
+                Show Earlier
+              </button>
               {category === 'sms' ? (
                 <div>
                   <h4 style={{marginBottom: '1rem'}}>
@@ -117,8 +136,9 @@ export default class UserCommunications extends Component {
                             ? `${user.firstName} ${user.lastName}`
                             : message.creator
                             ? `${message.creator.firstName} ${message.creator.lastName}`
-                            : 'The Computer'}
-                          :
+                            : 'The Computer'}{' '}
+                          ({moment(message.createdAt).format('M/D/YY h:MM A')}
+                          ):
                         </div>
                         <div
                           style={{
