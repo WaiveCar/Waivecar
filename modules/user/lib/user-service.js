@@ -625,7 +625,7 @@ module.exports = {
 
   *communications(userId, query) {
     return yield UserCommunication.find({
-      where: {userId}, 
+      where: {userId, type: query.type}, 
       order: [['created_at', 'DESC']],
       offset: Number(query.offset),
       limit: Number(query.limit),
