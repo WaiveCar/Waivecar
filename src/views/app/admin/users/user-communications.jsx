@@ -47,7 +47,7 @@ export default class UserCommunications extends Component {
       () =>
         (this.refs[
           `ref-${idx + 1}`
-        ].firstChild.innerHTML = `<div>${content.html}</div>`),
+        ].innerHTML = `<td colspan="4">${content.html}</td>`),
     );
   }
 
@@ -178,7 +178,6 @@ export default class UserCommunications extends Component {
                             />
                           ) : (
                             <tr key={i} ref={`ref-${i}`}>
-                              <td colSpan="4">Expansion</td>
                             </tr>
                           ),
                         )}
