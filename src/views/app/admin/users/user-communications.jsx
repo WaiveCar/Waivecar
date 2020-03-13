@@ -40,15 +40,9 @@ export default class UserCommunications extends Component {
     content.isExpansion = true;
     let temp = [...email];
     temp.splice(idx + 1, 0, content);
-    this.setState(
-      {
-        email: temp,
-      },
-      () =>
-        (this.refs[
-          `ref-${idx + 1}`
-        ].innerHTML = `<td colspan="4">${content.html}</td>`),
-    );
+    this.setState({
+      email: temp,
+    });
   }
 
   closeEmail(idx) {
@@ -169,7 +163,6 @@ export default class UserCommunications extends Component {
                             <Email
                               key={i}
                               idx={i}
-                              ref={`ref-${i}`}
                               message={message}
                               openEmail={(idx, content) =>
                                 this.openEmail(idx, content)
@@ -177,7 +170,12 @@ export default class UserCommunications extends Component {
                               closeEmail={idx => this.closeEmail(idx)}
                             />
                           ) : (
-                            <tr key={i} ref={`ref-${i}`}>
+                            <tr key={i}>
+                              <td
+                                colSpan="4"
+                                dangerouslySetInnerHTML={{
+                                  __html: message.html,
+                                }}></td>
                             </tr>
                           ),
                         )}
