@@ -4,7 +4,7 @@ import {snackbar} from 'bento-web';
 import Email from './email.jsx';
 import moment from 'moment';
 
-const limit = 2;
+const limit = 20;
 
 export default class UserCommunications extends Component {
   constructor(props) {
@@ -15,6 +15,7 @@ export default class UserCommunications extends Component {
       category: 'sms',
       textInput: '',
       offset: 0,
+      atEnd: false,
     };
   }
 
@@ -37,6 +38,7 @@ export default class UserCommunications extends Component {
           this.setState({
             sms: res.length ? res.reverse() : sms,
             offset: isStart ? 0 : res.length ? offset : offset - limit,
+            atEnd: res.length === 0,
           });
         } else {
           this.setState({
@@ -47,6 +49,7 @@ export default class UserCommunications extends Component {
                 })
               : email,
             offset: isStart ? 0 : res.length ? offset : offset - limit,
+            atEnd: res.length === 0,
           });
         }
       },
@@ -85,7 +88,7 @@ export default class UserCommunications extends Component {
   }
 
   render() {
-    let {category, inputText, sms, email} = this.state;
+    let {category, inputText, sms, email, offset, atEnd} = this.state;
     let {user, sendText} = this.props;
     let centerStyle = {
       display: 'flex',
@@ -123,18 +126,22 @@ export default class UserCommunications extends Component {
               </button>
             </div>
             <div className="row" style={{marginTop: '0.5rem'}}>
-              <button
-                type="button"
-                className={'btn btn-primary'}
-                onClick={() => this.showOlder()}>
-                Show Older
-              </button>
-              <button
-                type="button"
-                className={'btn btn-primary'}
-                onClick={() => this.showNewer()}>
-                Show Newer
-              </button>
+              <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                <button
+                  type="button"
+                  disabled={atEnd}
+                  className={'btn btn-sm'}
+                  onClick={() => this.showOlder()}>
+                  Show Older
+                </button>
+                <button
+                  type="button"
+                  disabled={offset <= 0}
+                  className={'btn btn-sm btn-primary'}
+                  onClick={() => this.showNewer()}>
+                  Show Newer
+                </button>
+              </div>
               {category === 'sms' ? (
                 <div>
                   <h4 style={{marginBottom: '1rem', marginTop: '1rem'}}>
