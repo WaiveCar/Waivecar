@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
-import Email from './email.jsx';
 import moment from 'moment';
 
 const limit = 20;
@@ -73,6 +72,7 @@ export default class UserCommunications extends Component {
     content.isExpansion = true;
     let temp = [...email];
     temp.splice(idx + 1, 0, content);
+    temp[idx].open = true;
     this.setState({
       email: temp,
     });
@@ -82,8 +82,33 @@ export default class UserCommunications extends Component {
     let {email} = this.state;
     let temp = [...email];
     temp.splice(idx + 1, 1);
+    temp[idx].open = false;
     this.setState({
       email: temp,
+    });
+  }
+
+  toggle(message, idx) {
+    let {open} = message;
+    if (open) {
+      this.closeEmail(idx);
+    } else {
+      this.openEmail(idx, message.content);
+    }
+  }
+
+  resend(id) {
+    api.post(`/users/resendEmail/${id}`, {}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error resending email: ${err.message}.`,
+        });
+      }
+      return snackbar.notify({
+        type: 'success',
+        message: 'Email resent successfully',
+      });
     });
   }
 
@@ -225,15 +250,32 @@ export default class UserCommunications extends Component {
                       <tbody>
                         {email.map((message, i) =>
                           !message.isExpansion ? (
-                            <Email
-                              key={i}
-                              idx={i}
-                              message={message}
-                              openEmail={(idx, content) =>
-                                this.openEmail(idx, content)
-                              }
-                              closeEmail={idx => this.closeEmail(idx)}
-                            />
+                            <tr className="ride-details">
+                              <td
+                                className="text-center"
+                                onClick={() => this.toggle(message, i)}>
+                                {message.open ? (
+                                  <i className="material-icons primary">
+                                    keyboard_arrow_down
+                                  </i>
+                                ) : (
+                                  <i className="material-icons">
+                                    keyboard_arrow_right
+                                  </i>
+                                )}
+                              </td>
+                              <td>
+                                {moment(message.createdAt).format('MM/DD/YYYY')}
+                              </td>
+                              <td>{message.content.subject}</td>
+                              <td>
+                                <button
+                                  onClick={() => this.resend(message.id)}
+                                  className="btn btn-xs btn-link undo">
+                                  <span className="fa fa-undo"></span>
+                                </button>
+                              </td>
+                            </tr>
                           ) : (
                             <tr key={i}>
                               <td
