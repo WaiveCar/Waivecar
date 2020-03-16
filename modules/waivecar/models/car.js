@@ -210,7 +210,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     totalMileage : {
-      type : Sequelize.DECIMAL(10, 2)
+      type : Sequelize.DECIMAL(10, 2),
+      defaultValue: 0
     },
 
     boardVoltage : {
