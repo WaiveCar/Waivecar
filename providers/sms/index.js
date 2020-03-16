@@ -1,7 +1,6 @@
 'use strict';
 
 let error = Bento.Error;
-
 module.exports = class SMS {
 
   /**

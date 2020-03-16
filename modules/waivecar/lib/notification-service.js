@@ -5,6 +5,7 @@ let Slack       = Bento.provider('slack');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication');
 let GroupUser   = Bento.model('GroupUser');
 let error       = Bento.Error;
 let config      = Bento.config;
@@ -32,7 +33,7 @@ function log_message(type, what) {
 let fcm = new FCM(config.push.serverKey);
 
 module.exports = {
-  *sendTextMessage(query, message) {
+  *sendTextMessage(query, message, _user) {
     // this allows us to send messages to whomever
     // regardless of whether we've contacted them prior
     if(query._phone) {
@@ -54,10 +55,20 @@ module.exports = {
     }
 
     log_message('sms', {phone: user.phone, text: message});
+    // User communications will only be saved for users that have already been let in
+    if (user && !user.accountType) {
+      let communication = new UserCommunication({
+        userId: user.id,
+        creatorId: _user ? _user.id : null,
+        content: message,
+        type: 'sms',
+      });
+      yield communication.save();
+    }
 
     if (user.phone && process.env.NODE_ENV === 'production') {
       try {
-        let sms = new Sms();
+        let sms = new Sms(user, _user);
         yield sms.send({
           to      : user.phone,
           message : message

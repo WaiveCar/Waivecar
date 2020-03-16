@@ -18,6 +18,7 @@ let moment      = require('moment');
 // ### Models
 
 let User      = Bento.model('User');
+let UserCommunication = Bento.model('UserCommunication');
 let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
@@ -620,5 +621,38 @@ module.exports = {
         bookings: allBookings.filter(booking => booking.createdAt > dayAgo),
       }
     }
+  },
+
+  *communications(userId, query) {
+    return yield UserCommunication.find({
+      where: {userId, type: query.type}, 
+      order: [['created_at', 'DESC']],
+      offset: Number(query.offset),
+      limit: Number(query.limit),
+      include: [
+        {
+          model: 'User',
+          as: 'creator',
+          allowNull: true,
+        },
+      ],
+    });
+  },
+  
+  *resendEmail(id) {
+    let record = yield UserCommunication.findById(id);
+    let email = new Email();
+    let ctx = JSON.parse(record.content);
+    let user = yield User.findById(record.userId);
+    // The lines below exist to make sure that the correct information is changed in the email if a user has updated their 
+    // personal info
+    if (user.email !== ctx.to) {
+      ctx.to = user.email;
+    }
+    Object.assign(ctx.context, user);
+    if (ctx.context.user) {
+      Object.assign(ctx.context.user, user);
+    }
+    yield email.send(ctx)
   }
 };

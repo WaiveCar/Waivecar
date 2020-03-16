@@ -13,4 +13,6 @@ Route.resource('users', 'UsersController', {
   params : config.params ? config.params : null
 });
 
+Route.pst('/users/resendEmail/:emailId', [ 'isAuthenticated', 'isAdmin', 'UsersController@resendEmail'])
 Route.get('/users/:id/stats', [ 'isAuthenticated', 'isAdmin', 'UsersController@stats']);
+Route.get('/users/:id/communications', [ 'isAuthenticated', 'isAdmin', 'UsersController@communications']);

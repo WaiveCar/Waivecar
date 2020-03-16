@@ -48,7 +48,7 @@ Bento.Register.Controller('NotificationsController', function(controller) {
    */
   function* handleSms(user, message, _user) {
     let sent = false;
-    yield notify.sendTextMessage(user, `WaiveCar: ${message}`);
+    yield notify.sendTextMessage(user, `WaiveCar: ${message}`, _user);
     yield notify.slack(
       {text: `${_user.name()} sent the message '${message}' to ${user.link()}`},
       {channel: '#app_support'},
