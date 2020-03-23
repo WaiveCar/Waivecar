@@ -633,10 +633,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       checklist.completedCount = requiredList.length - missingList.length;
       return checklist;
     },
-
-    removeChecklistFlags : function *() {
-
-    },
   };
 
   model.attributes = [
