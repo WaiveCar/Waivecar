@@ -1045,7 +1045,8 @@ module.exports = {
 
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
-    let devices = yield this.getAllDevices();
+    let devices = [];//yield this.getAllDevices();
+    devices.push({id: 'asdf'});
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
@@ -1072,7 +1073,7 @@ module.exports = {
         // It is not matched with a car until the car is added with the id of the device in airtable
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let newDevice = yield this.getDevice(device.id);
+          let newDevice = device;//yield this.getDevice(device.id);
           let newTelem = new Telematics({
             telemId: newDevice.id,
           });
@@ -1105,10 +1106,11 @@ module.exports = {
         } else {
           // If Device was found in database but not in our filtered list, ignore.
           log.debug(`Cars : Sync : skipping ${ device.id }.`);
-        }
         */
+        }
       }
     } catch(err) {
+      console.log(err);
       if(err.data) {
         log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.resource }`);
       } else {

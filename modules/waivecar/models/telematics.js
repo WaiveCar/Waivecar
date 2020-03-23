@@ -11,17 +11,16 @@ Bento.Register.Model('Telematics', 'sequelize', function register(
     },
     telemId: {
       type: Sequelize.STRING(28),
-      primaryKey: true,
       allowNull: false,
     },
     carId: {
       type: Sequelize.STRING(28),
-      primaryKey: true,
       defaultValue: null,
+      allowNull: true,
     },
-    lastSeeenAt: {
+    lastSeenAt: {
       type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW, 
+      defaultValue: Sequelize.NOW,
     },
   };
 
