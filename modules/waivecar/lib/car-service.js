@@ -29,6 +29,7 @@ let GroupRole = Bento.model('GroupRole');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
+let Telematics = Bento.model('Telematics');
 let util = require('util');
 
 let geolib      = require('geolib');
@@ -1067,10 +1068,17 @@ module.exports = {
           log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
         }
       } else {
-        // If Device does not match any Car then add it to the database.
+        // If Device does not match any Car then add a new telematics unit to the database.
+        // It is not matched with a car until the car is added with the id of the device in airtable
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let newCar = yield this.getDevice(device.id);
+          let newDevice = yield this.getDevice(device.id);
+          let newTelem = new Telematics({
+            telemId: newDevice.id,
+          });
+          yield newTelem.save();
+          /* This is probably no longer needed, but only commenting it out just in case it is
+           * needed later
           if (newCar) {
             let car = new Car(newCar);
             let meta = config.car.meta[car.id];
@@ -1098,6 +1106,7 @@ module.exports = {
           // If Device was found in database but not in our filtered list, ignore.
           log.debug(`Cars : Sync : skipping ${ device.id }.`);
         }
+        */
       }
     } catch(err) {
       if(err.data) {
