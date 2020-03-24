@@ -1030,6 +1030,14 @@ module.exports = {
 
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
+    try {
+      let fromAirtable = yield this.request(
+      '/Cars?maxRecords=3&view=Grid%20view',
+      {isAirtable: true},
+      );
+    } catch(e) {
+      console.log('err fetching from airtable', e)
+    }
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
@@ -1608,9 +1616,9 @@ module.exports = {
     // ### Request Payload
 
     let payload = {
-      url     : config.invers.uri + resource,
+      url     : !options.isAirtable ? config.invers.uri + resource : config.airtable.uri + resource,
       method  : options.method || 'GET',
-      headers : config.invers.headers,
+      headers : !options.isAirtable ? config.invers.headers : config.airtable.headers,
       timeout : options.timeout || 60000
     };
     if (data) {
