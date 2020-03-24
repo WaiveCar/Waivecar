@@ -1050,6 +1050,7 @@ module.exports = {
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars, allDevices));
+    // Not sure the line below is used for anything?
     let result   = yield parallel(syncList);
 
     return yield Car.find();
@@ -1060,9 +1061,8 @@ module.exports = {
   *syncCar(device, carList, allCars, allDevices) {
     try {
       let existingDevice = allDevices.find(c => c.telemId === device.id);
-      console.log('exisitingDevice', allDevices[allDevices.length - 1]);
-      console.log('device', device, existingDevice);
-      if (existingDevice) {
+      let existingCar = allCars.find(c => c.id = device.id);
+      if (existingDevice && existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
           // log.debug(`Cars : Sync : updating ${ device.id }.`);
@@ -1070,7 +1070,7 @@ module.exports = {
         } else {
           log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
         }
-      } else {
+      } else if (!existingDevice) {
         // If Device does not match any Car then add a new telematics unit to the database.
         // It is not matched with a car until the car is added with the id of the device in airtable
         let excludedCar = allCars.find(c => c.id === device.id);
@@ -1112,7 +1112,6 @@ module.exports = {
         }
       }
     } catch(err) {
-      console.log(err);
       if(err.data) {
         log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.resource }`);
       } else {
