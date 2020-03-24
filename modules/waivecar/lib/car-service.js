@@ -290,6 +290,10 @@ module.exports = {
     return cars;
   },
 
+  *unassignedTelems() {
+    return yield Telematics.find({where: {carId: null}});
+  },
+
   *stats() {
     let allCars = yield Car.find();
     let count = allCars.reduce((acc, car) => car.inRepair ? acc + 1 : acc, 0);

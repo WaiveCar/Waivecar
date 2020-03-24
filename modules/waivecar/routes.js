@@ -55,6 +55,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 // ### Cars
 
+Route.get('/unassignedTelematics',   [ 'CarsController@unassignedTelems' ]);
 Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
 Route.get('/cars/search',       [ 'isAuthenticated', 'CarsController@search' ]);

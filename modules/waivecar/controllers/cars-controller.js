@@ -9,7 +9,11 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.index(this.query, this.auth.user);
   };
 
-  controller.stats = function*() {
+  controller.unassignedTelems = function *() {
+    return yield car.unassignedTelems();
+  };
+
+  controller.stats = function *() {
     return yield car.stats(this.auth.user);
   };
 
