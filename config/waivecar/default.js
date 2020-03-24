@@ -106,6 +106,11 @@ module.exports = {
         'Content-Type'       : 'application/json'
       }
     },
+    airtable : {
+      headers: {
+        'Authorization': 'Bearer keyNS78PfhqH7bsGW'
+      },
+    },
     homebase : {
       coords : {
         latitude  : 34.0166784,
