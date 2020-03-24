@@ -1025,7 +1025,7 @@ module.exports = {
     // Retrieve all local cars.
 
     let allCars = yield Car.find();
-
+    let allDevices = yield Telematics.find();
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
@@ -1049,7 +1049,7 @@ module.exports = {
     devices.push({id: 'asdf'});
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
-    let syncList = devices.map(device => this.syncCar(device, cars, allCars));
+    let syncList = devices.map(device => this.syncCar(device, cars, allCars, allDevices));
     let result   = yield parallel(syncList);
 
     return yield Car.find();
@@ -1057,10 +1057,12 @@ module.exports = {
 
   // Note that the carList and the allCars are not model links
   // but actual arrays of results. SMH
-  *syncCar(device, carList, allCars) {
+  *syncCar(device, carList, allCars, allDevices) {
     try {
-      let existingCar = carList.find(c => c.id === device.id);
-      if (existingCar) {
+      let existingDevice = allDevices.find(c => c.telemId === device.id);
+      console.log('exisitingDevice', allDevices[allDevices.length - 1]);
+      console.log('device', device, existingDevice);
+      if (existingDevice) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
           // log.debug(`Cars : Sync : updating ${ device.id }.`);
@@ -1103,10 +1105,10 @@ module.exports = {
           } else {
             log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
+        */
         } else {
           // If Device was found in database but not in our filtered list, ignore.
           log.debug(`Cars : Sync : skipping ${ device.id }.`);
-        */
         }
       }
     } catch(err) {
