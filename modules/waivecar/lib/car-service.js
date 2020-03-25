@@ -1021,20 +1021,7 @@ module.exports = {
     return existingCar;
   },
 
-  *handleAirtable() {
-
-  },
-
-  // Does sync operations against all cars in the invers fleet.
-  *syncCars() {
-    //log.debug('CarService : syncCars : start');
-    let refreshAfter = config.car.staleLimit || 15;
-
-    // Retrieve all local cars.
-
-    let allCars = yield Car.find();
-    let allDevices = yield Telematics.find();
-
+  *handleAirtable(allCars, allDevices) {
     let fromAirtable;
     do {
       try {
@@ -1066,9 +1053,21 @@ module.exports = {
           }
         };
       } catch(e) {
-        console.log('err fetching from airtable', e)
+        console.log('err fetching from airtable', e);
       }
     } while (fromAirtable.records.length >= 100);
+  },
+
+  // Does sync operations against all cars in the invers fleet.
+  *syncCars() {
+    //log.debug('CarService : syncCars : start');
+    let refreshAfter = config.car.staleLimit || 15;
+
+    // Retrieve all local cars.
+
+    let allCars = yield Car.find();
+    let allDevices = yield Telematics.find();
+    yield this.handleAirtable(allCars, allDevices);
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
