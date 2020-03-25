@@ -1030,24 +1030,31 @@ module.exports = {
 
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
-    try {
-      let fromAirtable = yield this.request(
-      '/Cars?view=Grid%20view',
-      {isAirtable: true},
-      );
-      for (let entry of fromAirtable.records) {
-        // If there is a car entered into airtable, but not yet put into db, it must
-        // be created here and linked to the telem unit installed
-
-      if (entry.fields.TelematicsID && entry.fields.TelematicsID[0]) {
-          let car = allCars.find(car => car.id === entry.fields.TelematicsID[0]);
-          let telem = yield Telematics.find({telemId: entry.TelematicsID}); 
-          console.log(car, telem);
-        }
-      };
-    } catch(e) {
-      console.log('err fetching from airtable', e)
-    }
+    let offset;
+    let fromAirtable;
+    do {
+      try {
+        fromAirtable = yield this.request(
+          `/Cars?view=Grid%20view${offset ? `&offset=${offset}` : ''}`,
+        {isAirtable: true},
+        );
+        console.log(fromAirtable.records.length);
+        for (let entry of fromAirtable.records) {
+          // If there is a car entered into airtable, but not yet put into db, it must
+          // be created here and linked to the telem unit installed
+          if (entry.fields.TelematicsID && entry.fields.TelematicsID[0]) {
+            let car = allCars.find(car => car.id === entry.fields.TelematicsID[0]);
+            let telem = yield Telematics.find({telemId: entry.TelematicsID}); 
+            if (telem && !car) {
+              // create new car
+            }
+          }
+        };
+        offset = fromAirtable.offset;
+      } catch(e) {
+        console.log('err fetching from airtable', e)
+      }
+    } while (fromAirtable.records.length >= 100);
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
