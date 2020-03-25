@@ -1045,16 +1045,13 @@ module.exports = {
         for (let entry of fromAirtable.records) {
           // If there is a car entered into airtable, but not yet put into db, it must
           // be created here and linked to the telem unit installed
-          if (entry.fields.TelematicsID && entry.fields.TelematicsID[0]) {
-            let telem = yield this.request(
-              `/Telematics/${entry.fields.TelematicsID}`,
-              {isAirtable: true},
-            );
-            let car = allCars.find(car => car.id === telem.fields.TelematicsID);
-            let telemRecord = allDevices.find(device => device.telemId === telem.fields.TelematicsID); 
-            if (telemRecord && !car) {
+          let telemId = entry.fields['API:telemID'] && entry.fields['API:telemID'][0];
+          if (telemId) {
+            let car = allCars.find(car => car.id === telemId);
+            let telem = allDevices.find(device => device.telemId === telemId); 
+            if (telem && !car) {
               // create new car
-              let device = yield this.getDevice(telemRecord.telemId, null, 'sync');
+              let device = yield this.getDevice(telem.telemId, null, 'sync');
               if (device) {
                 let newCar = new Car(device);
                 newCar.license = entry.fields['Car Name'] 
