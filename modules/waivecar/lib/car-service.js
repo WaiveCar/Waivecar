@@ -1038,7 +1038,7 @@ module.exports = {
             let telem = allDevices.find(device => device.telemId === telemId); 
             if (telem && !car) {
               // create new car
-              let device = yield this.getDevice(telem.telemId, null, 'sync');
+              let device = yield this.getDevice(telemId, null, 'sync');
               if (device) {
                 let newCar = new Car(device);
                 newCar.license = entry.fields['Car Name'] 
@@ -1087,12 +1087,11 @@ module.exports = {
 
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
-    let devices = [];//yield this.getAllDevices();
+    let devices = yield this.getAllDevices();
     devices.push({id: 'asdf'});
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars, allDevices));
-    // Not sure the line below is used for anything?
     let result   = yield parallel(syncList);
 
     return yield Car.find();
