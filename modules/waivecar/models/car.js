@@ -242,6 +242,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.TEXT()
     },
 
+    airtableDate: {
+      type: Sequelize.TEXT();
+      default: null,
+    }
+
     bodyGrade : {
       type : Sequelize.TEXT,
       default : null,
