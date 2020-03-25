@@ -1021,6 +1021,10 @@ module.exports = {
     return existingCar;
   },
 
+  *handleAirtable() {
+
+  },
+
   // Does sync operations against all cars in the invers fleet.
   *syncCars() {
     //log.debug('CarService : syncCars : start');
@@ -1030,6 +1034,7 @@ module.exports = {
 
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
+
     let fromAirtable;
     do {
       try {
@@ -1046,10 +1051,20 @@ module.exports = {
               {isAirtable: true},
             );
             let car = allCars.find(car => car.id === telem.fields.TelematicsID);
-            let telemRecord = yield Telematics.findOne({where: {telemId: telem.fields.TelematicsID}}); 
-            if (telem && !car) {
+            let telemRecord = allDevices.find(device => device.telemId === telem.fields.TelematicsID); 
+            if (telemRecord && !car) {
               // create new car
+              let device = yield this.getDevice(telemRecord.telemId, null, 'sync');
+              if (device) {
+                let newCar = new Car(device);
+                newCar.license = entry.fields['Car Name'] 
+                newCar.airtableData = entry.fields.airtableData;
+                yield newCar.save();
+              }
             } else if (telem && car) {
+              // This is the place to switch telematics units from one car to another based
+              // on changes to airtable
+              yield car.update({airtableData: JSON.stringify(entry.fields)});
             }
           }
         };
@@ -1098,6 +1113,7 @@ module.exports = {
         if (updatedCar) {
           // log.debug(`Cars : Sync : updating ${ device.id }.`);
           yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
+          yield existingDevice.update({lastSeenAt: moment()})
         } else {
           log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
         }
