@@ -1032,9 +1032,19 @@ module.exports = {
     let allDevices = yield Telematics.find();
     try {
       let fromAirtable = yield this.request(
-      '/Cars?maxRecords=3&view=Grid%20view',
+      '/Cars?view=Grid%20view',
       {isAirtable: true},
       );
+      for (let entry of fromAirtable.records) {
+        // If there is a car entered into airtable, but not yet put into db, it must
+        // be created here and linked to the telem unit installed
+
+      if (entry.fields.TelematicsID && entry.fields.TelematicsID[0]) {
+          let car = allCars.find(car => car.id === entry.fields.TelematicsID[0]);
+          let telem = yield Telematics.find({telemId: entry.TelematicsID}); 
+          console.log(car, telem);
+        }
+      };
     } catch(e) {
       console.log('err fetching from airtable', e)
     }
