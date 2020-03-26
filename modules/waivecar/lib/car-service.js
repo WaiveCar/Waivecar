@@ -1052,7 +1052,7 @@ module.exports = {
           }
         };
       } catch(e) {
-        console.log('err fetching from airtable', e);
+        log.warn(`Error fetching from Airtable : ${ e }.`);
       }
     } while (carsFromAirtable.records.length >= 100);
     // The next part handles updating of telematics from airtable
@@ -1064,12 +1064,33 @@ module.exports = {
           {isAirtable: true},
         );
         for (let entry of telemsFromAirtable.records) {
-          // If there is a car entered into airtable, but not yet put into db, it must
-          // be created here and linked to the telem unit installed
-          console.log(entry);
+          try {
+            // If there is a car entered into airtable, but not yet put into db, it must
+            // be created here and linked to the telem unit installed
+            let telemId = entry.fields.TelematicsID;
+            let telem = yield Telematics.findOne({
+              where: {telemId},
+            });
+            let carLicense = entry.fields['API:carLicense'] && entry.fields['API:carLicense'][0].replace(/\s/g, '');
+            // This conditional is here because some telems in airtable have not yet been activated
+            if (telem) {
+              // Some telems in airtable have no assigned car, so the below must be done
+              let carId = carLicense ? (yield Car.findOne({
+                where: {license: {$like: `%${carLicense}`}},
+              })).id : null;
+              if (telem.carId !== carId) {
+                yield telem.update({carId});
+                console.log('updated');
+              }
+            } else {
+              log.warn(`Not telematics found with the id ${telemId}.`);
+            }
+          } catch(e) {
+            log.warn(`Error handling telem: ${e}.`);
+          }
         }
       } catch(e) {
-        console.log('err fetching from airtable', e);
+        log.warn(`Error fetching from Airtable : ${ e }`);
       }
     } while (carsFromAirtable.records.length >= 100);
   },
