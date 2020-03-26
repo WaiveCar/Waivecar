@@ -109,7 +109,8 @@ module.exports = {
     airtable : {
       uri: 'https://api.airtable.com/v0/appPTFWqjSvOrKcfu',
       headers: {
-        'Authorization': 'Bearer keyNS78PfhqH7bsGW'
+        'Authorization': 'Bearer keyNS78PfhqH7bsGW',
+        'Content-Type': 'application/json',
       },
     },
     homebase : {

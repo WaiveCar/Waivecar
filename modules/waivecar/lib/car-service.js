@@ -854,7 +854,6 @@ module.exports = {
       responseJSON = JSON.parse(response.body);
       return responseJSON;
     } catch(ex) {
-      console.log(ex);
       if(response) {
         return response.body;
       }
@@ -1096,6 +1095,37 @@ module.exports = {
   },
 
   *createAirtableTicket(payload) {
+    let newTicket = yield this.request(
+      '/Car%20Tickets',
+      {isAirtable: true, method: 'POST'},
+      {
+        records: [
+          {
+            fields: {
+              "Associated Car": [
+                payload.carId
+              ],
+              Notes: payload.notes,
+              /*
+              "Assigned To": {
+                "id": "usrKjhxE8H2bm7NQZ",
+                "email": "james@waive.car",
+                "name": "James Landau"
+              },
+              */
+              /*
+              "Assigned By": {
+                "id": "usrKjhxE8H2bm7NQZ",
+                "email": "james@waive.car",
+                "name": "James Landau"
+              },
+              */
+              Status: 'New',
+            }
+          },
+        ],
+      }
+    );
     return payload;
   },
 

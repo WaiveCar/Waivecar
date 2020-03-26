@@ -53,11 +53,12 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 
 
+Route.get('/unassignedTelematics',   [ 'CarsController@unassignedTelems' ]);
+Route.get('/airtableUsers', [ 'isAuthenticted', 'CarsController@airtableUsers' ]);
+Route.post('/createAirtableTicket', [ 'isAuthenticated', 'CarsController@createAirtableTicket' ]);
 // ### Cars
 
-Route.get('/unassignedTelematics',   [ 'CarsController@unassignedTelems' ]);
 Route.get('/cars',              [ 'CarsController@index' ]);
-Route.post('/cars/createAirtableTicket', [ 'CarsController@createAirtableTicket' ]);
 Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
 Route.get('/cars/search',       [ 'isAuthenticated', 'CarsController@search' ]);
 Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);
