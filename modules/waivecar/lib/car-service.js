@@ -1235,12 +1235,12 @@ module.exports = {
       return false;
     }
     // The line below is done so that devices can be switched from airtable
-    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
+    let actualDevice = (yield Telematics.findOne({where: {carId}}));
+    let actualDeviceId = actualDevice && actualDevice.telemId;
     // This handles the situation where there is no telematics unit that matches 
     // the car the is being fetched. It should cause the same behavior as when 
     // NODE_ENV === 'development' 
     if (!actualDeviceId) {
-      console.log('here');
       return false;
     }
     try {
@@ -1506,7 +1506,15 @@ module.exports = {
   *lockAndImmobilize(carId, _user) {
     let existingCar = yield Car.findById(carId);
     // The line below allows for the resassignment of telematics devices
-    let actualDeviceId = yield Telematics.findOne({where: {carId}}).id;
+    let actualDevice = (yield Telematics.findOne({where: {carId}}));
+    let actualDeviceId = actualDevice && actualDevice.telemId;
+
+    if (!actualDeviceId) {
+      throw error.parse({
+        code    : 'DEVICE_NOT_FOUND',
+        message : "That didn't work. The device you were trying to use was not found?"
+      }, 400);
+    }
     if (!existingCar) {
       let error    = new Error(`CAR: ${ carId }`);
       error.code   = 'CAR_SERVICE';
@@ -1539,8 +1547,16 @@ module.exports = {
   *executeCommand(carId, part, command, _user, existingCar, opts) {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(carId));
-    console.log(carId)
-    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
+
+    let actualDevice = (yield Telematics.findOne({where: {carId}}));
+    let actualDeviceId = actualDevice && actualDevice.telemId;
+
+    if (!actualDeviceId) {
+      throw error.parse({
+        code    : 'DEVICE_NOT_FOUND',
+        message : "That didn't work. The device you were trying to use was not found?"
+      }, 400);
+    }
 
     if(!carId || !existingCar) {
       throw error.parse({
@@ -1613,7 +1629,16 @@ module.exports = {
   },
 
   *getEvents(carId, _user) {
-    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
+    let actualDevice = (yield Telematics.findOne({where: {carId}}));
+    let actualDeviceId = actualDevice && actualDevice.telemId;
+
+    if (!actualDeviceId) {
+      throw error.parse({
+        code    : 'DEVICE_NOT_FOUND',
+        message : "That didn't work. The device you were trying to use was not found?"
+      }, 400);
+    }
+
     let events = yield this.request(`/events?device=${ actualDeviceId }&timeout=0`);
     return events.data;
   },
@@ -1711,7 +1736,6 @@ module.exports = {
     try {
       let res = yield request(payload);
       if (res.statusCode !== 200) {
-        //console.log(payload, res.body);
         throw error.parse({
           code    : 'CAR_SERVICE',
           message : "The server can't contact the car, please try again.",
