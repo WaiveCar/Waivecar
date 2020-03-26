@@ -1488,13 +1488,13 @@ module.exports = {
    * @param  {Object} _user
    * @return {Object} updated Car
    */
-  *executeCommand(id, part, command, _user, existingCar, opts) {
+  *executeCommand(carId, part, command, _user, existingCar, opts) {
     opts = opts || {};
-    existingCar = existingCar || (yield Car.findById(id));
+    existingCar = existingCar || (yield Car.findById(carId));
 
-    let actualDeviceId = (yield Telematics.find({where: {carId: id}})).telemId;
+    let actualDeviceId = (yield Telematics.find({where: {carId}})).telemId;
 
-    if(!id || !existingCar) {
+    if(!carId || !existingCar) {
       throw error.parse({
         code    : 'IGNITION_ON',
         message : "That didn't work. Are you sure you are in a booking?"
@@ -1516,7 +1516,7 @@ module.exports = {
 
     let updatedCar = false;
     if (!existingCar) {
-      let error    = new Error(`CAR: ${ id }`);
+      let error    = new Error(`CAR: ${ carId }`);
       error.code   = 'CAR_SERVICE';
       error.status = 404;
       error.data   = 'NA';
@@ -1532,8 +1532,8 @@ module.exports = {
       let status = yield this.request(`/devices/${ actualDeviceId }/status`, {
         method : 'PATCH'
       }, payload);
-      this.logStatus(status, id, payload);
-      updatedCar = this.transformDeviceToCar(id, status);
+      this.logStatus(status, carId, payload);
+      updatedCar = this.transformDeviceToCar(carId, status);
     } else {
       updatedCar = existingCar;
       if(part === 'central_lock') {
@@ -1553,7 +1553,7 @@ module.exports = {
         if(command === 'lock')   { updatedCar.isImmobilized = true; }
       }
     }
-    let res = yield this.syncUpdate(id, updatedCar, existingCar, _user);
+    let res = yield this.syncUpdate(carId, updatedCar, existingCar, _user);
 
     if (command == 'lock' && updatedCar.ignition === 'on') {
       throw error.parse({
@@ -1564,8 +1564,9 @@ module.exports = {
     return res;
   },
 
-  *getEvents(id, _user) {
-    let events = yield this.request(`/events?device=${ id }&timeout=0`);
+  *getEvents(carId, _user) {
+    let actualDeviceId = (yield Telematics.find({where: {carId}})).telemId;
+    let events = yield this.request(`/events?device=${ actualDeviceId }&timeout=0`);
     return events.data;
   },
 
