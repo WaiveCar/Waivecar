@@ -1034,14 +1034,13 @@ module.exports = {
           // be created here and linked to the telem unit installed
           let telemId = entry.fields['API:telemID'] && entry.fields['API:telemID'][0];
           if (telemId) {
-            let car = allCars.find(car => car.id === telemId);
             let telem = allDevices.find(device => device.telemId === telemId); 
+            let car = allCars.find(car => car.id === telem.carId);
             if (telem && !car) {
-              // create new car
               let device = yield this.getDevice(telemId, null, 'sync');
               if (device) {
                 let newCar = new Car(device);
-                newCar.license = entry.fields['Car Name'] 
+                newCar.license = entry.fields['Car Name']; 
                 newCar.airtableData = entry.fields.airtableData;
                 yield newCar.save();
               }
@@ -1088,7 +1087,6 @@ module.exports = {
     // Retrieve all Active Devices from Invers and loop.
     //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getAllDevices();
-    devices.push({id: 'asdf'});
     //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars, allDevices));
@@ -1102,7 +1100,7 @@ module.exports = {
   *syncCar(device, carList, allCars, allDevices) {
     try {
       let existingDevice = allDevices.find(c => c.telemId === device.id);
-      let existingCar = allCars.find(c => c.id = device.id);
+      let existingCar = allCars.find(c => c.id === existingDevice.carId);
       if (existingDevice && existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
@@ -1117,7 +1115,7 @@ module.exports = {
         // It is not matched with a car until the car is added with the id of the device in airtable
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let newDevice = device;//yield this.getDevice(device.id);
+          let newDevice = yield this.getDevice(device.id);
           let newTelem = new Telematics({
             telemId: newDevice.id,
           });
@@ -1195,6 +1193,9 @@ module.exports = {
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
+    // The line below is done so that devices can be switched from airtable
+    let actualTelemId = (yield Telematics.findOne({where: {carId: id}})).telemId;
+    id = actualTelemId;
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
