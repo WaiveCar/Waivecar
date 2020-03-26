@@ -1022,14 +1022,16 @@ module.exports = {
   },
 
   *handleAirtable(allCars, allDevices) {
-    let fromAirtable;
+    // The following handles creation of new cars from airtable and also updates 
+    // the data from airtable on the car model
+    let carsFromAirtable;
     do {
       try {
-        fromAirtable = yield this.request(
-          `/Cars?view=Grid%20view${fromAirtable ? `&offset=${fromAirtable.offset}` : ''}`,
+        carsFromAirtable = yield this.request(
+          `/Cars?view=Grid%20view${carsFromAirtable ? `&offset=${carsFromAirtable.offset}` : ''}`,
           {isAirtable: true},
         );
-        for (let entry of fromAirtable.records) {
+        for (let entry of carsFromAirtable.records) {
           // If there is a car entered into airtable, but not yet put into db, it must
           // be created here and linked to the telem unit installed
           let telemId = entry.fields['API:telemID'] && entry.fields['API:telemID'][0];
@@ -1045,8 +1047,6 @@ module.exports = {
                 yield newCar.save();
               }
             } else if (telem && car) {
-              // This is the place to switch telematics units from one car to another based
-              // on changes to airtable
               yield car.update({airtableData: JSON.stringify(entry.fields)});
             }
           }
@@ -1054,7 +1054,24 @@ module.exports = {
       } catch(e) {
         console.log('err fetching from airtable', e);
       }
-    } while (fromAirtable.records.length >= 100);
+    } while (carsFromAirtable.records.length >= 100);
+    // The next part handles updating of telematics from airtable
+    let telemsFromAirtable;
+    do {
+      try {
+        telemsFromAirtable = yield this.request(
+          `/Telematics?view=Grid%20view${telemsFromAirtable ? `&offset=${telemsFromAirtable.offset}` : ''}`,
+          {isAirtable: true},
+        );
+        for (let entry of telemsFromAirtable.records) {
+          // If there is a car entered into airtable, but not yet put into db, it must
+          // be created here and linked to the telem unit installed
+          console.log(entry);
+        }
+      } catch(e) {
+        console.log('err fetching from airtable', e);
+      }
+    } while (carsFromAirtable.records.length >= 100);
   },
 
   // Does sync operations against all cars in the invers fleet.
@@ -1067,9 +1084,9 @@ module.exports = {
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
 
-    if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'production') {
       yield this.handleAirtable(allCars, allDevices);
-    }
+    //}
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
@@ -1198,6 +1215,13 @@ module.exports = {
     }
     // The line below is done so that devices can be switched from airtable
     let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
+    // This handles the situation where there is no telematics unit that matches 
+    // the car the is being fetched. It should cause the same behavior as when 
+    // NODE_ENV === 'development' 
+    if (!actualDeviceId) {
+      console.log('here');
+      return false;
+    }
     try {
       let status = yield this.request(`/devices/${ actualDeviceId }/status`, { timeout : 30000 });
       this._errors[carId] = 0;
