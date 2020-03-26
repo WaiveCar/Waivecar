@@ -1083,7 +1083,7 @@ module.exports = {
                 yield telem.update({carId});
               }
             } else {
-              log.warn(`Not telematics found with the id ${telemId}.`);
+              log.warn(`No telematics found with the id ${telemId}.`);
             }
           } catch(e) {
             log.warn(`Error handling telem: ${e}.`);
