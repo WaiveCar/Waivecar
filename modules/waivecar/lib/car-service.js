@@ -1492,7 +1492,7 @@ module.exports = {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(id));
 
-    let actualDeviceId = (yield)
+    let actualDeviceId = (yield Telematics.find({where: {carId: id}})).telemId;
 
     if(!id || !existingCar) {
       throw error.parse({
@@ -1529,7 +1529,7 @@ module.exports = {
     // https://github.com/WaiveCar/Waivecar/issues/739
     //
     if (process.env.NODE_ENV === 'production') {
-      let status     = yield this.request(`/devices/${ id }/status`, {
+      let status = yield this.request(`/devices/${ actualDeviceId }/status`, {
         method : 'PATCH'
       }, payload);
       this.logStatus(status, id, payload);
