@@ -13,39 +13,40 @@ export default class Airtable extends Component {
 
   render() {
     let {airtableData} = this.state;
-    console.log(airtableData);
     return (
-      <div className="box">
-        <h3>Data From Airtable </h3>
-        <div className="box-content">
-          {airtableData ? (
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th style={{width: '30%'}}>Property</th>
-                    <th style={{width: '50%'}}>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.keys(airtableData).map((key, i) => (
-                    <tr key={i}>
-                      <td>{key}</td>
-                      <td>
-                        {typeof airtableData[key] !== 'object'
-                          ? typeof airtableData[key] !== 'boolean'
-                            ? airtableData[key]
-                            : airtableData[key].toString()
-                          : airtableData[key].join(', ')}
-                      </td>
+      <div className="logs">
+        <div className="box">
+          <h3>Data From Airtable </h3>
+          <div className="box-content">
+            {airtableData ? (
+              <div>
+                <table className="table-logs">
+                  <thead>
+                    <tr ref="sort">
+                      <th>Property</th>
+                      <th>Value</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div>No Airtable Data Found</div>
-          )}
+                  </thead>
+                  <tbody>
+                    {Object.keys(airtableData).map((key, i) => (
+                      <tr key={i}>
+                        <td>{key}</td>
+                        <td>
+                          {typeof airtableData[key] !== 'object'
+                            ? typeof airtableData[key] !== 'boolean'
+                              ? airtableData[key]
+                              : airtableData[key].toString()
+                            : airtableData[key].join(', ')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div>No Airtable Data Found</div>
+            )}
+          </div>
         </div>
       </div>
     );
