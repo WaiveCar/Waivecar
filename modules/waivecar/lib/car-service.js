@@ -1021,6 +1021,8 @@ module.exports = {
   },
 
   *handleAirtable(allCars, allDevices) {
+    allCars = allCars ? allCars : (yield Car.find());
+    allDevices = allDevices ? allDevices : (yield Telematics.find());
     // The following handles creation of new cars from airtable and also updates 
     // the data from airtable on the car model
     let carsFromAirtable;

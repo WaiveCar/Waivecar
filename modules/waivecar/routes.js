@@ -55,6 +55,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 Route.get('/unassignedTelematics',   [ 'CarsController@unassignedTelems' ]);
 Route.get('/airtableUsers', [ 'isAuthenticted', 'CarsController@airtableUsers' ]);
+Route.get('/refreshAirtable', [ 'isAuthenticated', 'CarsController@refreshAirtable' ]);
 Route.post('/createAirtableTicket', [ 'isAuthenticated', 'CarsController@createAirtableTicket' ]);
 // ### Cars
 
