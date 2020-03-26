@@ -1027,7 +1027,7 @@ module.exports = {
       try {
         fromAirtable = yield this.request(
           `/Cars?view=Grid%20view${fromAirtable ? `&offset=${fromAirtable.offset}` : ''}`,
-        {isAirtable: true},
+          {isAirtable: true},
         );
         for (let entry of fromAirtable.records) {
           // If there is a car entered into airtable, but not yet put into db, it must
@@ -1037,7 +1037,7 @@ module.exports = {
             let telem = allDevices.find(device => device.telemId === telemId); 
             let car = allCars.find(car => car.id === telem.carId);
             if (telem && !car) {
-              let device = yield this.getDevice(telemId, null, 'sync');
+              let device = yield this.getDevice(car.id, null, 'sync');
               if (device) {
                 let newCar = new Car(device);
                 newCar.license = entry.fields['Car Name']; 
@@ -1189,33 +1189,34 @@ module.exports = {
     fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n", function(){});
   },
 
-  *getDevice(id, _user, source) {
+  *getDevice(carId, _user, source) {
+    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
+    */
     // The line below is done so that devices can be switched from airtable
-    let actualTelemId = (yield Telematics.findOne({where: {carId: id}})).telemId;
-    id = actualTelemId;
+    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
     try {
-      let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
-      this._errors[id] = 0;
+      let status = yield this.request(`/devices/${ actualDeviceId }/status`, { timeout : 30000 });
+      this._errors[carId] = 0;
       if (status) {
-        this.logStatus(status, id, source);
-        return this.transformDeviceToCar(id, status);
+        this.logStatus(status, carId, source);
+        return this.transformDeviceToCar(carId, status);
       }
     } catch (err) {
       if (err.code === 'CAR_SERVICE_TIMEDOUT') {
-        if (!this._errors[id]) this._errors[id] = 0;
-        this._errors[id]++;
-        let device = id;
-        let car    = yield Car.findById(id);
+        if (!this._errors[carId]) this._errors[carId] = 0;
+        this._errors[carId]++;
+        let device = carId;
+        let car    = yield Car.findById(carId);
         if (car) {
-          device = car.license || id;
+          device = car.license || carId;
         }
-        log.warn(`Cars : Sync : fetching device ${ id } failed, fleet request timed out.`);
-        if (this._errors[id] === 4) {
+        log.warn(`Cars : Sync : fetching device ${ carId } failed, fleet request timed out.`);
+        if (this._errors[carId] === 4) {
           yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ], { channel : '#api-errors' });
-          this._errors[id] = 0;
+          this._errors[carId] = 0;
         }
         return null;
       }
@@ -1456,10 +1457,12 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
-  *lockAndImmobilize(id, _user) {
-    let existingCar = yield Car.findById(id);
+  *lockAndImmobilize(carId, _user) {
+    let existingCar = yield Car.findById(carId);
+    // The line below allows for the resassignment of telematics devices
+    let actualDeviceId = yield Telematics.find({where: {carId}});
     if (!existingCar) {
-      let error    = new Error(`CAR: ${ id }`);
+      let error    = new Error(`CAR: ${ carId }`);
       error.code   = 'CAR_SERVICE';
       error.status = 404;
       error.data   = 'NA';
@@ -1470,13 +1473,13 @@ module.exports = {
       centralLock : 'locked',
       immobilizer : 'locked'
     });
-    let status = yield this.request(`/devices/${ id }/status`, {
+    let status = yield this.request(`/devices/${ actualDeviceId }/status`, {
       method : 'PATCH'
     }, payload);
-    let updatedCar = this.transformDeviceToCar(id, status);
-    if (_user) yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
-    if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
-    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
+    let updatedCar = this.transformDeviceToCar(carId, status);
+    if (_user) yield LogService.create({ carId : carId, action : Actions.IMMOBILIZE_CAR }, _user);
+    if (_user) yield LogService.create({ carId : carId, action : Actions.LOCK_CAR }, _user);
+    return yield this.syncUpdate(carId, updatedCar, existingCar, _user);
   },
 
   /**
