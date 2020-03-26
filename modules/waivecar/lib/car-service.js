@@ -1066,7 +1066,10 @@ module.exports = {
 
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
-    yield this.handleAirtable(allCars, allDevices);
+
+    if (process.env.NODE_ENV === 'production') {
+      yield this.handleAirtable(allCars, allDevices);
+    }
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
@@ -1491,8 +1494,8 @@ module.exports = {
   *executeCommand(carId, part, command, _user, existingCar, opts) {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(carId));
-
-    let actualDeviceId = (yield Telematics.find({where: {carId}})).telemId;
+    console.log(carId)
+    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
 
     if(!carId || !existingCar) {
       throw error.parse({
@@ -1565,7 +1568,7 @@ module.exports = {
   },
 
   *getEvents(carId, _user) {
-    let actualDeviceId = (yield Telematics.find({where: {carId}})).telemId;
+    let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
     let events = yield this.request(`/events?device=${ actualDeviceId }&timeout=0`);
     return events.data;
   },
