@@ -1047,7 +1047,7 @@ module.exports = {
                 yield newCar.save();
               }
             } else if (telem && car) {
-              yield car.update({airtableData: JSON.stringify(entry.fields)});
+              yield car.update({airtableData: JSON.stringify(entry)});
             }
           }
         };
@@ -1105,9 +1105,9 @@ module.exports = {
     let allCars = yield Car.find();
     let allDevices = yield Telematics.find();
 
-    //if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       yield this.handleAirtable(allCars, allDevices);
-    //}
+    }
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
