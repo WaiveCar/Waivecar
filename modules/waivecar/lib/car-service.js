@@ -1095,6 +1095,10 @@ module.exports = {
     } while (carsFromAirtable.records.length >= 100);
   },
 
+  *createAirtableTicket(payload) {
+    return payload;
+  },
+
   // Does sync operations against all cars in the invers fleet.
   *syncCars() {
     //log.debug('CarService : syncCars : start');
