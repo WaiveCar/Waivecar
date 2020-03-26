@@ -1190,11 +1190,9 @@ module.exports = {
   },
 
   *getDevice(carId, _user, source) {
-    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
-    */
     // The line below is done so that devices can be switched from airtable
     let actualDeviceId = (yield Telematics.findOne({where: {carId}})).telemId;
     try {
@@ -1460,7 +1458,7 @@ module.exports = {
   *lockAndImmobilize(carId, _user) {
     let existingCar = yield Car.findById(carId);
     // The line below allows for the resassignment of telematics devices
-    let actualDeviceId = yield Telematics.find({where: {carId}});
+    let actualDeviceId = yield Telematics.findOne({where: {carId}}).id;
     if (!existingCar) {
       let error    = new Error(`CAR: ${ carId }`);
       error.code   = 'CAR_SERVICE';
@@ -1493,6 +1491,8 @@ module.exports = {
   *executeCommand(id, part, command, _user, existingCar, opts) {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(id));
+
+    let actualDeviceId = (yield)
 
     if(!id || !existingCar) {
       throw error.parse({
