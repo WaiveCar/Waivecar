@@ -11,6 +11,7 @@ import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Documentation from './documentation';
+import Airtable from './airtable';
 import Logs from '../../components/logs';
 import config from 'config';
 import helpers from 'bento/lib/helpers';
@@ -850,6 +851,7 @@ class CarsShowView extends React.Component {
         { this.state.latestBooking && this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
+        <Airtable car={car} />
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
         <Documentation car={car} />
