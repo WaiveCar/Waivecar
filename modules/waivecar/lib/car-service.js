@@ -1078,9 +1078,9 @@ module.exports = {
               let carId = carLicense ? (yield Car.findOne({
                 where: {license: {$like: `%${carLicense}`}},
               })).id : null;
+              // Only update if there is a change
               if (telem.carId !== carId) {
                 yield telem.update({carId});
-                console.log('updated');
               }
             } else {
               log.warn(`Not telematics found with the id ${telemId}.`);
