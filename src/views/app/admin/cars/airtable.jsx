@@ -5,7 +5,7 @@ import {snackbar} from 'bento-web';
 export default class Airtable extends Component {
   constructor(props) {
     super(props);
-    this.state = {airtableData: null};
+    this.state = {airtableData: null, notes: ''};
   }
 
   componentDidMount() {
@@ -14,7 +14,30 @@ export default class Airtable extends Component {
   }
 
   createTicket() {
-    api.post('/cars/createAirtableTicket', {}, (err, result) => {
+    let {airtableData, notes} = this.state;
+    api.post(
+      '/createAirtableTicket',
+      {
+        carId: airtableData.id,
+        notes,
+      },
+      (err, result) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        return snackbar.notify({
+          type: 'success',
+          message: 'Ticket created',
+        });
+      },
+    );
+  }
+
+  refreshAirtable() {
+    api.get('/refreshAirtable', (err, res) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
@@ -23,7 +46,7 @@ export default class Airtable extends Component {
       }
       return snackbar.notify({
         type: 'success',
-        message: 'Ticket created',
+        message: 'Airtable data refreshed successfully',
       });
     });
   }
@@ -33,7 +56,12 @@ export default class Airtable extends Component {
     return (
       <div className="logs">
         <div className="box">
-          <h3>Data From Airtable </h3>
+          <h3>Data From Airtable</h3>
+          <button onClick={() => this.refreshAirtable()}>Refresh</button>
+          <input
+            type="text"
+            onInput={e => this.setState({notes: e.target.value})}
+          />
           <button onClick={() => this.createTicket()}>Create</button>
           <div className="box-content">
             {airtableData ? (
