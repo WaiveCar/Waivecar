@@ -1097,10 +1097,10 @@ module.exports = {
   },
 
   *getAirtableUsers() {
-    return yield this.request(
-      '/Team%20Members',
+    return (yield this.request(
+      '/collab',
       {isAirtable: true},
-    ); 
+    )).records.map(collab => collab.fields.collaborator); 
   },
 
   *createAirtableTicket(payload) {
