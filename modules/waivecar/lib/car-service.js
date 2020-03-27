@@ -1115,20 +1115,7 @@ module.exports = {
                 payload.carId
               ],
               Notes: payload.notes,
-              /*
-              "Assigned To": {
-                "id": "usrKjhxE8H2bm7NQZ",
-                "email": "james@waive.car",
-                "name": "James Landau"
-              },
-              */
-              /*
-              "Assigned By": {
-                "id": "usrKjhxE8H2bm7NQZ",
-                "email": "james@waive.car",
-                "name": "James Landau"
-              },
-              */
+              "Assigned To": payload.collaborator,
               Status: 'New',
             }
           },
