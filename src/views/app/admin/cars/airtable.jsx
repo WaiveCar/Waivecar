@@ -113,26 +113,45 @@ export default class Airtable extends Component {
                     ))}
                   </tbody>
                 </table>
-                <div className="row">
-                  <h4>Create Tickets</h4>
-                  <textarea
-                    type="text"
-                    onInput={e => this.setState({notes: e.target.value})}
-                  />
+                <div className="row" style={{marginTop: '1rem'}}>
+                  <h4>Create Airtable Tickets</h4>
+                  <div style={{marginTop: '1rem'}}>Select Assignee:</div>
                   <div
-                    style={{display: 'flex', justifyContent: 'space-between'}}>
+                    style={{
+                      marginTop: '1rem',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                    }}>
                     {collaborators.map((each, i) => (
-                      <div key={i}>
-                        {each.name}
+                      <div key={i} style={{width: '25%'}}>
                         <input
+                          style={{marginRight: '0.2rem'}}
+                          id={`collaborator-${i}`}
                           type="radio"
-                          onChange={() => this.setState({selectedCollaborator: i})}
+                          onChange={() =>
+                            this.setState({selectedCollaborator: i})
+                          }
                           checked={i === selectedCollaborator}
                         />
+                        <label htmlFor={`collaborator-${i}`}>{each.name}</label>
                       </div>
                     ))}
                   </div>
-                  <div>
+                  <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <textarea
+                      style={{width: '50%', marginTop: '1rem'}}
+                      type="text"
+                      onInput={e => this.setState({notes: e.target.value})}
+                      placeholder={'Enter a task description'}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '1rem',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                    }}>
                     <button
                       className="btn btn-primary"
                       onClick={() => this.createTicket()}>
