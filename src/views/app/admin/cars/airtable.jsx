@@ -10,7 +10,18 @@ export default class Airtable extends Component {
 
   componentDidMount() {
     let {car} = this.props;
-    this.setState({airtableData: JSON.parse(car.airtableData)});
+    api.get('/airtable/users', (err, result) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.setState({
+        collaborators: result,
+        airtableData: JSON.parse(car.airtableData),
+      });
+    });
   }
 
   createTicket() {
@@ -53,17 +64,19 @@ export default class Airtable extends Component {
   }
 
   render() {
-    let {airtableData} = this.state;
+    let {airtableData, collaborators} = this.state;
     return (
       <div className="logs">
         <div className="box">
           <h3>Data From Airtable</h3>
-          <button onClick={() => this.refreshAirtable()}>Refresh</button>
-          <input
-            type="text"
-            onInput={e => this.setState({notes: e.target.value})}
-          />
-          <button onClick={() => this.createTicket()}>Create</button>
+          <div>
+            <button
+              className="btn btn-primary"
+              onClick={() => this.refreshAirtable()}>
+              Refresh
+            </button>
+          </div>
+
           <div className="box-content">
             {airtableData ? (
               <div>
@@ -89,6 +102,23 @@ export default class Airtable extends Component {
                     ))}
                   </tbody>
                 </table>
+                <div className="row">
+                  <h4>Create Tickets</h4>
+                  <textarea
+                    type="text"
+                    onInput={e => this.setState({notes: e.target.value})}
+                  />
+                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    {collaborators.map((each, i) => <div key={i}>{each.name}</div>)}
+                  </div>
+                  <div>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => this.createTicket()}>
+                      Create Ticket
+                    </button>
+                  </div>
+                </div>
               </div>
             ) : (
               <div>No Airtable Data Found</div>
