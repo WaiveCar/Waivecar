@@ -53,7 +53,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 
 
 // ### Airtable Related
-Route.get('/airtable/users', [ 'isAuthenticted', 'CarsController@airtableUsers' ]);
+Route.get('/airtable/users', [ 'isAuthenticated', 'CarsController@airtableUsers' ]);
 Route.get('/airtable/refresh', [ 'isAuthenticated', 'CarsController@refreshAirtable' ]);
 Route.post('/airtable/createTicket', [ 'isAuthenticated', 'CarsController@createAirtableTicket' ]);
 

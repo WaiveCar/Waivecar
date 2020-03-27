@@ -1096,6 +1096,13 @@ module.exports = {
     } while (carsFromAirtable.records.length >= 100);
   },
 
+  *getAirtableUsers() {
+    return yield this.request(
+      '/Team%20Members',
+      {isAirtable: true},
+    ); 
+  },
+
   *createAirtableTicket(payload) {
     let newTicket = yield this.request(
       '/Car%20Tickets',
@@ -1128,7 +1135,7 @@ module.exports = {
         ],
       }
     );
-    return payload;
+    return newTicket;
   },
 
   // Does sync operations against all cars in the invers fleet.

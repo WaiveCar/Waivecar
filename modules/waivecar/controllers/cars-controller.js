@@ -136,6 +136,10 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.createAirtableTicket(this.payload);
   };
 
+  controller.airtableUsers = function *() {
+    return yield car.getAirtableUsers();
+  };
+
   controller.refreshAirtable = function *() {
     return yield car.handleAirtable();
   };
