@@ -5,7 +5,7 @@ import {snackbar} from 'bento-web';
 export default class Airtable extends Component {
   constructor(props) {
     super(props);
-    this.state = {airtableData: null, notes: ''};
+    this.state = {airtableData: null, notes: '', selectedCollaborator: 0};
   }
 
   componentDidMount() {
@@ -25,12 +25,12 @@ export default class Airtable extends Component {
   }
 
   createTicket() {
-    let {airtableData, notes, collaborators} = this.state;
+    let {airtableData, notes, collaborators, selectedCollaborator} = this.state;
     api.post(
       '/airtable/createTicket',
       {
         carId: airtableData.id,
-        collaborators: collaborators.filter(each => each.selected),
+        collaborator: collaborators[selectedCollaborator],
         notes,
       },
       (err, result) => {
@@ -75,7 +75,7 @@ export default class Airtable extends Component {
   }
 
   render() {
-    let {airtableData, collaborators} = this.state;
+    let {airtableData, collaborators, selectedCollaborator} = this.state;
     return (
       <div className="logs">
         <div className="box">
@@ -125,8 +125,9 @@ export default class Airtable extends Component {
                       <div key={i}>
                         {each.name}
                         <input
-                          type="checkbox"
-                          onInput={() => this.toggleSelect(i)}
+                          type="radio"
+                          onChange={() => this.setState({selectedCollaborator: i})}
+                          checked={i === selectedCollaborator}
                         />
                       </div>
                     ))}
