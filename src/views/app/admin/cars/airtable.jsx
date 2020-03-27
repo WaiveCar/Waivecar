@@ -25,11 +25,12 @@ export default class Airtable extends Component {
   }
 
   createTicket() {
-    let {airtableData, notes} = this.state;
+    let {airtableData, notes, collaborators} = this.state;
     api.post(
       '/airtable/createTicket',
       {
         carId: airtableData.id,
+        collaborators: collaborators.filter(each => each.selected),
         notes,
       },
       (err, result) => {
@@ -61,6 +62,16 @@ export default class Airtable extends Component {
         message: 'Airtable data refreshed successfully',
       });
     });
+  }
+
+  toggleSelect(idx) {
+    let temp = [...this.state.collaborators];
+    if (!temp[idx].selected) {
+      temp[idx].selected = true;
+    } else {
+      delete temp[idx].selected;
+    }
+    this.setState({collaborators: temp});
   }
 
   render() {
@@ -108,8 +119,17 @@ export default class Airtable extends Component {
                     type="text"
                     onInput={e => this.setState({notes: e.target.value})}
                   />
-                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    {collaborators.map((each, i) => <div key={i}>{each.name}</div>)}
+                  <div
+                    style={{display: 'flex', justifyContent: 'space-between'}}>
+                    {collaborators.map((each, i) => (
+                      <div key={i}>
+                        {each.name}
+                        <input
+                          type="checkbox"
+                          onInput={() => this.toggleSelect(i)}
+                        />
+                      </div>
+                    ))}
                   </div>
                   <div>
                     <button
