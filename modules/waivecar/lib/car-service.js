@@ -1021,6 +1021,7 @@ module.exports = {
   },
 
   *handleAirtable(allCars, allDevices) {
+    // Cars and devices are found if they are not included with the function call
     allCars = allCars ? allCars : (yield Car.find());
     allDevices = allDevices ? allDevices : (yield Telematics.find());
     // The following handles creation of new cars from airtable and also updates 
