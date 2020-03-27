@@ -342,6 +342,7 @@ scheduler.process('waivework-billing', function*(job) {
       }
     }
     try {
+      /*
       scheduler.add('waivework-immobilize', {
         // A uid based on something needs to be added here because the code will run on both servers
         uid: `waivework-immobilize-${uuid.v4()}`,
@@ -350,6 +351,7 @@ scheduler.process('waivework-billing', function*(job) {
           toImmobilize,
         },
       });
+      */
     } catch (e) {
       log.warn('error starting immobilizer timer: ', e);
     }
