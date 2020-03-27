@@ -16,7 +16,7 @@ export default class Airtable extends Component {
   createTicket() {
     let {airtableData, notes} = this.state;
     api.post(
-      '/createAirtableTicket',
+      '/airtable/createTicket',
       {
         carId: airtableData.id,
         notes,
@@ -37,13 +37,14 @@ export default class Airtable extends Component {
   }
 
   refreshAirtable() {
-    api.get('/refreshAirtable', (err, res) => {
+    api.get('/airtable/refresh', (err, res) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
           message: err.message,
         });
       }
+      window.location.reload();
       return snackbar.notify({
         type: 'success',
         message: 'Airtable data refreshed successfully',
