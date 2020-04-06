@@ -18,5 +18,14 @@ Bento.Register.Model('OrganizationUser', 'sequelize', function register(
       allowNull: false,
     },
   };
+
+  model.relations = [
+    'Organization',
+    'User',
+    function(Organization, User) {
+      this.belongsTo(Organiation, {as: 'organization', foreignKey: 'organizationId'});
+      this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+    }
+  ];
   return model;
 });
