@@ -285,6 +285,13 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         key   : 'id'
       }
     },
+    organizationId : {
+      type       : Sequelize.INTEGER,
+      references : {
+        model : 'organizations',
+        key   : 'id'
+      }
+    },
   };
 
   model.methods = {
