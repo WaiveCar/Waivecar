@@ -4,7 +4,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(model, Seque
 
   model.schema = {
     id : {
-      type       : Sequelize.STRING(28),
+      type       : Sequelize.INTEGER,
       primaryKey : true
     },
     name: {
@@ -12,4 +12,5 @@ Bento.Register.Model('Organization', 'sequelize', function register(model, Seque
       allowNull: false,
     },
   };
+  return model;
 });
