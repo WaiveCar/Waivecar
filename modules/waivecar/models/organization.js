@@ -42,6 +42,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
           userId,
         },
       });
+      yield orgUser.delete();
     },
   };
 
@@ -49,8 +50,8 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     'User',
     'Car',
     function(User, Car) {
-      this.hasMany(User, {as: 'users'});
-      this.hasMany(Car, {as: 'cars'});
+      //this.hasMany(User, {as: 'user'});
+      //this.hasMany(Car, {as: 'car'});
     },
   ];
   return model;

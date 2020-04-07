@@ -164,3 +164,9 @@ Route.put('/group/:id', ['GroupController@update']);
 Route.del('/group/:id', ['GroupController@delete']);
 Route.post('/group/:groupRoleId/assigncar/:carId', ['GroupController@assignCar']);
 Route.del('/group/:groupRoleId/removecar/:carId', ['GroupController@removeCar']);
+
+// ### Organizations
+Route.get('/organization', ['isAuthenticated', 'OrganizationController@index']);
+Route.post('/organization', ['isAuthenticated', 'OrganizationController@create']);
+Route.get('/organization/:id', ['isAuthenticated','OrganizationController@create']);
+  
