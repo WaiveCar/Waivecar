@@ -7,6 +7,7 @@ class Organizations extends Component {
     super(props);
     this.state = {
       name: '',
+      organizations: [],
     };
   }
 
@@ -37,7 +38,6 @@ class Organizations extends Component {
 
   render() {
     let {organizations} = this.state;
-    console.log(organizations);
     return (
       <div>
         Organizations
