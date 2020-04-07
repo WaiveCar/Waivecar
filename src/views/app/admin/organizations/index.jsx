@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 
@@ -46,9 +47,15 @@ class Organizations extends Component {
           type={'text'}
           onChange={e => this.setState({name: e.target.value})}
         />
-            <button className={'btn btn-primary'} onClick={() => this.createOrg()}>Create</button>
+        <button className={'btn btn-primary'} onClick={() => this.createOrg()}>
+          Create
+        </button>
         <div>
-          {organizations.map((org, i) => <div key={i}>{org.name}</div>)}
+          {organizations.map((org, i) => (
+            <div key={i}>
+              <Link to={`/organizations/${org.id}`}>{org.name}</Link>
+            </div>
+          ))}
         </div>
       </div>
     );

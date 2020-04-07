@@ -164,6 +164,11 @@ templates.register('app', {
         path      : '/organizations',
         component : require('../../views/app/admin/organizations/index'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/organizations/:id',
+        component : require('../../views/app/admin/organizations/show'),
+        onEnter   : policies.isAdministrator
       }
       
     ].concat(views.getRoutes('app')));
