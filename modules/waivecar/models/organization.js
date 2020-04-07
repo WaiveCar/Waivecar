@@ -23,10 +23,12 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     addCar: function*(carId) {
       let car = yield Car.findById(carId);
       yield car.update({organizationId: this.id});
+      return car;
     },
     removeCar: function*(carId) {
       let car = yield Car.findById(carId);
       yield car.update({organizationId: null});
+      return car;
     },
     addUser: function*(userId) {
       let orgUser = new OrganizationUser({
@@ -34,6 +36,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         userId,
       });
       yield orgUser.save();
+      return orgUser;
     },
     removeUser: function*(userId) {
       let orgUser = yield OrganizationUser.findOne({
@@ -43,6 +46,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         },
       });
       yield orgUser.delete();
+      return orgUser;
     },
   };
 

@@ -12,7 +12,23 @@ module.exports = {
     return org;
   },
 
-  *show(id) {
+  *show(id, payload) {
     return yield Organization.findById(id); 
+  },
+
+  *addUser(organizationId, payload) {
+    let org = yield Organization.findById(organizationId);
+  },
+
+  *removeUser(organizationId, payload) {
+    let org = yield Organization.findById(organizationId);
+  },
+
+  *addCar(organizationId, payload) {
+    let org = yield Organization.findById(organizationId);
+  },
+
+  *removeCar(organizationId, payload) {
+    let org = yield Organization.findById(organizationId);
   },
 };
