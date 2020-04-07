@@ -512,9 +512,9 @@ module.exports = class BookingService extends Service {
     let today = moment(startDate || undefined).tz('America/Los_Angeles');
     function getNextTuesday(today) { 
       if (today <= dayINeed) {
-        return moment().tz('America/Los_Angeles').weekday(dayINeed);
+        return moment().weekday(dayINeed);
       } else {
-        return moment().tz('America/Los_Angeles').add(1, 'weeks').weekday(dayINeed);
+        return moment().add(1, 'weeks').weekday(dayINeed);
       }
     }
     let nextDate = getNextTuesday(today.weekday());
