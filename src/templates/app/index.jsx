@@ -159,6 +159,11 @@ templates.register('app', {
         path      : '/waivepark/:id',
         component : require('../../views/app/admin/waivepark/show'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/organizations',
+        component : require('../../views/app/admin/organizations/index'),
+        onEnter   : policies.isAdministrator
       }
       
     ].concat(views.getRoutes('app')));
@@ -300,6 +305,14 @@ let order = 2;
     title     : 'Locations',
     icon      : 'location_on',
     path      : '/locations',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Organizations',
+    icon      : 'location_on',
+    path      : '/organizations',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
