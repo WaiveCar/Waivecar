@@ -37,17 +37,18 @@ class Organizations extends Component {
 
   render() {
     let {organizations} = this.state;
+    console.log(organizations);
     return (
       <div>
         Organizations
-        <div>New</div>
+        <div>New:</div>
         <input
           type={'text'}
           onChange={e => this.setState({name: e.target.value})}
         />
             <button className={'btn btn-primary'} onClick={() => this.createOrg()}>Create</button>
         <div>
-          {organizations.map((org, i) => <div>{org.name}</div>)}
+          {organizations.map((org, i) => <div key={i}>{org.name}</div>)}
         </div>
       </div>
     );
