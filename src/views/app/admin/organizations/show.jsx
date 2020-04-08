@@ -11,6 +11,20 @@ class Organization extends Component {
     };
   }
 
+  componentDidMount() {
+    let {id} = this.state;
+    api.get(`/organizations/${id}`, (err, result) => {
+      if (err) {
+        snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      console.log(result);
+      this.setState({organization: result});
+    });
+  }
+
   render() {
     return <div>Orgs Show</div>;
   }
