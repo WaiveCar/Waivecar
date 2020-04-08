@@ -20,13 +20,29 @@ class Organization extends Component {
           message: err.message,
         });
       }
-      console.log(result);
       this.setState({organization: result});
     });
   }
 
   render() {
-    return <div>Orgs Show</div>;
+    let {cars, users} = this.state.organization;
+    return (
+      <div>
+        Orgs Show
+        <h4>Users</h4>
+        {users.map((each, i) => (
+          <div>
+            {each.firstName} {each.lastName}
+          </div>
+        ))}
+        <h4>Cars</h4>
+        {cars.map((each, i) => (
+          <div>
+            {each.id} {each.license}
+          </div>
+        ))}
+      </div>
+    );
   }
 }
 
