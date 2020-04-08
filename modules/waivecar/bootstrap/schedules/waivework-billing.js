@@ -270,6 +270,7 @@ scheduler.process('waivework-billing', function*(job) {
         } catch (e) {
           log.warn('error sending email', e);
         }
+        /*
         try {
           let {body} = yield request({
             url: `${config.ocpi.url}?key=${config.ocpi.key}&user=${oldPayment.booking.userId}&paid=true`,
@@ -339,6 +340,7 @@ scheduler.process('waivework-billing', function*(job) {
         } catch (e) {
           log.warn('Error automatically charging for evgo: ', e);
         }
+        */
       }
     }
     try {
