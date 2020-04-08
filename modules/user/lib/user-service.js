@@ -320,7 +320,10 @@ module.exports = {
    * @return {Object}
    */
   *get(id, _user) {
-    let user = yield User.findById(id);
+    let user = (yield User.findById(id));
+    let orgs = yield user.getOrganizations();
+    user = user.toJSON();
+    user.organizations = orgs;
     if (!user) {
       throw error.userNotFound();
     }
@@ -357,18 +360,6 @@ module.exports = {
       title : connector.groupRole.name,
       name  : role.name
     };
-    user.organizationUsers = yield OrganizationUser.find({
-      where: {
-        userId: user.id,
-      },
-      include: [
-        {
-          model: 'Organization',
-          as: 'organization',
-        },
-      ],
-    });
-    console.log(user);
     return user;
   },
 

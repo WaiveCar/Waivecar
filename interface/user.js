@@ -409,7 +409,22 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       yield this.update({
         status : 'suspended'
       });
-    }
+    },
+
+    *getOrganizations() {
+      let OrganizationUser = Bento.model('OrganizationUser');
+      return yield OrganizationUser.find({
+        where: {
+          userId: this.id,
+        },
+        include: [
+          {
+            model: 'Organization',
+            as: 'organization',
+          },
+        ],
+      });
+    },
 
   };
 
