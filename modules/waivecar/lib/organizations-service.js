@@ -1,4 +1,5 @@
 let Organization = Bento.model('Organization');
+let User = Bento.model('User');
 
 module.exports = {
   *index() {
@@ -13,13 +14,20 @@ module.exports = {
   },
 
   *show(id, payload) {
-    return yield Organization.findOne({
+    let org = yield Organization.findOne({
       where: {id},
       include: [
         {model: 'Car', as: 'cars'},
         {model: 'OrganizationUser', as: 'organizationUsers'},
       ],
     });
+    // What is done below is only done because the current implementation of the
+    // ORM is broken and and nested includes do not work at all.
+    let ids = org.organizationUsers.map(orgUser => orgUser.userId);
+    let users = yield User.find({where: {id: {$in: ids}}});
+    org = org.toJSON();
+    org.users = users;
+    return org;
   },
 
   *action(organizationId, action, payload) {
