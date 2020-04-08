@@ -23,6 +23,7 @@ let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
+let OrganizationUser = Bento.model('OrganizationUser');
 let Booking   = Bento.model('Booking');
 let ShopOrder = Bento.model('Shop/Order');
 let sequelize = Bento.provider('sequelize');
@@ -337,7 +338,7 @@ module.exports = {
         {
           model: 'GroupRole',
           as: 'group_role'
-        }
+        },
       ]
     });
 
@@ -356,7 +357,18 @@ module.exports = {
       title : connector.groupRole.name,
       name  : role.name
     };
-
+    user.organizationUsers = yield OrganizationUser.find({
+      where: {
+        userId: user.id,
+      },
+      include: [
+        {
+          model: 'Organization',
+          as: 'organization',
+        },
+      ],
+    });
+    console.log(user);
     return user;
   },
 
