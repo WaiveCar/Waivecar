@@ -58,7 +58,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     'OrganizationUser',
     'Car',
     function(OrganizationUser, Car) {
-      this.hasMany(OrganizationUser, {as: 'users'});
+      this.hasMany(OrganizationUser, {as: 'organizationUsers'});
       this.hasMany(Car, {as: 'cars'});
     },
   ];

@@ -13,7 +13,13 @@ module.exports = {
   },
 
   *show(id, payload) {
-    return yield Organization.findById(id);
+    return yield Organization.findOne({
+      where: {id},
+      include: [
+        {model: 'Car', as: 'cars'},
+        {model: 'OrganizationUser', as: 'organizationUsers'},
+      ],
+    });
   },
 
   *action(organizationId, action, payload) {
