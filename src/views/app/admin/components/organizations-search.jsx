@@ -23,16 +23,23 @@ class Organizations extends Component {
   }
 
   orgSearch() {
-    let {orgSearchWord} = this.state;
-    api.get(`/organizations/?name=${orgSearchWord}`, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      this.setState({searchResults: res});
-    });
+    let {orgSearchWord, currentOrganizations} = this.state;
+    api.get(
+      `/organizations/?name=${orgSearchWord}${
+        currentOrganizations.length
+          ? `&excluded=[${currentOrganizations.map(org => org.id)}]`
+          : ''
+      }`,
+      (err, res) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({searchResults: res});
+      },
+    );
   }
 
   orgAction(action, orgId) {
@@ -52,7 +59,6 @@ class Organizations extends Component {
           });
         }
         let idx = currentOrganizations.findIndex(org => org.id === orgId);
-        console.log(res);
         let nextOrgs =
           action === 'add'
             ? [...currentOrganizations, res]
@@ -74,9 +80,7 @@ class Organizations extends Component {
           {currentOrganizations.map((each, i) => (
             <div className="row" key={i}>
               <div style={{padding: '10px 0'}} className="col-xs-6">
-                <Link to={`/organizations/${each.id}`}>
-                  {each.name}
-                </Link>
+                <Link to={`/organizations/${each.id}`}>{each.name}</Link>
               </div>
               <button
                 className="btn btn-link col-xs-6"
