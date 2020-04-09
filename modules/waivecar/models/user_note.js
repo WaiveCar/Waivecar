@@ -33,12 +33,6 @@ Bento.Register.Model('UserNote', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    organizationId: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: null,
-    },
-
     content : {
       type      : Sequelize.STRING(250),
       allowNull : false
