@@ -500,6 +500,11 @@ module.exports = {
           {
             model : 'User',
             as    : 'user'
+          },
+          {
+            model: 'Organization',
+            as: 'organization',
+            required: false,
           }
         ]
       });
