@@ -38,12 +38,20 @@ class Organizations extends Component {
         <div className="box-content">
           <h4>Current Organizations</h4>
           {assignee.organizations.map((each, i) => (
-            <div key={i}>
-              <Link to={`/organizations/${each.organization.id}`}>
-                {each.organization.name}
-              </Link>
+            <div className="row" key={i}>
+              <div style={{padding: '10px 0'}} className="col-xs-6">
+                <Link to={`/organizations/${each.organization.id}`}>
+                  {each.organization.name}
+                </Link>
+              </div>
+              <button
+                className="btn btn-link col-xs-6"
+                onClick={() => this.removeFromOrg(item.id)}>
+                Remove Item
+              </button>
             </div>
           ))}
+          <h4>Search for More</h4>
           <div className="row" style={{marginTop: '10px'}}>
             <input
               onChange={e => this.setState({orgSearchWord: e.target.value})}
