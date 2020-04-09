@@ -18,7 +18,9 @@ class Organizations extends Component {
     let {type} = this.props;
     let assignee = this.props[type];
     this.setState({
-      currentOrganizations: assignee.organizations.map(org => org.organization),
+      currentOrganizations: assignee.organizations
+        ? assignee.organizations.map(org => org.organization)
+        : assignee.organization ? [assignee.organization] : [],
     });
   }
 
@@ -67,8 +69,6 @@ class Organizations extends Component {
       },
     );
   }
-
-  removeFromOrg(orgId) {}
 
   render() {
     let {currentOrganizations, searchResults, orgSearchWord} = this.state;

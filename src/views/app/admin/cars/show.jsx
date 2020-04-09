@@ -15,6 +15,7 @@ import Airtable from './airtable';
 import Logs from '../../components/logs';
 import config from 'config';
 import helpers from 'bento/lib/helpers';
+import Organizations from '../components/organizations-search.jsx';
 
 const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
@@ -847,6 +848,7 @@ class CarsShowView extends React.Component {
       <div className="cars cars-show">
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
+        <Organizations type={'car'} car={car}/>
         { this.renderCarMedia(car) }
         { this.state.latestBooking && this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
