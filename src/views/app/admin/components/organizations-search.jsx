@@ -17,7 +17,9 @@ class Organizations extends Component {
   componentDidMount() {
     let {type} = this.props;
     let assignee = this.props[type];
-    this.setState({currentOrganizations: assignee.organizations});
+    this.setState({
+      currentOrganizations: assignee.organizations.map(org => org.organization),
+    });
   }
 
   orgSearch() {
@@ -36,7 +38,7 @@ class Organizations extends Component {
   orgAction(action, orgId) {
     let {type} = this.props;
     let assignee = this.props[type];
-    console.log(orgId);
+    let {currentOrganizations} = this.state;
     api.put(
       `/organizations/${orgId}/${action}${capitalize(type)}`,
       {
@@ -49,7 +51,13 @@ class Organizations extends Component {
             message: err.message,
           });
         }
-        this.setState({currentOrganizations: res});
+        let idx = currentOrganizations.findIndex(org => org.id === orgId);
+        console.log(res);
+        let nextOrgs =
+          action === 'add'
+            ? [...currentOrganizations, res]
+            : [...currentOrganizations].splice(idx - 1, 1);
+        this.setState({currentOrganizations: nextOrgs});
       },
     );
   }
@@ -58,7 +66,6 @@ class Organizations extends Component {
 
   render() {
     let {currentOrganizations, searchResults, orgSearchWord} = this.state;
-    console.log(currentOrganizations);
     return (
       <div className="box">
         <h3>Organizations</h3>
@@ -67,13 +74,13 @@ class Organizations extends Component {
           {currentOrganizations.map((each, i) => (
             <div className="row" key={i}>
               <div style={{padding: '10px 0'}} className="col-xs-6">
-                <Link to={`/organizations/${each.organization.id}`}>
-                  {each.organization.name}
+                <Link to={`/organizations/${each.id}`}>
+                  {each.name}
                 </Link>
               </div>
               <button
                 className="btn btn-link col-xs-6"
-                onClick={() => this.orgAction('remove', each.organization.id)}>
+                onClick={() => this.orgAction('remove', each.id)}>
                 Remove Item
               </button>
             </div>
