@@ -6,7 +6,7 @@ module.exports = {
     if (!query) {
       return yield Organization.find();
     } else {
-      return yield Organizations.find({
+      return yield Organization.find({
         where: {
           name: {$like: `%${query.name}%`}
         },
