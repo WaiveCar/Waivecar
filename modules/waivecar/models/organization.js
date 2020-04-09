@@ -1,4 +1,4 @@
-let Error = Bento.Error;
+let error = Bento.Error;
 let Car = Bento.model('Car');
 let User = Bento.model('User');
 let OrganizationUser = Bento.model('OrganizationUser');
@@ -39,10 +39,13 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         where: {userId, organizationId: this.id},
       });
       if (prevUser) {
-        throw Error.parse({
-          code: 'USER_ALREADY_ADDED',
-          message: 'User has already been added to this organization.',
-        });
+        throw error.parse(
+          {
+            code: 'USER_ALREADY_ADDED',
+            message: 'User has already been added to this organization.',
+          },
+          400,
+        );
       }
       let orgUser = new OrganizationUser({
         organizationId: this.id,
