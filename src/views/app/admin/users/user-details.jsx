@@ -12,6 +12,7 @@ import ChargeList     from '../../components/user/charges/charge-list';
 import WaiveWorkDetails from './waivework-details'; 
 import WaiveWorkRequest from './waivework-request';
 import UserCommunications from './user-communications.jsx';
+import Organizations from '../components/organizations-search.jsx';
 
 
 module.exports = class UserDetails extends React.Component {
@@ -361,9 +362,9 @@ module.exports = class UserDetails extends React.Component {
     );
   }
 
-
   render() {
     let user = this.state.currentUser;
+    let {orgSearchWord} = this.state;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
     if (!user) {
       return (
@@ -502,10 +503,9 @@ module.exports = class UserDetails extends React.Component {
                   </div>
                 </div>
               </form>
-              <button onClick={() => this.sendText(null, user)} className="btn btn-sm btn-primary">Send Text</button>
             </div>
           </div>
-
+          <Organizations user={user}/>
           { this.state.addCard ?
             <AddCard user={ user } currentUser={ false }></AddCard>
             : ''
