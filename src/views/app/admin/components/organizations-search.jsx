@@ -20,7 +20,9 @@ class Organizations extends Component {
     this.setState({
       currentOrganizations: assignee.organizations
         ? assignee.organizations.map(org => org.organization)
-        : assignee.organization ? [assignee.organization] : [],
+        : assignee.organization
+        ? [assignee.organization]
+        : [],
     });
   }
 
@@ -61,11 +63,11 @@ class Organizations extends Component {
           });
         }
         let idx = currentOrganizations.findIndex(org => org.id === orgId);
-        let nextOrgs =
-          action === 'add'
-            ? [...currentOrganizations, res]
-            : [...currentOrganizations].splice(idx - 1, 1);
-        this.setState({currentOrganizations: nextOrgs});
+        let copy = currentOrganizations.slice();
+        action === 'add'
+          ? currentOrganizations.push(res)
+          : currentOrganizations.splice(idx, 1);
+        this.setState({currentOrganizations});
       },
     );
   }
