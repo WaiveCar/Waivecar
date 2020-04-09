@@ -24,6 +24,16 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     addCar: function*(payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
+      if (car.organizationId) {
+        throw error.parse(
+          {
+            code: 'CAR_ALREADY_ASSIGNED',
+            message:
+              'This car has already been assigned to another organization. Please remove the car from its old organization before adding it to a new one.',
+          },
+          400,
+        );
+      }
       yield car.update({organizationId: this.id});
       return this;
     },
@@ -42,7 +52,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'USER_ALREADY_ADDED',
-            message: 'User has already been added to this organization.',
+            message: 'This user has already been added to this organization.',
           },
           400,
         );
