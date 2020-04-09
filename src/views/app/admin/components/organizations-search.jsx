@@ -18,16 +18,16 @@ class Organizations extends Component {
 
   render() {
     let {searchResults, orgSearchWord} = this.state;
-    let {user} = this.props;
-    console.log(user);
+    let {type} = this.props;
+    let assignee = this.props[type];
     return (
       <div className="box">
         <h3>Organizations</h3>
         <div className="box-content">
           <h4>Current Organizations</h4>
-          {user.organizations.map((each, i) => 
-            <div>
-              {each.organization.name}
+          {assignee.organizations.map((each, i) => 
+            <div key={i}>
+              <Link to={`/organizations/${each.organization.id}`}>{each.organization.name}</Link>
             </div>
           )}
           <div className="row" style={{marginTop: '10px'}}>

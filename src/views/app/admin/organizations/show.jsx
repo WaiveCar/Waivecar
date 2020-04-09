@@ -8,6 +8,9 @@ class Organization extends Component {
     let pathName = window.location.pathname.split('/');
     this.state = {
       id: pathName.pop(),
+      users: [],
+      cars: [],
+      organization: null,
     };
   }
 
@@ -20,24 +23,28 @@ class Organization extends Component {
           message: err.message,
         });
       }
-      this.setState({organization: result});
+      this.setState({
+        organization: result,
+        users: result.users,
+        cars: result.cars,
+      });
     });
   }
 
   render() {
-    let {cars, users} = this.state.organization;
+    let {cars, users} = this.state;
     return (
       <div>
         Orgs Show
         <h4>Users</h4>
         {users.map((each, i) => (
-          <div>
+          <div key={i}>
             {each.firstName} {each.lastName}
           </div>
         ))}
         <h4>Cars</h4>
         {cars.map((each, i) => (
-          <div>
+          <div key={i}>
             {each.id} {each.license}
           </div>
         ))}

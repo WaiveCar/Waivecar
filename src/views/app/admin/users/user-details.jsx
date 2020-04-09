@@ -505,7 +505,7 @@ module.exports = class UserDetails extends React.Component {
               </form>
             </div>
           </div>
-          <Organizations user={user}/>
+          <Organizations type={'user'} user={user}/>
           { this.state.addCard ?
             <AddCard user={ user } currentUser={ false }></AddCard>
             : ''
