@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 
@@ -39,13 +40,13 @@ class Organization extends Component {
         <h4>Users</h4>
         {users.map((each, i) => (
           <div key={i}>
-            {each.firstName} {each.lastName}
+            <Link to={`/users/${each.id}`}>{each.firstName} {each.lastName}</Link>
           </div>
         ))}
         <h4>Cars</h4>
         {cars.map((each, i) => (
           <div key={i}>
-            {each.id} {each.license}
+            <Link to={`/cars/${each.id}`}>{each.id} {each.license}</Link>
           </div>
         ))}
       </div>

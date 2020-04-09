@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
+import {api} from 'bento';
+import {snackbar} from 'bento-web';
 
 class Organizations extends Component {
   constructor(props) {
@@ -10,6 +12,16 @@ class Organizations extends Component {
     };
   }
   orgSearch() {
+    let {orgSearchWord} = this.state;
+    api.get(`/organizations/?name=${orgSearchWord}`, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.setState({searchResults: res});
+    });
   }
 
   addToOrg() {}
@@ -25,11 +37,13 @@ class Organizations extends Component {
         <h3>Organizations</h3>
         <div className="box-content">
           <h4>Current Organizations</h4>
-          {assignee.organizations.map((each, i) => 
+          {assignee.organizations.map((each, i) => (
             <div key={i}>
-              <Link to={`/organizations/${each.organization.id}`}>{each.organization.name}</Link>
+              <Link to={`/organizations/${each.organization.id}`}>
+                {each.organization.name}
+              </Link>
             </div>
-          )}
+          ))}
           <div className="row" style={{marginTop: '10px'}}>
             <input
               onChange={e => this.setState({orgSearchWord: e.target.value})}
@@ -54,7 +68,7 @@ class Organizations extends Component {
               <button
                 className="btn btn-link col-xs-6"
                 onClick={() => this.addToOrg(item.id)}>
-                book now
+                Add Now
               </button>
             </div>
           ))}
