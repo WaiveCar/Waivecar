@@ -2,8 +2,17 @@ let Organization = Bento.model('Organization');
 let User = Bento.model('User');
 
 module.exports = {
-  *index() {
-    return yield Organization.find();
+  *index(query) {
+    if (!query) {
+      return yield Organization.find();
+    } else {
+      return yield Organizations.find({
+        where: {
+          name: {$like: `%${query.name}%`}
+        },
+        limit: query.limit || 10,
+      });
+    }
   },
 
   *create(payload) {
