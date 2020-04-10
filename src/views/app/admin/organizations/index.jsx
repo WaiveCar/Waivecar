@@ -59,21 +59,26 @@ class Organizations extends Component {
   }
 
   render() {
-    let {organizations} = this.state;
+    let {organizations, name} = this.state;
     return (
       <div className="box">
         <h3>Organizations</h3>
         <div className="box-content">
           <div>New:</div>
-          <input
-            type={'text'}
-            onChange={e => this.setState({name: e.target.value})}
-          />
-          <button
-            className={'btn btn-primary'}
-            onClick={() => this.createOrg()}>
-            Create
-          </button>
+          <div className="row" style={{marginTop: '1rem', marginBottom: '1rem'}}>
+            <input
+              onChange={e => this.setState({name: e.target.value})}
+              value={name}
+              style={{marginTop: '1px', padding: '2px', height: '40px'}}
+              className="col-xs-6"
+              placeholder="Organizations Name"
+            />
+            <button
+              className="btn btn-primary btn-sm col-xs-6"
+              onClick={() => this.createOrg()}>
+              Create
+            </button>
+          </div>
           <table className="box-table table-striped">
             <thead>
               <tr ref="sort">
