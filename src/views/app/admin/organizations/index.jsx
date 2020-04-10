@@ -45,14 +45,17 @@ class Organizations extends Component {
 
   row(org) {
     return (
-      <tr key={org.id }>
-        <td>{ org.id }</td>
-        <td><Link to={`/organizations/${org.id}`}>{org.name}</Link></td>
-        <td className="hidden-sm-down">{ moment(org.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
+      <tr key={org.id}>
+        <td>{org.id}</td>
+        <td>
+          <Link to={`/organizations/${org.id}`}>{org.name}</Link>
+        </td>
+        <td className="hidden-sm-down">
+          {moment(org.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+        </td>
       </tr>
     );
   }
-
 
   render() {
     let {organizations} = this.state;
@@ -85,6 +88,17 @@ class Organizations extends Component {
             </thead>
             <tbody>{this.table.index()}</tbody>
           </table>
+          {this.state.more ? (
+            <div className="text-center" style={{marginTop: 20}}>
+              <button
+                className="btn btn-primary"
+                onClick={() => this.table.more(false)}>
+                Load More
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );
