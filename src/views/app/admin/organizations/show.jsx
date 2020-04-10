@@ -42,6 +42,7 @@ class Organization extends Component {
         <div className="box-content">
           <h4>Users</h4>
           <OrganizationUsers organizationId={id} />
+          <h4 style={{marginTop: '1rem'}}>Cars</h4>
           <OrganizationCars organizationId={id} />
         </div>
       </div>
