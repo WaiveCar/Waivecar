@@ -186,7 +186,7 @@ module.exports = class NotesService extends Service {
         }
       ]
     };
-    let {Model} = yield this.getModel(type, payload);
+    let {Model} = yield this.getModel(type);
     let model = yield Model.findById(id, relations);
     if (!model) {
       throw error.parse({
