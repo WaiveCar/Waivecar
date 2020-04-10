@@ -252,12 +252,12 @@ module.exports = {
 
     let qs = config.filter(queryParser, query);
     // qs.where.status = { $not: 'waitlist' };
-    if (query.organizationId) {
+    if (query.organizationIds) {
       qs.include = [
         {
           model: 'OrganizationUser',
           as: 'organizationUsers',
-          where: {organizationId: query.organizationId},
+          where: {organizationId: {$in: JSON.parse(query.organizationIds)}},
         },
       ]
     }
