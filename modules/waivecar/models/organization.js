@@ -13,6 +13,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     name: {
       type: Sequelize.TEXT(),

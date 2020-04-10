@@ -8,7 +8,7 @@ module.exports = {
     } else {
       return yield Organization.find({
         where: {
-          name: {$like: `%${query.name}%`},
+          ...(query.name ? {name: {$like: `%${query.name}%`}} : {}),
           ...(query.excluded ? {id: {$notIn: JSON.parse(query.excluded)}} : {}),
         },
         limit: Number(query.limit) || 10,
