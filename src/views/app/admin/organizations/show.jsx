@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
+import OrganizationCars from './organization-cars.jsx'; 
 
 class Organization extends Component {
   constructor(props) {
@@ -33,7 +34,7 @@ class Organization extends Component {
   }
 
   render() {
-    let {cars, users} = this.state;
+    let {cars, users, id} = this.state;
     return (
       <div className="box">
         <h3>Organizations</h3>
@@ -47,13 +48,7 @@ class Organization extends Component {
             </div>
           ))}
           <h4>Cars</h4>
-          {cars.map((each, i) => (
-            <div key={i}>
-              <Link to={`/cars/${each.id}`}>
-                {each.id} {each.license}
-              </Link>
-            </div>
-          ))}
+          <OrganizationCars organizationId={id} />
         </div>
       </div>
     );
