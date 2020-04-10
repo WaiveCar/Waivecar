@@ -6,15 +6,16 @@ module.exports = {
     if (!Object.keys(query).length) {
       return yield Organization.find();
     } else {
-      return yield Organization.find({
+      let opts = {
         where: {
           ...(query.name ? {name: {$like: `%${query.name}%`}} : {}),
           ...(query.excluded ? {id: {$notIn: JSON.parse(query.excluded)}} : {}),
         },
         ...(query.limit ? {limit: Number(query.limit)} : {}),
-        ...(query.offset ? {limit: Number(query.offset)} : {}),
+        ...(query.offset ? {offset: Number(query.offset)} : {}),
         ...(query.order ? {order: [query.order.split(',')]} : {}),
-      });
+      };
+      return yield Organization.find(opts);
     }
   },
 
