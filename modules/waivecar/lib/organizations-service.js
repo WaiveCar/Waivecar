@@ -3,7 +3,7 @@ let User = Bento.model('User');
 
 module.exports = {
   *index(query) {
-    if (!query) {
+    if (!Object.keys(query).length) {
       return yield Organization.find();
     } else {
       return yield Organization.find({
