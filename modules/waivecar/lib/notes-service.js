@@ -148,13 +148,15 @@ module.exports = class NotesService extends Service {
             where: {
               id: payload.bookingId,
             },
-            include: {
-              model: 'Car',
-              as: 'car',
-            }
+            include: [
+              {
+                model: 'Car',
+                as: 'car',
+              },
+            ]
           });
         }
-        return {Model: BookingNote, organizationId: booking && booking.car.organizationId};
+        return {Model: BookingNote, organizationId: booking && booking.car && booking.car.organizationId};
       case 'car':
         let car;
         if (payload) {
