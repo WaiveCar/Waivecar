@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
-import OrganizationCars from './organization-cars.jsx'; 
-import OrganizationUsers from './organization-users.jsx'; 
+import OrganizationCars from './organization-cars.jsx';
+import OrganizationUsers from './organization-users.jsx';
+import OrganizationResource from './organization-resource-table.jsx';
+import ThSort from '../components/table-th';
+import moment from 'moment';
 
 class Organization extends Component {
   constructor(props) {
@@ -13,7 +16,7 @@ class Organization extends Component {
       id: pathName.pop(),
       users: [],
       cars: [],
-      organization: null,
+      organization: {},
     };
   }
 
@@ -41,9 +44,65 @@ class Organization extends Component {
         <h3>{organization.name}</h3>
         <div className="box-content">
           <h4>Users</h4>
-          <OrganizationUsers organizationId={id} />
+          <OrganizationResource
+            resource={'users'}
+            resourceUrl={'users'}
+            organizationId={id}
+            header={() => (
+              <tr ref="sort">
+                <ThSort sort="id" value="Id" ctx={this} />
+                <ThSort sort="firstName" value="Name" ctx={this} />
+                <ThSort
+                  sort="createdAt"
+                  value="Date"
+                  ctx={this}
+                  className="hidden-sm-down"
+                />
+              </tr>
+            )}
+            row={user => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>
+                  <Link to={`/users/${user.id}`}>
+                    {user.firstName} {user.lastName}
+                  </Link>
+                </td>
+                <td className="hidden-sm-down">
+                  {moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+                </td>
+              </tr>
+            )}
+          />
           <h4 style={{marginTop: '1rem'}}>Cars</h4>
-          <OrganizationCars organizationId={id} />
+          <OrganizationResource
+            resource={'cars'}
+            resourceUrl={'carsWithBookings'}
+            organizationId={id}
+            header={() => (
+              <tr ref="sort">
+                <ThSort sort="id" value="Id" ctx={this} />
+                <ThSort sort="license" value="Name" ctx={this} />
+                <ThSort
+                  sort="createdAt"
+                  value="Date"
+                  ctx={this}
+                  className="hidden-sm-down"
+                />
+              </tr>
+            )}
+            row={car => (
+              <tr key={car.id}>
+                <td>{car.id}</td>
+                <td>
+                  <Link to={`/cars/${car.id}`}>{car.license}</Link>
+                </td>
+                <td className="hidden-sm-down">
+                  {moment(car.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+                </td>
+              </tr>
+            )}
+          />
         </div>
       </div>
     );
