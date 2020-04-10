@@ -349,17 +349,18 @@ module.exports = {
     return yield Booking.find(opts);
   },
 
-  *carsWithBookings(_user) {
+  *carsWithBookings(_user, query) {
     let start = new Date();
     let perf = [];
     let cars = [];
-
+    console.log(query);
     function *join_method() {
       perf.push('table join');
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
       cars = yield Car.find({
+        ...(query.organizationId ? {where: {organizationId: query.organizationId}}: {}),
         include: [
           {
             model: 'GroupCar',
@@ -383,7 +384,8 @@ module.exports = {
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
-      let allCars = yield Car.find();
+      let opts = query.organizationId ? {where: {organizationId: query.organizationId}}: {};
+      let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 
       let carsOfInterest = allCars.filter((row) => row.bookingId);

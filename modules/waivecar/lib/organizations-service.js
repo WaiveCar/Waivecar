@@ -11,8 +11,8 @@ module.exports = {
           ...(query.name ? {name: {$like: `%${query.name}%`}} : {}),
           ...(query.excluded ? {id: {$notIn: JSON.parse(query.excluded)}} : {}),
         },
-        limit: Number(query.limit) || 10,
-        offset: Number(query.offset) || 0,
+        ...(query.limit ? {limit: Number(query.limit)} : {}),
+        ...(query.offset ? {limit: Number(query.offset)} : {}),
         ...(query.order ? {order: [query.order.split(',')]} : {}),
       });
     }

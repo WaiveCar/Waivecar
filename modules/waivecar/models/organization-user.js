@@ -8,6 +8,7 @@ Bento.Register.Model('OrganizationUser', 'sequelize', function register(
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     organizationId: {
       type: Sequelize.INTEGER,
