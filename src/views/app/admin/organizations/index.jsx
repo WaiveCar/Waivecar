@@ -12,6 +12,7 @@ class Organizations extends Component {
     this.state = {
       name: '',
       organizations: [],
+      offset: 0,
     };
     this.table = new Table(this, 'organizations', null, '/organizations');
     relay.subscribe(this, 'organizations');
