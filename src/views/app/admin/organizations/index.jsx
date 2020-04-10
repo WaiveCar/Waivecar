@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
-import {api} from 'bento';
+import {api, relay} from 'bento';
 import {snackbar} from 'bento-web';
+import Table from 'bento-service/table';
+import ThSort from '../components/table-th';
+import moment from 'moment';
 
 class Organizations extends Component {
   constructor(props) {
@@ -10,17 +13,20 @@ class Organizations extends Component {
       name: '',
       organizations: [],
     };
+    this.table = new Table(this, 'organizations', null, '/organizations');
+    relay.subscribe(this, 'organizations');
   }
 
   componentDidMount() {
-    api.get('/organizations', (err, res) => {
-      if (err) {
-        snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      this.setState({organizations: res});
+    this.table.init();
+    this.setState({
+      sort: {
+        key: 'createdAt',
+        order: 'DESC',
+      },
+      searchObj: {
+        order: 'id,DESC',
+      },
     });
   }
 
@@ -36,6 +42,17 @@ class Organizations extends Component {
       this.setState({organizations: [...organizations, res]});
     });
   }
+
+  row(org) {
+    return (
+      <tr key={org.id }>
+        <td>{ org.id }</td>
+        <td><Link to={`/organizations/${org.id}`}>{org.name}</Link></td>
+        <td className="hidden-sm-down">{ moment(org.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
+      </tr>
+    );
+  }
+
 
   render() {
     let {organizations} = this.state;
@@ -53,13 +70,21 @@ class Organizations extends Component {
             onClick={() => this.createOrg()}>
             Create
           </button>
-          <div>
-            {organizations.map((org, i) => (
-              <div key={i}>
-                <Link to={`/organizations/${org.id}`}>{org.name}</Link>
-              </div>
-            ))}
-          </div>
+          <table className="box-table table-striped">
+            <thead>
+              <tr ref="sort">
+                <ThSort sort="id" value="Id" ctx={this} />
+                <ThSort sort="name" value="Name" ctx={this} />
+                <ThSort
+                  sort="createdAt"
+                  value="Date"
+                  ctx={this}
+                  className="hidden-sm-down"
+                />
+              </tr>
+            </thead>
+            <tbody>{this.table.index()}</tbody>
+          </table>
         </div>
       </div>
     );
