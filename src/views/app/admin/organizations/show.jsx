@@ -35,20 +35,26 @@ class Organization extends Component {
   render() {
     let {cars, users} = this.state;
     return (
-      <div>
-        Orgs Show
-        <h4>Users</h4>
-        {users.map((each, i) => (
-          <div key={i}>
-            <Link to={`/users/${each.id}`}>{each.firstName} {each.lastName}</Link>
-          </div>
-        ))}
-        <h4>Cars</h4>
-        {cars.map((each, i) => (
-          <div key={i}>
-            <Link to={`/cars/${each.id}`}>{each.id} {each.license}</Link>
-          </div>
-        ))}
+      <div className="box">
+        <h3>Organizations</h3>
+        <div className="box-content">
+          <h4>Users</h4>
+          {users.map((each, i) => (
+            <div key={i}>
+              <Link to={`/users/${each.id}`}>
+                {each.firstName} {each.lastName}
+              </Link>
+            </div>
+          ))}
+          <h4>Cars</h4>
+          {cars.map((each, i) => (
+            <div key={i}>
+              <Link to={`/cars/${each.id}`}>
+                {each.id} {each.license}
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -40,22 +40,26 @@ class Organizations extends Component {
   render() {
     let {organizations} = this.state;
     return (
-      <div>
-        Organizations
-        <div>New:</div>
-        <input
-          type={'text'}
-          onChange={e => this.setState({name: e.target.value})}
-        />
-        <button className={'btn btn-primary'} onClick={() => this.createOrg()}>
-          Create
-        </button>
-        <div>
-          {organizations.map((org, i) => (
-            <div key={i}>
-              <Link to={`/organizations/${org.id}`}>{org.name}</Link>
-            </div>
-          ))}
+      <div className="box">
+        <h3>Organizations</h3>
+        <div className="box-content">
+          <div>New:</div>
+          <input
+            type={'text'}
+            onChange={e => this.setState({name: e.target.value})}
+          />
+          <button
+            className={'btn btn-primary'}
+            onClick={() => this.createOrg()}>
+            Create
+          </button>
+          <div>
+            {organizations.map((org, i) => (
+              <div key={i}>
+                <Link to={`/organizations/${org.id}`}>{org.name}</Link>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
