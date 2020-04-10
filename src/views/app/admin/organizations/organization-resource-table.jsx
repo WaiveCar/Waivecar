@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router';
 import {api, relay} from 'bento';
 import Table from 'bento-service/table';
-import ThSort from '../components/table-th';
-import moment from 'moment';
 
 class OrganizationResource extends Component {
   constructor(props) {
@@ -38,9 +35,7 @@ class OrganizationResource extends Component {
     return (
       <div>
         <table className="box-table table-striped">
-          <thead>
-            {this.props.header()}
-          </thead>
+          <thead>{this.props.header()}</thead>
           <tbody>{this.table.index()}</tbody>
         </table>
         {this.state.more ? (
