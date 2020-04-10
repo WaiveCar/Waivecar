@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import OrganizationCars from './organization-cars.jsx'; 
+import OrganizationUsers from './organization-users.jsx'; 
 
 class Organization extends Component {
   constructor(props) {
@@ -34,20 +35,13 @@ class Organization extends Component {
   }
 
   render() {
-    let {cars, users, id} = this.state;
+    let {cars, users, id, organization} = this.state;
     return (
       <div className="box">
-        <h3>Organizations</h3>
+        <h3>{organization.name}</h3>
         <div className="box-content">
           <h4>Users</h4>
-          {users.map((each, i) => (
-            <div key={i}>
-              <Link to={`/users/${each.id}`}>
-                {each.firstName} {each.lastName}
-              </Link>
-            </div>
-          ))}
-          <h4>Cars</h4>
+          <OrganizationUsers organizationId={id} />
           <OrganizationCars organizationId={id} />
         </div>
       </div>
