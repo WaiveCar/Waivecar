@@ -87,7 +87,7 @@ class Organizations extends Component {
               <button
                 className="btn btn-link col-xs-6"
                 onClick={() => this.orgAction('remove', each.id)}>
-                Remove Item
+                Remove
               </button>
             </div>
           ))}
