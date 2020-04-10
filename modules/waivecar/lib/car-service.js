@@ -359,7 +359,7 @@ module.exports = {
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
       cars = yield Car.find({
-        ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}}: {}),
+        ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {}),
         include: [
           {
             model: 'GroupCar',
@@ -380,10 +380,11 @@ module.exports = {
 
     function *separate_method() {
       perf.push('separate');
+      console.log('separate');
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
-      let opts = query.organizationIds ? {where: {organizationId: query.organizationId}}: {};
+      let opts = query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {};
       let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 
