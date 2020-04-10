@@ -424,6 +424,9 @@ module.exports = {
     } else {
       yield separate_method();
     }
+    if (!cars.length) {
+      return cars;
+    }
     
     // the schema as of this writing is
     // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
