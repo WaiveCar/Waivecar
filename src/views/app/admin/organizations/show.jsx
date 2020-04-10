@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api} from 'bento';
 import {snackbar} from 'bento-web';
-import OrganizationCars from './organization-cars.jsx';
-import OrganizationUsers from './organization-users.jsx';
 import OrganizationResource from './organization-resource-table.jsx';
 import ThSort from '../components/table-th';
 import moment from 'moment';
