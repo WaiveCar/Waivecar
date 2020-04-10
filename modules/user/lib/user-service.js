@@ -252,7 +252,15 @@ module.exports = {
 
     let qs = config.filter(queryParser, query);
     // qs.where.status = { $not: 'waitlist' };
-
+    if (query.organizationId) {
+      qs.include = [
+        {
+          model: 'OrganizationUser',
+          as: 'organizationUsers',
+          where: {organizationId: query.organizationId},
+        },
+      ]
+    }
     let users = [];
     if(query.search) {
       users = yield this.find(query.search, qs.offset, qs.limit);
