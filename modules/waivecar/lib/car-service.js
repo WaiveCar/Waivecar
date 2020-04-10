@@ -353,7 +353,6 @@ module.exports = {
     let start = new Date();
     let perf = [];
     let cars = [];
-    console.log(query);
     function *join_method() {
       perf.push('table join');
 
