@@ -39,7 +39,7 @@ class Organization extends Component {
     let {cars, users, id, organization} = this.state;
     return (
       <div className="box">
-        <h3>{organization.name}</h3>
+        <h3>{organization ? organization.name : ''}</h3>
         <div className="box-content">
           <h4>Users</h4>
           <OrganizationResource
