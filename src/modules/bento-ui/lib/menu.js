@@ -50,7 +50,6 @@ Menu.add = function (settings) {
  * @return {Array}
  */
 Menu.get = function (section, forWaiveAdmin) {
-  console.log(forWaiveAdmin);
   let map = [];
   for (let key in this.locations[section]) {
     let item = this.locations[section][key];
