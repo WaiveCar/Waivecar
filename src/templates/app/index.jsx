@@ -96,7 +96,7 @@ templates.register('app', {
       {
         path      : '/tickets',
         component : require('../../views/app/admin/tickets'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin
       },
       {
         path      : '/magic/:act',

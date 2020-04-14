@@ -69,6 +69,24 @@ module.exports = {
       }
       return replaceState(null, '/profile');
     }
-  }
+  },
 
+  isWaiveAdmin : (nextState, replaceState) => {
+    let user = auth.user();
+    if (!user) {
+      return replaceState(null, '/login', {
+        nextPathname : nextState.location.pathname
+      });
+    }
+    if (!user.hasAccess('admin')) {
+      return replaceState(null, '/forbidden', {
+        nextPathname : nextState.location.pathname
+      });
+    }
+    if (user.hasAccess('admin') && user.organizations && user.organizations.length) {
+      return replaceState(null, '/forbidden', {
+        nextPathname : nextState.location.pathname
+      });
+    }
+  }
 }
