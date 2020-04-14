@@ -78,12 +78,7 @@ module.exports = {
         nextPathname : nextState.location.pathname
       });
     }
-    if (!user.hasAccess('admin')) {
-      return replaceState(null, '/forbidden', {
-        nextPathname : nextState.location.pathname
-      });
-    }
-    if (user.hasAccess('admin') && user.organizations && user.organizations.length) {
+    if (!user.hasAccess('waiveAdmin')) {
       return replaceState(null, '/forbidden', {
         nextPathname : nextState.location.pathname
       });

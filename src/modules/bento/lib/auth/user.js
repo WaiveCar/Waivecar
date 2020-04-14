@@ -10,6 +10,7 @@ module.exports = class User {
     for (let key in data) {
       this[key] = data[key];
     }
+    this.isWaiveAdmin = this.hasAccess('admin') && !(data.organizations && data.organizations.length);
   }
 
   /**
@@ -18,6 +19,9 @@ module.exports = class User {
    * @return {Boolean}
    */
   hasAccess(role) {
+    if (role === 'waiveAdmin') {
+      return this.isWaiveAdmin;
+    }
     let check = this._roles.find(val => val.name === role);
     let auth  = this._roles.find(val => val.name === this.role.name);
 
