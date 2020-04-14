@@ -45,7 +45,7 @@ module.exports = class Sidebar extends React.Component {
         <div className="sidebar-admin">
           <h5 className="animated fadeInLeft">Administration</h5>
           <ul>
-            { menu.get('sidebar').map(this.getLink) }
+            { menu.get('sidebar', user.organizations.length < 1).map(this.getLink) }
           </ul>
         </div>
       );
@@ -108,14 +108,14 @@ module.exports = class Sidebar extends React.Component {
             <div className={ `sidebar-account${ this.state.account ? ' show' : '' }` }>
               <h5 className="animated fadeInTop">Account</h5>
               <ul>
-                { menu.get('sidebar-account').map(this.getLink) }
+                { menu.get('sidebar-account', user.organizations.length < 1).map(this.getLink) }
               </ul>
             </div>
 
             <div className="sidebar-nav">
               <h5 className="animated fadeInLeft">Application</h5>
               <ul>
-                { menu.get('sidebar-user').map(this.getLink) }
+                { menu.get('sidebar-user', user.organizations.length < 1).map(this.getLink) }
               </ul>
             </div>
 

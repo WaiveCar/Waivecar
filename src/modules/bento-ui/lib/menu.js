@@ -37,7 +37,8 @@ Menu.add = function (settings) {
     icon   : settings.icon || 'add_circle_outline',
     path   : settings.path,
     parent : settings.parent,
-    order  : settings.order
+    order  : settings.order,
+    waiveAdmin: settings.waiveAdmin,
   };
 
 };
@@ -48,11 +49,14 @@ Menu.add = function (settings) {
  * @param  {String} section
  * @return {Array}
  */
-Menu.get = function (section) {
+Menu.get = function (section, forWaiveAdmin) {
+  console.log(forWaiveAdmin);
   let map = [];
   for (let key in this.locations[section]) {
     let item = this.locations[section][key];
-    map.push(this.store[item]);
+    if (!this.store[item].waiveAdmin || (this.store[item].waiveAdmin && forWaiveAdmin)) {
+      map.push(this.store[item]);
+    }
   }
   return map.sort((a, b) => { return a.order > b.order });
 };

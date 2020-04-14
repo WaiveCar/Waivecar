@@ -304,7 +304,8 @@ let order = 2;
     path      : '/tickets',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
   {
     title     : 'Locations',
