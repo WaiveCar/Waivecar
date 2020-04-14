@@ -327,10 +327,12 @@ module.exports = {
    * @param  {Object} _user
    * @return {Object}
    */
-  *get(id, _user) {
+  *get(id, _user, fromShow) {
     let user = (yield User.findById(id));
     let orgs = yield user.getOrganizations();
-    user = user.toJSON();
+    if (fromShow) {
+      user = user.toJSON();
+    }
     user.organizations = orgs;
     if (!user) {
       throw error.userNotFound();
