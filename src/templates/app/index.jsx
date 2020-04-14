@@ -92,12 +92,12 @@ templates.register('app', {
         component : require('../../views/app/admin/tickets/show'),
         onEnter   : policies.isAdministrator
       },
-      */
       {
         path      : '/tickets',
         component : require('../../views/app/admin/tickets'),
         onEnter   : policies.isWaiveAdmin
       },
+      */
       {
         path      : '/magic/:act',
         component : require('../../views/app/admin/cars/magic'),
@@ -113,17 +113,17 @@ templates.register('app', {
       {
         path      : '/admin/waivework/signups',
         component : require('../../views/app/admin/waivework/waitlist'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/admin/waivework/insurance',
         component : require('../../views/app/admin/waivework/insurance-quotes'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/admin/waivework/car-prep',
         component : require('../../views/app/admin/waivework/car-prep'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/users',
@@ -153,22 +153,22 @@ templates.register('app', {
       {
         path      : '/waivepark',
         component : require('../../views/app/admin/waivepark'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       }, 
       {
         path      : '/waivepark/:id',
         component : require('../../views/app/admin/waivepark/show'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/organizations',
         component : require('../../views/app/admin/organizations/index'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/organizations/:id',
         component : require('../../views/app/admin/organizations/show'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isWaiveAdmin,
       }
       
     ].concat(views.getRoutes('app')));
@@ -272,7 +272,8 @@ let order = 2;
     path      : '/admin/waivework/signups',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
   {
     title     : 'Insurance Quotes',
@@ -280,7 +281,8 @@ let order = 2;
     path      : '/admin/waivework/insurance',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
   {
     title     : 'WaiveWork Car Prep',
@@ -288,7 +290,8 @@ let order = 2;
     path      : '/admin/waivework/car-prep',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
   {
     title     : 'Cars',
@@ -298,6 +301,7 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  /*
   {
     title     : 'Tickets',
     icon      : 'list',
@@ -307,6 +311,7 @@ let order = 2;
     order     : order++,
     waiveAdmin: true,
   },
+  */
   {
     title     : 'Locations',
     icon      : 'location_on',
@@ -321,13 +326,16 @@ let order = 2;
     path      : '/organizations',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
+  /*
   {
     title     : 'WaivePark',
     icon      : 'location_on',
     path      : '/waivepark',
-    locations : [/*'sidebar'*/],
+    locations : ['sidebar'],
     order     : order++
   }
+  */
 ].forEach(val => menu.add(val));
