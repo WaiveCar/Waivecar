@@ -1,5 +1,5 @@
 import React                   from 'react';
-import { dom, api, relay, helpers } from 'bento';
+import { dom, api, relay, helpers, auth } from 'bento';
 import { Link }                from 'react-router';
 import BookingFees             from './fees';
 import BookingPayment          from './payment';
@@ -46,14 +46,19 @@ module.exports = class BookingsView extends React.Component {
   }
 
   componentDidMount() {
-    this.loadBooking(this.props.params.id);
-    api.get(`/bookings/${ this.props.params.id }/parkingDetails`, (err, response) => {
-      this.setState({ parkingDetails: response && response.details });
+    this.loadBooking(this.props.params.id, booking => {
+      if (!auth.user().canSee('booking', booking)) {
+        console.log('here');
+        return this.props.history.replaceState({}, '/forbidden');
+      }
+      api.get(`/bookings/${ this.props.params.id }/parkingDetails`, (err, response) => {
+        this.setState({ parkingDetails: response && response.details });
+      });
     });
     //this.loadCarPath(this.props.params.id)
   }
 
-  loadBooking(id) {
+  loadBooking(id, cb) {
     api.get(`/bookings/${ id }?reports=true`, (err, booking) => {
       if (err) {
         this.setState({
@@ -78,6 +83,9 @@ module.exports = class BookingsView extends React.Component {
       dom.setTitle(booking.user.lastName + " " + booking.car.license.replace(/[^\d]/g, ''));
 
       this.bookings.store(booking);
+      if (cb) {
+        cb(booking);
+      }
     });
   }
 

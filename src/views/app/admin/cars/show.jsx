@@ -63,7 +63,6 @@ class CarsShowView extends React.Component {
     let id = this.id();
     this.service.setCar(id, (car) => {
       if (!auth.user().canSee('car', car)) {
-        console.log(this.props.history);
         return this.props.history.replaceState({}, '/forbidden'); 
       }
       api.get(`/cars/${ id }/bookings?limit=1&status=completed`, (err, bookings) => {
