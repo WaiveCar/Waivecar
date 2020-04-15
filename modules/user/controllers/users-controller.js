@@ -39,7 +39,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       delete model.password;
       model.booking = yield this.auth.user.currentBooking();
       model.organizations = yield this.auth.user.getOrganizations(); 
-      console.log(model.organizations);
       return model;
     }
     throw error.parse({
