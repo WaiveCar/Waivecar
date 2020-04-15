@@ -47,10 +47,6 @@ module.exports = class BookingsView extends React.Component {
 
   componentDidMount() {
     this.loadBooking(this.props.params.id, booking => {
-      if (!auth.user().canSee('booking', booking)) {
-        console.log('here');
-        return this.props.history.replaceState({}, '/forbidden');
-      }
       api.get(`/bookings/${ this.props.params.id }/parkingDetails`, (err, response) => {
         this.setState({ parkingDetails: response && response.details });
       });
@@ -65,6 +61,9 @@ module.exports = class BookingsView extends React.Component {
           error : err
         });
         return;
+      }
+      if (!auth.user().canSee('booking', booking)) {
+        return this.props.history.replaceState({}, '/forbidden');
       }
       // When the relay updates the booking it doesn't pass over a user
       // object or the car or payments, this means that it gets blown away
