@@ -171,6 +171,7 @@ module.exports = {
   // word in programming. I'm going to preface the "smart" stuff with an
   // asterisk and give an explanation below:
   *find(query, offset, limit, opts) {
+    let include = opts && opts.include;
     if(query) {
       if(!_.isArray(query)) {
         query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
@@ -232,6 +233,9 @@ module.exports = {
       } else {
         opts.order = [ ['updated_at', 'DESC'] ];
       } 
+      if (include) {
+        opts.include = include;
+      }
       return yield User.find(opts);
     } 
     return [];
@@ -263,7 +267,7 @@ module.exports = {
     }
     let users = [];
     if(query.search) {
-      users = yield this.find(query.search, qs.offset, qs.limit);
+      users = yield this.find(query.search, qs.offset, qs.limit, qs.include && {include: qs.include});
     } else {
       qs.order = [['updated_at', 'DESC']];
       users = yield User.find(qs);
