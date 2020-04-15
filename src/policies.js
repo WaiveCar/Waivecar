@@ -11,10 +11,16 @@ module.exports = {
    * @param  {Object} transition
    */
   isAuthenticated : (nextState, replaceState) => {
-    if (!auth.user()) {
+    let user = auth.user();
+    if (!user) {
       return replaceState(null, '/login', {
         nextPathname : nextState.location.pathname
       });
+    }
+    // Now, we will direct all non-admins to  waivework.com. There 
+    // is no longer a reason for them to be here
+    if (!user.hasAccess('admin')) {
+      return replaceState(null, '/work-redirect');
     }
   },
 
