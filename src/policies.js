@@ -31,9 +31,7 @@ module.exports = {
       });
     }
     if (user.status !== 'active') {
-      return replaceState(null, '/forbidden', {
-        nextPathname : nextState.location.pathname
-      });
+      return replaceState(null, '/forbidden');
     }
   },
 
@@ -50,9 +48,7 @@ module.exports = {
       });
     }
     if (!user.hasAccess('admin')) {
-      return replaceState(null, '/forbidden', {
-        nextPathname : nextState.location.pathname
-      });
+      return replaceState(null, '/forbidden');
     }
   },
 
@@ -79,9 +75,7 @@ module.exports = {
       });
     }
     if (!user.hasAccess('waiveAdmin')) {
-      return replaceState(null, '/forbidden', {
-        nextPathname : nextState.location.pathname
-      });
+      return replaceState(null, '/forbidden');
     }
   }
 }
