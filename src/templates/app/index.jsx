@@ -170,6 +170,10 @@ templates.register('app', {
         component : require('../../views/app/admin/organizations/show'),
         onEnter   : policies.isWaiveAdmin,
       },
+      {
+        path: '/forbidden',
+        component: require('../../views/app/user/forbidden/index'),
+      },
     ].concat(views.getRoutes('app')));
   }
 });
