@@ -43,7 +43,7 @@ module.exports = class User {
       return this.canSee('car', model.car);
     } else if (type === 'user') {
       for (let org of model.organizations) {
-        if (orgIds.has(org.organizationid)) {
+        if (orgIds.has(org.organizationId)) {
           return true;
         }
       }
