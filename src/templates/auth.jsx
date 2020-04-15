@@ -47,7 +47,11 @@ templates.register('auth', {
       path      : '/logout',
       component : require('views/auth/logout'),
       onEnter   : policies.isAuthenticated
-    }
+    },
+    {
+      path: '/work-redirect',
+      component: require('views/site/work-redirect'),
+    },
   ]
 });
 
