@@ -31,6 +31,27 @@ module.exports = class User {
     return check.position <= auth.position;
   }
 
+  canSee(type, model) {
+    let orgIds = new Set();
+    this.organizations.forEach(org => orgIds.add(org.organizationId))
+    for (let org of this.organizations) {
+      
+    }
+    this.organizations.map(obj => obj.organizationId);
+    if (type === 'car') {
+      return orgIds.has(model.organizationId);
+    } else if (type === 'booking') {
+      return this.canSee('car', model.car);
+    } else if (type === 'user') {
+      for (let org of model.organizations) {
+        if (orgIds.has(org.organizationid)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   /**
    * Returns the users full name.
    * @return {String}
