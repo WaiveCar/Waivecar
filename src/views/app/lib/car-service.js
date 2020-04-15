@@ -97,7 +97,7 @@ module.exports = class Car extends Service {
     }.call(this));
   }
 
-  setCar(id) {
+  setCar(id, cb) {
     api.get(`/cars/${ id }`, (err, car) => {
       if (err) {
         return this.error(err.message);
@@ -105,6 +105,9 @@ module.exports = class Car extends Service {
 
       car.lastUpdated = (new Date()).toLocaleTimeString();
       this.getBooking(car);
+      if (cb) {
+        cb(car);
+      }
     });
   }
 

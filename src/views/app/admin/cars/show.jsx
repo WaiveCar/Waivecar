@@ -61,44 +61,49 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     let id = this.id();
-    this.service.setCar(id);
-    api.get(`/cars/${ id }/bookings?limit=1&status=completed`, (err, bookings) => {
-      if(bookings.length) {
-        this.setState({
-          latestBooking: bookings[0]
-        }, () => {
-          api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
-            if (response) {
-              this.setState({ parkingDetails: response.details });
-            }
+    this.service.setCar(id, (car) => {
+      if (!auth.user().canSee('car', car)) {
+        console.log(this.props.history);
+        return this.props.history.replaceState({}, '/forbidden'); 
+      }
+      api.get(`/cars/${ id }/bookings?limit=1&status=completed`, (err, bookings) => {
+        if(bookings.length) {
+          this.setState({
+            latestBooking: bookings[0]
+          }, () => {
+            api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
+              if (response) {
+                this.setState({ parkingDetails: response.details });
+              }
+            });
           });
+        }
+      });
+      api.get(`/history/car/${ id }`, (err, model) => {
+        this.setState({
+          carPath : model.data.data
         });
-      }
-    });
-    api.get(`/history/car/${ id }`, (err, model) => {
-      this.setState({
-        carPath : model.data.data
       });
-    });
-    api.get(`/reports/car/${ id }?fromDate=${moment().subtract(3, 'months').utc().format()}`, (err, model) => {
-      if (err) {
-        console.log(err);
-      }
-      model.reverse();
-      this.setState({
-        damage : model
-      });
-    });
-
-    api.get('/group', (err, groups) => {
-      if(err) {
-        snackbar.danger(err);
-      }
-
-      this.setState({
-        groups : groups
+      api.get(`/reports/car/${ id }?fromDate=${moment().subtract(3, 'months').utc().format()}`, (err, model) => {
+        if (err) {
+          console.log(err);
+        }
+        model.reverse();
+        this.setState({
+          damage : model
+        });
       });
 
+      api.get('/group', (err, groups) => {
+        if(err) {
+          snackbar.danger(err);
+        }
+
+        this.setState({
+          groups : groups
+        });
+
+      });
     });
   }
 

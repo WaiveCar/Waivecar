@@ -34,10 +34,9 @@ module.exports = class User {
   canSee(type, model) {
     let orgIds = new Set();
     this.organizations.forEach(org => orgIds.add(org.organizationId))
-    for (let org of this.organizations) {
-      
+    if (!orgIds.size) {
+      return true;
     }
-    this.organizations.map(obj => obj.organizationId);
     if (type === 'car') {
       return orgIds.has(model.organizationId);
     } else if (type === 'booking') {
