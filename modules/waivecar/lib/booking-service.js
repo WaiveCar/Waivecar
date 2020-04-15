@@ -667,7 +667,15 @@ module.exports = class BookingService extends Service {
     if (!_user.hasAccess('admin') || query.type === 'mine') {
       dbQuery.where.user_id = _user.id;
     }
-
+    if (query.organizationIds) {
+      dbQuery.include = [
+        {
+          model: 'Car',
+          as: 'car',
+          where: {organizationId: {$in: JSON.parse(query.organizationIds)}}
+        }
+      ];
+    }
     bookings = yield Booking.find(dbQuery);
 
     // ### Prepare Bookings
