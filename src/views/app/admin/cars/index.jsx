@@ -2,7 +2,7 @@ import React    from 'react';
 import { Link } from 'react-router';
 import moment   from 'moment';
 import { GMap }  from 'bento-web';
-import { api, relay, dom }  from 'bento';
+import { api, relay, dom, auth }  from 'bento';
 var _ = require('lodash');
 
 
@@ -15,7 +15,7 @@ module.exports = class CarsIndex extends React.Component {
 
   constructor(...options) {
     super(...options);
-
+    this.userOrganizations = auth.user().organizations.map(each => each.organizationId);
     this.state = {
       shownCars : [],
       showHelp : false,
@@ -43,10 +43,12 @@ module.exports = class CarsIndex extends React.Component {
     ];
   }
 
-  update() {
+  update(cb) {
     let moment = require('moment');
     let start = moment();
-    api.get(`/carsWithBookings`, (err, cars) => {
+    api.get(`/carsWithBookings${this.userOrganizations.length ?
+      `?organizationIds=[${this.userOrganizations}]` : ''
+    }`, (err, cars) => {
       cars.forEach((row) => {
         row.licenseLower = row.license.toLowerCase();
         row.plateLower = row.plateNumber ? row.plateNumber.toLowerCase() : '';
@@ -60,7 +62,7 @@ module.exports = class CarsIndex extends React.Component {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
         shownCars: this.runShown({cars: cars})
-      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
+      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')), cb && cb(cars));
     });
   }
 
