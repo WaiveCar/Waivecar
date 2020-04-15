@@ -107,10 +107,10 @@ module.exports = class Table {
       queryObj
     );
     let query = queryObj.search;
-    if(! ('offset' in queryObj) ) {
+    if(! (queryObj.offset) ) {
       queryObj.offset = this.ctx.state.offset;
     }
-    
+ 
     if (query || force) {
       if (dom) {
         dom.style.background = 'url("images/site/spinner.gif") #fff 0 50% no-repeat';
@@ -154,21 +154,23 @@ module.exports = class Table {
   // note the documentation on the likely 
   // counter-intuitive format.
   search = (e, value, dom, opts) => {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      let query = '';
-      if(value) {
-        query = value;
-      } else if (e && e.target) {
-        query = e.target.value;
-      } 
-      this.search_handler({
-        offset: 0,
-        limit: this.limit || 20,
-        search: query,
-        ...opts,
-      }, false, dom);
-    }, 700);
+    this.ctx.setState({offset: 0}, () => {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        let query = '';
+        if(value) {
+          query = value;
+        } else if (e && e.target) {
+          query = e.target.value;
+        } 
+        this.search_handler({
+          offset: 0,
+          limit: this.limit || 20,
+          search: query,
+          ...opts,
+        }, false, dom);
+      }, 700);
+    });
   }
 
   /**

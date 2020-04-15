@@ -1,5 +1,5 @@
 import React             from 'react';
-import { relay, dom }    from 'bento';
+import { relay, dom, auth}    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -15,7 +15,11 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'users', [ ['firstName', 'lastName'], 'phone' ]);
+    this.userOrganizations = auth.user().organizations.map(each => each.organizationId);
+    this.table = new Table(this, 'users', [ ['firstName', 'lastName'] ], 
+    `/users${
+      this.userOrganizations.length ? `?organizationIds=[${this.userOrganizations}]` : ''
+    }`);
     this.state = {
       search : null,
       sort   : {
