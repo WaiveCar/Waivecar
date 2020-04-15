@@ -169,8 +169,7 @@ templates.register('app', {
         path      : '/organizations/:id',
         component : require('../../views/app/admin/organizations/show'),
         onEnter   : policies.isWaiveAdmin,
-      }
-      
+      },
     ].concat(views.getRoutes('app')));
   }
 });

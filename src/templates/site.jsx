@@ -58,7 +58,12 @@ templates.register('site', {
     {
       path      : '/jobs',
       component : require('views/site/job')
-    }
+    },
+    {
+      path: '/work-redirect',
+      component: require('views/site/work-redirect'),
+    },
+
     /*
     {
       path      : '/fee-schedule',
