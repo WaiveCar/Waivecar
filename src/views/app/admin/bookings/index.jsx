@@ -1,6 +1,6 @@
 import React             from 'react';
 import moment            from 'moment';
-import { api, relay, dom }    from 'bento';
+import { api, relay, dom, auth }    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -17,7 +17,11 @@ class TableIndex extends React.Component {
   constructor(...args) {
     super(...args);
     //self._debug = true;
-    this.table = new Table(this, 'bookings', null, '/bookings?details=true');
+    this.userOrganizations = auth.user().organizations.map(each => each.organizationId);
+    this.table = new Table(this, 'bookings', null, `/bookings?details=true${
+      this.userOrganizations.length ? 
+      `&organizationIds=[${this.userOrganizations}]`: ''
+    }`);
     //this.table = new Table(this, 'bookings', ['car', 'user'], '/bookings?details=true');
     this.state = {
       sort : {
