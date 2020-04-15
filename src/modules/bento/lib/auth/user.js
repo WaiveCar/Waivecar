@@ -34,6 +34,7 @@ module.exports = class User {
   canSee(type, model) {
     let orgIds = new Set();
     this.organizations.forEach(org => orgIds.add(org.organizationId))
+    // If a user is not a part of any organization, they are a way admin
     if (!orgIds.size) {
       return true;
     }

@@ -1,6 +1,6 @@
 import React          from 'react';
 import ReactSelect    from 'react-select';
-import { relay, api, dom } from 'bento';
+import { relay, api, dom, auth } from 'bento';
 import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
@@ -31,7 +31,7 @@ module.exports = class UserDetails extends React.Component {
   }
 
   componentDidMount() {
-    let user = this.state.users.find(val => val.id === parseInt(this.props.id));
+    let user = this.props.user || this.state.users.find(val => val.id === parseInt(this.props.id));
     //
     // The user we get off the users page doesn't have the full fidelity and all
     // the information that we need to display information corresponding to the user.
