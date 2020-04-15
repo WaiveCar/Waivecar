@@ -38,6 +38,7 @@ class TableIndex extends React.Component {
       },
       searchObj: {
         order: 'id,DESC',
+        status: 'pending',
       }
     });
   }
