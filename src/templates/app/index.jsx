@@ -133,7 +133,7 @@ templates.register('app', {
       {
         path      : '/users/add',
         component : require('../../views/app/admin/users/add-user'),
-        onEnter   : policies.isAdministrator
+        onEnter   : policies.isAdministrator,
       },
       {
         path      : '/users/:id',
