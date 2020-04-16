@@ -61,7 +61,7 @@ module.exports = class ShopService extends Service {
       // If true we throw a snackbar notification of a successfull registration.
 
       if (shouldNotify) {
-        this.success(`Your account can now register payment methods.`);
+        //this.success(`Your account can now register payment methods.`);
       }
     });
   }
