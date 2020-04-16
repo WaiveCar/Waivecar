@@ -36,7 +36,6 @@ module.exports = class ProfileView extends React.Component {
 
     this.submitToken = this.submitToken.bind(this);
     this.user = auth.user();
-    console.log(this.user);
     // ### Relay Subscriptions
     relay.subscribe(this, 'users');
   }
