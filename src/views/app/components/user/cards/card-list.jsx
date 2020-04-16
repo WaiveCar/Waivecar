@@ -21,6 +21,7 @@ class CardList extends React.Component {
     this.state = {
       topUpDisabled: '',
     };
+    this.user = auth.user();
     this.shop = new Shop(this);
   }
 
@@ -159,7 +160,7 @@ class CardList extends React.Component {
     }
        
     if (credit < 0) {
-      return <div className='notice'>You cannot book WaiveCars until this balance is cleared.</div>
+      return <div className='notice'><sup>*</sup>You cannot book WaiveCars until this balance is cleared.</div>
     }
     if (credit > 0) {
       return <div className='notice'>This credit will be automatically applied against any future fees excluding tickets and damage.</div>
@@ -202,10 +203,10 @@ class CardList extends React.Component {
     }
 
     let header = (
-      <div className='credit'>{auth.user().hasAccess('admin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
+      <div className='credit'>{this.user.hasAccess('admin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
       {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
       {
-        auth.user().hasAccess('admin') ? 
+        this.user.hasAccess('waiveAdmin') ? 
           <div className="pull-right">
             <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
           </div>
@@ -217,7 +218,7 @@ class CardList extends React.Component {
     let footer = (
       <div style={{ textAlign: 'right' }}>
         { 
-          auth.user().hasAccess('admin') ? 
+          this.user.hasAccess('waiveAdmin') ? 
             <div>
               <em>The buttons below are not to be used for WaiveWork charges or WaiveWork late fees. Please use the proper avenues for these types of charges.</em>
               <span>
@@ -227,9 +228,8 @@ class CardList extends React.Component {
             </div>
             : '' 
         }
-        {/*
-            This is not currently used, so it is being commented out to avoid confusion
-            <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>*/} 
+        {!this.user.hasAccess('waiveAdmin') &&
+            <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>} 
       </div>
     );
 
