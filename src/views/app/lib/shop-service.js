@@ -42,7 +42,6 @@ module.exports = class ShopService extends Service {
       }
     }, (err, res) => {
       if (err) {
-        console.log(err);
         return this.error(err.message);
       }
 

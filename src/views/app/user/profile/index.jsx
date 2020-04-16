@@ -171,6 +171,16 @@ module.exports = class ProfileView extends React.Component {
             buttons   = { buttons }
             submit = { this.account.submitUser }
           />
+          {user.organizations.length ? 
+            <div>
+              <h4>Organizations</h4>
+              <ul>
+                {user.organizations.map((org, i) => 
+                  <li key={i}>{org.organization.name}</li>
+                )}
+              </ul>
+            </div> : ''
+          }
         </div>
       </div>
     );
