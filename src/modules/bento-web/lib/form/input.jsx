@@ -104,7 +104,7 @@ module.exports = class Input extends React.Component {
    * @return {Component}
    */
   render() {
-    let { label, name, type, placeholder, helpText, tabIndex } = this.props.options;
+    let { label, name, type, placeholder, helpText, tabIndex, required } = this.props.options;
     logger.debug(`Form > Render input component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ this.state.className }>
@@ -119,6 +119,7 @@ module.exports = class Input extends React.Component {
           onFocus     = { this.focus }
           onBlur      = { this.blur }
           tabIndex    = { tabIndex }
+          required    = { required ? true : false }
         />
         <div className="focus-bar"></div>
         <span className="help-text">{ helpText }</span>

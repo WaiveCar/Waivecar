@@ -24,9 +24,13 @@ class AddUser extends Component {
 
   submitUser(e) {
     let form = this.refs.addUser;
-    console.log(form);
     let data = form.state.data;
-    console.log(data);
+    api.post('/organizations/addUser', {}, (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(res);
+    });
   }
 
   addOrg(org) {
