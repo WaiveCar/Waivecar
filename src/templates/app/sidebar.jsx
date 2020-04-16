@@ -111,14 +111,14 @@ module.exports = class Sidebar extends React.Component {
                 { menu.get('sidebar-account', user.hasAccess('waiveAdmin')).map(this.getLink) }
               </ul>
             </div>
-
-            <div className="sidebar-nav">
-              <h5 className="animated fadeInLeft">Application</h5>
-              <ul>
-                { menu.get('sidebar-user', user.hasAccess('waiveAdmin')).map(this.getLink) }
-              </ul>
-            </div>
-
+            {user.hasAccess('waiveAdmin') &&
+              <div className="sidebar-nav">
+                <h5 className="animated fadeInLeft">Application</h5>
+                <ul>
+                  { menu.get('sidebar-user', user.hasAccess('waiveAdmin')).map(this.getLink) }
+                </ul>
+              </div>
+            }
             { this.admin() }
           </div>
         </div>

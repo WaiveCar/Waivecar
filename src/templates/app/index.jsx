@@ -36,7 +36,7 @@ templates.register('app', {
       {
         path      : '/my-rides',
         component : require('../../views/app/user/rides'),
-        onEnter   : policies.isAuthenticated
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/profile',
@@ -223,7 +223,8 @@ let order = 2;
     icon      : 'navigation',
     path      : '/my-rides',
     parent    : null,
-    locations : [ 'sidebar-user' ]
+    locations : [ 'sidebar-user' ],
+    waiveAdmin: true,
   },
   /*
   {
