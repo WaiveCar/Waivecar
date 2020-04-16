@@ -23,9 +23,8 @@ class AddUser extends Component {
   render() {
     return (
       <div className="box">
-        <h3>Add Users</h3>
+        <h3>Add a User</h3>
         <div className="box-content">
-          User Adding Component
           <Form
             ref="personal"
             className="bento-form-static"
@@ -33,6 +32,11 @@ class AddUser extends Component {
             buttons={buttons}
             submit={() => this.submitUser()}
           />
+          {this.currentUser.organizations.length ? (
+            <div>Has Organizations</div>
+          ) : (
+            <div>No Organizations</div>
+          )}
         </div>
       </div>
     );

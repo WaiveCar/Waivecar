@@ -10,6 +10,7 @@ import RideList                  from '../../components/user/rides/ride-list';
 import ChargeList                from '../../components/user/charges/charge-list';
 import UserParking               from '../../components/user/user-parking/user-parking';
 import facebook                  from '../../../auth/facebook';
+import Organizations from '../../admin/components/organizations-search.jsx';
 
 // ### Form Fields
 
@@ -171,17 +172,10 @@ module.exports = class ProfileView extends React.Component {
             buttons   = { buttons }
             submit = { this.account.submitUser }
           />
-          {user.organizations.length ? 
-            <div>
-              <h4>Organizations</h4>
-              <ul>
-                {user.organizations.map((org, i) => 
-                  <li key={i}>{org.organization.name}</li>
-                )}
-              </ul>
-            </div> : ''
-          }
         </div>
+        {user.organizations.length ? 
+          <Organizations type={'user'} user={auth.user()}/> : ''
+        }
       </div>
     );
   }
