@@ -23,10 +23,11 @@ class AddUser extends Component {
 
   addOrg(org) {
     let {currentOrganizations} = this.state;
+    console.log(org)
     if (!currentOrganizations.find(match => match.id === org.id)) {
       this.setState({
         currentOrganizations: [...currentOrganizations, org]
-      });
+      }, () => console.log(this.state.currentOrganizations));
     }
   }
 
@@ -51,7 +52,7 @@ class AddUser extends Component {
   }
 
   render() {
-    let {orgSearchWord, searchResults} = this.state;
+    let {orgSearchWord, searchResults, currentOrganizations} = this.state;
     return (
       <div className="box">
         <h3>Add a User</h3>
@@ -91,11 +92,21 @@ class AddUser extends Component {
                   </div>
                   <button
                     className="btn btn-link col-xs-6"
-                    onClick={() => this.addOrg(item.id)}>
+                    onClick={() => this.addOrg(item)}>
                     Add
                   </button>
                 </div>
               ))}
+              <h4 style={{marginTop: '10px'}}>Selected</h4>
+              <ul>
+              {currentOrganizations.map((each, i) => 
+                <li>
+                    <Link to={`/organizations/${each.id}`} target="_blank">
+                      {each.name}
+                    </Link>
+                  </li>
+              )}
+                 </ul>
             </div>
           )}
         </div>
