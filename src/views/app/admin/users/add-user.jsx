@@ -3,8 +3,7 @@ import {api, auth} from 'bento';
 import {Form, snackbar} from 'bento-web';
 import {Link} from 'react-router';
 
-let buttons = [
-];
+let buttons = [];
 
 class AddUser extends Component {
   constructor(props) {
@@ -14,7 +13,7 @@ class AddUser extends Component {
       currentOrganizations: [],
       searchResults: [],
       orgSearchWord: '',
-    }
+    };
   }
 
   submitUser() {
@@ -23,11 +22,13 @@ class AddUser extends Component {
 
   addOrg(org) {
     let {currentOrganizations} = this.state;
-    console.log(org)
     if (!currentOrganizations.find(match => match.id === org.id)) {
-      this.setState({
-        currentOrganizations: [...currentOrganizations, org]
-      }, () => console.log(this.state.currentOrganizations));
+      this.setState(
+        {
+          currentOrganizations: [...currentOrganizations, org],
+        },
+        () => console.log(this.state.currentOrganizations),
+      );
     }
   }
 
@@ -65,7 +66,20 @@ class AddUser extends Component {
             submit={() => this.submitUser()}
           />
           {this.currentUser.organizations.length ? (
-            <div>Has Organizations</div>
+            <div>
+              {this.currentUser.organizations.map((org, i) => (
+                <div>
+                  <input
+                    type={'checkbox'}
+                    name={`org-${i}`}
+                    key={i}
+                    id={`org-${i}`}
+                    style={{verticalAlign: 'middle', marginRight: '5px'}}
+                  />
+                  <label htmlFor={`org-${i}`}>{org.organization.name}</label>
+                </div>
+              ))}
+            </div>
           ) : (
             <div>
               <h4>Search for Organizations</h4>
@@ -99,14 +113,14 @@ class AddUser extends Component {
               ))}
               <h4 style={{marginTop: '10px'}}>Selected</h4>
               <ul>
-              {currentOrganizations.map((each, i) => 
-                <li>
+                {currentOrganizations.map((each, i) => (
+                  <li>
                     <Link to={`/organizations/${each.id}`} target="_blank">
                       {each.name}
                     </Link>
                   </li>
-              )}
-                 </ul>
+                ))}
+              </ul>
             </div>
           )}
         </div>
