@@ -35,9 +35,9 @@ module.exports = class ProfileView extends React.Component {
     // ### Function Binds
 
     this.submitToken = this.submitToken.bind(this);
-
+    this.user = auth.user();
+    console.log(this.user);
     // ### Relay Subscriptions
-
     relay.subscribe(this, 'users');
   }
 
@@ -281,9 +281,9 @@ module.exports = class ProfileView extends React.Component {
         { this.renderPersonalDetails() }
         { this.renderCards() }
         {/*<UserParking admin={false} userId={ user.id }/>*/}
-        { this.renderRides() }
+        { this.user.hasAccess('waiveAdmin') && this.renderRides() }
         { this.renderCharges() }
-        { this.renderAccountStatus() }
+        { this.user.hasAccess('waiveAdmin') && this.renderAccountStatus() }
       </div>
     );
   }

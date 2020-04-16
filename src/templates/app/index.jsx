@@ -46,7 +46,7 @@ templates.register('app', {
       {
         path      : '/account/license',
         component : require('../../views/app/user/profile/license'),
-        onEnter   : policies.isAuthenticated
+        onEnter   : policies.isWaiveAdmin,
       },
       {
         path      : '/account/password',
@@ -194,7 +194,8 @@ let order = 2;
     icon      : 'assignment_ind',
     path      : '/account/license',
     parent    : null,
-    locations : [ 'sidebar-account' ]
+    locations : [ 'sidebar-account' ],
+    waiveAdmin: true,
   },
   {
     title     : 'Password',
