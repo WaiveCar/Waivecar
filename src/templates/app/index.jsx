@@ -321,7 +321,8 @@ let order = 2;
     path      : '/locations',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : order++
+    order     : order++,
+    waiveAdmin: true,
   },
   {
     title     : 'Organizations',
