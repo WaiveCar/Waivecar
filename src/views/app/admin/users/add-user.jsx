@@ -23,12 +23,25 @@ class AddUser extends Component {
   addOrg(org) {
     let {currentOrganizations} = this.state;
     if (!currentOrganizations.find(match => match.id === org.id)) {
-      this.setState(
-        {
-          currentOrganizations: [...currentOrganizations, org],
-        },
-        () => console.log(this.state.currentOrganizations),
-      );
+      this.setState({
+        currentOrganizations: [...currentOrganizations, org],
+      });
+    }
+  }
+
+  toggleOrg(org) {
+    let {currentOrganizations} = this.state;
+    let idx = currentOrganizations.findIndex(match => match.id === org.id);
+    if (idx >= 0) {
+      let temp = currentOrganizations.slice();
+      temp.splice(idx, 1);
+      this.setState({
+        currentOrganizations: temp,
+      });
+    } else {
+      this.setState({
+        currentOrganizations: [...currentOrganizations, org],
+      });
     }
   }
 
@@ -68,11 +81,11 @@ class AddUser extends Component {
           {this.currentUser.organizations.length ? (
             <div>
               {this.currentUser.organizations.map((org, i) => (
-                <div>
+                <div key={i}>
                   <input
+                    onInput={() => this.toggleOrg(org)}
                     type={'checkbox'}
                     name={`org-${i}`}
-                    key={i}
                     id={`org-${i}`}
                     style={{verticalAlign: 'middle', marginRight: '5px'}}
                   />
