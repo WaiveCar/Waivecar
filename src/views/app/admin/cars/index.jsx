@@ -24,6 +24,7 @@ module.exports = class CarsIndex extends React.Component {
       shown : this.getShown(),
       sortBy: { key: "license", orderAsc: true }
     };
+    this.user = auth.user();
 
     this.columns = [
       {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
@@ -460,7 +461,7 @@ module.exports = class CarsIndex extends React.Component {
                       </div>
                     </div>
 
-                    { this.renderShownFilters(displayedCars.length) }
+                    { this.user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
 
                     <div className="griddle-container">
                       <div className="griddle-body">
