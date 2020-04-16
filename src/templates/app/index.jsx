@@ -131,6 +131,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/users/add',
+        component : require('../../views/app/admin/users/add-user'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/users/:id',
         component : require('../../views/app/admin/users/show'),
         onEnter   : policies.isAdministrator
