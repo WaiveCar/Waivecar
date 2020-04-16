@@ -47,4 +47,8 @@ module.exports = {
     let org = yield Organization.findById(organizationId);
     return yield org[action](payload);
   },
+
+  *addUser(payload) {
+    console.log(payload);
+  },
 };
