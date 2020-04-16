@@ -79,22 +79,22 @@ class Organizations extends Component {
       <div className="box">
         <h3>Organizations</h3>
         <div className="box-content">
-          {currentOrganizations.map((each, i) => (
-            <div className="row" key={i}>
-              <div style={{padding: '10px 0'}} className="col-xs-6">
-                <Link to={`/organizations/${each.id}`}>{each.name}</Link>
-              </div>
-              {this.currentUser.hasAccess('waiveAdmin') ? (
-                <button
-                  className="btn btn-link col-xs-6"
-                  onClick={() => this.orgAction('remove', each.id)}>
-                  Remove
-                </button>
-              ) : (
-                ''
-              )}
-            </div>
-          ))}
+          <ul>
+            {currentOrganizations.map((each, i) => (
+              <li key={i}>
+                  <Link to={`/organizations/${each.id}`}>{each.name}</Link>
+                {this.currentUser.hasAccess('waiveAdmin') ? (
+                  <button
+                    className="btn btn-link"
+                    onClick={() => this.orgAction('remove', each.id)}>
+                    Remove
+                  </button>
+                ) : (
+                  ''
+                )}
+              </li>
+            ))}
+          </ul>
           {this.currentUser.hasAccess('waiveAdmin') ? (
             <div>
               <h4>Search for More</h4>
