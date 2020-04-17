@@ -19,6 +19,7 @@ class AddUser extends Component {
       currentOrganizations: [],
       searchResults: [],
       orgSearchWord: '',
+      isAdmin: false,
     };
   }
 
@@ -68,7 +69,7 @@ class AddUser extends Component {
   }
 
   submitUser(e) {
-    let {currentOrganizations} = this.state;
+    let {currentOrganizations, isAdmin} = this.state;
     let {history} = this.props;
     if (!currentOrganizations.length) {
       return snackbar.notify({
@@ -79,6 +80,7 @@ class AddUser extends Component {
     let form = this.refs.addUser;
     let data = form.state.data;
     data.organizations = currentOrganizations.map(org => org.id);
+    data.isAdmin = isAdmin;
     api.post('/organizations/addUser', data, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -95,7 +97,12 @@ class AddUser extends Component {
   }
 
   render() {
-    let {orgSearchWord, searchResults, currentOrganizations} = this.state;
+    let {
+      orgSearchWord,
+      searchResults,
+      currentOrganizations,
+      isAdmin,
+    } = this.state;
     return (
       <div className="box">
         <h3 style={{marginBottom: '1rem'}}>Add a User</h3>
@@ -148,14 +155,28 @@ class AddUser extends Component {
             ))}
             <h4 style={{marginTop: '10px'}}>Selected</h4>
             <ul>
-              {currentOrganizations.map((each, i) => (
-                <li key={i}>
-                  <Link to={`/organizations/${each.id}`} target="_blank">
-                    {each.name}
-                  </Link>
-                </li>
-              ))}
+              {currentOrganizations.length ? (
+                currentOrganizations.map((each, i) => (
+                  <li key={i}>
+                    <Link to={`/organizations/${each.id}`} target="_blank">
+                      {each.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <div>None Selected</div>
+              )}
             </ul>
+            <h4>
+              <input
+                onInput={() => this.setState({isAdmin: !isAdmin})}
+                type={'checkbox'}
+                name={'is-admin'}
+                id={'is-admin'}
+                style={{verticalAlign: 'middle', marginRight: '5px'}}
+              />
+              <label htmlFor={'is-admin'}>Is this user an admin?</label>
+            </h4>
           </div>
         )}
         <div className="box-content">
