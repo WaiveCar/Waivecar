@@ -173,7 +173,7 @@ templates.register('app', {
       {
         path      : '/organizations/:id',
         component : require('../../views/app/admin/organizations/show'),
-        onEnter   : policies.isWaiveAdmin,
+        onEnter   : policies.isAdmin,
       },
       {
         path: '/forbidden',

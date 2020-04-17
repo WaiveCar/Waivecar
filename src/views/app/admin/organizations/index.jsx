@@ -35,7 +35,7 @@ class Organizations extends Component {
     let {name, organizations} = this.state;
     api.post('/organizations', {name}, (err, res) => {
       if (err) {
-        snackbar.notify({
+        return snackbar.notify({
           type: 'danger',
           message: err.message,
         });

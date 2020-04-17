@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
-import {api} from 'bento';
+import {api, auth} from 'bento';
 import {snackbar} from 'bento-web';
 import OrganizationResource from './organization-resource-table.jsx';
 import ThSort from '../components/table-th';
@@ -20,6 +20,9 @@ class Organization extends Component {
 
   componentDidMount() {
     let {id} = this.state;
+    if (!auth.user().canSee('organization', {id})) {
+      return this.props.history.replaceState({}, '/forbidden');
+    }
     api.get(`/organizations/${id}`, (err, result) => {
       if (err) {
         snackbar.notify({
