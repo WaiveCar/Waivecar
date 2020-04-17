@@ -465,38 +465,43 @@ module.exports = class UserDetails extends React.Component {
                         Active
                       </label>
                     </div>
-
-                    <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
-                      User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
-                      { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
-                    <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
+                    {this.props.currentUser.hasAccess('waiveAdmin') ?
+                    <div>
+                      <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
+                        User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
+                        { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
+                      <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
+                      </div>
+                      <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                     </div>
-                    <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
+                    : ''}
                   </div>
 
                 </div>
-                { this.tagList() }
-                <div className="form-group row">
-                  <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
-                  <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
-                    { this.state.showDanger && 
-                     <div>
-                       <div className="radio-inline">
-                         <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
-                       </div>
+                { this.props.currentUser.hasAccess('waiveAdmin') ? this.tagList() : '' }
+                { this.props.currentUser.hasAccess('waiveAdmin') ? ( 
+                  <div className="form-group row">
+                    <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
+                    <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
+                      { this.state.showDanger && 
+                       <div>
+                         <div className="radio-inline">
+                           <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
+                         </div>
 
-                       <div className="radio-inline">
-                         <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
-                       </div>
+                         <div className="radio-inline">
+                           <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
+                         </div>
 
-                       <div className="radio-inline">
-                         <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
-                       </div>
+                         <div className="radio-inline">
+                           <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
+                         </div>
 
-                     </div>
-                    }
+                       </div>
+                      }
+                    </div>
                   </div>
-                </div>
+                ) : ''}
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
                     <button type="submit" className="btn btn-sm">Update Details</button>

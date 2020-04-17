@@ -11,6 +11,7 @@ import { api, auth } from 'bento';
 module.exports = class AdminUsersView extends React.Component {
   constructor(props) {
     super(props);
+    this.currentUser = auth.user();
     this.state = {
       loaded: false,
       user: null,
@@ -18,7 +19,7 @@ module.exports = class AdminUsersView extends React.Component {
   }
   componentDidMount() {
     api.get(`/users/${this.props.params.id}`, (err, user) => {
-      if (!auth.user().canSee('user', user)) {
+      if (!this.currentUser.canSee('user', user)) {
         return this.props.history.replaceState({}, '/forbidden');
       }
       this.setState({user, loaded: true});
@@ -34,7 +35,7 @@ module.exports = class AdminUsersView extends React.Component {
       </div>
     ) :(
       <div id="users">
-        <UserDetails id={ this.props.params.id } user={this.state.user} />
+        <UserDetails id={ this.props.params.id } user={this.state.user} currentUser={this.currentUser}/>
         {/*<UserParking admin={true} userId={ this.props.params.id }/>*/}
         <UserLicense id={ this.props.params.id } isAdmin={true} />
         <UsersEvents id={ this.props.params.id } />
