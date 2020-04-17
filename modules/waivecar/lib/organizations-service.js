@@ -104,6 +104,9 @@ module.exports = {
         user.id,
         `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`,
       );
+      if (payload.isAdmin) {
+        yield UserService.update(user.id, {groupId: 1, groupRoleId: 3}, _user);
+      }
       return user;
     } catch (e) {
       throw error.parse(
