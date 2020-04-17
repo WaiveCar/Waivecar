@@ -69,17 +69,29 @@ class AddUser extends Component {
 
   submitUser(e) {
     let {currentOrganizations} = this.state;
+    if (!currentOrganizations.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Users must be added with organizations.',
+      });
+    }
     let form = this.refs.addUser;
     let data = form.state.data;
     data.organizations = currentOrganizations.map(org => org.id);
     api.post('/organizations/addUser', data, (err, res) => {
       if (err) {
-        console.log(err);
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
       }
-      console.log(res);
+      snackbar.notify({
+        type: 'User Successfully added.',
+        message: err.message,
+      });
+      history.replaceState({}, '/users');
     });
   }
-
 
   render() {
     let {orgSearchWord, searchResults, currentOrganizations} = this.state;
