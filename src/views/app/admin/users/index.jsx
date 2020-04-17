@@ -15,10 +15,10 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.userOrganizations = auth.user().organizations.map(each => each.organizationId);
+    this.currentUser = auth.user();
     this.table = new Table(this, 'users', [ ['firstName', 'lastName'] ], 
     `/users${
-      this.userOrganizations.length ? `?organizationIds=[${this.userOrganizations}]` : ''
+      this.currentUser.organizations.length ? `?organizationIds=[${this.currentUser.organizations.map(each => each.organizationId)}]` : ''
     }`);
     this.state = {
       search : null,
@@ -97,7 +97,16 @@ class UsersListView extends React.Component {
     return (
       <div id="users-list" className="container">
         <div className="box full">
-          <h3>Users <small>List of registered WaiveCar users</small></h3>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div>
+              <h3>Users <small>List of registered WaiveCar users</small></h3>
+            </div>
+            <div>
+              <Link className="btn btn-primary" to={'/users/add'}>
+                {this.currentUser.hasAccess('waiveAdmin') ? 'Add organization users': 'Add users'}
+              </Link>
+            </div>
+          </div>
           <div className="box-content">
             <input 
               type="text" 
