@@ -5,7 +5,6 @@ let Slack       = Bento.provider('slack');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
-let UserCommunication = Bento.model('UserCommunication');
 let GroupUser   = Bento.model('GroupUser');
 let error       = Bento.Error;
 let config      = Bento.config;
@@ -57,6 +56,7 @@ module.exports = {
     log_message('sms', {phone: user.phone, text: message});
     // User communications will only be saved for users that have already been let in
     if (user && !user.accountType) {
+      let UserCommunication = Bento.model('UserCommunication');
       let communication = new UserCommunication({
         userId: user.id,
         creatorId: _user ? _user.id : null,
