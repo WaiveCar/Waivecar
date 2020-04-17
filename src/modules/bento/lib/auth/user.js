@@ -50,7 +50,7 @@ module.exports = class User {
       }
       return false;
     } else if (type === 'organization') {
-      return this.organizations.find(org => org.id = model.id);
+      return this.organizations.find(org => org.organization.id == model.id);
     }
   }
 
