@@ -2,6 +2,8 @@ let error = Bento.Error;
 let Car = Bento.model('Car');
 let User = Bento.model('User');
 let OrganizationUser = Bento.model('OrganizationUser');
+let notify = require('../lib/notification-service');
+let apiConfig = Bento.config.api;
 
 Bento.Register.Model('Organization', 'sequelize', function register(
   model,
@@ -22,6 +24,9 @@ Bento.Register.Model('Organization', 'sequelize', function register(
   };
 
   model.methods = {
+    link: function() {
+      return `<${apiConfig.uri}/organizations/${this.id}|${this.name}>`;
+    },
     addCar: function*(payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
@@ -36,16 +41,27 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         );
       }
       yield car.update({organizationId: this.id});
+      yield notify.notifyAdmins(
+        `:blue_car: ${car.link()} added to ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
       return this;
     },
     removeCar: function*(payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
       yield car.update({organizationId: null});
+      yield notify.notifyAdmins(
+        `:ski: ${car.link()} removed from ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
       return this;
     },
     addUser: function*(payload) {
       let {userId} = payload;
+      let user = yield User.findById(userId);
       let prevUser = yield OrganizationUser.findOne({
         where: {userId, organizationId: this.id},
       });
@@ -63,10 +79,16 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         userId,
       });
       yield orgUser.save();
+      yield notify.notifyAdmins(
+        `:stadium: ${user.link()} added to ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
       return this;
     },
     removeUser: function*(payload) {
       let {userId} = payload;
+      let user = yield User.findById(userId);
       let orgUser = yield OrganizationUser.findOne({
         where: {
           organizationId: this.id,
@@ -74,6 +96,11 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         },
       });
       yield orgUser.delete();
+      yield notify.notifyAdmins(
+        `:metro: ${user.link()} removed from ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
       return orgUser;
     },
   };
