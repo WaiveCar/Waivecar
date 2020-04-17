@@ -18,8 +18,9 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       autoIncrement: true,
     },
     name: {
-      type: Sequelize.TEXT(),
+      type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
   };
 
@@ -37,7 +38,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
             message:
               'This car has already been assigned to another organization. Please remove the car from its old organization before adding it to a new one.',
           },
-          400,
+          500,
         );
       }
       yield car.update({organizationId: this.id});
@@ -71,7 +72,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
             code: 'USER_ALREADY_ADDED',
             message: 'This user has already been added to this organization.',
           },
-          400,
+          500,
         );
       }
       let orgUser = new OrganizationUser({

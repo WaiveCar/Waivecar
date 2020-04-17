@@ -5,7 +5,7 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
     return yield organizations.index(this.query && this.query);
   };
   controller.create = function*() {
-    return yield organizations.create(this.payload);
+    return yield organizations.create(this.payload, this.auth.user);
   };
   controller.show = function*(id) {
     return yield organizations.show(id);
