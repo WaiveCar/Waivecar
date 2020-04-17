@@ -1,3 +1,5 @@
+let UserService = require('./user-service');
+let LicenseService = require('../../license/lib/license-service');
 let Organization = Bento.model('Organization');
 let User = Bento.model('User');
 
@@ -48,7 +50,12 @@ module.exports = {
     return yield org[action](payload);
   },
 
-  *addUser(payload) {
-    console.log(payload);
+  *addUser(payload, _user) {
+    payload.status = 'active';
+    let user = (yield UserService.store(payload)).toJSON();
+    if (payload.number) {
+      user.license = yield LicenseService.store({userId: user.id, ...payload}, _user);
+    }
+    return user;
   },
 };
