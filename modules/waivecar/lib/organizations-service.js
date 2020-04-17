@@ -53,8 +53,18 @@ module.exports = {
   *addUser(payload, _user) {
     payload.status = 'active';
     let user = (yield UserService.store(payload)).toJSON();
+    let orgs = yield Organization.find({
+      where: {id: {$in: payload.organizations}},
+    });
+    for (let org of orgs) {
+      yield org.addUser({userId: user.id});
+    }
+    user.organizations = orgs;
     if (payload.number) {
-      user.license = yield LicenseService.store({userId: user.id, ...payload}, _user);
+      user.license = yield LicenseService.store(
+        {userId: user.id, ...payload},
+        _user,
+      );
     }
     return user;
   },
