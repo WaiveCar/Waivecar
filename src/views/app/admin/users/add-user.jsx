@@ -69,6 +69,7 @@ class AddUser extends Component {
 
   submitUser(e) {
     let {currentOrganizations} = this.state;
+    let {history} = this.props;
     if (!currentOrganizations.length) {
       return snackbar.notify({
         type: 'danger',
@@ -86,8 +87,8 @@ class AddUser extends Component {
         });
       }
       snackbar.notify({
-        type: 'User Successfully added.',
-        message: err.message,
+        type: 'success',
+        message: 'User Successfully added.',
       });
       history.replaceState({}, '/users');
     });
@@ -148,7 +149,7 @@ class AddUser extends Component {
             <h4 style={{marginTop: '10px'}}>Selected</h4>
             <ul>
               {currentOrganizations.map((each, i) => (
-                <li>
+                <li key={i}>
                   <Link to={`/organizations/${each.id}`} target="_blank">
                     {each.name}
                   </Link>
