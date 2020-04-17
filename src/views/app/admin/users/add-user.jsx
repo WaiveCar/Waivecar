@@ -167,18 +167,18 @@ class AddUser extends Component {
                 <div>None Selected</div>
               )}
             </ul>
-            <h4>
-              <input
-                onInput={() => this.setState({isAdmin: !isAdmin})}
-                type={'checkbox'}
-                name={'is-admin'}
-                id={'is-admin'}
-                style={{verticalAlign: 'middle', marginRight: '5px'}}
-              />
-              <label htmlFor={'is-admin'}>Is this user an admin?</label>
-            </h4>
           </div>
         )}
+        <h4>
+          <input
+            onInput={() => this.setState({isAdmin: !isAdmin})}
+            type={'checkbox'}
+            name={'is-admin'}
+            id={'is-admin'}
+            style={{verticalAlign: 'middle', marginRight: '5px'}}
+          />
+          <label htmlFor={'is-admin'}>Is this user an admin?</label>
+        </h4>
         <div className="box-content">
           <Form
             ref="addUser"
