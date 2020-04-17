@@ -250,7 +250,7 @@ export default class UserCommunications extends Component {
                       <tbody>
                         {email.map((message, i) =>
                           !message.isExpansion ? (
-                            <tr className="ride-details">
+                            <tr className="ride-details" key={i}>
                               <td
                                 className="text-center"
                                 onClick={() => this.toggle(message, i)}>
