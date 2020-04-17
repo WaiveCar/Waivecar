@@ -22,17 +22,6 @@ class AddUser extends Component {
     };
   }
 
-  submitUser(e) {
-    let form = this.refs.addUser;
-    let data = form.state.data;
-    api.post('/organizations/addUser', {}, (err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(res);
-    });
-  }
-
   addOrg(org) {
     let {currentOrganizations} = this.state;
     if (!currentOrganizations.find(match => match.id === org.id)) {
@@ -77,6 +66,20 @@ class AddUser extends Component {
       },
     );
   }
+
+  submitUser(e) {
+    let {currentOrganizations} = this.state;
+    let form = this.refs.addUser;
+    let data = form.state.data;
+    data.organizations = currentOrganizations.map(org => org.id);
+    api.post('/organizations/addUser', data, (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(res);
+    });
+  }
+
 
   render() {
     let {orgSearchWord, searchResults, currentOrganizations} = this.state;
