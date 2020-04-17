@@ -1,5 +1,6 @@
 let UserService = require('./user-service');
 let LicenseService = require('../../license/lib/license-service');
+let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
 let User = Bento.model('User');
 
@@ -53,7 +54,7 @@ module.exports = {
   *addUser(payload, _user) {
     payload.status = 'active';
     payload.isWaivework = true;
-    let user = (yield UserService.store(payload)).toJSON();
+    let user = yield UserService.store(payload);
     let orgs = yield Organization.find({
       where: {id: {$in: payload.organizations}},
     });
@@ -67,6 +68,8 @@ module.exports = {
         _user,
       );
     }
+    yield notify.notifyAdmins(`:heavy_plus_sign: ${ _user.name() } added the new user ${user.link()}`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.sendTextMessage(user.id, `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`);
     return user;
   },
 };
