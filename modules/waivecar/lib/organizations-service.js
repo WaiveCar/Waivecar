@@ -52,6 +52,7 @@ module.exports = {
 
   *addUser(payload, _user) {
     payload.status = 'active';
+    payload.isWaivework = true;
     let user = (yield UserService.store(payload)).toJSON();
     let orgs = yield Organization.find({
       where: {id: {$in: payload.organizations}},
