@@ -857,16 +857,16 @@ class CarsShowView extends React.Component {
       <div className="cars cars-show">
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
-        <Organizations type={'car'} car={car}/>
+        <Organizations type={'car'} car={car} _user={this._user}/>
         { this.renderCarMedia(car) }
         { /* this.state.latestBooking && this.renderParkingLocation(car) */}
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
-        <Airtable car={car} />
+        { this._user.hasAccess('waiveAdmin') ? <Airtable car={car} /> : ''}
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
         <Documentation car={car} _user={this._user}/>
-        { this.renderDamage(car) }
+        { this._user.hasAccess('waiveAdmin') ? this.renderDamage(car) : ''}
       </div>
     );
   }

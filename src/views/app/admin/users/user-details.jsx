@@ -27,7 +27,7 @@ module.exports = class UserDetails extends React.Component {
     relay.subscribe(this, 'users');
     relay.subscribe(this, 'notes');
     this.addCard = this.addCard.bind(this);
-
+    this._user = this.props._user;
   }
 
   componentDidMount() {
@@ -465,7 +465,7 @@ module.exports = class UserDetails extends React.Component {
                         Active
                       </label>
                     </div>
-                    {this.props._user.hasAccess('waiveAdmin') ?
+                    {this._user.hasAccess('waiveAdmin') ?
                     <div>
                       <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
                         User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
@@ -478,8 +478,8 @@ module.exports = class UserDetails extends React.Component {
                   </div>
 
                 </div>
-                { this.props._user.hasAccess('waiveAdmin') ? this.tagList() : '' }
-                { this.props._user.hasAccess('waiveAdmin') ? ( 
+                { this._user.hasAccess('waiveAdmin') ? this.tagList() : '' }
+                { this._user.hasAccess('waiveAdmin') ? ( 
                   <div className="form-group row">
                     <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                     <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
@@ -510,18 +510,18 @@ module.exports = class UserDetails extends React.Component {
               </form>
             </div>
           </div>
-          <Organizations type={'user'} user={user}/>
+          <Organizations type={'user'} user={user} _user={this._user}/>
           { this.state.addCard ?
             <AddCard user={ user } currentUser={ false }></AddCard>
             : ''
           }
-          {this.props._user.hasAccess('waiveAdmin') ? <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList> : ''}
-          {this.props._user.hasAccess('waiveAdmin') ? <WaiveWorkRequest user={user} /> : ''}
-          {this.props._user.hasAccess('waiveAdmin') ? <WaiveWorkDetails user={user} /> : ''}
+          {this._user.hasAccess('waiveAdmin') ? <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList> : ''}
+          {this._user.hasAccess('waiveAdmin') ? <WaiveWorkRequest user={user} /> : ''}
+          {this._user.hasAccess('waiveAdmin') ? <WaiveWorkDetails user={user} /> : ''}
           <UserCommunications user={user} sendText={this.sendText}/>
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
-            {this.props._user.hasAccess('waiveAdmin') ? <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList> : ''}
+            {this._user.hasAccess('waiveAdmin') ? <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList> : ''}
           </div>
         </div>
       );

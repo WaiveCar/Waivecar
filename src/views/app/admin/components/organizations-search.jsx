@@ -8,7 +8,7 @@ const capitalize = word => word[0].toUpperCase() + word.slice(1);
 class Organizations extends Component {
   constructor(props) {
     super(props);
-    this._user = auth.user();
+    this._user = this.props._user;
     this.state = {
       currentOrganizations: [],
       searchResults: [],
