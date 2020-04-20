@@ -22,6 +22,7 @@ module.exports = class RideDetails extends React.Component {
       lng : [],
       smallPath : null
     };
+    this._user = this.props._user
   }
 
   getAddress(lat, lng, data, i) {
@@ -45,93 +46,95 @@ module.exports = class RideDetails extends React.Component {
   componentDidMount() {
     var ix = 0;
     var threshold = 0.0004;
-    var ival = setInterval(function(){
-      var tempDriving = 0, tempStill = 0, lastLat = 0, lastLong = 0, lastTime = 0;
-      if (this.props.carPath.length != 0) {
-        clearInterval(ival);
-        var data = {time:[], switchStat: [], address: [], lat: [], lng: []};
-        //This waivework related code due to wanting to limit the amount of data points
-        //when the booking is a waive work
-        var isNotWaiveWork = Object.keys(this.props.booking.flags).every((flag) => {
-          return (flag != "Waivework")
-        })
-        var carPath
-        if(!isNotWaiveWork || this.props.carPath.length > 800) {
-          carPath = this.props.carPath.slice((this.props.carPath.length-800))
-        } else {
-          carPath = this.props.carPath
-        }
-        this.setState({
-          smallPath : carPath,
-          startTime : carPath[0][2],
-          finishTime : carPath[carPath.length - 1][2]
-        });
-        var j = 0;
-        for (var i = 0; i < carPath.length; i++) {
-          //If the car just started
-          if(carPath[i][2] == this.state.startTime) {
-            this.getAddress(carPath[i][0],carPath[i][1],data,j);
-            j++
-            data.switchStat.push('started');
-            data.lat.push(carPath[i][0]);
-            data.lng.push(carPath[i][1]);
+    if (this._user.hasAccess('waiveAdmin')) {
+      var ival = setInterval(function(){
+        var tempDriving = 0, tempStill = 0, lastLat = 0, lastLong = 0, lastTime = 0;
+        if (this.props.carPath.length != 0) {
+          clearInterval(ival);
+          var data = {time:[], switchStat: [], address: [], lat: [], lng: []};
+          //This waivework related code due to wanting to limit the amount of data points
+          //when the booking is a waive work
+          var isNotWaiveWork = Object.keys(this.props.booking.flags).every((flag) => {
+            return (flag != "Waivework")
+          })
+          var carPath
+          if(!isNotWaiveWork || this.props.carPath.length > 800) {
+            carPath = this.props.carPath.slice((this.props.carPath.length-800))
+          } else {
+            carPath = this.props.carPath
           }
-          //If the car just finished
-          else if (carPath[i][2] == this.state.finishTime) {
-            //If the car has been driving and finished being used
-            if (tempDriving != 0) {
-              tempDriving = tempDriving + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
-              data.time.push(this.getTTime(tempDriving)); //hours
+          this.setState({
+            smallPath : carPath,
+            startTime : carPath[0][2],
+            finishTime : carPath[carPath.length - 1][2]
+          });
+          var j = 0;
+          for (var i = 0; i < carPath.length; i++) {
+            //If the car just started
+            if(carPath[i][2] == this.state.startTime) {
               this.getAddress(carPath[i][0],carPath[i][1],data,j);
+              j++
+              data.switchStat.push('started');
               data.lat.push(carPath[i][0]);
               data.lng.push(carPath[i][1]);
-              j++
-              tempDriving = 0;
-              data.switchStat.push('endWDrive');
-              //If the car has been stationary and finished being used
-            } else {
+            }
+            //If the car just finished
+            else if (carPath[i][2] == this.state.finishTime) {
+              //If the car has been driving and finished being used
+              if (tempDriving != 0) {
+                tempDriving = tempDriving + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
+                data.time.push(this.getTTime(tempDriving)); //hours
+                this.getAddress(carPath[i][0],carPath[i][1],data,j);
+                data.lat.push(carPath[i][0]);
+                data.lng.push(carPath[i][1]);
+                j++
+                tempDriving = 0;
+                data.switchStat.push('endWDrive');
+                //If the car has been stationary and finished being used
+              } else {
+                tempStill = tempStill + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
+                data.time.push(this.getTTime(tempStill));
+                this.getAddress(carPath[i][0],carPath[i][1],data,j);
+                data.lat.push(carPath[i][0]);
+                data.lng.push(carPath[i][1]);
+                j++
+                tempStill = 0;
+                data.switchStat.push('endWStop');
+              }
+            }
+            //If car is not moving
+            else if (Math.abs(carPath[i][0] - lastLat) < threshold && Math.abs(carPath[i][1] - lastLong) < threshold ) {
+              if(tempDriving != 0) {
+                data.switchStat.push('notMoving');
+                data.time.push(this.getTTime(tempDriving)); //hours
+                data.time.push(carPath[i-1][2]);
+                this.getAddress(carPath[i][0],carPath[i][1],data,j);
+                data.lat.push(carPath[i][0]);
+                data.lng.push(carPath[i][1]);
+                j++
+                tempDriving = 0;
+              } else {
+                data.switchStat.push('unnecessaryStop');
+              }
               tempStill = tempStill + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
-              data.time.push(this.getTTime(tempStill));
-              this.getAddress(carPath[i][0],carPath[i][1],data,j);
-              data.lat.push(carPath[i][0]);
-              data.lng.push(carPath[i][1]);
-              j++
-              tempStill = 0;
-              data.switchStat.push('endWStop');
             }
-          }
-          //If car is not moving
-          else if (Math.abs(carPath[i][0] - lastLat) < threshold && Math.abs(carPath[i][1] - lastLong) < threshold ) {
-            if(tempDriving != 0) {
-              data.switchStat.push('notMoving');
-              data.time.push(this.getTTime(tempDriving)); //hours
-              data.time.push(carPath[i-1][2]);
-              this.getAddress(carPath[i][0],carPath[i][1],data,j);
-              data.lat.push(carPath[i][0]);
-              data.lng.push(carPath[i][1]);
-              j++
-              tempDriving = 0;
-            } else {
-              data.switchStat.push('unnecessaryStop');
+            //If car is moving
+            else {
+              if (tempStill != 0) {
+                data.switchStat.push('startMove');
+                data.time.push(this.getTTime(tempStill)); //hours
+                tempStill = 0;
+              } else {data.switchStat.push('unnecessaryMove');}
+              tempDriving = tempDriving + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
             }
-            tempStill = tempStill + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
+            lastLat = carPath[i][0];
+            lastLong = carPath[i][1];
+            lastTime = carPath[i][2];
           }
-          //If car is moving
-          else {
-            if (tempStill != 0) {
-              data.switchStat.push('startMove');
-              data.time.push(this.getTTime(tempStill)); //hours
-              tempStill = 0;
-            } else {data.switchStat.push('unnecessaryMove');}
-            tempDriving = tempDriving + (new Date(carPath[i][2]).getTime() - new Date(lastTime).getTime());
-          }
-          lastLat = carPath[i][0];
-          lastLong = carPath[i][1];
-          lastTime = carPath[i][2];
+          this.setState(data);
         }
-        this.setState(data);
-      }
-    }.bind(this), 1000);
+      }.bind(this), 1000);
+    };
   }
 
   render() {
@@ -269,7 +272,7 @@ module.exports = class RideDetails extends React.Component {
               </div>
             </div>
             {
-              this.state.switchStat && this.state.switchStat[0] &&
+              this._user.hasAccess('waiveAdmin') && this.state.switchStat && this.state.switchStat[0] &&
               <div className="box-content timeline">
                 <strong>Timeline</strong><br/>
                 {this.state.smallPath.map((path, i) => {

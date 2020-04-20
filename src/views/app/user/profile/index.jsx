@@ -174,7 +174,7 @@ module.exports = class ProfileView extends React.Component {
           />
         </div>
         {user.organizations.length ? 
-          <Organizations type={'user'} user={auth.user()}/> : ''
+          <Organizations type={'user'} user={this.user} _user={this.user}/> : ''
         }
       </div>
     );
