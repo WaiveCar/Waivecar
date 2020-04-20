@@ -90,7 +90,7 @@ module.exports = class NotesService extends Service {
    * Get list of all notes for specific booking
    * @param {Number} bookingId
    */
-  static *getBookingNotes(bookingId) {
+  static *getBookingNotes(bookingId, query) {
     return yield BookingNote.find({
       where   : { bookingId },
       include : [
@@ -106,9 +106,11 @@ module.exports = class NotesService extends Service {
    * Get list of all notes for specific car
    * @param {String} carId
    */
-  static *getCarNotes(carId) {
+  static *getCarNotes(carId, query) {
     return yield CarNote.find({
-      where   : { carId },
+      where   : { carId, ...(query.organizationIds ? 
+        {organizationId: {$in: JSON.parse(query.organizationIds)}} : {} 
+      )},
       include : [
         {
           model : 'User',
@@ -124,7 +126,9 @@ module.exports = class NotesService extends Service {
    */
   static *getUserNotes(userId) {
     return yield UserNote.find({
-      where   : { userId },
+      where   : { userId, ...(query.organizationIds ? 
+        {organizationId: {$in: JSON.parse(query.organizationIds)}} : {} 
+      )},
       include : [
         {
           model : 'User',

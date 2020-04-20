@@ -21,11 +21,11 @@ Bento.Register.Controller('NotesController', function(controller) {
   };
 
   controller.getBookingNotes = function *(bookingId) {
-    return yield notes.getBookingNotes(bookingId);
+    return yield notes.getBookingNotes(bookingId, this.query);
   };
 
   controller.getCarNotes = function *(carId) {
-    return yield notes.getCarNotes(carId);
+    return yield notes.getCarNotes(carId, this.query);
   };
 
   controller.getUserNotes = function *(userId) {
