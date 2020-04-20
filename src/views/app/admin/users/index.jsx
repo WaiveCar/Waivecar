@@ -15,10 +15,10 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.currentUser = auth.user();
+    this._user = auth.user();
     this.table = new Table(this, 'users', [ ['firstName', 'lastName'] ], 
     `/users${
-      this.currentUser.organizations.length ? `?organizationIds=[${this.currentUser.organizations.map(each => each.organizationId)}]` : ''
+      this._user.organizations.length ? `?organizationIds=[${this._user.organizations.map(each => each.organizationId)}]` : ''
     }`);
     this.state = {
       search : null,
@@ -103,7 +103,7 @@ class UsersListView extends React.Component {
             </div>
             <div>
               <Link className="btn btn-primary" to={'/users/add'}>
-                {this.currentUser.hasAccess('waiveAdmin') ? 'Add organization users': 'Add users'}
+                {this._user.hasAccess('waiveAdmin') ? 'Add organization users': 'Add users'}
               </Link>
             </div>
           </div>

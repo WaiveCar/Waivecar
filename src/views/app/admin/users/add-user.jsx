@@ -14,7 +14,7 @@ let buttons = [
 class AddUser extends Component {
   constructor(props) {
     super(props);
-    this.currentUser = auth.user();
+    this._user = auth.user();
     this.state = {
       currentOrganizations: [],
       searchResults: [],
@@ -106,10 +106,10 @@ class AddUser extends Component {
     return (
       <div className="box">
         <h3 style={{marginBottom: '1rem'}}>Add a User</h3>
-        {this.currentUser.organizations.length ? (
+        {this._user.organizations.length ? (
           <div>
             <h4>Organizations</h4>
-            {this.currentUser.organizations.map((org, i) => (
+            {this._user.organizations.map((org, i) => (
               <div key={i}>
                 <input
                   onInput={() => this.toggleOrg(org.organization)}

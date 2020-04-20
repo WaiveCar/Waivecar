@@ -8,7 +8,7 @@ const capitalize = word => word[0].toUpperCase() + word.slice(1);
 class Organizations extends Component {
   constructor(props) {
     super(props);
-    this.currentUser = auth.user();
+    this._user = auth.user();
     this.state = {
       currentOrganizations: [],
       searchResults: [],
@@ -83,7 +83,7 @@ class Organizations extends Component {
             {currentOrganizations.map((each, i) => (
               <li key={i}>
                   <Link to={`/organizations/${each.id}`}>{each.name}</Link>
-                {this.currentUser.hasAccess('waiveAdmin') ? (
+                {this._user.hasAccess('waiveAdmin') ? (
                   <button
                     className="btn btn-link"
                     onClick={() => this.orgAction('remove', each.id)}>
@@ -95,7 +95,7 @@ class Organizations extends Component {
               </li>
             ))}
           </ul>
-          {this.currentUser.hasAccess('waiveAdmin') ? (
+          {this._user.hasAccess('waiveAdmin') ? (
             <div>
               <h4>Search for More</h4>
               <div className="row" style={{marginTop: '10px'}}>

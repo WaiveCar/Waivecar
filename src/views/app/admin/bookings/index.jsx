@@ -17,8 +17,8 @@ class TableIndex extends React.Component {
   constructor(...args) {
     super(...args);
     //self._debug = true;
-    this.currentUser = auth.user();
-    this.userOrganizations = this.currentUser.organizations.map(each => each.organizationId);
+    this._user = auth.user();
+    this.userOrganizations = this._user.organizations.map(each => each.organizationId);
     this.table = new Table(this, 'bookings', null, `/bookings?details=true${
       this.userOrganizations.length ? 
       `&organizationIds=[${this.userOrganizations}]`: ''
@@ -191,7 +191,7 @@ class TableIndex extends React.Component {
     return (
       <div id="bookings-list" className="container">
         <div className="box full">
-          <h3>Bookings {this.currentUser.hasAccess('waiveAdmin') ? <button className="pull-right btn btn-info btn-sm" onClick={ this.reportStatus }>Send to Slack</button> : ''}</h3>
+          <h3>Bookings {this._user.hasAccess('waiveAdmin') ? <button className="pull-right btn btn-info btn-sm" onClick={ this.reportStatus }>Send to Slack</button> : ''}</h3>
           <div className="box-content">
             <div className="row">
               <div className="col-md-3">
