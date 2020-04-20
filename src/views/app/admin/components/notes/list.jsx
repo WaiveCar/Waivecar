@@ -1,5 +1,5 @@
 import React from 'react';
-import { api, relay } from 'bento';
+import { api, relay, auth } from 'bento';
 import AddNote from './add';
 import Note from './note';
 
@@ -12,7 +12,7 @@ module.exports = class NotesList extends React.Component {
 
   constructor(...args) {
     super(...args);
-
+    this._user = auth.user();
     relay.subscribe(this, 'notes');
   }
 
@@ -68,6 +68,6 @@ module.exports = class NotesList extends React.Component {
    * @return {String}
    */
   _buildUrl(type, identifier) {
-    return `/${ type }s/${ identifier }/notes`;
+    return `/${ type }s/${ identifier }/notes${type !== 'cars' && this._user.organizations.length ? `?organizationIds=[${this._user.organizations.map(each => each.organizationId)}]` : ''}`;
   }
 }

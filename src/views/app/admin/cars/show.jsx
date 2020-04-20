@@ -50,6 +50,7 @@ class CarsShowView extends React.Component {
     };
     dom.setTitle('Car');
     this.service = new Service(this);
+    this._user = auth.user();
     //relay.subscribe(this, 'cars');
   }
 
@@ -286,107 +287,111 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
-          <div className="row">
+          {this._user.hasAccess('waiveAdmin') ?
             <div>
-              Danger Zone <a onClick={() => this.setState({hideDangerZone: !this.state.hideDangerZone})}>
-                ({this.state.hideDangerZone ? 'Show' : 'Hide'})
-              </a>
-              <div className={this.state.hideDangerZone ? 'hide' : ''}>
-                <div>
-                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isTotalLoss')}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button> { car.license } as a total loss.
-                </div>
-                <div>
-                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isOutOfService')}>{car.isOutOfService ? 'Unmark' : 'Mark'}</button> { car.license } out of service.
-                </div>
-              </div>
-            </div>
-          </div>
-          <form role="form" onSubmit={ this.submit }>
-            <div className="form-group row">
               <div className="row">
-                <div className="col-sm-3">
-                  <label>
-                    Body Grade (A - F):
-                    <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
-                  </label>
-                </div>
-                <div className="col-sm-3">
-                  <label>
-                    Front Tire Wear (A - F):
-                    <input type="text" name="frontTireWear" defaultValue={car.frontTireWear} />
-                  </label>
-                </div>
-                <div className="col-sm-3">
-                  <label>
-                    Rear Tire Wear (A - F):
-                    <input type="text" name="rearTireWear" defaultValue={car.rearTireWear} />
-                  </label>
-                </div>
-              </div>
-              <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
-              <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
-                    Regular Service
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
-                    CSULA
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
-                    Level
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
-                    Choice Hotels
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
-                    WaiveWork
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="clean inside" defaultChecked={ this.hasTag('clean inside') } />
-                    Clean Inside
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="clean outside" defaultChecked={ this.hasTag('clean outside') } />
-                    Clean Outside
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="has keys" defaultChecked={ this.hasTag('has keys') } />
-                    Has Keys
-                  </label>
-                </div>
-                <div className="radio-inline">
-                  <label>
-                    <input type="checkbox" name="tagList[]" value="maintenance updated" defaultChecked={ this.hasTag('maintenance updated') } />
-                    Maintenance Updated
-                  </label>
-                </div>
-                <div className="form-actions text-center">
-                  <div className="btn-group" role="group">
-                    <button type="submit" className="btn btn-sm">Update Tags / Grade</button>
+                <div>
+                  Danger Zone <a onClick={() => this.setState({hideDangerZone: !this.state.hideDangerZone})}>
+                    ({this.state.hideDangerZone ? 'Show' : 'Hide'})
+                  </a>
+                  <div className={this.state.hideDangerZone ? 'hide' : ''}>
+                    <div>
+                      <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isTotalLoss')}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button> { car.license } as a total loss.
+                    </div>
+                    <div>
+                      <button className="btn btn-danger btn-xs"  onClick={() => this.toggleDanger(car, 'isOutOfService')}>{car.isOutOfService ? 'Unmark' : 'Mark'}</button> { car.license } out of service.
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </form>
+              <form role="form" onSubmit={ this.submit }>
+                <div className="form-group row">
+                  <div className="row">
+                    <div className="col-sm-3">
+                      <label>
+                        Body Grade (A - F):
+                        <input type="text" name="bodyGrade" defaultValue={car.bodyGrade} />
+                      </label>
+                    </div>
+                    <div className="col-sm-3">
+                      <label>
+                        Front Tire Wear (A - F):
+                        <input type="text" name="frontTireWear" defaultValue={car.frontTireWear} />
+                      </label>
+                    </div>
+                    <div className="col-sm-3">
+                      <label>
+                        Rear Tire Wear (A - F):
+                        <input type="text" name="rearTireWear" defaultValue={car.rearTireWear} />
+                      </label>
+                    </div>
+                  </div>
+                  <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+                  <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
+                        Regular Service
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
+                        CSULA
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                        Level
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
+                        Choice Hotels
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
+                        WaiveWork
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="clean inside" defaultChecked={ this.hasTag('clean inside') } />
+                        Clean Inside
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="clean outside" defaultChecked={ this.hasTag('clean outside') } />
+                        Clean Outside
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="has keys" defaultChecked={ this.hasTag('has keys') } />
+                        Has Keys
+                      </label>
+                    </div>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="maintenance updated" defaultChecked={ this.hasTag('maintenance updated') } />
+                        Maintenance Updated
+                      </label>
+                    </div>
+                    <div className="form-actions text-center">
+                      <div className="btn-group" role="group">
+                        <button type="submit" className="btn btn-sm">Update Tags / Grade</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div> 
+          : ''}
         </div>
       </div>
     );
@@ -854,13 +859,13 @@ class CarsShowView extends React.Component {
         { this.renderCarActions(car) }
         <Organizations type={'car'} car={car}/>
         { this.renderCarMedia(car) }
-        { this.state.latestBooking && this.renderParkingLocation(car) }
+        { /* this.state.latestBooking && this.renderParkingLocation(car) */}
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
         <Airtable car={car} />
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
-        <Documentation car={car} />
+        <Documentation car={car} _user={this._user}/>
         { this.renderDamage(car) }
       </div>
     );
