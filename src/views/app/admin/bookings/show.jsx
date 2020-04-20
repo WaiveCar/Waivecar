@@ -35,7 +35,7 @@ module.exports = class BookingsView extends React.Component {
       car      : false,
       reservationTime: 10
     };
-
+    this._user = auth.user();
     this.handleInputChange = this.handleInputChange.bind(this);
 
     relay.subscribe(this, 'bookings');
@@ -468,7 +468,7 @@ module.exports = class BookingsView extends React.Component {
           </div>
         </div>
         {
-          this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath }/>
+          this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath } _user={this._user}/>
             : <div className="box-empty">
                 <h3>Details</h3>
                 A ride must be ended before details are shown.
@@ -476,17 +476,17 @@ module.exports = class BookingsView extends React.Component {
         }
         { this.renderBookingDamage(booking) }
         {
-          payments.length
+          this._user.hasAccess('waiveAdmin') && payments.length
             ? this.renderPayments(payments)
             : ''
         }
         {
-          booking.status === 'completed'
+          this._user.hasAccess('waiveAdmin') && booking.status === 'completed'
             ? <BookingFees bookingId={ booking.id } userId={ user.id } cartId={ booking.cartId } />
             : ''
         }
-        {
-          <BookingFlags booking={ booking } userId={ user.id }/>
+        { this._user.hasAccess('waiveAdmin') ? 
+          <BookingFlags booking={ booking } userId={ user.id }/> : ''
         }
         { this.renderNotes(booking) }
         { parkingDetails && (
