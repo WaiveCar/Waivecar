@@ -278,13 +278,13 @@ class CarsShowView extends React.Component {
             className = "bento-form-static"
             fields    = { formFields.car }
             default   = { car }
-            buttons   = {[
+            buttons   = {this._user.hasAccess('waiveAdmin') ? [
               {
                 value : 'Update Above Info',
                 type  : 'submit',
                 class : 'btn btn-primary btn-profile-submit'
               }
-            ]}
+            ] : []}
             submit = { this.service.update }
           />
           {this._user.hasAccess('waiveAdmin') ?
