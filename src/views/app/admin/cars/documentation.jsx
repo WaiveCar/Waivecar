@@ -3,7 +3,6 @@ import {api} from 'bento';
 import {snackbar} from 'bento-web';
 import moment from 'moment';
 
-let fileTypes = ['inspection', 'registration', 'video'];
 
 class Documentation extends Component {
   constructor(props) {
@@ -12,14 +11,16 @@ class Documentation extends Component {
       uploading: false,
       car: props.car,
     };
-    for (let type of fileTypes) {
+    this._user = this.props._user;
+    this.fileTypes = !this._user.organizations.length ? ['inspection', 'registration', 'video'] : ['registration'];
+    for (let type of this.fileTypes) {
       this.state[`${type}File`] = null;
     }
   }
 
   componentDidMount() {
     let {car} = this.props;
-    for (let type of fileTypes) {
+    for (let type of this.fileTypes) {
       if (car[`${type}FileId`]) {
         api.get(`/files/${car[`${type}FileId`]}`, (err, response) => {
           if (err) {
@@ -103,7 +104,7 @@ class Documentation extends Component {
           className="box-content"
           style={{display: 'flex', justifyContent: 'center'}}>
           <div style={{width: '80%'}}>
-            {fileTypes.map((type, i) => (
+            {this.fileTypes.map((type, i) => (
               <div
                 key={i}
                 className="row"
