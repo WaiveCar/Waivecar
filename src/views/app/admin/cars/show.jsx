@@ -129,7 +129,7 @@ class CarsShowView extends React.Component {
   findUser() {
     let user_id = this.state.user_find_id;
     if (parseInt(user_id) == user_id) {
-      api.get(`/users/${ user_id }$`, (err, user) => {
+      api.get(`/users/${ user_id }`, (err, user) => {
         if (err) {
           return snackbar.notify({
             type    : `danger`,
