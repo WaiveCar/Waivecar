@@ -349,17 +349,17 @@ module.exports = {
     return yield Booking.find(opts);
   },
 
-  *carsWithBookings(_user) {
+  *carsWithBookings(_user, query) {
     let start = new Date();
     let perf = [];
     let cars = [];
-
     function *join_method() {
       perf.push('table join');
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
       cars = yield Car.find({
+        ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {}),
         include: [
           {
             model: 'GroupCar',
@@ -383,7 +383,8 @@ module.exports = {
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
-      let allCars = yield Car.find();
+      let opts = query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {};
+      let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 
       let carsOfInterest = allCars.filter((row) => row.bookingId);
@@ -421,6 +422,9 @@ module.exports = {
       yield join_method();
     } else {
       yield separate_method();
+    }
+    if (!cars.length) {
+      return cars;
     }
     
     // the schema as of this writing is
@@ -500,6 +504,11 @@ module.exports = {
           {
             model : 'User',
             as    : 'user'
+          },
+          {
+            model: 'Organization',
+            as: 'organization',
+            required: false,
           }
         ]
       });

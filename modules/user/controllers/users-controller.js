@@ -14,7 +14,7 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   controller.show = function *(id) {
-    return yield service.get(id, this.auth.user);
+    return yield service.get(id, this.auth.user, true);
   };
 
   controller.intercom = function *() {
@@ -38,7 +38,7 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       //See #1132
       delete model.password;
       model.booking = yield this.auth.user.currentBooking();
-
+      model.organizations = yield this.auth.user.getOrganizations(); 
       return model;
     }
     throw error.parse({

@@ -512,9 +512,9 @@ module.exports = class BookingService extends Service {
     let today = moment(startDate || undefined).tz('America/Los_Angeles');
     function getNextTuesday(today) { 
       if (today <= dayINeed) {
-        return moment().tz('America/Los_Angeles').weekday(dayINeed);
+        return moment().weekday(dayINeed);
       } else {
-        return moment().tz('America/Los_Angeles').add(1, 'weeks').weekday(dayINeed);
+        return moment().add(1, 'weeks').weekday(dayINeed);
       }
     }
     let nextDate = getNextTuesday(today.weekday());
@@ -667,7 +667,15 @@ module.exports = class BookingService extends Service {
     if (!_user.hasAccess('admin') || query.type === 'mine') {
       dbQuery.where.user_id = _user.id;
     }
-
+    if (query.organizationIds) {
+      dbQuery.include = [
+        {
+          model: 'Car',
+          as: 'car',
+          where: {organizationId: {$in: JSON.parse(query.organizationIds)}}
+        }
+      ];
+    }
     bookings = yield Booking.find(dbQuery);
 
     // ### Prepare Bookings

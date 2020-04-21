@@ -1,0 +1,118 @@
+let error = Bento.Error;
+let Car = Bento.model('Car');
+let User = Bento.model('User');
+let OrganizationUser = Bento.model('OrganizationUser');
+let notify = require('../lib/notification-service');
+let apiConfig = Bento.config.api;
+
+Bento.Register.Model('Organization', 'sequelize', function register(
+  model,
+  Sequelize,
+) {
+  model.table = 'organizations';
+
+  model.schema = {
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
+    },
+  };
+
+  model.methods = {
+    link: function() {
+      return `<${apiConfig.uri}/organizations/${this.id}|${this.name}>`;
+    },
+    addCar: function*(payload) {
+      let {carId} = payload;
+      let car = yield Car.findOne({where: {id: carId}});
+      if (car.organizationId) {
+        throw error.parse(
+          {
+            code: 'CAR_ALREADY_ASSIGNED',
+            message:
+              'This car has already been assigned to another organization. Please remove the car from its old organization before adding it to a new one.',
+          },
+          500,
+        );
+      }
+      yield car.update({organizationId: this.id});
+      yield notify.notifyAdmins(
+        `:blue_car: ${car.link()} added to ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
+      return this;
+    },
+    removeCar: function*(payload) {
+      let {carId} = payload;
+      let car = yield Car.findOne({where: {id: carId}});
+      yield car.update({organizationId: null});
+      yield notify.notifyAdmins(
+        `:ski: ${car.link()} removed from ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
+      return this;
+    },
+    addUser: function*(payload) {
+      let {userId} = payload;
+      let user = yield User.findById(userId);
+      let prevUser = yield OrganizationUser.findOne({
+        where: {userId, organizationId: this.id},
+      });
+      if (prevUser) {
+        throw error.parse(
+          {
+            code: 'USER_ALREADY_ADDED',
+            message: 'This user has already been added to this organization.',
+          },
+          500,
+        );
+      }
+      let orgUser = new OrganizationUser({
+        organizationId: this.id,
+        userId,
+      });
+      yield orgUser.save();
+      yield notify.notifyAdmins(
+        `:stadium: ${user.link()} added to ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
+      return this;
+    },
+    removeUser: function*(payload) {
+      let {userId} = payload;
+      let user = yield User.findById(userId);
+      let orgUser = yield OrganizationUser.findOne({
+        where: {
+          organizationId: this.id,
+          userId,
+        },
+      });
+      yield orgUser.delete();
+      yield notify.notifyAdmins(
+        `:metro: ${user.link()} removed from ${this.link()}`,
+        ['slack'],
+        {channel: '#organizations'},
+      );
+      return orgUser;
+    },
+  };
+
+  model.relations = [
+    'OrganizationUser',
+    'Car',
+    function(OrganizationUser, Car) {
+      this.hasMany(OrganizationUser, {as: 'organizationUsers'});
+      this.hasMany(Car, {as: 'cars'});
+    },
+  ];
+  return model;
+});

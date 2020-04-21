@@ -33,6 +33,12 @@ Bento.Register.Model('CarNote', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    organizationId: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+
     content : {
       type      : Sequelize.STRING(250),
       allowNull : false

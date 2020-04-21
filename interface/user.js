@@ -146,9 +146,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
   model.relations = [
     'GroupUser',
     'InsuranceQuote',
-    function(GroupUser, InsuranceQuote) {
+    'OrganizationUser',
+    function(GroupUser, InsuranceQuote, OrganizationUser) {
       this.hasMany(GroupUser, { as: 'tagList', foreignKey: 'userId' });
       this.hasMany(InsuranceQuote, { as : 'insuranceQuote', foreignKey : 'userId'});
+      this.hasMany(OrganizationUser, { as : 'organizationUsers', foreignKey : 'userId'});
     }
   ];
 
@@ -409,7 +411,22 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       yield this.update({
         status : 'suspended'
       });
-    }
+    },
+
+    *getOrganizations() {
+      let OrganizationUser = Bento.model('OrganizationUser');
+      return yield OrganizationUser.find({
+        where: {
+          userId: this.id,
+        },
+        include: [
+          {
+            model: 'Organization',
+            as: 'organization',
+          },
+        ],
+      });
+    },
 
   };
 

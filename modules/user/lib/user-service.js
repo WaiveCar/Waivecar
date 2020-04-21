@@ -23,6 +23,7 @@ let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
+let OrganizationUser = Bento.model('OrganizationUser');
 let Booking   = Bento.model('Booking');
 let ShopOrder = Bento.model('Shop/Order');
 let sequelize = Bento.provider('sequelize');
@@ -170,6 +171,7 @@ module.exports = {
   // word in programming. I'm going to preface the "smart" stuff with an
   // asterisk and give an explanation below:
   *find(query, offset, limit, opts) {
+    let include = opts && opts.include;
     if(query) {
       if(!_.isArray(query)) {
         query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
@@ -231,6 +233,9 @@ module.exports = {
       } else {
         opts.order = [ ['updated_at', 'DESC'] ];
       } 
+      if (include) {
+        opts.include = include;
+      }
       return yield User.find(opts);
     } 
     return [];
@@ -251,10 +256,18 @@ module.exports = {
 
     let qs = config.filter(queryParser, query);
     // qs.where.status = { $not: 'waitlist' };
-
+    if (query.organizationIds) {
+      qs.include = [
+        {
+          model: 'OrganizationUser',
+          as: 'organizationUsers',
+          where: {organizationId: {$in: JSON.parse(query.organizationIds)}},
+        },
+      ]
+    }
     let users = [];
     if(query.search) {
-      users = yield this.find(query.search, qs.offset, qs.limit);
+      users = yield this.find(query.search, qs.offset, qs.limit, qs.include && {include: qs.include});
     } else {
       qs.order = [['updated_at', 'DESC']];
       users = yield User.find(qs);
@@ -318,8 +331,13 @@ module.exports = {
    * @param  {Object} _user
    * @return {Object}
    */
-  *get(id, _user) {
-    let user = yield User.findById(id);
+  *get(id, _user, fromShow) {
+    let user = (yield User.findById(id));
+    let orgs = yield user.getOrganizations();
+    if (fromShow) {
+      user = user.toJSON();
+    }
+    user.organizations = orgs;
     if (!user) {
       throw error.userNotFound();
     }
@@ -337,7 +355,7 @@ module.exports = {
         {
           model: 'GroupRole',
           as: 'group_role'
-        }
+        },
       ]
     });
 
@@ -356,7 +374,6 @@ module.exports = {
       title : connector.groupRole.name,
       name  : role.name
     };
-
     return user;
   },
 

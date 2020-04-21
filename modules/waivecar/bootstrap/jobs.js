@@ -18,7 +18,8 @@ module.exports = function *() {
   yield require('./schedules/have-cars-moved');
   yield require('./schedules/bookings-in-last-day');
   yield require('./schedules/make-cars-unavailable');
-  yield require('./schedules/check-user-levels');
+  // The one below is not currently relevant
+  //yield require('./schedules/check-user-levels');
   yield require('./schedules/waivework-billing');
   yield require('./schedules/waivework-immobilize');
   yield require('./schedules/waivework-reminder');
