@@ -47,6 +47,7 @@ module.exports = class CarsIndex extends React.Component {
         new Set(this.columns.map(col => col.key)),
       ),
       selectedCars: new Set(),
+      masterChecked: false,
     };
   }
 
@@ -325,21 +326,21 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   toggleSelectedCar(car) {
-    let {selectedCars} = this.state;
+    let {selectedCars, masterChecked} = this.state;
     if (selectedCars.has(car)) {
       selectedCars.delete(car);
     } else {
       selectedCars.add(car);
     }
-    this.setState({selectedCars});
+    this.setState({selectedCars, masterChecked: false});
   } 
 
-  toggleAllCars(displayedCars) {
+  toggleAllCars(e, displayedCars) {
     let {selectedCars} = this.state;
-    if (selectedCars.size) {
-      this.setState({selectedCars: new Set()});
+    if (!e.target.checked) {
+      this.setState({selectedCars: new Set(), masterChecked: false});
     } else {
-      this.setState({selectedCars: new Set(displayedCars)});
+      this.setState({selectedCars: new Set(displayedCars), masterChecked: true});
     }
   }
 
@@ -512,7 +513,7 @@ module.exports = class CarsIndex extends React.Component {
     if (!this.state.shownCars.length) {
       return false;
     }
-    let {selectedCols} = this.state;
+    let {selectedCols, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index" >
@@ -538,7 +539,7 @@ module.exports = class CarsIndex extends React.Component {
                             <thead>
                             <tr>
                               <th>
-                                <input type="checkbox" onChange={() => this.toggleAllCars(displayedCars)}/>
+                                <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
                               </th>
                               {
                                 this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
