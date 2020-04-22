@@ -20,19 +20,19 @@ module.exports = class CarsIndex extends React.Component {
 
     this.columns = [
       {key : "license", title:"Car Name", type : "text", comparator : this.licenseComparator.bind(this), noToggle: true},
+      {key: 'vin', title: 'VIN', type: 'text', defaultHidden: true},
       {key : "charge", title:"Charge", type : "text"},
-      {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
-
-      {key : "isIgnitionOn", title:"Ignition", type : "bool"},
-      //{key : "isKeySecure", title:"Key Secure", type : "bool"},
       {key : "isLocked", title:"Locked", type : "bool"},
+      {key : "isIgnitionOn", title:"Ignition", type : "bool"},
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
-      {key : "isCharging", title:"Charging", type : "bool"},
+      {key : "isCharging", title:"Charging", type : "bool", defaultHidden: true},
       {key : "statusColumn", title:"Status", type : "status", noToggle: true},
-      {key : "lastActionTime", title:"Last Action", type : "duration"},
-      // {key : "action", title:"Last Action", type : "text"},
-      // {key : "actionAt", title:"Action At", type : "datetime"}
-      //{key : "inService", title:"In Repair", type : "bool"}
+      {key: 'Open Ticket Count', title: 'Open Tickets', type: 'airtable', defaultHidden: true},
+      {key: 'plateNumber', title: 'Plate Number', type: 'text', defaultHidden: true},
+      {key: 'plateState', title: 'Plate State', type: 'text', defaultHidden: true},
+      {key: 'manufacturer', title: 'Make', type: 'text', defaultHidden: true},
+      {key: 'model', title: 'Model', type: 'text', defaultHidden: true},
+      {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
     ];
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
@@ -44,7 +44,7 @@ module.exports = class CarsIndex extends React.Component {
       sortBy: { key: "license", orderAsc: true },
       selectedCols: new Set(storedCols ? 
         new Set(JSON.parse(storedCols)) : 
-        new Set(this.columns.map(col => col.key)),
+        new Set(this.columns.map(col => !col.defaultHidden && col.key)),
       ),
       selectedCars: new Set(),
       masterChecked: false,
@@ -201,8 +201,16 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   renderCell(car, column) {
+    console.log(car);
     var value = car[column.key];
-
+    if (column.type === 'airtable') {
+      let airtableData = JSON.parse(car.airtableData);
+      return airtableData ? (
+        <td className="table-col-xs" key={column.key}>
+          {airtableData.fields[column.key]}
+        </td>
+      ) : <td className="table-col-xs">No Data</td>;
+    }
     if (column.type == "bool") {
       return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value)}</td>
     }
