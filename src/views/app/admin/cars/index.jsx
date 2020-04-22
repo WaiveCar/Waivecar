@@ -318,10 +318,11 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   renderCarRow(car) {
+    let {selectedCols} = this.state;
     return (
       <tr className="standard-row" key={car.id}>
         {
-          this.columns.map((column) => this.renderCell(car, column))
+          Array.from(selectedCols).map((column) => this.renderCell(car, column))
         }
         <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
       </tr>
@@ -482,7 +483,6 @@ module.exports = class CarsIndex extends React.Component {
     return (
       <div className="cars-index" >
         <section className="container" >
-          {this.selectColumns()}
           <div className="row">
             <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
@@ -495,7 +495,8 @@ module.exports = class CarsIndex extends React.Component {
                     </div>
 
                     { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
-
+                    <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
+                    {this.selectColumns()}
                     <div className="griddle-container">
                       <div className="griddle-body">
                         <div>
