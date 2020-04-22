@@ -19,7 +19,7 @@ module.exports = class CarsIndex extends React.Component {
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
     this.columns = [
-      {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
+      {key : "license", title:"Car Name", type : "text", comparator : this.licenseComparator.bind(this), noToggle: true},
       {key : "charge", title:"Charge", type : "text"},
       {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
 
@@ -28,7 +28,7 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isLocked", title:"Locked", type : "bool"},
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
-      {key : "statusColumn", title:"Status", type : "status"},
+      {key : "statusColumn", title:"Status", type : "status", noToggle: true},
       {key : "lastActionTime", title:"Last Action", type : "duration"},
       // {key : "action", title:"Last Action", type : "text"},
       // {key : "actionAt", title:"Action At", type : "datetime"}
@@ -492,7 +492,7 @@ module.exports = class CarsIndex extends React.Component {
     let {selectedCols} = this.state;
     return (
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        {this.columns.map((col, i) => (
+        {this.columns.filter(col => !col.noToggle).map((col, i) => (
           <div key={i}>
             <input
               onChange={() => this.toggleColumn(col.key)}
