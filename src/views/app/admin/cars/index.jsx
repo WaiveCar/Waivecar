@@ -15,16 +15,8 @@ module.exports = class CarsIndex extends React.Component {
 
   constructor(...options) {
     super(...options);
-    this.userOrganizations = auth.user().organizations.map(each => each.organizationId);
-    this.state = {
-      shownCars : [],
-      showHelp : false,
-      allCars : [],
-      filter : {},
-      shown : this.getShown(),
-      sortBy: { key: "license", orderAsc: true }
-    };
-    this.user = auth.user();
+    this._user = auth.user();
+    this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
     this.columns = [
       {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
@@ -42,6 +34,15 @@ module.exports = class CarsIndex extends React.Component {
       // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
     ];
+    this.state = {
+      shownCars : [],
+      showHelp : false,
+      allCars : [],
+      filter : {},
+      shown : this.getShown(),
+      sortBy: { key: "license", orderAsc: true },
+      selectedCols: new Set(this.columns),
+    };
   }
 
   update(cb) {
@@ -441,6 +442,38 @@ module.exports = class CarsIndex extends React.Component {
     )
   }
 
+  toggleColumn(col) {
+    console.log(col);
+    let {selectedCols} = this.state;
+    if (selectedCols.has(col)) {
+      selectedCols.delete(col);
+    } else {
+      selectedCols.add(col);
+    }
+    this.setState({selectedCols}, () => console.log(this.state.selectedCols));
+  }
+
+  selectColumns() {
+    let {selectedCols} = this.state;
+    return (
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        {this.columns.map((col, i) => (
+          <div key={i}>
+            <input
+              onChange={() => this.toggleColumn(col)}
+              type={'checkbox'}
+              name={`prop-${i}`}
+              id={`prop-${i}`}
+              style={{verticalAlign: 'middle', marginRight: '5px'}}
+              checked={selectedCols.has(col)}
+            />
+            <label htmlFor={`prop-${i}`}>{col.title}</label>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   render() {
     if (!this.state.shownCars.length) {
       return false;
@@ -450,6 +483,7 @@ module.exports = class CarsIndex extends React.Component {
     return (
       <div className="cars-index" >
         <section className="container" >
+          {this.selectColumns()}
           <div className="row">
             <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
@@ -461,7 +495,7 @@ module.exports = class CarsIndex extends React.Component {
                       </div>
                     </div>
 
-                    { this.user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+                    { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
 
                     <div className="griddle-container">
                       <div className="griddle-body">

@@ -112,7 +112,7 @@ class AddUser extends Component {
             {this._user.organizations.map((org, i) => (
               <div key={i}>
                 <input
-                  onInput={() => this.toggleOrg(org.organization)}
+                  onChange={() => this.toggleOrg(org.organization)}
                   type={'checkbox'}
                   name={`org-${i}`}
                   id={`org-${i}`}
