@@ -18,22 +18,22 @@ module.exports = class CarsIndex extends React.Component {
     this._user = auth.user();
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
-    this.columns = {
-      license: {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
-      charge: {key : "charge", title:"Charge", type : "text"},
-      lastTimeAtHq: {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
+    this.columns = [
+      {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
+      {key : "charge", title:"Charge", type : "text"},
+      {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
 
-      isIgnitionOn: {key : "isIgnitionOn", title:"Ignition", type : "bool"},
+      {key : "isIgnitionOn", title:"Ignition", type : "bool"},
       //{key : "isKeySecure", title:"Key Secure", type : "bool"},
-      isLocked: {key : "isLocked", title:"Locked", type : "bool"},
-      isImmobilized: {key : "isImmobilized", title:"Immobilized", type : "bool"},
-      isCharging: {key : "isCharging", title:"Charging", type : "bool"},
-      statusColumn: {key : "statusColumn", title:"Status", type : "status"},
-      lastActionTime: {key : "lastActionTime", title:"Last Action", type : "duration"},
+      {key : "isLocked", title:"Locked", type : "bool"},
+      {key : "isImmobilized", title:"Immobilized", type : "bool"},
+      {key : "isCharging", title:"Charging", type : "bool"},
+      {key : "statusColumn", title:"Status", type : "status"},
+      {key : "lastActionTime", title:"Last Action", type : "duration"},
       // {key : "action", title:"Last Action", type : "text"},
       // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
-    };
+    ];
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
       shownCars : [],
@@ -44,7 +44,7 @@ module.exports = class CarsIndex extends React.Component {
       sortBy: { key: "license", orderAsc: true },
       selectedCols: new Set(storedCols ? 
         new Set(JSON.parse(storedCols)) : 
-        new Set(Object.keys(this.columns)),
+        new Set(this.columns.map(col => col.key)),
       ),
       selectedCars: new Set(),
     };
@@ -285,7 +285,7 @@ module.exports = class CarsIndex extends React.Component {
 
     let comparator = this.defaultComparator;
 
-    let sortingCol = Object.values(this.columns).filter((col) => col.key == sortBy.key);
+    let sortingCol = this.columns.filter((col) => col.key == sortBy.key);
     if (sortingCol.length && sortingCol[0].comparator) {
       comparator = sortingCol[0].comparator;
     }
@@ -355,7 +355,7 @@ module.exports = class CarsIndex extends React.Component {
           />
         </td>
         {
-          Object.values(this.columns).filter(col => selectedCols.has(col.key)).map((col) => this.renderCell(car, this.columns[col.key]))
+          this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderCell(car, col))
         }
         <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i>expand</a></div></td>
       </tr>
@@ -491,7 +491,7 @@ module.exports = class CarsIndex extends React.Component {
     let {selectedCols} = this.state;
     return (
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        {Object.values(this.columns).map((col, i) => (
+        {this.columns.map((col, i) => (
           <div key={i}>
             <input
               onChange={() => this.toggleColumn(col.key)}
@@ -541,7 +541,7 @@ module.exports = class CarsIndex extends React.Component {
                                 <input type="checkbox" onChange={() => this.toggleAllCars(displayedCars)}/>
                               </th>
                               {
-                                Object.values(this.columns).filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
+                                this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
                               }
                               <th data-title="actions" ></th>
                             </tr>
