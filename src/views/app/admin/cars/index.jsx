@@ -42,6 +42,7 @@ module.exports = class CarsIndex extends React.Component {
       shown : this.getShown(),
       sortBy: { key: "license", orderAsc: true },
       selectedCols: new Set(this.columns),
+      selectedCars: new Set(),
     };
   }
 
@@ -317,14 +318,40 @@ module.exports = class CarsIndex extends React.Component {
     )
   }
 
+  toggleSelectedCar(car) {
+    let {selectedCars} = this.state;
+    if (selectedCars.has(car)) {
+      selectedCars.delete(car);
+    } else {
+      selectedCars.add(car);
+    }
+    this.setState({selectedCars}, () => console.log(this.state.selectedCars));
+  } 
+
+  toggleAllCars(displayedCars) {
+    let {selectedCars} = this.state;
+    if (selectedCars.size) {
+      this.setState({selectedCars: new Set()});
+    } else {
+      this.setState({selectedCars: new Set(displayedCars)});
+    }
+  }
+
   renderCarRow(car) {
-    let {selectedCols} = this.state;
+    let {selectedCols, selectedCars} = this.state;
     return (
       <tr className="standard-row" key={car.id}>
+        <td>
+          <input 
+            type="checkbox" 
+            onChange={() => this.toggleSelectedCar(car)}
+            checked={selectedCars.has(car)}
+          />
+        </td>
         {
           Array.from(selectedCols).map((column) => this.renderCell(car, column))
         }
-        <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
+        <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i>expand</a></div></td>
       </tr>
     )
   }
@@ -503,10 +530,13 @@ module.exports = class CarsIndex extends React.Component {
                           <table>
                             <thead>
                             <tr>
+                              <th>
+                                <input type="checkbox" onChange={() => this.toggleAllCars(displayedCars)}/>
+                              </th>
                               {
                                 Array.from(selectedCols).map((col) => this.renderColumnHeader(col))
                               }
-                              <th data-title="actions" ><span>Actions</span></th>
+                              <th data-title="actions" ></th>
                             </tr>
                             </thead>
                             <tbody>
