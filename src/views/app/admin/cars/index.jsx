@@ -69,7 +69,7 @@ module.exports = class CarsIndex extends React.Component {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
         shownCars: this.runShown({cars: cars})
-      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')), cb && cb(cars));
+      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
   }
 
