@@ -36,7 +36,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
           {
             code: 'CAR_ALREADY_ASSIGNED',
             message:
-              'This car has already been assigned to another organization. Please remove the car from its old organization before adding it to a new one.',
+              `${car.license} has already been assigned to an organization. Please remove the car from its old organization before adding it to a new one.`,
           },
           500,
         );
@@ -70,7 +70,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'USER_ALREADY_ADDED',
-            message: 'This user has already been added to this organization.',
+            message: `${user.name()} has already been added to this organization.`,
           },
           500,
         );
@@ -109,24 +109,28 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       for (let car of carsList) {
         yield this.addCar({carId: car.id});
       }
+      return this;
     },
     removeCars: function*(payload) {
       let {carsList} = payload;
       for (let car of carsList) {
         yield this.removeCar({carId: car.id});
       }
+      return this;
     },
     addUsers: function*(payload) {
       let {usersList} = payload;
       for (let user of usersList) {
         yield this.addUser({userId: user.id});
       }
+      return this;
     },
     removeUsers: function*(payload) {
       let {usersList} = payload;
       for (let user of usersList) {
         yield this.removeUser({userId: user.id});
       }
+      return this;
     },
   };
 
