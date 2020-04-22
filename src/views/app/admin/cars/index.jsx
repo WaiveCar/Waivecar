@@ -79,6 +79,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   onFilter(event) {
+    this.toggleAllCars({target: {checked: false}});
     let filter = event.target.value.toLowerCase();
     let opts = { raw: filter };
     let isFlagged = false;
@@ -143,6 +144,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   updateShown(e) {
+    this.toggleAllCars({target: {checked: false}});
     let shown = this.state.shown;
     if(e.target.checked) {
       shown.push(e.target.value);
@@ -589,11 +591,18 @@ module.exports = class CarsIndex extends React.Component {
               <div className="map-dynamic">
                 <GMap
                     markerIcon = { '/images/map/active-waivecar.svg' }
-                    markers    = { this.state.shownCars }
+                    markers    = { displayedCars }
                   />
               </div>
             </div>
           </div>
+          {this._user.hasAccess('waiveAdmin') ? (
+            <div className="row">
+              <div className="col-xs-12" >
+
+              </div>
+            </div>
+          ) : ''}
         </section>
       </div>
     );
