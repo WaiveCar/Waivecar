@@ -105,26 +105,26 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       return orgUser;
     },
     addCars: function*(payload) {
-      let {carList} = payload;
-      for (let car of carList) {
+      let {carsList} = payload;
+      for (let car of carsList) {
         yield this.addCar({carId: car.id});
       }
     },
     removeCars: function*(payload) {
-      let {carList} = payload;
-      for (let car of carList) {
+      let {carsList} = payload;
+      for (let car of carsList) {
         yield this.removeCar({carId: car.id});
       }
     },
     addUsers: function*(payload) {
-      let {userList} = payload;
-      for (let user of userList) {
+      let {usersList} = payload;
+      for (let user of usersList) {
         yield this.addUser({userId: user.id});
       }
     },
     removeUsers: function*(payload) {
-      let {userList} = payload;
-      for (let user of userList) {
+      let {usersList} = payload;
+      for (let user of usersList) {
         yield this.removeUser({userId: user.id});
       }
     },
