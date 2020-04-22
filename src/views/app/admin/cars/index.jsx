@@ -201,7 +201,6 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   renderCell(car, column) {
-    console.log(car);
     var value = car[column.key];
     if (column.type === 'airtable') {
       let airtableData = JSON.parse(car.airtableData);
@@ -496,10 +495,10 @@ module.exports = class CarsIndex extends React.Component {
     localStorage.setItem('selectedCols', JSON.stringify(selectedCols));
   }
 
-  selectColumns() {
+  selectColumns(mobile) {
     let {selectedCols} = this.state;
     return (
-      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+      <div style={!mobile ? {display: 'flex', justifyContent: 'space-between'} : {}}>
         {this.columns.filter(col => !col.noToggle).map((col, i) => (
           <div key={i}>
             <input
@@ -571,6 +570,8 @@ module.exports = class CarsIndex extends React.Component {
                 </div>
                 <div className="hidden-lg-up visible-md-down">
                   { this.renderSearch() }
+                    <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
+                    {this.selectColumns(true)}
                   <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a> (Showing { displayedCars.length })</small>
                   <div className="list-group">
                     {
@@ -579,7 +580,7 @@ module.exports = class CarsIndex extends React.Component {
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
-                  { this.renderShownFilters() }
+                    { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
                 </div>
               </div>
             </div>
