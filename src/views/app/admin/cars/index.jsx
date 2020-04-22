@@ -443,14 +443,13 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   toggleColumn(col) {
-    console.log(col);
     let {selectedCols} = this.state;
     if (selectedCols.has(col)) {
       selectedCols.delete(col);
     } else {
       selectedCols.add(col);
     }
-    this.setState({selectedCols}, () => console.log(this.state.selectedCols));
+    this.setState({selectedCols});
   }
 
   selectColumns() {
@@ -478,7 +477,7 @@ module.exports = class CarsIndex extends React.Component {
     if (!this.state.shownCars.length) {
       return false;
     }
-
+    let {selectedCols} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index" >
@@ -504,7 +503,7 @@ module.exports = class CarsIndex extends React.Component {
                             <thead>
                             <tr>
                               {
-                                this.columns.map((column) => this.renderColumnHeader(column))
+                                Array.from(selectedCols).map((col) => this.renderColumnHeader(col))
                               }
                               <th data-title="actions" ><span>Actions</span></th>
                             </tr>
