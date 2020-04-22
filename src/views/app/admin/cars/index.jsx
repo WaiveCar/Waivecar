@@ -229,6 +229,8 @@ module.exports = class CarsIndex extends React.Component {
       if (car.user) {
         let name = `${car.user.firstName } ${ car.user.lastName }`;
         value = <a title={name} href={ '/users/' + car.user.id }>{name}</a>
+      } else {
+        value = car.isAvailable ? 'Available' : 'Unavailable';
       }
       return <td key={column.key}>{value}</td>
     }
@@ -297,8 +299,7 @@ module.exports = class CarsIndex extends React.Component {
     return comparisonResult;
   }
 
-  renderColumnHeader(columnKey) {
-    let column = this.columns[columnKey];
+  renderColumnHeader(column) {
     var className = "";
 
     if (column.type == "bool") {
@@ -354,7 +355,7 @@ module.exports = class CarsIndex extends React.Component {
           />
         </td>
         {
-          Array.from(selectedCols).map((columnKey) => this.renderCell(car, this.columns[columnKey]))
+          Object.values(this.columns).filter(col => selectedCols.has(col.key)).map((col) => this.renderCell(car, this.columns[col.key]))
         }
         <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i>expand</a></div></td>
       </tr>
@@ -540,7 +541,7 @@ module.exports = class CarsIndex extends React.Component {
                                 <input type="checkbox" onChange={() => this.toggleAllCars(displayedCars)}/>
                               </th>
                               {
-                                Array.from(selectedCols).map((col) => this.renderColumnHeader(col))
+                                Object.values(this.columns).filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
                               }
                               <th data-title="actions" ></th>
                             </tr>
