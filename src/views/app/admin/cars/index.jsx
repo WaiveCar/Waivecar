@@ -18,22 +18,23 @@ module.exports = class CarsIndex extends React.Component {
     this._user = auth.user();
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
-    this.columns = [
-      {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
-      {key : "charge", title:"Charge", type : "text"},
-      {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
+    this.columns = {
+      license: {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
+      charge: {key : "charge", title:"Charge", type : "text"},
+      lastTimeAtHq: {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
 
-      {key : "isIgnitionOn", title:"Ignition", type : "bool"},
+      isIgnitionOn: {key : "isIgnitionOn", title:"Ignition", type : "bool"},
       //{key : "isKeySecure", title:"Key Secure", type : "bool"},
-      {key : "isLocked", title:"Locked", type : "bool"},
-      {key : "isImmobilized", title:"Immobilized", type : "bool"},
-      {key : "isCharging", title:"Charging", type : "bool"},
-      {key : "statuscolumn", title:"Status", type : "status"},
-      {key : "lastActionTime", title:"Last Action", type : "duration"},
+      isLocked: {key : "isLocked", title:"Locked", type : "bool"},
+      isImmobilized: {key : "isImmobilized", title:"Immobilized", type : "bool"},
+      isCharging: {key : "isCharging", title:"Charging", type : "bool"},
+      statusColumn: {key : "statusColumn", title:"Status", type : "status"},
+      lastActionTime: {key : "lastActionTime", title:"Last Action", type : "duration"},
       // {key : "action", title:"Last Action", type : "text"},
       // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
-    ];
+    };
+    let storedCols = localStorage.getItem('selectedCols');
     this.state = {
       shownCars : [],
       showHelp : false,
@@ -41,7 +42,10 @@ module.exports = class CarsIndex extends React.Component {
       filter : {},
       shown : this.getShown(),
       sortBy: { key: "license", orderAsc: true },
-      selectedCols: new Set(this.columns),
+      selectedCols: new Set(storedCols ? 
+        new Set(JSON.parse(storedCols)) : 
+        new Set(Object.keys(this.columns)),
+      ),
       selectedCars: new Set(),
     };
   }
@@ -279,7 +283,7 @@ module.exports = class CarsIndex extends React.Component {
 
     let comparator = this.defaultComparator;
 
-    let sortingCol = this.columns.filter((col) => col.key == sortBy.key);
+    let sortingCol = Object.values(this.columns).filter((col) => col.key == sortBy.key);
     if (sortingCol.length && sortingCol[0].comparator) {
       comparator = sortingCol[0].comparator;
     }
@@ -293,7 +297,8 @@ module.exports = class CarsIndex extends React.Component {
     return comparisonResult;
   }
 
-  renderColumnHeader( column) {
+  renderColumnHeader(columnKey) {
+    let column = this.columns[columnKey];
     var className = "";
 
     if (column.type == "bool") {
@@ -325,7 +330,7 @@ module.exports = class CarsIndex extends React.Component {
     } else {
       selectedCars.add(car);
     }
-    this.setState({selectedCars}, () => console.log(this.state.selectedCars));
+    this.setState({selectedCars});
   } 
 
   toggleAllCars(displayedCars) {
@@ -349,7 +354,7 @@ module.exports = class CarsIndex extends React.Component {
           />
         </td>
         {
-          Array.from(selectedCols).map((column) => this.renderCell(car, column))
+          Array.from(selectedCols).map((columnKey) => this.renderCell(car, this.columns[columnKey]))
         }
         <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i>expand</a></div></td>
       </tr>
@@ -392,7 +397,7 @@ module.exports = class CarsIndex extends React.Component {
         }
         name = name.join(' ');
       } else {
-        let word = item.statuscolumn;
+        let word = item.statusColumn;
         let home = '';
         let repair = '';
         let lock = '';
@@ -470,29 +475,30 @@ module.exports = class CarsIndex extends React.Component {
     )
   }
 
-  toggleColumn(col) {
+  toggleColumn(key) {
     let {selectedCols} = this.state;
-    if (selectedCols.has(col)) {
-      selectedCols.delete(col);
+    if (selectedCols.has(key)) {
+      selectedCols.delete(key);
     } else {
-      selectedCols.add(col);
+      selectedCols.add(key);
     }
     this.setState({selectedCols});
+    localStorage.setItem('selectedCols', JSON.stringify(selectedCols));
   }
 
   selectColumns() {
     let {selectedCols} = this.state;
     return (
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        {this.columns.map((col, i) => (
+        {Object.values(this.columns).map((col, i) => (
           <div key={i}>
             <input
-              onChange={() => this.toggleColumn(col)}
+              onChange={() => this.toggleColumn(col.key)}
               type={'checkbox'}
               name={`prop-${i}`}
               id={`prop-${i}`}
               style={{verticalAlign: 'middle', marginRight: '5px'}}
-              checked={selectedCols.has(col)}
+              checked={selectedCols.has(col.key)}
             />
             <label htmlFor={`prop-${i}`}>{col.title}</label>
           </div>
