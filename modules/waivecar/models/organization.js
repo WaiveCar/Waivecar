@@ -117,7 +117,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'CAR_ALREADY_ASSIGNED',
-            message: `${errs.join(', ')} has already been assigned to an organization. Please remove the cars from their old organizations before adding them to a new one.`,
+            message: `${errs.join(', ')} have already been assigned to an organization. Please remove the cars from their old organizations before adding them to a new one.`,
           },
           500,
         );

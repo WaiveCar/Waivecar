@@ -4,6 +4,7 @@ let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
 let User = Bento.model('User');
 let error = Bento.Error;
+let log = Bento.Log;
 
 module.exports = {
   *index(query) {
@@ -35,6 +36,7 @@ module.exports = {
       );
       return org;
     } catch (e) {
+      log.warn(e);
       throw error.parse(
         {
           code: 'ERROR_CREATING_ORGANIZATION',
@@ -67,6 +69,7 @@ module.exports = {
       let org = yield Organization.findById(organizationId);
       return yield org[action](payload);
     } catch (e) {
+      log.warn(e);
       throw error.parse(
         {
           code: 'ERROR_TAKING_ORGANIZATION_ACTION',
@@ -109,6 +112,7 @@ module.exports = {
       }
       return user;
     } catch (e) {
+      log.warn(e);
       throw error.parse(
         {
           code: 'ERROR_ADDING_USER',
