@@ -72,7 +72,7 @@ class Organizations extends Component {
     );
   }
 
-  orgAction(action, orgId) {
+  orgAction(action, orgId, cb) {
     let {type} = this.props;
     let assignee = this.props[type];
     let {currentOrganizations} = this.state;
@@ -97,13 +97,22 @@ class Organizations extends Component {
         action === 'add'
           ? currentOrganizations.push(res)
           : currentOrganizations.splice(idx, 1);
-        this.setState({currentOrganizations});
+        this.setState({currentOrganizations}, () => cb && cb());
       },
     );
   }
 
+  batchRemove(orgList) {
+    let {type} = this.props;
+    if (!orgList.length) {
+      return;
+    }
+    let next = orgList.pop();
+    this.orgAction('remove', next, () => this.batchRemove(orgList));
+  }
+
   render() {
-    let {currentOrganizations, searchResults, orgSearchWord} = this.state;
+    let {currentOrganizations, searchResults, orgSearchWord, type} = this.state;
     return (
       <div className="box">
         <h3>Organizations</h3>
@@ -124,6 +133,13 @@ class Organizations extends Component {
               </li>
             ))}
           </ul>
+          <button
+            className="btn btn-link"
+            onClick={() =>
+              this.batchRemove(currentOrganizations.map(each => each.id))
+            }>
+            Remove All
+          </button>
           {this._user.hasAccess('waiveAdmin') ? (
             <div>
               <h4>Search for More</h4>
