@@ -31,6 +31,7 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'manufacturer', title: 'Make', type: 'text', defaultHidden: true},
       {key: 'model', title: 'Model', type: 'text', defaultHidden: true},
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
+      {key: 'organization', title: 'Organization', type: 'org'},
     ];
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
@@ -67,7 +68,7 @@ module.exports = class CarsIndex extends React.Component {
       this.setState( {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
-        shownCars: this.runShown({cars: cars})
+        shownCars: this.runShown({cars: cars}),
       }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
   }
@@ -210,6 +211,15 @@ module.exports = class CarsIndex extends React.Component {
         </td>
       ) : <td className="table-col-xs">No Data</td>;
     }
+    if (column.type === 'org') {
+      let org = car.organization;
+      value = org ? org.name : 'none';
+      color = org ? 'green' : 'red';
+      return (
+        <td className="table-col-xs" style={{color}}key={column.key}>
+          {value}
+        </td>)
+    }
     if (column.type == "bool") {
       return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value)}</td>
     }
@@ -334,10 +344,10 @@ module.exports = class CarsIndex extends React.Component {
 
   toggleSelectedCar(car) {
     let {selectedCars, masterChecked} = this.state;
-    if (selectedCars.has(car)) {
-      selectedCars.delete(car);
+    if (selectedCars.has(car.license)) {
+      selectedCars.delete(car.license);
     } else {
-      selectedCars.add(car);
+      selectedCars.add(car.license);
     }
     this.setState({selectedCars, masterChecked: false});
   } 
@@ -347,7 +357,7 @@ module.exports = class CarsIndex extends React.Component {
     if (!e.target.checked) {
       this.setState({selectedCars: new Set(), masterChecked: false});
     } else {
-      this.setState({selectedCars: new Set(displayedCars), masterChecked: true});
+      this.setState({selectedCars: new Set(displayedCars.map(car => car.license)), masterChecked: true});
     }
   }
 
@@ -359,7 +369,7 @@ module.exports = class CarsIndex extends React.Component {
           <input 
             type="checkbox" 
             onChange={() => this.toggleSelectedCar(car)}
-            checked={selectedCars.has(car)}
+            checked={selectedCars.has(car.license)}
           />
         </td>
         {
@@ -522,6 +532,7 @@ module.exports = class CarsIndex extends React.Component {
     }
     let {selectedCols, selectedCars, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
+    console.log('selectedCars', selectedCars);
     return (
       <div className="cars-index" >
         <section className="container" >
@@ -598,7 +609,12 @@ module.exports = class CarsIndex extends React.Component {
           {this._user.hasAccess('waiveAdmin') ? (
             <div className="row">
               <div className="col-xs-12" >
-                {selectedCars.size ? <Organizations type={'cars'} cars={Array.from(selectedCars)} _user={this._user}/> : ''}
+                {selectedCars.size ? 
+                    <Organizations type={'cars'} 
+                      cars={displayedCars.filter(car => selectedCars.has(car.license))} 
+                      _user={this._user} 
+                      updateCars={() => this.update()}/> 
+                : ''}
               </div>
             </div>
           ) : ''}

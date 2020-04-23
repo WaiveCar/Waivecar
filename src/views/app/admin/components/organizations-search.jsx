@@ -14,6 +14,7 @@ class Organizations extends Component {
       searchResults: [],
       orgSearchWord: '',
     };
+    console.log(this.props);
   }
   componentDidMount() {
     this.updateCurrent();
@@ -32,6 +33,7 @@ class Organizations extends Component {
   updateCurrent() {
     let {type} = this.props;
     let assignee = this.props[type];
+    console.log(assignee);
     if (assignee.length) {
       let orgSet = new Set();
       let orgs = [];
@@ -103,16 +105,17 @@ class Organizations extends Component {
   }
 
   batchRemove(orgList) {
-    let {type} = this.props;
+    let {type, updateCars} = this.props;
     if (orgList.length) {
       let next = orgList.pop();
-      this.orgAction('remove', next, () => this.batchRemove(orgList));
+      return this.orgAction('remove', next, () => this.batchRemove(orgList));
     }
+    updateCars();
   }
 
   render() {
     let {currentOrganizations, searchResults, orgSearchWord} = this.state;
-    let {type} = this.props;
+    let {type, updateCars} = this.props;
     return (
       <div className="box">
         <h3>Organizations</h3>
@@ -172,7 +175,7 @@ class Organizations extends Component {
                   </div>
                   <button
                     className="btn btn-link col-xs-6"
-                    onClick={() => this.orgAction('add', item.id)}>
+                    onClick={() => this.orgAction('add', item.id, () => updateCars && updateCars())}>
                     Add Now
                   </button>
                 </div>
