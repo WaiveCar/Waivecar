@@ -372,7 +372,11 @@ module.exports = {
           { 
             model : 'Booking',
             as: 'currentBooking'
-          }
+          },
+          {
+            model: 'Organization',
+            as: 'organization',
+          },
         ]
       });
       perf.push("car " + (new Date() - start));
@@ -384,6 +388,12 @@ module.exports = {
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
       let opts = query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {};
+      opts.include = [
+        {
+          model: 'Organization',
+          as: 'organization',
+        },
+      ];
       let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 
