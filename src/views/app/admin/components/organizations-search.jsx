@@ -118,28 +118,34 @@ class Organizations extends Component {
         <h3>Organizations</h3>
         <div className="box-content">
           <ul>
-            {currentOrganizations && currentOrganizations.map((each, i) => (
-              <li key={i}>
-                <Link to={`/organizations/${each.id}`}>{each.name}</Link>
-                {this._user.hasAccess('waiveAdmin') && type[type.length - 1] !== 's' ? (
-                  <button
-                    className="btn btn-link"
-                    onClick={() => this.orgAction('remove', each.id)}>
-                    Remove
-                  </button>
-                ) : (
-                  ''
-                )}
-              </li>
-            ))}
+            {currentOrganizations &&
+              currentOrganizations.map((each, i) => (
+                <li key={i}>
+                  <Link to={`/organizations/${each.id}`}>{each.name}</Link>
+                  {this._user.hasAccess('waiveAdmin') &&
+                  type[type.length - 1] !== 's' ? (
+                    <button
+                      className="btn btn-link"
+                      onClick={() => this.orgAction('remove', each.id)}>
+                      Remove
+                    </button>
+                  ) : (
+                    ''
+                  )}
+                </li>
+              ))}
           </ul>
-          <button
-            className="btn btn-link"
-            onClick={() =>
-              this.batchRemove(currentOrganizations.map(each => each.id))
-            }>
-            Remove All
-          </button>
+          {this._user.hasAccess('waiveAdmin') ? (
+            <button
+              className="btn btn-link"
+              onClick={() =>
+                this.batchRemove(currentOrganizations.map(each => each.id))
+              }>
+              Remove All
+            </button>
+          ) : (
+            ''
+          )}
           {this._user.hasAccess('waiveAdmin') ? (
             <div>
               <h4>Search for More</h4>
