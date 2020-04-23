@@ -32,6 +32,17 @@ class Organizations extends Component {
   updateCurrent() {
     let {type} = this.props;
     let assignee = this.props[type];
+    if (assignee.length) {
+      let orgSet = new Set();
+      let orgs = [];
+      for (let each of assignee) {
+        if (each.organization && !orgSet.has(each.organization.id)) {
+          orgSet.add(each.organization.id);
+          orgs.push(each.organization);
+        }
+      }
+      return this.setState({currentOrganizations: orgs});
+    }
     this.setState({
       currentOrganizations: assignee.organizations
         ? assignee.organizations.map(org => org.organization)
