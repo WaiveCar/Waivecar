@@ -52,7 +52,7 @@ Bento.Register.Controller('CarsController', function(controller) {
     let failures = [];
     for (let car of this.payload.carList) {
       try {
-        yield this.command(car.id, command);
+        yield controller.command(car.id, command, this.auth.user);
       } catch(e) {
         failures.push(car);
       }
@@ -60,7 +60,10 @@ Bento.Register.Controller('CarsController', function(controller) {
     return {failures};
   };
 
-  controller.command = function *(id, command) {
+  controller.command = function *(id, command, _user) {
+    if (!this.auth) {
+      this.auth = {user: _user};
+    }
     switch (command) {
       case 'ble'                : return yield car.ble(id, this.auth.user);
       case 'lock'               : return yield car.lockCar(id, this.auth.user);
