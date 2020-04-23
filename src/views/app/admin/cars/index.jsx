@@ -1,7 +1,7 @@
 import React    from 'react';
 import { Link } from 'react-router';
 import moment   from 'moment';
-import { GMap }  from 'bento-web';
+import { GMap, snackbar }  from 'bento-web';
 import { api, relay, dom, auth }  from 'bento';
 import Organizations from '../components/organizations-search.jsx';
 
@@ -532,9 +532,23 @@ module.exports = class CarsIndex extends React.Component {
     let {selectedCars} = this.state;
     api.post(`/cars/batch/${action}`, {
       carList: displayedCars.filter(car => selectedCars.has(car.license)),
-    }, (err, result) => {
-      console.log('err', err);
-      console.log('res', result);
+    }, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      } 
+      if (res.failures.length) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `${res.failures.map(car => car.license).join(', ')} failed to ${action}.`,
+        });
+      }
+      return snackbar.notify({
+        type: 'success',
+        message: `${action} successful on all cars.`
+      });
     });
   }
 
