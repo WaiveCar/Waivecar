@@ -71,7 +71,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'USER_ALREADY_ADDED',
-            message: `${user.name()} has already been added to this organization.`,
+            message: `${user.firstName} ${user.lastName} has already been added to this organization.`,
           },
           500,
         );
@@ -144,7 +144,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         try {
           yield this.addUser({userId: user.id});
         } catch (e) {
-          errs.push(user.name());
+          errs.push(`${user.firstName} ${user.lastName}`);
         }
       }
       if (errs.length) {
