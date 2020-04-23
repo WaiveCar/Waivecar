@@ -16,6 +16,20 @@ class Organizations extends Component {
     };
   }
   componentDidMount() {
+    this.updateCurrent();
+  }
+
+  componentDidUpdate(prevProps) {
+    let {type} = this.props;
+    if (
+      this.props[type].length &&
+      prevProps[type].length !== this.props[type].length
+    ) {
+      this.updateCurrent();
+    }
+  }
+
+  updateCurrent() {
     let {type} = this.props;
     let assignee = this.props[type];
     this.setState({
@@ -53,9 +67,13 @@ class Organizations extends Component {
     let {currentOrganizations} = this.state;
     api.put(
       `/organizations/${orgId}/${action}${capitalize(type)}`,
-      {
-        [`${type}Id`]: assignee.id,
-      },
+      assignee.id
+        ? {
+            [`${type}Id`]: assignee.id,
+          }
+        : {
+            [`${type}List`]: assignee,
+          },
       (err, res) => {
         if (err) {
           return snackbar.notify({
@@ -82,7 +100,7 @@ class Organizations extends Component {
           <ul>
             {currentOrganizations.map((each, i) => (
               <li key={i}>
-                  <Link to={`/organizations/${each.id}`}>{each.name}</Link>
+                <Link to={`/organizations/${each.id}`}>{each.name}</Link>
                 {this._user.hasAccess('waiveAdmin') ? (
                   <button
                     className="btn btn-link"

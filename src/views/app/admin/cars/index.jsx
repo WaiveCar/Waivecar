@@ -3,8 +3,7 @@ import { Link } from 'react-router';
 import moment   from 'moment';
 import { GMap }  from 'bento-web';
 import { api, relay, dom, auth }  from 'bento';
-var _ = require('lodash');
-
+import Organizations from '../components/organizations-search.jsx';
 
 const oneDay = 1000 * 60 * 60 * 24;
 const shownList = ['work', 'waive', 'level', 'csula', 'other'];
@@ -521,7 +520,7 @@ module.exports = class CarsIndex extends React.Component {
     if (!this.state.shownCars.length) {
       return false;
     }
-    let {selectedCols, masterChecked} = this.state;
+    let {selectedCols, selectedCars, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index" >
@@ -599,7 +598,7 @@ module.exports = class CarsIndex extends React.Component {
           {this._user.hasAccess('waiveAdmin') ? (
             <div className="row">
               <div className="col-xs-12" >
-
+                {selectedCars.size ? <Organizations type={'cars'} cars={Array.from(selectedCars)} _user={this._user}/> : ''}
               </div>
             </div>
           ) : ''}
