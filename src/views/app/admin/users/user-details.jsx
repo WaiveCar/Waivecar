@@ -427,57 +427,58 @@ module.exports = class UserDetails extends React.Component {
                     }
                   </FormInput>
                 </div>
-
-                <div className="form-group row">
-                  <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
-                  <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                    <div className="radio-inline">
-                      <label>
-                        <input type="radio" name="status" value="waitlist" defaultChecked={ user.status === 'waitlist' } />
-                        Waitlist
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
-                        Pending
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'probation' } />
-                        Probation
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
-                        Suspended
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="radio" name="status" value="active" defaultChecked={ user.status === 'active' } />
-                        Active
-                      </label>
-                    </div>
-                    {this._user.hasAccess('waiveAdmin') ?
-                    <div>
-                      <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
-                        User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
-                        { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
-                      <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
+                {this._user.hasAccess('waiveAdmin') ?
+                  <div className="form-group row">
+                    <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
+                    <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                      <div className="radio-inline">
+                        <label>
+                          <input type="radio" name="status" value="waitlist" defaultChecked={ user.status === 'waitlist' } />
+                          Waitlist
+                        </label>
                       </div>
-                      <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
-                    </div>
-                    : ''}
-                  </div>
 
-                </div>
+                      <div className="radio-inline">
+                        <label>
+                          <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
+                          Pending
+                        </label>
+                      </div>
+
+                      <div className="radio-inline">
+                        <label>
+                          <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'probation' } />
+                          Probation
+                        </label>
+                      </div>
+
+                      <div className="radio-inline">
+                        <label>
+                          <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
+                          Suspended
+                        </label>
+                      </div>
+
+                      <div className="radio-inline">
+                        <label>
+                          <input type="radio" name="status" value="active" defaultChecked={ user.status === 'active' } />
+                          Active
+                        </label>
+                      </div>
+                      {this._user.hasAccess('waiveAdmin') ?
+                      <div>
+                        <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
+                          User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
+                          { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
+                        <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
+                        </div>
+                        <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
+                      </div>
+                      : ''}
+                    </div>
+
+                  </div> 
+                : ''}
                 { this._user.hasAccess('waiveAdmin') ? this.tagList() : '' }
                 { this._user.hasAccess('waiveAdmin') ? ( 
                   <div className="form-group row">
