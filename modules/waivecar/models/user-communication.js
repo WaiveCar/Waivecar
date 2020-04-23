@@ -1,4 +1,4 @@
-Bento.Register.Model('UserCommunication', 'sequelize', function register(
+Bento.Register.Model('UserCommunication', 'sequelize', function(
   model,
   Sequelize,
 ) {

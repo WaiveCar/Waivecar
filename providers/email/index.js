@@ -8,7 +8,6 @@ let path              = require('path');
 let fs                = require('fs');
 let error             = Bento.Error;
 let User = Bento.model('User');
-let UserCommunication = Bento.model('UserCommunication');
 
 module.exports = class Email {
 
@@ -63,6 +62,7 @@ module.exports = class Email {
     email.text  = content.text ? context.text : email.text;
     let user = yield User.findOne({where: {email: to}});
     if (user) {
+      let UserCommunication = Bento.model('UserCommunication');
       let communication = new UserCommunication({
         userId: user.id,
         type: 'email',
