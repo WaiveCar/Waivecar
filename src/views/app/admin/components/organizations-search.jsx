@@ -41,8 +41,10 @@ class Organizations extends Component {
           orgs.push(each.organization);
         } else {
           each.organizations.forEach(org => {
+            if (!orgSet.has(org.organizationId)) {
+              orgs.push(org.organization);
+            }
             orgSet.add(org.organizationId);
-            orgs.push(org.organization);
           });
         }
       }
@@ -82,7 +84,6 @@ class Organizations extends Component {
     let assignee = this.props[type];
     let {currentOrganizations} = this.state;
     let seenSelf = false;
-    console.log(assignee);
     api.put(
       `/organizations/${orgId}/${action}${capitalize(type)}`,
       assignee.id
@@ -115,7 +116,9 @@ class Organizations extends Component {
       let next = orgList.pop();
       return this.orgAction('remove', next, () => this.batchRemove(orgList));
     }
-    updateCars();
+    if (updateCars) {
+      updateCars();
+    }
   }
 
   render() {

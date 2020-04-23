@@ -175,25 +175,28 @@ class UsersListView extends React.Component {
             }
           </div>
         </div>
-        <div className="box">
-          <h3>
-            <span>Selected Users</span>
-            <small>
-              Batch operations will be done on these users
-            </small>
-          </h3>
-          <div className="box-content">
-            <ul>
-            {selectedUsers.map((user, i) => 
-              <li key={i}>
-                <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
-                <button className="btn btn-link" onClick={() => this.toggleSelected(user.id, user)}>Unselect</button> 
-              </li>
-            )}
-            </ul>
-          </div>
-        </div>
-        <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
+        {this._user.hasAccess('waiveAdmin') ?
+          <div>
+            <div className="box">
+              <h3>
+                <span>Selected Users</span>
+                <small>
+                  Batch operations will be done on these users
+                </small>
+              </h3>
+              <div className="box-content">
+                <ul>
+                {selectedUsers.map((user, i) => 
+                  <li key={i}>
+                    <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
+                    <button className="btn btn-link" onClick={() => this.toggleSelected(user.id, user)}>Unselect</button> 
+                  </li>
+                )}
+                </ul>
+              </div>
+            </div>
+            <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
+          </div> : ''}
       </div>
     );
   }
