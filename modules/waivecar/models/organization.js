@@ -51,12 +51,14 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     removeCar: function*(payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
-      yield car.update({organizationId: null});
-      yield notify.notifyAdmins(
-        `:ski: ${car.link()} removed from ${this.link()}`,
-        ['slack'],
-        {channel: '#organizations'},
-      );
+      if (this.id === car.organizationId) {
+        yield car.update({organizationId: null});
+        yield notify.notifyAdmins(
+          `:ski: ${car.link()} removed from ${this.link()}`,
+          ['slack'],
+          {channel: '#organizations'},
+        );
+      }
       return this;
     },
     addUser: function*(payload) {
@@ -109,7 +111,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       for (let car of carsList) {
         try {
           yield this.addCar({carId: car.id});
-        } catch(e) {
+        } catch (e) {
           errs.push(car.license);
         }
       }
@@ -117,7 +119,9 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'CAR_ALREADY_ASSIGNED',
-            message: `${errs.join(', ')} have already been assigned to an organization. Please remove the cars from their old organizations before adding them to a new one.`,
+            message: `${errs.join(
+              ', ',
+            )} have already been assigned to an organization. Please remove the cars from their old organizations before adding them to a new one.`,
           },
           500,
         );
@@ -137,7 +141,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       for (let user of usersList) {
         try {
           yield this.addUser({userId: user.id});
-        } catch(e) {
+        } catch (e) {
           errs.push(user.name());
         }
       }
@@ -145,7 +149,9 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         throw error.parse(
           {
             code: 'USERS_ALREADY_ADDED',
-            message: `${errs.join(', ')} have already been added to this organization.`,
+            message: `${errs.join(
+              ', ',
+            )} have already been added to this organization.`,
           },
           500,
         );
