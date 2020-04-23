@@ -319,8 +319,14 @@ module.exports = {
         return list;
       }, []);
     }
-
-    return users;
+    let withOrgs = [];
+    for (let user of users) {
+      let orgs = yield user.getOrganizations();
+      user = user.toJSON();
+      user.organizations = orgs;
+      withOrgs.push(user);
+    }
+    return withOrgs;
   },
 
   /**
