@@ -61,6 +61,7 @@ Route.post('/airtable/createTicket', [ 'isAuthenticated', 'CarsController@create
 Route.get('/unassignedTelematics',   [ 'CarsController@unassignedTelems' ]);
 
 Route.get('/cars',              [ 'CarsController@index' ]);
+Route.post('/cars/batch/:action',[ 'isAuthenticated', 'CarsController@batch' ]);
 Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
 Route.get('/cars/search',       [ 'isAuthenticated', 'CarsController@search' ]);
 Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);

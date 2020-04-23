@@ -48,6 +48,17 @@ Bento.Register.Controller('CarsController', function(controller) {
     };
   };
 
+  controller.batch = function *(command) {
+    let failures = [];
+    for (let car of this.payload.carList) {
+      try {
+        yield this.command(car.id, command);
+      } catch(e) {
+        failures.push(car);
+      }
+    }
+    return {failures};
+  };
 
   controller.command = function *(id, command) {
     switch (command) {
