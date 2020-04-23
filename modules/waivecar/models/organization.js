@@ -97,13 +97,15 @@ Bento.Register.Model('Organization', 'sequelize', function register(
           userId,
         },
       });
+      if (orgUser) {
       yield orgUser.delete();
-      yield notify.notifyAdmins(
-        `:metro: ${user.link()} removed from ${this.link()}`,
-        ['slack'],
-        {channel: '#organizations'},
-      );
-      return orgUser;
+        yield notify.notifyAdmins(
+          `:metro: ${user.link()} removed from ${this.link()}`,
+          ['slack'],
+          {channel: '#organizations'},
+        );
+        return orgUser;
+      }
     },
     addCars: function*(payload) {
       let {carsList} = payload;
