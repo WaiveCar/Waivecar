@@ -4,6 +4,7 @@ import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
+import Organizations from '../components/organizations-search.jsx';
 
 @mixin.decorate(History)
 class UsersListView extends React.Component {
@@ -27,7 +28,9 @@ class UsersListView extends React.Component {
         order : 'DESC'
       },
       more   : false,
-      offset : 0
+      offset : 0,
+      selectedUsersSet: new Set(),
+      possibleUsersForAction: [],
     };
     relay.subscribe(this, 'users');
   }
@@ -62,6 +65,7 @@ class UsersListView extends React.Component {
     user.phone = user.phone || '';
     return (
       <tr key={ user.id } onClick={ () => { this.history.pushState(null, `/users/${ user.id }`) } }>
+        <td><input type="checkbox" /></td>
         <td>{ user.id }</td>
         <td>{ user.firstName } { user.lastName }</td>
         <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
@@ -94,16 +98,18 @@ class UsersListView extends React.Component {
   }
 
   render() {
+    let {possibleUsersForAction} = this.state;
     return (
       <div id="users-list" className="container">
         <div className="box full">
+
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <div>
               <h3>Users <small>List of registered WaiveCar users</small></h3>
             </div>
             <div>
               <Link className="btn btn-primary" to={'/users/add'}>
-                {this._user.hasAccess('waiveAdmin') ? 'Add organization users': 'Add users'}
+                {this._user.hasAccess('waiveAdmin') ? 'Add new organization users': 'Add users'}
               </Link>
             </div>
           </div>
@@ -117,6 +123,7 @@ class UsersListView extends React.Component {
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
+                  <th></th>
                   <ThSort sort="id"          value="#"           ctx={ this } />
                   <ThSort sort="firstName"   value="Name"        ctx={ this } />
                   <ThSort sort="phone"       value="Phone"       ctx={ this } className="hidden-sm-down" />
@@ -138,6 +145,20 @@ class UsersListView extends React.Component {
             }
           </div>
         </div>
+        <div className="box">
+          <h3>
+            <span>Selected Users</span>
+            <small>
+              Batch operations will be done on these users
+            </small>
+          </h3>
+          <div className="box-content">
+            {possibleUsersForAction.map((user, i) => 
+              <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link> 
+            )}
+          </div>
+        </div>
+        <Organizations type={'users'} users={possibleUsersForAction.filter(user => selectedUserSet.has(user.id))} _user={this._user}/>
       </div>
     );
   }

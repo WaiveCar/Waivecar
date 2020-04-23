@@ -129,7 +129,7 @@ class Organizations extends Component {
                 <li key={i}>
                   <Link to={`/organizations/${each.id}`}>{each.name}</Link>
                   {this._user.hasAccess('waiveAdmin') &&
-                  type[type.length - 1] !== 's' ? (
+                  type !== 'cars' ? (
                     <button
                       className="btn btn-link"
                       onClick={() => this.orgAction('remove', each.id)}>
@@ -147,7 +147,7 @@ class Organizations extends Component {
               onClick={() =>
                 this.batchRemove(currentOrganizations.map(each => each.id))
               }>
-              Remove All
+              Remove From All
             </button>
           ) : (
             ''
