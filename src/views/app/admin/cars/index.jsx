@@ -532,7 +532,6 @@ module.exports = class CarsIndex extends React.Component {
     }
     let {selectedCols, selectedCars, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
-    console.log('selectedCars', selectedCars);
     return (
       <div className="cars-index" >
         <section className="container" >

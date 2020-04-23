@@ -14,7 +14,6 @@ class Organizations extends Component {
       searchResults: [],
       orgSearchWord: '',
     };
-    console.log(this.props);
   }
   componentDidMount() {
     this.updateCurrent();
@@ -33,7 +32,6 @@ class Organizations extends Component {
   updateCurrent() {
     let {type} = this.props;
     let assignee = this.props[type];
-    console.log(assignee);
     if (assignee.length) {
       let orgSet = new Set();
       let orgs = [];
