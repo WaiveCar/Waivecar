@@ -116,7 +116,12 @@ class Organizations extends Component {
     let {type, updateCars} = this.props;
     return (
       <div className="box">
-        <h3>Organizations</h3>
+        <h3>
+          <span>{type[type.length - 1] !== 's' ? 'Organizations' : 'Batch Organization Actions'}</span>
+          <small>
+            {type[type.length - 1] !== 's' ? '' : '(on all selected)'}
+          </small>
+        </h3>
         <div className="box-content">
           <ul>
             {currentOrganizations &&

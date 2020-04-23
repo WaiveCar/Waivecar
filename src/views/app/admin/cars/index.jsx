@@ -33,6 +33,8 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
       {key: 'organization', title: 'Organization', type: 'org'},
     ];
+    this.actions = ['lock', 'unlock', 'immobilize', 'unimmobilize'];
+
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
       shownCars : [],
@@ -605,19 +607,27 @@ module.exports = class CarsIndex extends React.Component {
               </div>
             </div>
           </div>
-          {this._user.hasAccess('waiveAdmin') ? (
-            <div className="row">
-              <div className="col-xs-12" >
-                {selectedCars.size ? 
-                    <Organizations type={'cars'} 
-                      cars={displayedCars.filter(car => selectedCars.has(car.license))} 
-                      _user={this._user} 
-                      updateCars={() => this.update()}/> 
-                : ''}
-              </div>
-            </div>
-          ) : ''}
         </section>
+        {this._user.hasAccess('waiveAdmin') ? (
+          <div className="row">
+            {selectedCars.size ? 
+                <div>
+                  <div className="box">
+                    <h3><span>Batch Car Actions</span><small>(on all selected)</small></h3>
+                    <div className="box-content">
+                      {this.actions.map((action, i) => (
+                        <button className="btn btn-primary" key={i}>{action}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <Organizations type={'cars'} 
+                    cars={displayedCars.filter(car => selectedCars.has(car.license))} 
+                    _user={this._user} 
+                    updateCars={() => this.update()}/> 
+                </div>
+            : ''}
+          </div>
+        ) : ''}
       </div>
     );
   }
