@@ -105,8 +105,22 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     },
     addCars: function*(payload) {
       let {carsList} = payload;
+      let errs = [];
       for (let car of carsList) {
-        yield this.addCar({carId: car.id});
+        try {
+          yield this.addCar({carId: car.id});
+        } catch(e) {
+          errs.push(car.license);
+        }
+      }
+      if (errs.length) {
+        throw error.parse(
+          {
+            code: 'CAR_ALREADY_ASSIGNED',
+            message: `${errs.join(', ')} has already been assigned to an organization. Please remove the cars from their old organizations before adding them to a new one.`,
+          },
+          500,
+        );
       }
       return this;
     },
@@ -119,8 +133,22 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     },
     addUsers: function*(payload) {
       let {usersList} = payload;
+      let errs = [];
       for (let user of usersList) {
-        yield this.addUser({userId: user.id});
+        try {
+          yield this.addUser({userId: user.id});
+        } catch(e) {
+          errs.push(user.name());
+        }
+      }
+      if (errs.length) {
+        throw error.parse(
+          {
+            code: 'USERS_ALREADY_ADDED',
+            message: `${errs.join(', ')} have already been added to this organization.`,
+          },
+          500,
+        );
       }
       return this;
     },
