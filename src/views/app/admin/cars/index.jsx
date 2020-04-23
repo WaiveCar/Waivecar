@@ -33,7 +33,7 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
       {key: 'organization', title: 'Organization', type: 'org'},
     ];
-    this.actions = ['lock', 'unlock', 'immobilize', 'unimmobilize'];
+    this.actions = ['lock', 'unlock', 'lock-immobilizer', 'unlock-immobilizer'];
 
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
@@ -528,6 +528,16 @@ module.exports = class CarsIndex extends React.Component {
     );
   }
 
+  batchAction(action, displayedCars) {
+    let {selectedCars} = this.state;
+    api.post(`/cars/batch/${action}`, {
+      carList: displayedCars.filter(car => selectedCars.has(car.license)),
+    }, (err, result) => {
+      console.log('err', err);
+      console.log('res', result);
+    });
+  }
+
   render() {
     if (!this.state.shownCars.length) {
       return false;
@@ -616,7 +626,9 @@ module.exports = class CarsIndex extends React.Component {
                     <h3><span>Batch Car Actions</span><small>(on all selected)</small></h3>
                     <div className="box-content">
                       {this.actions.map((action, i) => (
-                        <button className="btn btn-primary" key={i}>{action}</button>
+                        <button className="btn btn-primary" key={i} onClick={() => this.batchAction(action, displayedCars)}>
+                          {action}
+                        </button>
                       ))}
                     </div>
                   </div>
