@@ -18,8 +18,8 @@ class UsersListView extends React.Component {
     super(...args);
     this._user = auth.user();
     this.table = new Table(this, 'users', [ ['firstName', 'lastName'] ], 
-    `/users${
-      this._user.organizations.length ? `?organizationIds=[${this._user.organizations.map(each => each.organizationId)}]` : ''
+    `/users?includeOrgs=true${
+      this._user.organizations.length ? `&organizationIds=[${this._user.organizations.map(each => each.organizationId)}]` : ''
     }`);
     this.state = {
       search : null,
@@ -30,7 +30,7 @@ class UsersListView extends React.Component {
       more   : false,
       offset : 0,
       selectedUsersSet: new Set(),
-      possibleUsersForAction: [],
+      selectedUsers: [],
     };
     relay.subscribe(this, 'users');
   }
@@ -77,6 +77,7 @@ class UsersListView extends React.Component {
         <td>{ user.firstName } { user.lastName }</td>
         <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
         <td>{ user.status }</td>
+        <td>{ user.organizations.length ? user.organizations.map(orgUser => orgUser.organization.name).join(', ') : 'none'}</td>
         <td className="hidden-sm-down">
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -87,14 +88,14 @@ class UsersListView extends React.Component {
   }
 
   toggleSelected(id, selectedUser) {
-    let {selectedUsersSet, possibleUsersForAction} = this.state;
+    let {selectedUsersSet, selectedUsers} = this.state;
     if (selectedUsersSet.has(id)) {
       selectedUsersSet.delete(id);
     } else {
       selectedUsersSet.add(id);
     }
     let seen = new Set();
-    let temp = [...possibleUsersForAction];
+    let temp = [...selectedUsers];
     temp.push(selectedUser);
     temp = temp.filter(user => {
       if (seen.has(user.id)) {
@@ -105,7 +106,7 @@ class UsersListView extends React.Component {
     });
     this.setState({
       selectedUsersSet, 
-      possibleUsersForAction: temp,
+      selectedUsers: temp,
     });
   }
   /**
@@ -126,7 +127,7 @@ class UsersListView extends React.Component {
   }
 
   render() {
-    let {possibleUsersForAction} = this.state;
+    let {selectedUsers} = this.state;
     return (
       <div id="users-list" className="container">
         <div className="box full">
@@ -156,6 +157,7 @@ class UsersListView extends React.Component {
                   <ThSort sort="firstName"   value="Name"        ctx={ this } />
                   <ThSort sort="phone"       value="Phone"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
+                  <th>Organization</th>
                   <th></th>
                 </tr>
               </thead>
@@ -182,15 +184,16 @@ class UsersListView extends React.Component {
           </h3>
           <div className="box-content">
             <ul>
-            {possibleUsersForAction.map((user, i) => 
+            {selectedUsers.map((user, i) => 
               <li key={i}>
-                <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link> 
+                <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
+                <button className="btn btn-link" onClick={() => this.toggleSelected(user.id, user)}>Unselect</button> 
               </li>
             )}
             </ul>
           </div>
         </div>
-        <Organizations type={'users'} users={possibleUsersForAction} _user={this._user}/>
+        <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
       </div>
     );
   }

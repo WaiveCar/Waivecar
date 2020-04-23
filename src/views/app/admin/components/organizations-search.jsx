@@ -39,6 +39,11 @@ class Organizations extends Component {
         if (each.organization && !orgSet.has(each.organization.id)) {
           orgSet.add(each.organization.id);
           orgs.push(each.organization);
+        } else {
+          each.organizations.forEach(org => {
+            orgSet.add(org.organizationId);
+            orgs.push(org.organization);
+          });
         }
       }
       return this.setState({currentOrganizations: orgs});
@@ -76,6 +81,8 @@ class Organizations extends Component {
     let {type} = this.props;
     let assignee = this.props[type];
     let {currentOrganizations} = this.state;
+    let seenSelf = false;
+    console.log(assignee);
     api.put(
       `/organizations/${orgId}/${action}${capitalize(type)}`,
       assignee.id
@@ -117,7 +124,11 @@ class Organizations extends Component {
     return (
       <div className="box">
         <h3>
-          <span>{type[type.length - 1] !== 's' ? 'Organizations' : 'Batch Organization Actions'}</span>
+          <span>
+            {type[type.length - 1] !== 's'
+              ? 'Organizations'
+              : 'Batch Organization Actions'}
+          </span>
           <small>
             {type[type.length - 1] !== 's' ? '' : '(on all selected)'}
           </small>
@@ -128,8 +139,7 @@ class Organizations extends Component {
               currentOrganizations.map((each, i) => (
                 <li key={i}>
                   <Link to={`/organizations/${each.id}`}>{each.name}</Link>
-                  {this._user.hasAccess('waiveAdmin') &&
-                  type !== 'cars' ? (
+                  {this._user.hasAccess('waiveAdmin') && type !== 'cars' ? (
                     <button
                       className="btn btn-link"
                       onClick={() => this.orgAction('remove', each.id)}>
@@ -178,7 +188,13 @@ class Organizations extends Component {
                   </div>
                   <button
                     className="btn btn-link col-xs-6"
-                    onClick={() => this.orgAction('add', item.id, () => updateCars && updateCars())}>
+                    onClick={() =>
+                      this.orgAction(
+                        'add',
+                        item.id,
+                        () => updateCars && updateCars(),
+                      )
+                    }>
                     Add Now
                   </button>
                 </div>
