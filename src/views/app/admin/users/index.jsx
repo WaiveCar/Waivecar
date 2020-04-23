@@ -63,9 +63,16 @@ class UsersListView extends React.Component {
 
   row(user) {
     user.phone = user.phone || '';
+    let {selectedUsersSet} = this.state;
     return (
-      <tr key={ user.id } onClick={ () => { this.history.pushState(null, `/users/${ user.id }`) } }>
-        <td><input type="checkbox" /></td>
+      <tr key={ user.id }>
+        <td>
+          <input 
+            type="checkbox" 
+            onChange={() => this.toggleSelected(user.id, user)} 
+            checked={selectedUsersSet.has(user.id)}
+          />
+        </td>
         <td>{ user.id }</td>
         <td>{ user.firstName } { user.lastName }</td>
         <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
@@ -79,13 +86,34 @@ class UsersListView extends React.Component {
     );
   }
 
+  toggleSelected(id, selectedUser) {
+    let {selectedUsersSet, possibleUsersForAction} = this.state;
+    if (selectedUsersSet.has(id)) {
+      selectedUsersSet.delete(id);
+    } else {
+      selectedUsersSet.add(id);
+    }
+    let seen = new Set();
+    let temp = [...possibleUsersForAction];
+    temp.push(selectedUser);
+    temp = temp.filter(user => {
+      if (seen.has(user.id)) {
+        return false;
+      }
+      seen.add(user.id);
+      return selectedUsersSet.has(user.id);
+    });
+    this.setState({
+      selectedUsersSet, 
+      possibleUsersForAction: temp,
+    });
+  }
   /**
    * Toggle field in DB.
    * @param  {int} user id
    * @return {Void}
    */
   toggleIsWaivework(user) {
-    console.log('Sent request, user ID is: ' + user.id + ', isWaivework is: ' + user.isWaivework);
     // TODO: Get response and give value of "isWaivework" to "result"
     let result = !user.isWaivework;
     let arr = this.state.users;
@@ -153,12 +181,16 @@ class UsersListView extends React.Component {
             </small>
           </h3>
           <div className="box-content">
+            <ul>
             {possibleUsersForAction.map((user, i) => 
-              <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link> 
+              <li key={i}>
+                <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link> 
+              </li>
             )}
+            </ul>
           </div>
         </div>
-        <Organizations type={'users'} users={possibleUsersForAction.filter(user => selectedUserSet.has(user.id))} _user={this._user}/>
+        <Organizations type={'users'} users={possibleUsersForAction} _user={this._user}/>
       </div>
     );
   }
