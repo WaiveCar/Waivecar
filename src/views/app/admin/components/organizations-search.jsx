@@ -104,24 +104,24 @@ class Organizations extends Component {
 
   batchRemove(orgList) {
     let {type} = this.props;
-    if (!orgList.length) {
-      return;
+    if (orgList.length) {
+      let next = orgList.pop();
+      this.orgAction('remove', next, () => this.batchRemove(orgList));
     }
-    let next = orgList.pop();
-    this.orgAction('remove', next, () => this.batchRemove(orgList));
   }
 
   render() {
-    let {currentOrganizations, searchResults, orgSearchWord, type} = this.state;
+    let {currentOrganizations, searchResults, orgSearchWord} = this.state;
+    let {type} = this.props;
     return (
       <div className="box">
         <h3>Organizations</h3>
         <div className="box-content">
           <ul>
-            {currentOrganizations.map((each, i) => (
+            {currentOrganizations && currentOrganizations.map((each, i) => (
               <li key={i}>
                 <Link to={`/organizations/${each.id}`}>{each.name}</Link>
-                {this._user.hasAccess('waiveAdmin') ? (
+                {this._user.hasAccess('waiveAdmin') && type[type.length - 1] !== 's' ? (
                   <button
                     className="btn btn-link"
                     onClick={() => this.orgAction('remove', each.id)}>
