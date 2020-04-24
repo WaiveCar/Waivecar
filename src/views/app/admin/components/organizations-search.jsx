@@ -40,7 +40,7 @@ class Organizations extends Component {
           orgSet.add(each.organization.id);
           orgs.push(each.organization);
         } else {
-          each.organizations.forEach(org => {
+          each.organizations && each.organizations.forEach(org => {
             if (!orgSet.has(org.organizationId)) {
               orgs.push(org.organization);
             }
