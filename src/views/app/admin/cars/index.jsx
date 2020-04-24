@@ -216,7 +216,7 @@ module.exports = class CarsIndex extends React.Component {
     if (column.type === 'org') {
       let org = car.organization;
       value = org ? org.name : 'none';
-      color = org ? 'green' : 'red';
+      let color = org ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
           {value}

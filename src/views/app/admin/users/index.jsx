@@ -64,6 +64,7 @@ class UsersListView extends React.Component {
   row(user) {
     user.phone = user.phone || '';
     let {selectedUsersSet} = this.state;
+    let color = user.organizations.length ? 'green' : 'red';
     return (
       <tr key={ user.id }>
         <td>
@@ -77,7 +78,7 @@ class UsersListView extends React.Component {
         <td>{ user.firstName } { user.lastName }</td>
         <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
         <td>{ user.status }</td>
-        <td>{ user.organizations.length ? user.organizations.map(orgUser => orgUser.organization.name).join(', ') : 'none'}</td>
+        <td style={{color}}>{ user.organizations.length ? user.organizations.map(orgUser => orgUser.organization.name).join(', ') : 'none'}</td>
         <td className="hidden-sm-down">
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -157,7 +158,7 @@ class UsersListView extends React.Component {
                   <ThSort sort="firstName"   value="Name"        ctx={ this } />
                   <ThSort sort="phone"       value="Phone"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
-                  <th>Organization</th>
+                  <th>Organizations</th>
                   <th></th>
                 </tr>
               </thead>
