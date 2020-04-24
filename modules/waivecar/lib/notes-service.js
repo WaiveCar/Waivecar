@@ -124,11 +124,9 @@ module.exports = class NotesService extends Service {
    * Get list of all notes for specific user
    * @param {String} userId
    */
-  static *getUserNotes(userId) {
+  static *getUserNotes(userId, query) {
     return yield UserNote.find({
-      where   : { userId, ...(query.organizationIds ? 
-        {organizationId: {$in: JSON.parse(query.organizationIds)}} : {} 
-      )},
+      where   : { userId }, 
       include : [
         {
           model : 'User',
