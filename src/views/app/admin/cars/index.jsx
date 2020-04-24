@@ -575,7 +575,7 @@ module.exports = class CarsIndex extends React.Component {
   downloadCSV(csv) {
     let csvFile = new Blob([csv], {type: 'text/csv'});
     let downloadLink = document.createElement('a');
-    downloadLink.href = 'cars.csv';
+    downloadLink.download = 'cars.csv';
     downloadLink.href = window.URL.createObjectURL(csvFile);
     downloadLink.style.display = 'none';
     document.body.appendChild(downloadLink);
