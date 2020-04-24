@@ -75,7 +75,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     verifiedPhone : {
       type         : Sequelize.BOOLEAN,
-      defaultValue : false
+      defaultValue : true
     },
 
     verifiedEmail : {

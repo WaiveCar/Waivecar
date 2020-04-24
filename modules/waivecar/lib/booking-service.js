@@ -490,9 +490,10 @@ module.exports = class BookingService extends Service {
     //
     // Ok cool, now everything is done and the user has the car. messages have been sent
     // and the person can go get it. 
-
-    if (data.isWaivework && !data.skipPayment) {
+    if (data.isWaivework) {
       yield booking.addFlag('Waivework');
+    }
+    if (data.isWaivework && !data.skipPayment) {
       let waiveworkPayment;
       try {
         let waiveworkPayment = yield this.handleWaivework(booking, data, _user, driver);
