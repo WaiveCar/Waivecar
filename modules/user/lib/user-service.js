@@ -67,8 +67,7 @@ module.exports = {
     } else if (data.password) {
       user.password = yield bcrypt.hash(data.password, 10);
     }
-    yield user.save();
-
+    yield user.save(); 
     // ### Group Assignment
     let group = new GroupUser({
       groupId     : 1,
@@ -76,9 +75,7 @@ module.exports = {
       groupRoleId : 1
     });
     yield group.save();
-
     yield hooks.require('user:store:after', user, _user, opts);
-
     relay.emit('users', {
       type : 'store',
       data : yield this.get(user.id, _user)

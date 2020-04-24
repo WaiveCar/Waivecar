@@ -115,7 +115,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     notifyEnd : {
       type         : Sequelize.DATE,
-      defaultValue : false
+      defaultValue : null
     },
 
     deviceToken : {

@@ -2,9 +2,11 @@ let UserService = require('./user-service');
 let LicenseService = require('../../license/lib/license-service');
 let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
+let Email = Bento.provider('email');
 let User = Bento.model('User');
 let error = Bento.Error;
 let log = Bento.Log;
+let config = Bento.config;
 
 module.exports = {
   *index(query) {
@@ -109,6 +111,24 @@ module.exports = {
       );
       if (payload.isAdmin) {
         yield UserService.update(user.id, {groupId: 1, groupRoleId: 3}, _user);
+      }
+      try {
+        let res = yield UserService.generatePasswordToken(user, 7 * 24 * 60);
+        let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
+        let email = new Email();
+        let emailOpts = {
+          to: user.email,
+          from: config.email.sender,
+          subject: 'Your WaiveWork Password',
+          template: 'waivework-general',
+          context: {
+            name: user.name(),
+            text: `Welcome to WaiveWork! Please set your password by going <a href=${passwordLink}>here</a>.`,
+          },
+        };
+        yield email.send(emailOpts);
+      } catch (e) {
+        console.log('error sending email', e);
       }
       return user;
     } catch (e) {
