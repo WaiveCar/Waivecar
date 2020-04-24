@@ -13,6 +13,7 @@ import WaiveWorkDetails from './waivework-details';
 import WaiveWorkRequest from './waivework-request';
 import UserCommunications from './user-communications.jsx';
 import Organizations from '../components/organizations-search.jsx';
+import BookCars from './book-cars';
 
 
 module.exports = class UserDetails extends React.Component {
@@ -23,6 +24,7 @@ module.exports = class UserDetails extends React.Component {
       showDanger: false,
       addCard: false,
       showUserAgent: false,
+      carSearchResults: [],
     }
     relay.subscribe(this, 'users');
     relay.subscribe(this, 'notes');
@@ -512,10 +514,7 @@ module.exports = class UserDetails extends React.Component {
             </div>
           </div>
           <Organizations type={'user'} user={user} _user={this._user}/>
-          { this.state.addCard ?
-            <AddCard user={ user } currentUser={ false }></AddCard>
-            : ''
-          }
+          <BookCars user={user} _user={this._user}/>
           {this._user.hasAccess('waiveAdmin') ? <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList> : ''}
           {this._user.hasAccess('waiveAdmin') ? <WaiveWorkRequest user={user} /> : ''}
           {this._user.hasAccess('waiveAdmin') ? <WaiveWorkDetails user={user} /> : ''}
