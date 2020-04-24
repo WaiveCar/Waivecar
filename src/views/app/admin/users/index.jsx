@@ -64,7 +64,7 @@ class UsersListView extends React.Component {
   row(user) {
     user.phone = user.phone || '';
     let {selectedUsersSet} = this.state;
-    let color = user.organizations.length ? 'green' : 'red';
+    let color = user.organizations && user.organizations.length ? 'green' : 'red';
     return (
       <tr key={ user.id }>
         <td>
