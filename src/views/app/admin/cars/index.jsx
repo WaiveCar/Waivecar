@@ -551,6 +551,36 @@ module.exports = class CarsIndex extends React.Component {
       });
     });
   }
+  
+  getCSVFromTable() {
+    let toJoin = [];
+    let table = this.refs['table-ref'];
+    let headerCells = table.querySelectorAll('thead tr th');
+    let headerRow = [];
+    headerCells.forEach(cell => {
+      headerRow.push(cell.textContent);
+    });
+    toJoin.push(headerRow.join(','));
+    let rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      let currentRow = [];
+      for (let child of row.children) {
+        currentRow.push(child.textContent);
+      }
+      toJoin.push(currentRow.join(','));
+    });
+    this.downloadCSV(toJoin.join('\n'));
+  } 
+
+  downloadCSV(csv) {
+    let csvFile = new Blob([csv], {type: 'text/csv'});
+    let downloadLink = document.createElement('a');
+    downloadLink.href = 'cars.csv';
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
 
   render() {
     if (!this.state.shownCars.length) {
@@ -578,7 +608,7 @@ module.exports = class CarsIndex extends React.Component {
                     <div className="griddle-container">
                       <div className="griddle-body">
                         <div>
-                          <table>
+                          <table ref="table-ref">
                             <thead>
                             <tr>
                               <th>
@@ -620,6 +650,9 @@ module.exports = class CarsIndex extends React.Component {
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <button className="btn btn-primary" onClick={() => this.getCSVFromTable()}>Get CSV</button>
           </div>
           <div className="row">
             <div className="col-xs-12" >
