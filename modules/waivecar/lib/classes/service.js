@@ -172,7 +172,7 @@ module.exports = class Service {
    * @param  {Object}  user
    * @return {Void}
    */
-  static *hasBookingAccess(user) {
+  static *hasBookingAccess(user, skipPayment) {
     let missing = [];
     let after = '';
     let license = yield License.findOne({ where : { userId : user.id } });
@@ -231,8 +231,7 @@ module.exports = class Service {
     if (!user.verifiedPhone) { 
       missing.push('phone'); 
     }
-
-    if (!user.stripeId || !card) { 
+    if ((!user.stripeId || !card) && !skipPayment) { 
       missing.push('credit card'); 
       after = '<br/><em>Please note: We no longer accept debit cards.</em>';
     }

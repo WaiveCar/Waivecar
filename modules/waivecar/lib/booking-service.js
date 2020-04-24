@@ -98,7 +98,7 @@ module.exports = class BookingService extends Service {
   // Creates a new booking.
   static *create(data, _user) {
     let start = new Date();
-    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 60 * 1000);
+    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 5 * 1000);
 
     var car = false;
     var booking = false;
@@ -142,7 +142,7 @@ module.exports = class BookingService extends Service {
       yield bail(err);
     } 
 
-    if (data.isWaivework) {
+    if (data.isWaivework && !data.skipChecklist) {
       // If the booking is Waivework, the checklist of items required before a waivework booking is run
       let checklist = yield car.waiveworkChecklist();
       if (checklist.missingList.length) {
@@ -170,7 +170,7 @@ module.exports = class BookingService extends Service {
       // means that if an admin is booking a driver who is not
       // themselves, this code is still run.
       try {
-        yield this.hasBookingAccess(driver);
+        yield this.hasBookingAccess(driver, data.skipPayment);
       } catch(err) {
         yield bail(err);
       } 
@@ -331,7 +331,6 @@ module.exports = class BookingService extends Service {
       }
     });
     if(currentBookingCheck) {
-      console.log(currentBookingCheck);
       yield bail(error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
@@ -492,7 +491,7 @@ module.exports = class BookingService extends Service {
     // Ok cool, now everything is done and the user has the car. messages have been sent
     // and the person can go get it. 
 
-    if (data.isWaivework) {
+    if (data.isWaivework && !data.skipPayment) {
       yield booking.addFlag('Waivework');
       let waiveworkPayment;
       try {
