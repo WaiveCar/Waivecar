@@ -85,16 +85,6 @@ class BookCars extends Component {
               message: `Error completing action: ${err.message}`,
             });
           }
-          console.log(response);
-          if (response.isCarReachable) {
-            this.setState({
-              ended: true,
-              currentBooking: {
-                ...this.state.currentBooking,
-                waiveworkPayment: null,
-              },
-            });
-          }
         });
       });
     });
@@ -109,10 +99,11 @@ class BookCars extends Component {
             message: err,
           });
         }
-        this.service.setCar(this.id());
-        return snackbar.notify({
-          type: 'success',
-          message: 'InstaEnd successful!',
+        this.setState({currentBooking: null}, () => {
+          return snackbar.notify({
+            type: 'success',
+            message: 'InstaEnd successful!',
+          });
         });
       });
     }
@@ -174,7 +165,9 @@ class BookCars extends Component {
                 in{' '}
               </div>
               <div style={{marginTop: '1rem'}}>
-                <button className="btn btn-primary">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => this.instaEnd(currentBooking.carId)}>
                   End And Complete Booking
                 </button>
               </div>
