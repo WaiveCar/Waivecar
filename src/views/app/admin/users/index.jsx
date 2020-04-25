@@ -5,6 +5,7 @@ import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
 import Organizations from '../components/organizations-search.jsx';
+import BookCars from './book-cars';
 
 @mixin.decorate(History)
 class UsersListView extends React.Component {
@@ -31,6 +32,7 @@ class UsersListView extends React.Component {
       offset : 0,
       selectedUsersSet: new Set(),
       selectedUsers: [],
+      selectedForBooking: null,
     };
     relay.subscribe(this, 'users');
   }
@@ -128,7 +130,7 @@ class UsersListView extends React.Component {
   }
 
   render() {
-    let {selectedUsers} = this.state;
+    let {selectedUsers, selectedForBooking} = this.state;
     return (
       <div id="users-list" className="container">
         <div className="box full">
@@ -143,6 +145,30 @@ class UsersListView extends React.Component {
               </Link>
             </div>
           </div>
+          <div>
+            <div className="box">
+              <h3>
+                <span>Selected Users</span>
+                <small>
+                  Batch operations will be done on these users
+                </small>
+              </h3>
+              <div className="box-content">
+                <ul>
+                {selectedUsers.map((user, i) => 
+                  <li key={i}>
+                    <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
+                    <button className="btn btn-link" onClick={() => this.toggleSelected(user.id, user)}>Unselect</button> 
+                    <button className="btn btn-link" onClick={() => this.setState({selectedForBooking: user})}>Select For Booking</button> 
+                  </li>
+                )}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {selectedForBooking ? (
+            <BookCars user={selectedForBooking} _user={this._user} />
+          ) : ''}
           <div className="box-content">
             <input 
               type="text" 
@@ -176,28 +202,9 @@ class UsersListView extends React.Component {
             }
           </div>
         </div>
-        {this._user.hasAccess('waiveAdmin') ?
-          <div>
-            <div className="box">
-              <h3>
-                <span>Selected Users</span>
-                <small>
-                  Batch operations will be done on these users
-                </small>
-              </h3>
-              <div className="box-content">
-                <ul>
-                {selectedUsers.map((user, i) => 
-                  <li key={i}>
-                    <Link to={`/users/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
-                    <button className="btn btn-link" onClick={() => this.toggleSelected(user.id, user)}>Unselect</button> 
-                  </li>
-                )}
-                </ul>
-              </div>
-            </div>
-            <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
-          </div> : ''}
+          {this._user.hasAccess('waiveAdmin') ?
+              <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
+           : ''}
       </div>
     );
   }

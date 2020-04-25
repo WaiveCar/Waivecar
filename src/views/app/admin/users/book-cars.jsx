@@ -15,10 +15,14 @@ class BookCars extends Component {
   }
 
   componentDidMount() {
+    this.getBooking();
+  }
+
+  getBooking(userId) {
     api.get(
       '/bookings',
       {
-        userId: this.props.user.id,
+        userId: userId || this.props.user.id,
         order: 'id,DESC',
         details: true,
         status: 'started,reserved,ended',
@@ -32,19 +36,29 @@ class BookCars extends Component {
             message: err.message,
           });
         }
-        if (bookings[0]) {
-          this.setState({
-            currentBooking: bookings[0],
-            ended: bookings[0].status === 'ended',
-          });
-        }
+        this.setState({
+          currentBooking: (bookings && bookings[0]) || null,
+        });
       },
     );
   }
 
+  componentDidUpdate(prevProps) {
+    let {user} = this.props;
+    if (prevProps.user.id !== user.id) {
+      this.getBooking(user.id);
+    }
+  }
+
   carSearch() {
     api.get(
-      `/cars/search/?search=${this.state.carSearchWord}`,
+      `/cars/search/?search=${this.state.carSearchWord}${
+        this._user.organizations.length
+          ? `&organizationIds=[${this._user.organizations.map(
+              org => org.organizationId,
+            )}]`
+          : ''
+      }`,
       (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -111,6 +125,7 @@ class BookCars extends Component {
 
   render() {
     let {searchResults, carSearchWord, currentBooking} = this.state;
+    let {user} = this.props;
     return (
       <div className="box">
         <h3>
@@ -124,6 +139,7 @@ class BookCars extends Component {
         <div className="box-content">
           {!currentBooking ? (
             <div>
+              Selected User: {user.firstName} {user.lastName}
               <div className="row" style={{marginTop: '10px'}}>
                 <input
                   onChange={e => this.setState({carSearchWord: e.target.value})}
@@ -158,7 +174,7 @@ class BookCars extends Component {
           ) : (
             <div>
               <div>
-                Current in booking{' '}
+                {user.firstName} {user.lastName} currently in booking{' '}
                 <Link to={`/bookings/${currentBooking.id}`}>
                   #{currentBooking.id}
                 </Link>{' '}
