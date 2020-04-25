@@ -125,9 +125,9 @@ class BookCars extends Component {
 
   render() {
     let {searchResults, carSearchWord, currentBooking} = this.state;
-    let {user} = this.props;
+    let {user, full} = this.props;
     return (
-      <div className="box">
+      <div className={`box ${full ? 'full' : ''}`}>
         <h3>
           Book Cars
           <small>

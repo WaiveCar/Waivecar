@@ -146,7 +146,7 @@ class UsersListView extends React.Component {
             </div>
           </div>
           <div>
-            <div className="box">
+            <div className="box full">
               <h3>
                 <span>Selected Users</span>
                 <small>
@@ -167,8 +167,11 @@ class UsersListView extends React.Component {
             </div>
           </div>
           {selectedForBooking ? (
-            <BookCars user={selectedForBooking} _user={this._user} />
+            <BookCars user={selectedForBooking} _user={this._user} full={true}/>
           ) : ''}
+          {this._user.hasAccess('waiveAdmin') ?
+              <Organizations type={'users'} users={selectedUsers} _user={this._user} full={true}/>
+           : ''}
           <div className="box-content">
             <input 
               type="text" 
@@ -202,9 +205,6 @@ class UsersListView extends React.Component {
             }
           </div>
         </div>
-          {this._user.hasAccess('waiveAdmin') ?
-              <Organizations type={'users'} users={selectedUsers} _user={this._user}/>
-           : ''}
       </div>
     );
   }

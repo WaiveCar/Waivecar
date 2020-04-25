@@ -123,9 +123,9 @@ class Organizations extends Component {
 
   render() {
     let {currentOrganizations, searchResults, orgSearchWord} = this.state;
-    let {type, updateCars} = this.props;
+    let {type, updateCars,full} = this.props;
     return (
-      <div className="box">
+      <div className={`box ${full ? 'full' : ''}`}>
         <h3>
           <span>
             {type[type.length - 1] !== 's'
