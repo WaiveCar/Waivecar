@@ -1819,7 +1819,10 @@ module.exports = {
       where: {
         license: {
           $and: [{$like: `%${query.search}`}]
-        }
+        },
+        ...(query.organizationIds ? {
+          organizationId: {$in: JSON.parse(query.organizationIds)},
+        } : {}),
       }
     });
     return cars;
