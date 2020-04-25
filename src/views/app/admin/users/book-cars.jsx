@@ -129,7 +129,7 @@ class BookCars extends Component {
     return (
       <div className={`box ${full ? 'full' : ''}`}>
         <h3>
-          Book Cars
+          User Bookings
           <small>
             {this._user.hasAccess('waiveAdmin')
               ? '(not for normal WaiveWork)'
