@@ -38,7 +38,7 @@ class FileService extends Service {
     // Store the file on the local storage and save file record.
 
     try {
-      yield storage.save(collectionId, _user);
+      yield storage.save(collectionId, _user, query.organizationId);
     } catch (err) {
       yield this.deleteFiles(storage.files);
       throw err;
