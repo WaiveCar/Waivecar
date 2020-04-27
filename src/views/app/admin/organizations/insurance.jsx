@@ -139,7 +139,7 @@ class Insurance extends Component {
               </tr>
             </thead>
             <tbody>
-              {insurance.map((each, i) => (
+              {insurance.length ? insurance.map((each, i) => (
                 <tr key={i}>
                   <td>
                     <a
@@ -157,7 +157,7 @@ class Insurance extends Component {
                     </button>
                   </td>
                 </tr>
-              ))}
+              )): <tr><td colSpan="3" className="text-center">No policies uploaded.</td></tr>}
             </tbody>
           </table>
         </div>
