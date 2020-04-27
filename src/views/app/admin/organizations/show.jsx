@@ -5,6 +5,7 @@ import {snackbar} from 'bento-web';
 import OrganizationResource from './organization-resource-table.jsx';
 import ThSort from '../components/table-th';
 import moment from 'moment';
+import Insurance from './insurance.jsx';
 
 class Organization extends Component {
   constructor(props) {
@@ -104,6 +105,7 @@ class Organization extends Component {
               </tr>
             )}
           />
+          <Insurance _user={this._user} />
         </div>
       </div>
     );
