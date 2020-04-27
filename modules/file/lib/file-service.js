@@ -80,7 +80,7 @@ class FileService extends Service {
   *index(query, _user) {
     let order;
     if (query.collectionId === 'insurance') {
-      order = [['created_at', 'asc']];
+      order = [['comment', 'asc']];
     }
     if (_user.hasAccess('admin')) {
       let actualQuery = queryParser(query, {
