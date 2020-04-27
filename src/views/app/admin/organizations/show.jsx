@@ -105,7 +105,8 @@ class Organization extends Component {
               </tr>
             )}
           />
-          <Insurance _user={this._user} />
+          <h4 style={{marginTop: '1rem'}}>Insurance</h4>
+          <Insurance _user={this._user} organizationId={id} />
         </div>
       </div>
     );
