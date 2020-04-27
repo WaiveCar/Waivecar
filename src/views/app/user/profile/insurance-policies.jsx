@@ -1,13 +1,27 @@
 import React from 'react';
 import {auth} from 'bento';
+import {Link} from 'react-router';
 import Insurance from '../../../app/admin/organizations/insurance.jsx';
 
 let _user = auth.user();
-console.log(_user);
+
 function InsurancePolicies() {
-  return <div className="box">
-    {_user.organizations.map((org, i) => <Insurance _user={_user} organizationId={org.organizationId} />)}
+  return (
+    <div className="box">
+      {_user.organizations.map((org, i) => (
+        <div style={{marginTop: '1.25rem'}}>
+          <h3>
+            <Link to={`/organizations/${org.organizationId}`}>
+              {org.organization.name}
+            </Link>
+          </h3>
+          <div key={i} className="box-content">
+            <Insurance _user={_user} organizationId={org.organizationId} />
+          </div>
+        </div>
+      ))}
     </div>
+  );
 }
 
 export default InsurancePolicies;
