@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
-import {snackbar} from 'bento-ui';
+import {snackbar} from 'bento-web';
 import moment from 'moment';
 
 class Insurance extends Component {
@@ -32,7 +32,7 @@ class Insurance extends Component {
 
   upload() {
     let {expireDate} = this.state;
-    let {organization} = this.props;
+    let {organizationId} = this.props;
     if (!expireDate || !this.fileUpload.files.length) {
       return snackbar.notify({
         type: 'danger',
@@ -93,7 +93,7 @@ class Insurance extends Component {
       <div>
         <div className="row">
           <input
-            type="text"
+            type="date"
             className="col-xs-6"
             style={{marginTop: '1px', padding: '2px', height: '40px'}}
             placeholder="Expiration Date (MM/DD/YYYY)"
