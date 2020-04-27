@@ -120,6 +120,11 @@ Bento.Register.Model('File', 'sequelize', (model, Sequelize) => {
       type : Sequelize.TEXT
     },
 
+    organizationId: {
+      type: Sequelize.INTEGER,
+      defaultValue: null,
+    },
+
     /**
      * The location where the file is stored, this is either local or
      * any of the available 3rd party service providers.
