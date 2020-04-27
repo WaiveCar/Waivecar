@@ -92,6 +92,7 @@ class FileService extends Service {
           store        : queryParser.STRING,
           bucket       : queryParser.STRING,
           comment      : queryParser.STRING,
+          organizationId: queryParser.NUMBER,
         },
       })
       actualQuery.order = order;

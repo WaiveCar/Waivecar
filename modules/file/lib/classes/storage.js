@@ -75,7 +75,7 @@ module.exports = class Storage {
           message : `You do not have the required access to upload files to this group.`
         }, 400);
       }
-
+      console.log(payload);
       let stat = yield this.fileStats(filepath);
       let file = new File({
         userId       : _user.id,
@@ -87,6 +87,7 @@ module.exports = class Storage {
         mime         : mime.lookup(filename),
         size         : stat.size,
         comment      : payload.comment || null,
+        organizationId: payload.organizationId || null,
         store        : 'local'
       });
       yield file.save();
