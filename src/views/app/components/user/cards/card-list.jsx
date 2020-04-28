@@ -193,17 +193,20 @@ class CardList extends React.Component {
     }
   }
 
-  selectCard(e, cardId) {
-    e.target.checked = false;
-    api.put(`/shop/cards/${cardId}`, {}, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type    : 'danger',
-          message : err.message
-        });
-      }
-      this.shop.setCards(this.props.user.id);
-    }); 
+  selectCard(e, card) {
+    if (!card.selected) {
+      let cardId = card.id;
+      e.target.checked = false;
+      api.put(`/shop/cards/${cardId}`, {}, (err, res) => {
+        if (err) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
+        }
+        this.shop.setCards(this.props.user.id);
+      }); 
+    }
   }
 
   renderCardTable() {
@@ -269,7 +272,7 @@ class CardList extends React.Component {
                     <td>**** - **** - **** - { card.last4 }</td>
                     <td className="text-center">{ card.brand }</td>
                     <td className="text-center">{ card.expMonth } / { card.expYear }</td>
-                    <td className="text-center" onClick={(e) => this.selectCard(e, card.id)}>
+                    <td className="text-center" onClick={(e) => this.selectCard(e, card)}>
                       <input type="radio" checked={card.selected} />
                     </td>
                     <td className="text-center">
