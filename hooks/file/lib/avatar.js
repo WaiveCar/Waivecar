@@ -5,6 +5,7 @@ let User  = Bento.model('User');
 let relay = Bento.Relay;
 let error = Bento.Error;
 let UserLog      = require('../../../modules/log/lib/log-service');
+let UserController = require('../../../modules/user/controllers/users-controller');
 
 module.exports = class Avatar {
 
@@ -30,12 +31,12 @@ module.exports = class Avatar {
     });
 
     if (user.id === _user.id) {
+      let newUser = {..._user.toJSON(), ...user.toJSON()};
       relay.emit('me', {
         type : 'update',
-        data : user.toJSON()
+        data : newUser,
       });
     }
-
     relay.emit('users', {
       type : 'update',
       data : user.toJSON()
