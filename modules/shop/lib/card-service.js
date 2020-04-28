@@ -66,6 +66,7 @@ module.exports = class Cards extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
+    console.log('at top', query);
     let showSelected = query.showSelected;
     query = queryParser(query, {
       where : {
@@ -84,8 +85,7 @@ module.exports = class Cards extends Service {
     }
 
     // ### User Query
-
-    query.where.userId = _user.id;
+    query.where.userId = query.where.userId || _user.id;
     let cards = yield Card.find(query);
     if (cards.length && showSelected) {
       let currentMax = null;
