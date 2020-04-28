@@ -6,6 +6,7 @@ const apiUrl = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 module.exports = class User {
 
   constructor(data, roles) {
+    console.log('contstructor', data.role);
     this._roles = roles;
     for (let key in data) {
       this[key] = data[key];
