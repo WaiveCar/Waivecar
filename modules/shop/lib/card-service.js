@@ -66,7 +66,6 @@ module.exports = class Cards extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
-    console.log('at top', query);
     let showSelected = query.showSelected;
     query = queryParser(query, {
       where : {
