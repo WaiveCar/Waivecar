@@ -273,7 +273,7 @@ class CardList extends React.Component {
                     <td className="text-center">{ card.brand }</td>
                     <td className="text-center">{ card.expMonth } / { card.expYear }</td>
                     <td className="text-center" onClick={(e) => this.selectCard(e, card)}>
-                      <input type="radio" checked={card.selected} />
+                      <input type="radio" checked={card.selected} readOnly />
                     </td>
                     <td className="text-center">
                       <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
