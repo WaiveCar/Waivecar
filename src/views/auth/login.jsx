@@ -121,13 +121,12 @@ class LoginView extends React.Component {
           </label>
           <Link tabIndex="5" to="/reset-password">Forgot your password?</Link>
         </div>
-
         <div className="actions">
           <button type="button" className="r-btn btn-login" onClick={ this.submit }>Log in</button>
-          <button className="r-btn btn-facebook" onClick={ facebook.login }>
+          {/*<button className="r-btn btn-facebook" onClick={ facebook.login }>
             <i className="fa fa-facebook" />
             Log in with Facebook
-          </button>
+          </button>*/}
         </div>
 
         <div className="footer" style={{ display: 'none' }}>
