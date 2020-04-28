@@ -55,6 +55,7 @@ templates.register('auth', {
     {
       path: '/custom/:organizationName',
       component: require('views/auth/organization-signin'),
+      onEnter: policies.isAnonymous,
     },
   ]
 });

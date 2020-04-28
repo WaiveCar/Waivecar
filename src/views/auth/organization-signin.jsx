@@ -17,18 +17,19 @@ class OrganizationSignin extends Component {
     api.get(
       `/organizations?name=${organizationName}&includeImage=true`,
       (err, res) => {
-        if (err) {
-          console.log('error fetching organization', err);
+        if (err || !res.length) {
+          this.props.history.replaceState({}, '/login');
         }
-        this.setState({organization: res});
+        this.setState({organization: res[0]});
       },
     );
   }
 
   render() {
+    let {organization} = this.state;
     return (
       <div>
-        <Login />
+        <Login organization={organization} />
       </div>
     );
   }

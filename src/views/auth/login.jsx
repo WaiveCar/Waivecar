@@ -84,11 +84,20 @@ class LoginView extends React.Component {
    * @return {Object}
    */
   render() {
+    let {organization} = this.props;
     return (
       <div className="login">
         <div className="title">
-          { config.app.name }&nbsp;
-          <span className="title-site">Log in</span>
+          {!organization ? (
+            <div>
+              { config.app.name }&nbsp;
+              <span className="title-site">Log in</span>
+            </div> ) : (
+            <div>
+              <div>{organization.name}</div>
+              <span className="title-site">Log in</span>
+            </div>
+          )}
         </div>
 
         <Form
