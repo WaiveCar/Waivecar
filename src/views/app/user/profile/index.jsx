@@ -263,7 +263,7 @@ module.exports = class ProfileView extends React.Component {
             <div className="profile-image-selector" onClick={ this.avatar.select }>
               <i className="material-icons" role="avatar-upload">add_a_photo</i>
             </div>
-            <div className="profile-image-view" style={{ background : `url(${ this.user.getAvatar() }) center center / cover` }} />
+            <div className="profile-image-view" style={{ background : `url(${ auth.user().getAvatar() }) center center / cover` }} />
           </div>
 
           <div className="profile-meta">
