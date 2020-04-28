@@ -366,7 +366,7 @@ module.exports = class UserDetails extends React.Component {
 
   render() {
     let user = this.state.currentUser;
-    let {orgSearchWord} = this.state;
+    let {orgSearchWord, addCard} = this.state;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
     if (!user) {
       return (
@@ -516,6 +516,7 @@ module.exports = class UserDetails extends React.Component {
           <Organizations type={'user'} user={user} _user={this._user}/>
           <BookCars user={user} _user={this._user}/>
           {this._user.hasAccess('waiveAdmin') ? <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList> : ''}
+          {addCard ? <AddCard user={user}/> : ''}
           {this._user.hasAccess('waiveAdmin') ? <WaiveWorkRequest user={user} /> : ''}
           {this._user.hasAccess('waiveAdmin') ? <WaiveWorkDetails user={user} /> : ''}
           <UserCommunications user={user} sendText={this.sendText}/>

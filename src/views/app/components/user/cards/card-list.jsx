@@ -74,7 +74,7 @@ class CardList extends React.Component {
       });
       if (err) {
         return snackbar.notify({
-          type    : `danger`,
+          type    : 'danger',
           message : err.message
         });
       }
@@ -183,7 +183,7 @@ class CardList extends React.Component {
           if (err) {
             this.setState({topUpDisabled: ''});
             return snackbar.notify({
-              type    : `danger`,
+              type    : 'danger',
               message : err.message
             });
           }
@@ -191,6 +191,18 @@ class CardList extends React.Component {
         });
       })
     }
+  }
+
+  selectCard(cardId) {
+    api.put(`/shop/cards/${cardId}`, {}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      this.shop.setCards(this.props.user.id);
+    }); 
   }
 
   renderCardTable() {
@@ -204,7 +216,7 @@ class CardList extends React.Component {
 
     let header = (
       <div className='credit'>{this.user.hasAccess('admin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
-      {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
+        {this.props.addCard && <button onClick={ () => this.props.addCard() } className='btn btn-link btn-sm'>Add Card</button>}
       {
         this.user.hasAccess('waiveAdmin') ? 
           <div className="pull-right">
@@ -244,6 +256,7 @@ class CardList extends React.Component {
                 <th>Card number</th>
                 <th className="text-center">Brand</th>
                 <th className="text-center">Expiration Date</th>
+                <th className="text-center">Select</th>
                 <th></th>
               </tr>
             </thead>
@@ -255,6 +268,7 @@ class CardList extends React.Component {
                     <td>**** - **** - **** - { card.last4 }</td>
                     <td className="text-center">{ card.brand }</td>
                     <td className="text-center">{ card.expMonth } / { card.expYear }</td>
+                    <td className="text-center" onClick={() => this.selectCard(card.id)}>{ card.selected ? '0' : 'X'}</td>
                     <td className="text-center">
                       <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
                         <i className="material-icons">delete</i>
@@ -284,7 +298,6 @@ class CardList extends React.Component {
       </div>
     );
   }
-
   render() {
     return (
       <div className="box">

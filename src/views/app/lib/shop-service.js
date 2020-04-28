@@ -106,7 +106,7 @@ module.exports = class ShopService extends Service {
    * Loads cards from the api and adds them to the cards array on the ctx.
    */
   setCards(userId) {
-    api.get('/shop/cards', {
+    api.get('/shop/cards?showSelected=true', {
       userId : userId
     }, (err, cards) => {
       if (err) {
