@@ -5,12 +5,14 @@ import {snackbar} from 'bento-web';
 import OrganizationResource from './organization-resource-table.jsx';
 import ThSort from '../components/table-th';
 import moment from 'moment';
-import Insurance from './insurance.jsx';
+import Insurance from './insurance';
+import Logo from './logo';
 
 class Organization extends Component {
   constructor(props) {
     super(props);
     let pathName = window.location.pathname.split('/');
+    this._user = auth.user();
     this.state = {
       id: pathName.pop(),
       users: [],
@@ -24,7 +26,7 @@ class Organization extends Component {
     if (!auth.user().canSee('organization', {id})) {
       return this.props.history.replaceState({}, '/forbidden');
     }
-    api.get(`/organizations/${id}`, (err, result) => {
+    api.get(`/organizations/${id}?includeImage=true`, (err, result) => {
       if (err) {
         snackbar.notify({
           type: 'danger',
@@ -45,7 +47,8 @@ class Organization extends Component {
       <div className="box">
         <h3>{organization ? organization.name : ''}</h3>
         <div className="box-content">
-          <h4>Users</h4>
+          <Logo organization={{organization}} _user={this._user}/>
+          <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
             resource={'users'}
             resourceUrl={'users'}
