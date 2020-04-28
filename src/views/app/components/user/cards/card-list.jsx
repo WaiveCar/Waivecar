@@ -193,7 +193,8 @@ class CardList extends React.Component {
     }
   }
 
-  selectCard(cardId) {
+  selectCard(e, cardId) {
+    e.target.checked = false;
     api.put(`/shop/cards/${cardId}`, {}, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -268,7 +269,9 @@ class CardList extends React.Component {
                     <td>**** - **** - **** - { card.last4 }</td>
                     <td className="text-center">{ card.brand }</td>
                     <td className="text-center">{ card.expMonth } / { card.expYear }</td>
-                    <td className="text-center" onClick={() => this.selectCard(card.id)}>{ card.selected ? '0' : 'X'}</td>
+                    <td className="text-center" onClick={(e) => this.selectCard(e, card.id)}>
+                      <input type="radio" checked={card.selected} />
+                    </td>
                     <td className="text-center">
                       <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
                         <i className="material-icons">delete</i>
