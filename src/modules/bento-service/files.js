@@ -46,7 +46,7 @@ module.exports = class Files {
         });
       }
       if (prev) {
-        this.delete(prev); // Delete previous avatar, reduces bloat...
+        //this.delete(prev); // Delete previous avatar, reduces bloat...
       }
     });
   }
