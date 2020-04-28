@@ -52,6 +52,10 @@ templates.register('auth', {
       path: '/work-redirect',
       component: require('views/site/work-redirect'),
     },
+    {
+      path: '/custom/:organizationName',
+      component: require('views/auth/organization-signin'),
+    },
   ]
 });
 
