@@ -22,6 +22,9 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       allowNull: false,
       unique: true,
     },
+    logoId : {
+      type : Sequelize.STRING,
+    },
   };
 
   model.methods = {
@@ -172,9 +175,11 @@ Bento.Register.Model('Organization', 'sequelize', function register(
   model.relations = [
     'OrganizationUser',
     'Car',
-    function(OrganizationUser, Car) {
+    'File',
+    function(OrganizationUser, Car, File) {
       this.hasMany(OrganizationUser, {as: 'organizationUsers'});
       this.hasMany(Car, {as: 'cars'});
+      this.belongsTo(File, { as : 'logo', foreignKey: 'logoId'});
     },
   ];
   return model;

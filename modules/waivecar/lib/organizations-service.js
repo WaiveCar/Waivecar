@@ -21,6 +21,12 @@ module.exports = {
         ...(query.limit ? {limit: Number(query.limit)} : {}),
         ...(query.offset ? {offset: Number(query.offset)} : {}),
         ...(query.order ? {order: [query.order.split(',')]} : {}),
+        ...(query.includeImage ? {include: [
+          {
+            model: 'File',
+            as: 'logo', 
+          }
+        ]} : {}),
       };
       return yield Organization.find(opts);
     }
