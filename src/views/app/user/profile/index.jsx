@@ -61,8 +61,7 @@ module.exports = class ProfileView extends React.Component {
    * @return {Object}
    */
   renderFacebookConnect() {
-    let user = auth.user();
-    if (!user.facebook) {
+    if (!this.user.facebook) {
       return (
         <button className="r-btn btn-facebook" onClick={ this.facebookConnect }>
           <i className="fa fa-facebook" />
@@ -123,7 +122,6 @@ module.exports = class ProfileView extends React.Component {
    * Sends a new verification sms
    */
   submitVerification() {
-    let user = auth.user();
     api.post(`/verifications/phone-verification/${ user.id }`, {}, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -139,7 +137,6 @@ module.exports = class ProfileView extends React.Component {
   }
 
   renderPersonalDetails() {
-    let user = auth.user();
 
     let buttons = [{
       value : 'Update Details',
@@ -147,7 +144,7 @@ module.exports = class ProfileView extends React.Component {
       class : 'btn btn-sm btn-profile-submit'
     }];
 
-    if (user.phone && !user.verifiedPhone) {
+    if (this.user.phone && !this.user.verifiedPhone) {
       buttons.push({
         value : 'Send Verification SMS',
         class : 'btn btn-primary',
@@ -168,12 +165,12 @@ module.exports = class ProfileView extends React.Component {
             ref       = "personal"
             className = "bento-form-static"
             fields    = { formFields.personal }
-            default   = { user }
+            default   = { this.user }
             buttons   = { buttons }
             submit = { this.account.submitUser }
           />
         </div>
-        {user.organizations.length ? 
+        {this.user.organizations.length ? 
           <Organizations type={'user'} user={this.user} _user={this.user}/> : ''
         }
       </div>
@@ -181,32 +178,29 @@ module.exports = class ProfileView extends React.Component {
   }
 
   renderCards() {
-    let user = auth.user();
     let {addCard} = this.state;
     return (
       <div>
         {addCard &&
-          <AddCard user={ user }/>
+          <AddCard user={ this.user }/>
         }
-        <CardList user={ user } addCard={() => this.setState({ addCard: true }, () => console.log(this.state))} />
+        <CardList user={ this.user } addCard={() => this.setState({ addCard: true }, () => console.log(this.state))} />
       </div>
     );
   }
 
   renderCharges() {
-    let user = auth.user();
     return (
       <div className='rides'>
-        <ChargeList user={ user } full={ false }></ChargeList>
+        <ChargeList user={ this.user } full={ false }></ChargeList>
       </div>
     );
   }
 
   renderRides() {
-    let user = auth.user();
     return (
       <div className='rides'>
-        <RideList user={ user } full={ false }></RideList>
+        <RideList user={ this.user } full={ false }></RideList>
       </div>
     );
   }
@@ -261,21 +255,20 @@ module.exports = class ProfileView extends React.Component {
   }
 
   render() {
-    let user = auth.user();
     return (
       <div className="profile">
         <div className="profile-header">
           <div className="profile-image">
-            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.bindUpload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
+            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.bindUpload(`/files?isAvatar=true&userId=${ this.user.id }`, this.user.avatar) } />
             <div className="profile-image-selector" onClick={ this.avatar.select }>
               <i className="material-icons" role="avatar-upload">add_a_photo</i>
             </div>
-            <div className="profile-image-view" style={{ background : `url(${ user.getAvatar() }) center center / cover` }} />
+            <div className="profile-image-view" style={{ background : `url(${ this.user.getAvatar() }) center center / cover` }} />
           </div>
 
           <div className="profile-meta">
             <div className="profile-name">
-              { user.getName() } <span>{user.isWaivework ? 'Waivework' : ''}</span>
+              { this.user.getName() } <span>{this.user.isWaivework ? 'Waivework' : ''}</span>
             </div>
           </div>
         </div>
@@ -283,7 +276,7 @@ module.exports = class ProfileView extends React.Component {
         {/*this.renderFacebookConnect() */}
         { this.renderPersonalDetails() }
         { this.renderCards() }
-        {/*<UserParking admin={false} userId={ user.id }/>*/}
+        {/*<UserParking admin={false} userId={ this.user.id }/>*/}
         { this.user.hasAccess('waiveAdmin') && this.renderRides() }
         { this.renderCharges() }
         { this.user.hasAccess('waiveAdmin') && this.renderAccountStatus() }
