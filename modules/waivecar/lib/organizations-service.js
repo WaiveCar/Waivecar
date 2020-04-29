@@ -21,12 +21,16 @@ module.exports = {
         ...(query.limit ? {limit: Number(query.limit)} : {}),
         ...(query.offset ? {offset: Number(query.offset)} : {}),
         ...(query.order ? {order: [query.order.split(',')]} : {}),
-        ...(query.includeImage ? {include: [
-          {
-            model: 'File',
-            as: 'logo', 
-          }
-        ]} : {}),
+        ...(query.includeImage
+          ? {
+              include: [
+                {
+                  model: 'File',
+                  as: 'logo',
+                },
+              ],
+            }
+          : {}),
       };
       return yield Organization.find(opts);
     }
@@ -55,14 +59,18 @@ module.exports = {
     }
   },
 
-  *show(id, payload) {
-    let org = yield Organization.findOne({
+  *show(id, query) {
+    let q = {
       where: {id},
       include: [
         {model: 'Car', as: 'cars'},
         {model: 'OrganizationUser', as: 'organizationUsers'},
       ],
-    });
+    };
+    if (query.includeImage) {
+      q.include.push({model: 'File', as: 'logo'});
+    }
+    let org = yield Organization.findOne(q);
     // What is done below is only done because the current implementation of the
     // ORM is broken and and nested includes do not work at all.
     let ids = org.organizationUsers.map(orgUser => orgUser.userId);
