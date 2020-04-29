@@ -15,7 +15,6 @@ class Logo extends Component {
   render() {
     let {logo} = this.state;
     let {organization} = this.props;
-    console.log(logo);
     return (
       <div className="row">
         <h4>Logo</h4>

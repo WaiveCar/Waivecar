@@ -94,7 +94,15 @@ class LoginView extends React.Component {
               <span className="title-site">Log in</span>
             </div> ) : (
             <div>
-              <div>{organization.name}</div>
+              {!organization.logo ? <div>{organization.name}</div> : 
+                <div>
+                  <img
+                    style={{height: '150px', margin: '0.5rem'}}
+                    className="profile-image-view"
+                    src={`http://waivecar-prod.s3.amazonaws.com/${organization.logo.path}`}
+                  />
+                </div>
+              }
               <span className="title-site">Log in</span>
             </div>
           )}
