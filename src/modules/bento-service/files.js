@@ -35,15 +35,19 @@ module.exports = class Files {
    * @param  {String} [prev] Id of the file you wish to delete after successfull upload
    * @return {Void}
    */
-  upload(url, prev) {
+  upload(url, prev, cb) {
     api.file(url, {
       files : this.ctx.refs[this.ref].files
-    }, (err) => {
+    }, (err, res) => {
       if (err) {
         return snackbar.notify({
           type    : `danger`,
           message : err.message
         });
+      }
+      console.log(res, cb);
+      if (cb) {
+        cb(res);
       }
       if (prev) {
         // This is breaking stuff
@@ -76,8 +80,8 @@ module.exports = class Files {
    * @param  {String} prev
    * @return {Function}
    */
-  bindUpload(url, prev) {
-    return this.upload.bind(this, url, prev);
+  bindUpload(url, prev, cb) {
+    return this.upload.bind(this, url, prev, cb);
   }
 
 };
