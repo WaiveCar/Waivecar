@@ -14,10 +14,10 @@ class Logo extends Component {
 
   render() {
     let {logo} = this.state;
-    let {organization} = this.props;
+    let {organization, hideHeader} = this.props;
     return (
       <div className="row">
-        <h4>Logo</h4>
+        {!hideHeader && <h4>Logo</h4>}
         <div
           style={{
             position: 'relative',
