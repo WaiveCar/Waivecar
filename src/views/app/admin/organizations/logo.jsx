@@ -19,28 +19,49 @@ class Logo extends Component {
     return (
       <div className="row">
         <h4>Logo</h4>
-        <div className="profile-image">
-          <input
-            type="file"
-            style={{display: 'none'}}
-            ref="logo"
-            onChange={this.files.bindUpload(
-              `/files?isLogo=true&organizationId=${organization.id}`,
-              null,
-              res => this.setState({logo: res[0]}),
-            )}
-          />
-          <div className="profile-image-selector" onClick={this.files.select}>
-            <i className="material-icons" role="avatar-upload">
-              add_a_photo
-            </i>
-          </div>
-          {logo && (
-            <img
-              className="profile-image-view"
-              src={`http://waivecar-prod.s3.amazonaws.com/${logo.path}`}
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+          }}>
+          <div className="profile-image" style={{width: '250px', minHeight: '100px'}}>
+            <input
+              type="file"
+              style={{display: 'none'}}
+              ref="logo"
+              onChange={this.files.bindUpload(
+                `/files?isLogo=true&organizationId=${organization.id}`,
+                null,
+                res => this.setState({logo: res[0]}),
+              )}
             />
-          )}
+            <div
+              style={{
+                position: 'absolute',
+                width: '250px',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }}>
+              <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
+                <div
+                  className="profile-image-selector"
+                  onClick={this.files.select}>
+                  <i className="material-icons" role="avatar-upload">
+                    add_a_photo
+                  </i>
+                </div>
+              </div>
+            </div>
+            {logo && (
+              <img
+                style={{width: '100%'}}
+                className="profile-image-view"
+                src={`http://waivecar-prod.s3.amazonaws.com/${logo.path}`}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
