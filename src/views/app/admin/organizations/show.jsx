@@ -17,7 +17,7 @@ class Organization extends Component {
       id: pathName.pop(),
       users: [],
       cars: [],
-      organization: {},
+      organization: null,
     };
   }
 
@@ -47,7 +47,7 @@ class Organization extends Component {
       <div className="box">
         <h3>{organization ? organization.name : ''}</h3>
         <div className="box-content">
-          <Logo organization={organization} _user={this._user}/>
+          {organization && <Logo organization={organization} _user={this._user}/>}
           <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
             resource={'users'}
