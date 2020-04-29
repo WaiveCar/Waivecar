@@ -1,5 +1,6 @@
 'use strict';
 let apiConfig   = Bento.config.api;
+let File = Bento.model('File');
 
 Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
@@ -394,7 +395,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
         status : 'active'
       });
     },
-
     *setProbation() {
       yield this.update({
         status : 'probation'
@@ -415,7 +415,8 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     *getOrganizations() {
       let OrganizationUser = Bento.model('OrganizationUser');
-      return yield OrganizationUser.find({
+      let File = Bento.model('File');
+      let orgUsers = yield OrganizationUser.find({
         where: {
           userId: this.id,
         },
@@ -426,6 +427,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           },
         ],
       });
+      for (let each of orgUsers) {
+        each.organization.logo = yield File.findById(each.organization.logoId);
+      }
+      return orgUsers;
     },
 
   };
