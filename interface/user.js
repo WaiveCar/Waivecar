@@ -427,8 +427,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           },
         ],
       });
+      orgUsers = orgUsers.map(each => each.toJSON());
       for (let each of orgUsers) {
-        each.organization.logo = yield File.findById(each.organization.logoId);
+        each.organization = each.organization.toJSON();
+        each.organization.logo = (yield File.findById(each.organization.logoId)).toJSON();
       }
       return orgUsers;
     },

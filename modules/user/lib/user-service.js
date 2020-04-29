@@ -340,10 +340,10 @@ module.exports = {
     if (fromShow) {
       user = user.toJSON();
     }
-    user.organizations = orgs;
     if (!user) {
       throw error.userNotFound();
     }
+    user.organizations = orgs;
 
     let allRecords = yield GroupUser.find({
       where : { userId  : user.id },
