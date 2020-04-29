@@ -45,7 +45,6 @@ module.exports = class Files {
           message : err.message
         });
       }
-      console.log(res, cb);
       if (cb) {
         cb(res);
       }

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {auth} from 'bento';
 import {Link} from 'react-router';
-import Insurance from '../../../app/admin/organizations/insurance.jsx';
+import Logo from '../../../app/admin/organizations/logo';
 
 let _user = auth.user();
 
-function InsurancePolicies() {
+function Logos() {
   return (
     <div className="box">
       {_user.organizations.length ? (
@@ -17,14 +17,15 @@ function InsurancePolicies() {
               </Link>
             </h3>
             <div key={i} className="box-content">
-              <Insurance _user={_user} organizationId={org.organizationId} />
+              <Logo _user={_user} organization={org.organization} />
             </div>
           </div>
         ))
       ) : (
         <div id="booking-view">
           <div className="booking-message">
-            You are not a member of any organizations with group insurance policies.
+            You are not a member of any organizations with group insurance
+            policies.
           </div>
         </div>
       )}
@@ -32,4 +33,4 @@ function InsurancePolicies() {
   );
 }
 
-export default InsurancePolicies;
+export default Logos;
