@@ -5,6 +5,7 @@ let Storage     = require('./classes/storage');
 let S3          = require('./classes/s3');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let File        = Bento.model('File');
+let Organization = Bento.model('Organization')
 let hooks       = Bento.Hooks;
 let error       = Bento.Error;
 let config      = Bento.config.file;
@@ -38,7 +39,11 @@ class FileService extends Service {
     // Store the file on the local storage and save file record.
 
     try {
-      yield storage.save(collectionId, _user, query.organizationId);
+      let file = yield storage.save(collectionId, _user, Number(query.organizationId));
+      if (query.organizationId) {
+        let organization = yield Organization.findById(Number(query.organizationId));
+        yield organization.update({logoId: file.id});
+      }
     } catch (err) {
       yield this.deleteFiles(storage.files);
       throw err;

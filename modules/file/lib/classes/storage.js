@@ -92,6 +92,7 @@ module.exports = class Storage {
       yield file.save();
 
       this.files.push(file);
+      return file;
     }
 
     // ### Post Fields
