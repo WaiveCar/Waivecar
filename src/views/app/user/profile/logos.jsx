@@ -24,8 +24,7 @@ function Logos() {
       ) : (
         <div id="booking-view">
           <div className="booking-message">
-            You are not a member of any organizations with group insurance
-            policies.
+            You are not a member of any organizations with logos.
           </div>
         </div>
       )}
