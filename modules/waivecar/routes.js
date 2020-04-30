@@ -172,4 +172,5 @@ Route.post('/organizations', ['isAuthenticated', 'OrganizationsController@create
 Route.post('/organizations/addUser', ['isAuthenticated', 'OrganizationsController@addUser']);
 Route.get('/organizations/:id', ['isAuthenticated','OrganizationsController@show']);
 Route.put('/organizations/:id/:action', ['isAuthenticated', 'OrganizationsController@action']);
+Route.get('/organizations/:id/:statements', ['isAuthenticated', 'OrganizationsController@getStatements']);
  
