@@ -161,4 +161,21 @@ module.exports = {
   *getStatements(id) {
     return yield OrganizationStatement.find({where: {organizationId: id}});
   },
+
+  *createStatement(payload) {
+    try {
+      let statement = new OrganizationStatement(payload);
+      yield statement.save();
+      return statement;
+    } catch (e) {
+      log.warn(e);
+      throw error.parse(
+        {
+          code: 'ERROR_CREATING_STATEMENT',
+          message: `Error creating statement ${e.message}`,
+        },
+        500,
+      );
+    }
+  },
 };
