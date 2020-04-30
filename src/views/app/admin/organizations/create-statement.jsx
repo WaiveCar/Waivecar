@@ -8,7 +8,14 @@ class CreateStatement extends Component {
   }
   
   render() {
-    return <div>Create Statement</div>
+    return (
+    
+      <div className="box">
+        <h3 style={{marginBottom: '1rem'}}>New Statement</h3>
+        <div className="box-content">
+
+        </div>
+      </div>)
   }
 };
 

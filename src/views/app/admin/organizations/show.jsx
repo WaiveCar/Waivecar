@@ -45,9 +45,22 @@ class Organization extends Component {
     let {cars, users, id, organization} = this.state;
     return (
       <div className="box">
-        <h3>{organization ? organization.name : ''}</h3>
+        <h3>
+          {organization ? organization.name : ''}{' '}
+          {this._user.hasAccess('waiveAdmin') ? (
+            <Link
+              className="pull-right"
+              to={`/organizations/${id}/statements/create`}>
+              Create Statement
+            </Link>
+          ) : (
+            ''
+          )}
+        </h3>
         <div className="box-content">
-          {organization && <Logo organization={organization} _user={this._user}/>}
+          {organization && (
+            <Logo organization={organization} _user={this._user} />
+          )}
           <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
             resource={'users'}

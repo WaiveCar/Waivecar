@@ -186,7 +186,7 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
-        path      : '/statements/create',
+        path      : '/organizations/:id/statements/create',
         component : require('../../views/app/admin/organizations/create-statement'),
         onEnter   : policies.isWaiveAdmin,
       },
