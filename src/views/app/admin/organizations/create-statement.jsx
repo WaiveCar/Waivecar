@@ -16,8 +16,20 @@ class CreateStatement extends Component {
     this.state = {};
   }
 
-  createStatement() {
-
+  createStatement(e) {
+    let formData = this.refs['createStatement'].state.data;
+    formData.amount *= 100;
+    let id = Number(this.props.params.id);
+    formData.organizationId = id;
+    api.post('/organizations/statements', formData, (err, res) => {
+      if (err) {
+        snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.props.history.replaceState({}, `/organizations/${id}`)
+    });
   }
 
   render() {
@@ -27,11 +39,11 @@ class CreateStatement extends Component {
         <h3 style={{marginBottom: '1rem'}}>New Statement for {name}</h3>
         <div className="box-content">
           <Form
-            ref="addUser"
+            ref="createStatement"
             className="bento-form-static"
             fields={require('./statement-form')}
             buttons={buttons}
-            submit={e => this.createStatement()}
+            submit={e => this.createStatement(e)}
           />
         </div>
       </div>
