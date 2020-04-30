@@ -2,6 +2,7 @@ let UserService = require('./user-service');
 let LicenseService = require('../../license/lib/license-service');
 let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
+let OrganizationStatement = Bento.model('OrganizationStatement');
 let Email = Bento.provider('email');
 let User = Bento.model('User');
 let error = Bento.Error;
@@ -155,5 +156,9 @@ module.exports = {
         500,
       );
     }
+  },
+
+  *getStatements(id) {
+    return yield OrganizationStatement.find({where: {organizationId: id}});
   },
 };
