@@ -37,11 +37,14 @@ Bento.Register.Model('OrganizationStatement', 'sequelize', function register(
   };
 
   model.relations = [
-    'Organization',
     'Shop/Order',
-    function(Organization, ShopOrder) {
-      this.belongsTo({model: Organization, as: 'organization'});
-      this.belongsTo({model: ShopOrder, as: 'payment'});
+    'Organization',
+    function(ShopOrder, Organization) {
+      this.belongsTo(ShopOrder, {as: 'payment', foreignKey: 'paymentId'});
+      this.belongsTo(Organization, {
+        as: 'organization',
+        foreignKey: 'organizationId',
+      });
     },
   ];
   return model;
