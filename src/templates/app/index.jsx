@@ -186,6 +186,11 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
+        path      : '/statements/create',
+        component : require('../../views/app/admin/organizations/create-statement'),
+        onEnter   : policies.isWaiveAdmin,
+      },
+      {
         path: '/forbidden',
         component: require('../../views/app/user/forbidden/index'),
       },
