@@ -1,7 +1,9 @@
-Bento.Register.Model('OrganizationPayments', 'sequelize', function register(
+Bento.Register.Model('OrganizationStatement', 'sequelize', function register(
   model,
   Sequelize,
 ) {
+  model.table = 'organization_statements';
+
   model.schema = {
     id: {
       type: Sequelize.INTEGER,
@@ -33,5 +35,14 @@ Bento.Register.Model('OrganizationPayments', 'sequelize', function register(
       defaultValue: null,
     },
   };
+
+  model.relations = [
+    'Organization',
+    'Shop/Order',
+    function(Organization, ShopOrder) {
+      this.belongsTo({model: Organization, as: 'organization'});
+      this.belongsTo({model: ShopOrder, as: 'payment'});
+    },
+  ];
   return model;
 });
