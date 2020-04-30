@@ -3,96 +3,37 @@ import {fields} from 'bento-ui';
 let layout = [
   [
     {
-      label: 'First Name',
-      component: 'input',
-      type: 'text',
-      name: 'firstName',
-      className: 'col-md-6 bento-form-input',
-      required: true,
-    },
-    {
-      label: 'Last Name',
-      component: 'input',
-      type: 'text',
-      name: 'lastName',
-      className: 'col-md-6 bento-form-input',
-      required: true,
-    },
-  ],
-  [
-    {
-      label: 'Email',
-      component: 'input',
-      type: 'text',
-      name: 'email',
-      className: 'col-md-6 bento-form-input',
-      required: true,
-    },
-    {
-      label: 'Phone',
-      component: 'input',
-      type: 'text',
-      name: 'phone',
-      className: 'col-md-6 bento-form-input',
-      required: true,
-    },
-  ],
-  [
-    {
-      label: 'Address line 1',
-      component: 'input',
-      name: 'street1',
-      className: 'col-md-12 bento-form-input',
-    },
-  ],
-  [
-    {
-      label: 'Address line 2',
-      component: 'input',
-      name: 'street2',
-      className: 'col-md-12 bento-form-input',
-    },
-  ],
-  [
-    {
-      label: 'City',
-      component: 'input',
-      name: 'city',
-      className: 'col-md-4 bento-form-input',
-    },
-    {
-      label: 'State',
-      component: 'input',
-      name: 'state',
-      className: 'col-md-4 bento-form-input',
-    },
-    {
-      label: 'Zip',
-      component: 'input',
-      name: 'zip',
-      className: 'col-md-4 bento-form-input',
-    },
-  ],
-  [
-    {
-      label: 'License Number',
-      component: 'input',
-      name: 'number',
-      className: 'col-md-4 bento-form-input',
-    },
-    {
-      label: 'Birthday',
+      label: 'Billing Date',
       component: 'input',
       type: 'date',
-      name: 'birthDate',
+      name: 'billingDate',
       className: 'col-md-4 bento-form-input',
+      required: true,
     },
     {
-      label: 'Expiration Date',
+      label: 'Due Date',
       component: 'input',
       type: 'date',
-      name: 'expirationDate',
+      name: 'dueDate',
       className: 'col-md-4 bento-form-input',
+      required: true,
+    },
+    {
+      label: 'Amount',
+      component: 'input',
+      type: 'number',
+      name: 'amount',
+      className: 'col-md-3 bento-form-input',
+      required: true,
+    },
+  ],
+  [
+    {
+      label: 'Notes',
+      component: 'textarea',
+      type: 'text',
+      name: 'notes',
+      className: 'col-md-12 bento-form-input',
     },
   ],
 ];
