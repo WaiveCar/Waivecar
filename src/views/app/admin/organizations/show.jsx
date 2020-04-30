@@ -47,10 +47,12 @@ class Organization extends Component {
       <div className="box">
         <h3>
           {organization ? organization.name : ''}{' '}
-          {this._user.hasAccess('waiveAdmin') ? (
+          {this._user.hasAccess('waiveAdmin') && organization ? (
             <Link
               className="pull-right"
-              to={`/organizations/${id}/statements/create`}>
+              params={{name: organization.name}}
+              to={`/organizations/${id}/statements/create?name=${organization.name}`}>
+             
               Create Statement
             </Link>
           ) : (
