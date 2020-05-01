@@ -432,12 +432,12 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       for (let each of orgUsers) {
         each.organization = each.organization.toJSON();
         each.organization.logo = (yield File.findById(each.organization.logoId)).toJSON();
-        each.organization.statements = []
+        each.organization.organizationStatements = []
         let statements = yield OrganizationStatement.find({
           where: {organizationId: each.organization.id}
         });
         for (let s of statements) {
-          each.organization.statements.push(s.toJSON());
+          each.organization.organizationStatements.push(s.toJSON());
         }
       }
       return orgUsers;
