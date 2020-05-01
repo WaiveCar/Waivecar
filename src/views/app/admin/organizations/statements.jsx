@@ -13,16 +13,31 @@ class Statements extends Component {
   }
 
   payStatement(id) {
+    let {organizationStatements} = this.state;
     api.put(`/organizations/statements/pay/${id}`, {}, (err, res) => {
       if (err) {
-        console.log('err', err);
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
       }
-      console.log(res);
+      let temp = [...organizationStatements];
+      let idx = temp.findIndex(s => s.id === res.id);
+      temp[idx] = res;
+      console.log('res', res);
+      console.log(idx, temp);
+      this.setState({organizationStatements: temp}, () =>
+        snackbar.notify({
+          type: 'success',
+          message: 'Statement Paid',
+        }),
+      );
     });
   }
 
   render() {
     let {organizationStatements} = this.state;
+    console.log(organizationStatements);
     return (
       <div>
         <h4 style={{marginTop: '1rem'}}>Statements</h4>
