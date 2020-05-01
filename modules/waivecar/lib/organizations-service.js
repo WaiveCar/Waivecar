@@ -190,7 +190,7 @@ module.exports = {
     _user = yield User.findById(_user.id);
 
     let data = {};
-    data.source = 'Statement Payment';20948
+    data.source = 'Statement Payment';
     data.amount = statement.amount;
     data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
     data.userId = _user.id;
@@ -236,8 +236,18 @@ module.exports = {
     }
   },
 
-  deleteStatement(id) {
-    let statemenet = yield OrganizationStatement.findById(id);
-    return yield statement.delete();
+  *deleteStatement(id) {
+    try {
+      let statement = yield OrganizationStatement.findById(id);
+      return yield statement.delete();
+    } catch (e) {
+      throw error.parse(
+        {
+          code: 'STATEMENT_DELETE_FAILED',
+          message: e.message,
+        },
+        404,
+      );
+    }
   },
 };
