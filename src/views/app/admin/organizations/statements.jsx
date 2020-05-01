@@ -6,7 +6,6 @@ import {snackbar} from 'bento-web';
 class Statements extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       organizationStatements: props.organization.organizationStatements,
     };
@@ -14,7 +13,12 @@ class Statements extends Component {
   }
 
   payStatement(id) {
-    console.log('paying', id);
+    api.put(`/organizations/statements/pay/${id}`, {}, (err, res) => {
+      if (err) {
+        console.log('err', err);
+      }
+      console.log(res);
+    });
   }
 
   render() {
@@ -39,7 +43,7 @@ class Statements extends Component {
                 <td>{statement.id}</td>
                 <td>{moment(statement.billingDate).format('MM/DD/YYYY')}</td>
                 <td>{moment(statement.dueDate).format('MM/DD/YYYY')}</td>
-                <td>${(statement.amount / 2).toFixed(2)}</td>
+                <td>${(statement.amount / 100).toFixed(2)}</td>
                 <td>{statement.status}</td>
                 {!this._user.hasAccess('waiveAdmin') ? (
                   <td>
