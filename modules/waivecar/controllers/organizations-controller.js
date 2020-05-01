@@ -25,5 +25,8 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
   controller.payStatement = function*(statementId) {
     return yield organizations.payStatement(statementId, this.auth.user);
   };
+  controller.deleteStatement = function*(statementId) {
+    return yield organizations.deleteStatement(statementId);
+  };
   return controller;
 });

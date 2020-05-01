@@ -235,4 +235,9 @@ module.exports = {
       );
     }
   },
+
+  deleteStatement(id) {
+    let statemenet = yield OrganizationStatement.findById(id);
+    return yield statement.delete();
+  },
 };
