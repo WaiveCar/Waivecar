@@ -24,8 +24,6 @@ class Statements extends Component {
       let temp = [...organizationStatements];
       let idx = temp.findIndex(s => s.id === res.id);
       temp[idx] = res;
-      console.log('res', res);
-      console.log(idx, temp);
       this.setState({organizationStatements: temp}, () =>
         snackbar.notify({
           type: 'success',
