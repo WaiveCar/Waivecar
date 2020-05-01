@@ -22,5 +22,8 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
   controller.createStatement = function*() {
     return yield organizations.createStatement(this.payload);
   };
+  controller.payStatement = function*(statementId) {
+    return yield organizations.payStatement(statementId, this.auth.user);
+  };
   return controller;
 });

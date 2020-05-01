@@ -66,6 +66,7 @@ module.exports = {
       include: [
         {model: 'Car', as: 'cars'},
         {model: 'OrganizationUser', as: 'organizationUsers'},
+        {model: 'OrganizationStatement', as: 'organizationStatements' },
       ],
     };
     if (query.includeImage) {
@@ -178,4 +179,8 @@ module.exports = {
       );
     }
   },
+
+  *payStatement(id, _user) {
+
+  }
 };
