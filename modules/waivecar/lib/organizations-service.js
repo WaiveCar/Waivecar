@@ -6,10 +6,10 @@ let Organization = Bento.model('Organization');
 let OrganizationStatement = Bento.model('OrganizationStatement');
 let User = Bento.model('User');
 let Email = Bento.provider('email');
-let User = Bento.model('User');
 let error = Bento.Error;
 let log = Bento.Log;
 let config = Bento.config;
+let moment = require('moment');
 
 module.exports = {
   *index(query) {
@@ -195,7 +195,7 @@ module.exports = {
     data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
 
     try {
-      let workCharge = yield OrderService.quickCharge(data, _user, {});
+      let charge = (yield OrderService.quickCharge(data, _user, {})).order;
       yield notify.slack(
         {
           text: `:ok_hand: ${organization.name} charged $${(
@@ -206,6 +206,12 @@ module.exports = {
         },
         {channel: '#waivework-charges'},
       );
+      yield statement.update({
+        status: 'paid',
+        paidDate: moment(),
+        paymentId: workCarge,
+        charge.id,
+      })
     } catch (e) {
       yield notify.slack(
         {

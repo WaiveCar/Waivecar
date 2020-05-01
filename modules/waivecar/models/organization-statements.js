@@ -22,6 +22,10 @@ Bento.Register.Model('OrganizationStatement', 'sequelize', function register(
       type: Sequelize.DATE,
       allowNull: false,
     },
+    paidDate: {
+      type: Sequelize.DATE,
+      defaultValue: null,
+    },
     amount: {
       type: Sequelize.INTEGER,
       allowNull: false,

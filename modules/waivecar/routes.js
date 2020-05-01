@@ -170,7 +170,7 @@ Route.del('/group/:groupRoleId/removecar/:carId', ['GroupController@removeCar'])
 Route.get('/organizations', ['OrganizationsController@index']);
 Route.post('/organizations', ['isAuthenticated', 'OrganizationsController@create']);
 Route.post('/organizations/statements', ['isAuthenticated', 'OrganizationsController@createStatement']);
-Route.put('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@paytatement']);
+Route.put('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@payStatement']);
 Route.post('/organizations/addUser', ['isAuthenticated', 'OrganizationsController@addUser']);
 Route.get('/organizations/:id', ['isAuthenticated','OrganizationsController@show']);
 Route.put('/organizations/:id/:action', ['isAuthenticated', 'OrganizationsController@action']);
