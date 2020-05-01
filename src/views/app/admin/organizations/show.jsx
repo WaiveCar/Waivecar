@@ -63,7 +63,9 @@ class Organization extends Component {
           {organization && (
             <Logo organization={organization} _user={this._user} />
           )}
-          <Statements _user={this._user} organization={organization} />
+          {organization && (
+            <Statements _user={this._user} organization={organization} />
+          )}
           <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
             resource={'users'}
