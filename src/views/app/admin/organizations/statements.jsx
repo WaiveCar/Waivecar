@@ -33,9 +33,29 @@ class Statements extends Component {
     });
   }
 
+  deleteStatement(id) {
+    let {organizationStatements} = this.state;
+    api.delete(`/organizations/statements/pay/${id}`, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      let temp = [...organizationStatements];
+      let idx = temp.findIndex(s => s.id === res.id);
+      temp.splice(idx, 1);
+      this.setState({organizationStatements: temp}, () =>
+        snackbar.notify({
+          type: 'success',
+          message: 'Statement Deleted',
+        }),
+      );
+    });
+  }
+
   render() {
     let {organizationStatements} = this.state;
-    console.log(organizationStatements);
     return (
       <div>
         <h4 style={{marginTop: '1rem'}}>Statements</h4>
@@ -47,7 +67,8 @@ class Statements extends Component {
               <th>Due Date</th>
               <th>Amount</th>
               <th>Status</th>
-              {!this._user.hasAccess('waiveAdmin') ? <th>Pay</th> : ''}
+              <th>Paid Date</th>
+              {!this._user.hasAccess('waiveAdmin') ? <th>Pay</th> : <th>Delete</th>}
             </tr>
           </thead>
           <tbody>
@@ -58,6 +79,7 @@ class Statements extends Component {
                 <td>{moment(statement.dueDate).format('MM/DD/YYYY')}</td>
                 <td>${(statement.amount / 100).toFixed(2)}</td>
                 <td>{statement.status}</td>
+                <td>{statement.paidDate ? moment(statement.paidDate).format('MM/DD/YYYY'): 'Not Paid'}</td>
                 {!this._user.hasAccess('waiveAdmin') ? (
                   <td>
                     {statement.status === 'outstanding' ? (
@@ -71,7 +93,13 @@ class Statements extends Component {
                     )}
                   </td>
                 ) : (
-                  ''
+                    statement.status === 'outstanding' ? (
+                      <td
+                        className="btn btn-danger btn-sm"
+                        onClick={() => this.deleteStatement(statement.id)}>
+                        Delete
+                      </td>
+                    ) : ''
                 )}
               </tr>
             ))}
