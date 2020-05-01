@@ -8,7 +8,7 @@ let _user = auth.user();
 function Logos() {
   return (
     <div className="box">
-      <h1> Logos</h1>
+      <h1>Logos</h1>
       {_user.organizations.length ? (
         _user.organizations.map((org, i) => (
           <div style={{marginTop: '1.25rem'}} key={i}>
@@ -18,7 +18,11 @@ function Logos() {
               </Link>
             </h3>
             <div key={i} className="box-content">
-              <Logo hideHeader={true} _user={_user} organization={org.organization} />
+              <Logo
+                hideHeader={true}
+                _user={_user}
+                organization={org.organization}
+              />
             </div>
           </div>
         ))

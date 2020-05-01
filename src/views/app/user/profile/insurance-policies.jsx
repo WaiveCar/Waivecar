@@ -8,6 +8,7 @@ let _user = auth.user();
 function InsurancePolicies() {
   return (
     <div className="box">
+      <h1>Insurance Policies</h1>
       {_user.organizations.length ? (
         _user.organizations.map((org, i) => (
           <div style={{marginTop: '1.25rem'}} key={i}>
@@ -24,7 +25,8 @@ function InsurancePolicies() {
       ) : (
         <div id="booking-view">
           <div className="booking-message">
-            You are not a member of any organizations with group insurance policies.
+            You are not a member of any organizations with group insurance
+            policies.
           </div>
         </div>
       )}

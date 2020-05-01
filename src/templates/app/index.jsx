@@ -54,6 +54,11 @@ templates.register('app', {
         onEnter: policies.isAuthenticated,
       },
       {
+        path: '/account/statements',
+        component : require('../../views/app/user/profile/statements'),
+        onEnter: policies.isAuthenticated,
+      },
+      {
         path      : '/account/logos',
         component : require('../../views/app/user/profile/logos'),
         onEnter   : policies.isAuthenticated
@@ -216,6 +221,13 @@ let order = 2;
     parent    : null,
     locations : [ 'sidebar-account' ],
     waiveAdmin: true,
+  },
+  {
+    title     : 'Statements',
+    icon      : 'assignment_ind',
+    path      : '/account/statements',
+    parent    : null,
+    locations : [ 'sidebar-account' ],
   },
   {
     title     : 'Insurance Policies',
