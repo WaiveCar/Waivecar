@@ -93,13 +93,15 @@ class Statements extends Component {
                     )}
                   </td>
                 ) : (
-                    statement.status === 'outstanding' ? (
-                      <td
+                  <td>
+                    {statement.status === 'outstanding' ? (
+                      <div
                         className="btn btn-danger btn-sm"
                         onClick={() => this.deleteStatement(statement.id)}>
                         Delete
-                      </td>
-                    ) : ''
+                      </div>
+                    ) : 'paid'}
+                   </td>
                 )}
               </tr>
             ))}
