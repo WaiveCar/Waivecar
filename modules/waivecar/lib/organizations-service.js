@@ -1,8 +1,10 @@
 let UserService = require('./user-service');
 let LicenseService = require('../../license/lib/license-service');
+let OrderService = require('../../shop/lib/order-service');
 let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
 let OrganizationStatement = Bento.model('OrganizationStatement');
+let User = Bento.model('User');
 let Email = Bento.provider('email');
 let User = Bento.model('User');
 let error = Bento.Error;
@@ -66,7 +68,7 @@ module.exports = {
       include: [
         {model: 'Car', as: 'cars'},
         {model: 'OrganizationUser', as: 'organizationUsers'},
-        {model: 'OrganizationStatement', as: 'organizationStatements' },
+        {model: 'OrganizationStatement', as: 'organizationStatements'},
       ],
     };
     if (query.includeImage) {
@@ -181,6 +183,47 @@ module.exports = {
   },
 
   *payStatement(id, _user) {
+    let statement = yield OrganizationStatement.findOne({
+      where: {id},
+      include: {model: 'Organization', as: 'organization'},
+    });
+    _user = yield User.findById(_user.id);
 
-  }
+    let data = {};
+    data.source = 'Statement Payment';
+    data.amount = statement.amount;
+    data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
+
+    try {
+      let workCharge = yield OrderService.quickCharge(data, _user, {});
+      yield notify.slack(
+        {
+          text: `:ok_hand: ${organization.name} charged $${(
+            data.amount / 100
+          ).toFixed(2)} for the statement due on ${moment(
+            statement.dueDate,
+          ).format('MM/DD/YYYY')}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+    } catch (e) {
+      yield notify.slack(
+        {
+          text: `:imp: ${organization.name} failed to charge $${(
+            data.amount / 100
+          ).toFixed(2)} for their statement due on ${moment(
+            statement.dueDate,
+          ).format('MM/DD/YYYY')}. ${e.message}`,
+        },
+        {channel: '#waivework-charges'},
+      );
+      throw error.parse(
+        {
+          code: 'STATEMENT_PAYMENT_FAILED',
+          message: e.message,
+        },
+        404,
+      );
+    }
+  },
 };
