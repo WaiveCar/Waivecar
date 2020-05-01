@@ -7,6 +7,7 @@ import ThSort from '../components/table-th';
 import moment from 'moment';
 import Insurance from './insurance';
 import Logo from './logo';
+import Statements from './statements';
 
 class Organization extends Component {
   constructor(props) {
@@ -52,7 +53,6 @@ class Organization extends Component {
               className="pull-right"
               params={{name: organization.name}}
               to={`/organizations/${id}/statements/create?name=${organization.name}`}>
-             
               Create Statement
             </Link>
           ) : (
@@ -63,6 +63,7 @@ class Organization extends Component {
           {organization && (
             <Logo organization={organization} _user={this._user} />
           )}
+          <Statements _user={this._user} organization={organization} />
           <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
             resource={'users'}
