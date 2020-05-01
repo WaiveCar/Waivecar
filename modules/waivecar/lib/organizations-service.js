@@ -190,7 +190,7 @@ module.exports = {
     _user = yield User.findById(_user.id);
 
     let data = {};
-    data.source = 'Statement Payment';
+    data.source = 'Statement Payment';20948
     data.amount = statement.amount;
     data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
     data.userId = _user.id;
@@ -201,7 +201,7 @@ module.exports = {
       })).order;
       yield notify.slack(
         {
-          text: `:ok_hand: ${organization.name} charged $${(
+          text: `:ok_hand: ${statement.organization.name} charged $${(
             data.amount / 100
           ).toFixed(2)} for the statement due on ${moment(
             statement.dueDate,
@@ -212,9 +212,9 @@ module.exports = {
       yield statement.update({
         status: 'paid',
         paidDate: moment(),
-        paymentId: workCharge,
-        chargeId: charge.id,
+        paymentId: charge.id,
       });
+      return statement;
     } catch (e) {
       yield notify.slack(
         {
