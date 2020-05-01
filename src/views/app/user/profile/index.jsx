@@ -10,7 +10,7 @@ import RideList                  from '../../components/user/rides/ride-list';
 import ChargeList                from '../../components/user/charges/charge-list';
 import UserParking               from '../../components/user/user-parking/user-parking';
 import facebook                  from '../../../auth/facebook';
-import Organizations from '../../admin/components/organizations-search.jsx';
+import Organizations from '../../admin/organizations/organizations-search.jsx';
 
 // ### Form Fields
 

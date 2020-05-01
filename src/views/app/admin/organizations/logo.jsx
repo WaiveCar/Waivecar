@@ -16,7 +16,7 @@ class Logo extends Component {
     let {logo} = this.state;
     let {organization, hideHeader} = this.props;
     return (
-      <div className="row">
+      <div>
         {!hideHeader && <h4>Logo</h4>}
         <div
           style={{

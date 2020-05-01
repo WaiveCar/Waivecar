@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import moment   from 'moment';
 import { GMap, snackbar }  from 'bento-web';
 import { api, relay, dom, auth }  from 'bento';
-import Organizations from '../components/organizations-search.jsx';
+import Organizations from '../organizations/organizations-search.jsx';
 
 const oneDay = 1000 * 60 * 60 * 24;
 const shownList = ['work', 'waive', 'level', 'csula', 'other'];

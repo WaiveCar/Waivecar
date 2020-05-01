@@ -4,7 +4,7 @@ import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
-import Organizations from '../components/organizations-search.jsx';
+import Organizations from '../organizations/organizations-search.jsx';
 import BookCars from './book-cars';
 
 @mixin.decorate(History)

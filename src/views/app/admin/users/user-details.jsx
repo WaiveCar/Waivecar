@@ -12,7 +12,7 @@ import ChargeList     from '../../components/user/charges/charge-list';
 import WaiveWorkDetails from './waivework-details'; 
 import WaiveWorkRequest from './waivework-request';
 import UserCommunications from './user-communications.jsx';
-import Organizations from '../components/organizations-search.jsx';
+import Organizations from '../organizations/organizations-search.jsx';
 import BookCars from './book-cars';
 
 
