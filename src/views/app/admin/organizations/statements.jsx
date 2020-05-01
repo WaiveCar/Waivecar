@@ -35,6 +35,7 @@ class Statements extends Component {
 
   deleteStatement(id) {
     let {organizationStatements} = this.state;
+    let {hideHeader} = this.props;
     api.delete(`/organizations/statements/pay/${id}`, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -56,9 +57,10 @@ class Statements extends Component {
 
   render() {
     let {organizationStatements} = this.state;
+    let {hideHeader} = this.props;
     return (
       <div>
-        <h4 style={{marginTop: '1rem'}}>Statements</h4>
+        {!hideHeader && <h4 style={{marginTop: '1rem'}}>Statements</h4>}
         <table className="box-table table-striped">
           <thead>
             <tr>
@@ -68,43 +70,59 @@ class Statements extends Component {
               <th>Amount</th>
               <th>Status</th>
               <th>Paid Date</th>
-              {!this._user.hasAccess('waiveAdmin') ? <th>Pay</th> : <th>Delete</th>}
+              {!this._user.hasAccess('waiveAdmin') ? (
+                <th>Pay</th>
+              ) : (
+                <th>Delete</th>
+              )}
             </tr>
           </thead>
           <tbody>
-            {organizationStatements.map((statement, i) => (
-              <tr key={i}>
-                <td>{statement.id}</td>
-                <td>{moment(statement.billingDate).format('MM/DD/YYYY')}</td>
-                <td>{moment(statement.dueDate).format('MM/DD/YYYY')}</td>
-                <td>${(statement.amount / 100).toFixed(2)}</td>
-                <td>{statement.status}</td>
-                <td>{statement.paidDate ? moment(statement.paidDate).format('MM/DD/YYYY'): 'Not Paid'}</td>
-                {!this._user.hasAccess('waiveAdmin') ? (
+            {organizationStatements.length ? (
+              organizationStatements.map((statement, i) => (
+                <tr key={i}>
+                  <td>{statement.id}</td>
+                  <td>{moment(statement.billingDate).format('MM/DD/YYYY')}</td>
+                  <td>{moment(statement.dueDate).format('MM/DD/YYYY')}</td>
+                  <td>${(statement.amount / 100).toFixed(2)}</td>
+                  <td>{statement.status}</td>
                   <td>
-                    {statement.status === 'outstanding' ? (
-                      <div
-                        className="btn btn-primary btn-sm"
-                        onClick={() => this.payStatement(statement.id)}>
-                        Pay
-                      </div>
-                    ) : (
-                      ''
-                    )}
+                    {statement.paidDate
+                      ? moment(statement.paidDate).format('MM/DD/YYYY')
+                      : 'Not Paid'}
                   </td>
-                ) : (
-                  <td>
-                    {statement.status === 'outstanding' ? (
-                      <div
-                        className="btn btn-danger btn-sm"
-                        onClick={() => this.deleteStatement(statement.id)}>
-                        Delete
-                      </div>
-                    ) : 'paid'}
-                   </td>
-                )}
+                  {!this._user.hasAccess('waiveAdmin') ? (
+                    <td>
+                      {statement.status === 'outstanding' ? (
+                        <div
+                          className="btn btn-primary btn-sm"
+                          onClick={() => this.payStatement(statement.id)}>
+                          Pay
+                        </div>
+                      ) : (
+                        ''
+                      )}
+                    </td>
+                  ) : (
+                    <td>
+                      {statement.status === 'outstanding' ? (
+                        <div
+                          className="btn btn-danger btn-sm"
+                          onClick={() => this.deleteStatement(statement.id)}>
+                          Delete
+                        </div>
+                      ) : (
+                        'paid'
+                      )}
+                    </td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-center">No Statements Yet</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
