@@ -185,7 +185,7 @@ module.exports = {
   *payStatement(id, _user) {
     let statement = yield OrganizationStatement.findOne({
       where: {id},
-      include: {model: 'Organization', as: 'organization'},
+      include: [{model: 'Organization', as: 'organization'}],
     });
     _user = yield User.findById(_user.id);
 
@@ -193,9 +193,12 @@ module.exports = {
     data.source = 'Statement Payment';
     data.amount = statement.amount;
     data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
+    data.userId = _user.id;
 
     try {
-      let charge = (yield OrderService.quickCharge(data, _user, {})).order;
+      let charge = (yield OrderService.quickCharge(data, _user, {
+        overrideAdminCheck: true,
+      })).order;
       yield notify.slack(
         {
           text: `:ok_hand: ${organization.name} charged $${(
@@ -209,13 +212,13 @@ module.exports = {
       yield statement.update({
         status: 'paid',
         paidDate: moment(),
-        paymentId: workCarge,
-        charge.id,
-      })
+        paymentId: workCharge,
+        chargeId: charge.id,
+      });
     } catch (e) {
       yield notify.slack(
         {
-          text: `:imp: ${organization.name} failed to charge $${(
+          text: `:imp: ${statement.organization.name} failed to charge $${(
             data.amount / 100
           ).toFixed(2)} for their statement due on ${moment(
             statement.dueDate,
