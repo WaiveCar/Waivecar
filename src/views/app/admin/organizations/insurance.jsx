@@ -91,7 +91,7 @@ class Insurance extends Component {
     let {uploading, insurance} = this.state;
     return (
       <div>
-        <div className="row">
+        <div>
           <input
             type="date"
             className="col-xs-6"
@@ -129,7 +129,7 @@ class Insurance extends Component {
             />
           </button>
         </div>
-        <div className="row" style={{width: '100%'}}>
+        <div style={{width: '100%'}}>
           <table className="box-table table-striped">
             <thead>
               <tr>
