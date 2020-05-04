@@ -75,6 +75,7 @@ module.exports = class CarsIndex extends React.Component {
           let airtableData = car.airtableData && JSON.parse(car.airtableData);
           car.maintenanceDue = airtableData && airtableData.fields['Next Service Due'];
           car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
+          car.organization = car.organization ? car.organization.name : 'none';
           return car;
         }),
         shownCars: this.runShown({cars: cars}),
@@ -221,9 +222,8 @@ module.exports = class CarsIndex extends React.Component {
       ) : <td className="table-col-xs">No Data</td>;
     }
     if (column.type === 'org') {
-      let org = car.organization;
-      value = org ? org.name : 'none';
-      let color = org ? 'green' : 'red';
+      value = car.organization;
+      let color = value !== 'none' ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
           {value}
