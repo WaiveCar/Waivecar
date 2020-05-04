@@ -475,6 +475,11 @@ module.exports = {
         car.statusColumn = car.isAvailable ? 'Available' : 'Unavailable';
       }
 
+      let airtableData = car.airtableData && JSON.parse(car.airtableData);
+      car.maintenanceDueAt = airtableData && airtableData.fields['Next Service Due'];
+      car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
+      car.organizationName = car.organization && car.organization.name;
+      car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
     });
     perf.push("misc " + (new Date() - start));
 
