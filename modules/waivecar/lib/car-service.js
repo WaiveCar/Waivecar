@@ -465,14 +465,14 @@ module.exports = {
       }
       car.license = car.license || '';
       if(car.currentBooking) {
-        car.statuscolumn = statusMap[car.currentBooking.status] || 'Unavailable';
+        car.statusColumn = statusMap[car.currentBooking.status] || 'Unavailable';
 
-        if(car.statuscolumn === 'Available' && !car.isAvailable) {
-          car.statuscolumn = 'Unavailable';
+        if(car.statusColumn === 'Available' && !car.isAvailable) {
+          car.statusColumn = 'Unavailable';
         }
 
       } else { 
-        car.statuscolumn = car.isAvailable ? 'Available' : 'Unavailable';
+        car.statusColumn = car.isAvailable ? 'Available' : 'Unavailable';
       }
 
     });
