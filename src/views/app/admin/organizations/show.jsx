@@ -68,13 +68,22 @@ class Organization extends Component {
           )}
           <h4 style={{marginTop: '1rem'}}>Users</h4>
           <OrganizationResource
+            ref="users-resource"
             resource={'users'}
             resourceUrl={'users'}
             organizationId={id}
             header={() => (
               <tr ref="sort">
-                <ThSort sort="id" value="Id" ctx={this} />
-                <ThSort sort="firstName" value="Name" ctx={this} />
+                <ThSort
+                  sort="id"
+                  value="Id"
+                  ctx={this.refs['users-resource']}
+                />
+                <ThSort
+                  sort="firstName"
+                  value="Name"
+                  ctx={this.refs['users-resource']}
+                />
               </tr>
             )}
             row={user => (
@@ -90,13 +99,23 @@ class Organization extends Component {
           />
           <h4 style={{marginTop: '1rem'}}>Cars</h4>
           <OrganizationResource
+            ref="cars-resource"
             resource={'cars'}
             resourceUrl={'carsWithBookings'}
             organizationId={id}
             header={() => (
               <tr ref="sort">
-                <ThSort sort="id" value="Id" ctx={this} />
-                <ThSort sort="license" value="Name" ctx={this} />
+                <ThSort sort="id" value="Id" ctx={this.refs['cars-resource']} />
+                <ThSort
+                  sort="license"
+                  value="Name"
+                  ctx={this.refs['cars-resource']}
+                />
+                <ThSort
+                  sort="maintenanceDueIn"
+                  value="Maintenance Due In"
+                  ctx={this.refs['cars-resource']}
+                />
               </tr>
             )}
             row={car => (
@@ -105,6 +124,7 @@ class Organization extends Component {
                 <td>
                   <Link to={`/cars/${car.id}`}>{car.license}</Link>
                 </td>
+                <td>{car.maintenanceDueIn} miles</td>
               </tr>
             )}
           />

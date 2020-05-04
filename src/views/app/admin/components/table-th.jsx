@@ -12,12 +12,12 @@ module.exports = class ThSort extends React.Component {
     this.setState({
       sort : {
         key   : field,
-        order : () => {
+        order : (() => {
           if (key !== field) {
             return 'DESC';
           }
           return order === 'DESC' ? 'ASC' : 'DESC'
-        }()
+        })()
       }
     });
   }
