@@ -219,7 +219,6 @@ module.exports = class CarsIndex extends React.Component {
     }
     if (column.type === 'org') {
       value = car.organizationName;
-      console.log(value);
       let color = value !== 'none' ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
@@ -281,10 +280,10 @@ module.exports = class CarsIndex extends React.Component {
     if (!isNaN(valA - valB)) {
       return valA - valB;
     }
-    if (valA < valB) {
+    if (valA < valB || !valB) {
       return -1;
     }
-    if (valB < valA) {
+    if (valB < valA || !valA) {
       return 1;
     }
     return 0;
