@@ -29,6 +29,8 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'plateNumber', title: 'Plate Number', type: 'text', defaultHidden: true},
       {key: 'plateState', title: 'Plate State', type: 'text', defaultHidden: true},
       {key: 'manufacturer', title: 'Make', type: 'text', defaultHidden: true},
+      {key: 'maintenanceDue', title: 'Maintenance Due', type: 'text', defaultHidden: true},
+      {key: 'serviceInterval', title: 'Maintenance Interval', type: 'text', defaultHidden: true},
       {key: 'model', title: 'Model', type: 'text', defaultHidden: true},
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
       {key: 'organization', title: 'Organization', type: 'org'},
