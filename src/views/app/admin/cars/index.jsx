@@ -69,7 +69,12 @@ module.exports = class CarsIndex extends React.Component {
       });
       this.setState( {
         updated: moment().format('HH:mm:ss'),
-        allCars: cars,
+        allCars: cars.map(car => {
+          let airtableData = car.airtableData && JSON.parse(car.airtableData);
+          car.maintenanceDue = airtableData && airtableData.fields['Next Service Due'];
+          car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
+          return car;
+        }),
         shownCars: this.runShown({cars: cars}),
       }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
