@@ -281,7 +281,16 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   defaultComparator(valA, valB) {
-    return valA - valB;
+    if (!isNaN(valA - valB)) {
+      return valA - valB;
+    }
+    if (valA < valB) {
+      return -1;
+    }
+    if (valB < valA) {
+      return 1;
+    }
+    return 0;
   }
 
   licenseComparator(valA, valB) {
@@ -305,6 +314,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   sortComparator(a, b) {
+    console.log(a, b);
     let sortBy = this.state.sortBy;
     if (!sortBy) {
       return 0;
@@ -318,7 +328,6 @@ module.exports = class CarsIndex extends React.Component {
     }
 
     var comparisonResult = comparator(a[sortBy.key], b[sortBy.key])
-
     if (!sortBy.orderAsc) {
       comparisonResult = -comparisonResult;
     }
