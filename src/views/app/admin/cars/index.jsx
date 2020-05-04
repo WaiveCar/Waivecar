@@ -314,7 +314,6 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   sortComparator(a, b) {
-    console.log(a, b);
     let sortBy = this.state.sortBy;
     if (!sortBy) {
       return 0;
