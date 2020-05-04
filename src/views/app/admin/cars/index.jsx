@@ -29,7 +29,8 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'plateNumber', title: 'Plate Number', type: 'text', defaultHidden: true},
       {key: 'plateState', title: 'Plate State', type: 'text', defaultHidden: true},
       {key: 'manufacturer', title: 'Make', type: 'text', defaultHidden: true},
-      {key: 'maintenanceDue', title: 'Maintenance Due', type: 'text', defaultHidden: true},
+      {key: 'maintenanceDueAt', title: 'Maintenance Due At', type: 'text', defaultHidden: true},
+      {key: 'maintenanceDueIn', title: 'Maintenance Due In', type: 'text', defaultHidden: true},
       {key: 'serviceInterval', title: 'Maintenance Interval', type: 'text', defaultHidden: true},
       {key: 'model', title: 'Model', type: 'text', defaultHidden: true},
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
@@ -73,9 +74,10 @@ module.exports = class CarsIndex extends React.Component {
         updated: moment().format('HH:mm:ss'),
         allCars: cars.map(car => {
           let airtableData = car.airtableData && JSON.parse(car.airtableData);
-          car.maintenanceDue = airtableData && airtableData.fields['Next Service Due'];
+          car.maintenanceDueAt = airtableData && airtableData.fields['Next Service Due'];
           car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
           car.organization = car.organization ? car.organization.name : 'none';
+          car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
           return car;
         }),
         shownCars: this.runShown({cars: cars}),
