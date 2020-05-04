@@ -75,12 +75,6 @@ class Organization extends Component {
               <tr ref="sort">
                 <ThSort sort="id" value="Id" ctx={this} />
                 <ThSort sort="firstName" value="Name" ctx={this} />
-                <ThSort
-                  sort="createdAt"
-                  value="Date"
-                  ctx={this}
-                  className="hidden-sm-down"
-                />
               </tr>
             )}
             row={user => (
@@ -90,9 +84,6 @@ class Organization extends Component {
                   <Link to={`/users/${user.id}`}>
                     {user.firstName} {user.lastName}
                   </Link>
-                </td>
-                <td className="hidden-sm-down">
-                  {moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                 </td>
               </tr>
             )}
@@ -106,12 +97,6 @@ class Organization extends Component {
               <tr ref="sort">
                 <ThSort sort="id" value="Id" ctx={this} />
                 <ThSort sort="license" value="Name" ctx={this} />
-                <ThSort
-                  sort="createdAt"
-                  value="Date"
-                  ctx={this}
-                  className="hidden-sm-down"
-                />
               </tr>
             )}
             row={car => (
@@ -119,9 +104,6 @@ class Organization extends Component {
                 <td>{car.id}</td>
                 <td>
                   <Link to={`/cars/${car.id}`}>{car.license}</Link>
-                </td>
-                <td className="hidden-sm-down">
-                  {moment(car.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                 </td>
               </tr>
             )}

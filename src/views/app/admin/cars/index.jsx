@@ -34,7 +34,7 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'serviceInterval', title: 'Maintenance Interval', type: 'text', defaultHidden: true},
       {key: 'model', title: 'Model', type: 'text', defaultHidden: true},
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
-      {key: 'organization', title: 'Organization', type: 'org'},
+      {key: 'organizationName', title: 'Organization', type: 'org'},
     ];
     this.actions = ['lock', 'unlock', 'lock-immobilizer', 'unlock-immobilizer'];
 
@@ -70,16 +70,10 @@ module.exports = class CarsIndex extends React.Component {
           row.name = '';
         }
       });
+      console.log(cars);
       this.setState( {
         updated: moment().format('HH:mm:ss'),
-        allCars: cars.map(car => {
-          let airtableData = car.airtableData && JSON.parse(car.airtableData);
-          car.maintenanceDueAt = airtableData && airtableData.fields['Next Service Due'];
-          car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
-          car.organization = car.organization ? car.organization.name : 'none';
-          car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
-          return car;
-        }),
+        allCars: cars,
         shownCars: this.runShown({cars: cars}),
       }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
@@ -224,7 +218,8 @@ module.exports = class CarsIndex extends React.Component {
       ) : <td className="table-col-xs">No Data</td>;
     }
     if (column.type === 'org') {
-      value = car.organization;
+      value = car.organizationName;
+      console.log(value);
       let color = value !== 'none' ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
