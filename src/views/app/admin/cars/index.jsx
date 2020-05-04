@@ -70,7 +70,6 @@ module.exports = class CarsIndex extends React.Component {
           row.name = '';
         }
       });
-      console.log(cars);
       this.setState( {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
@@ -218,8 +217,8 @@ module.exports = class CarsIndex extends React.Component {
       ) : <td className="table-col-xs">No Data</td>;
     }
     if (column.type === 'org') {
-      value = car.organizationName;
-      let color = value !== 'none' ? 'green' : 'red';
+      value = car.organizationName || 'none';
+      let color = car.organizationName ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
           {value}
@@ -257,7 +256,9 @@ module.exports = class CarsIndex extends React.Component {
       }
       return <td key={column.key}>{value}</td>
     }
-
+    if (!value) {
+      value = 'Not Provided';
+    }
     return <td title={value} key={column.key}>{value}</td>
   }
 
