@@ -1,18 +1,19 @@
 import React from 'react';
+import ReactSelect from 'react-select';
 import {Map, Charts} from 'bento-web';
-import {api} from 'bento';
+import {api, auth} from 'bento';
+import Organization from '../organizations/show';
 
 let {MiniChart} = Charts;
 
 module.exports = class DashboardIndex extends React.Component {
   constructor(...options) {
     super(...options);
-
+    this._user = auth.user();
     this.state = {
       cars: [],
       bookings: [],
       users: [],
-
       bookingsCount: {
         now: 0,
         weekAgo: 0,
@@ -21,20 +22,21 @@ module.exports = class DashboardIndex extends React.Component {
         now: 0,
         weekAgo: 0,
       },
+      organizations: this._user.organizations,
+      selectedOrganization: 0,
+      showOrg: true,
     };
   }
 
   update() {
     api.get(`/dashboard`, (err, data) => {
-      this.setState(
-        {
-          bookingsCount: data.bookingsCount,
-          usersCount: data.usersCount,
-          currentWaiveworkBookingsCount: data.currentWaiveworkBookingsCount,
-          carsInRepairCount: data.carsInRepairCount,
-          carsInWaiveworkCount: data.carsInWaiveworkCount,
-        }
-      );
+      this.setState({
+        bookingsCount: data.bookingsCount,
+        usersCount: data.usersCount,
+        currentWaiveworkBookingsCount: data.currentWaiveworkBookingsCount,
+        carsInRepairCount: data.carsInRepairCount,
+        carsInWaiveworkCount: data.carsInWaiveworkCount,
+      });
     });
 
     api.get(`/carsWithBookings`, (err, cars) => {
@@ -56,7 +58,9 @@ module.exports = class DashboardIndex extends React.Component {
   }
 
   componentDidMount() {
-    this.update();
+    if (this._user.hasAccess('waiveAdmin')) {
+      this.update();
+    }
   }
 
   renderCount(counts) {
@@ -71,11 +75,8 @@ module.exports = class DashboardIndex extends React.Component {
   }
 
   render() {
-    if (!this.state.cars.length) {
-      return false;
-    }
-
-    return (
+    let {selectedOrganization, organizations, showOrg} = this.state;
+    return this._user.hasAccess('waiveAdmin') ? (
       <section className="container">
         <div className="row">
           <div className="col-xs-6">
@@ -131,6 +132,27 @@ module.exports = class DashboardIndex extends React.Component {
           </div>
         </div>
       </section>
+    ) : (
+      <div className="container">
+        <ReactSelect
+          name={'organizationSelect'}
+          value={selectedOrganization}
+          options={this._user.organizations.map((org, i) => ({
+            label: org.organization.name,
+            value: i,
+          }))}
+          onChange={e =>
+            this.setState({selectedOrganization: e, showOrg: false}, () =>
+              this.setState({showOrg: true}),
+            )
+          }
+        />
+        {showOrg && (
+          <Organization
+            id={organizations[selectedOrganization].organizationId}
+          />
+        )}
+      </div>
     );
   }
 };

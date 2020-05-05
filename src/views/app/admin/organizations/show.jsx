@@ -15,7 +15,7 @@ class Organization extends Component {
     let pathName = window.location.pathname.split('/');
     this._user = auth.user();
     this.state = {
-      id: pathName.pop(),
+      id: props.id || pathName.pop(),
       users: [],
       cars: [],
       organization: null,
