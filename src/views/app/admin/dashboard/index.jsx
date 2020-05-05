@@ -133,9 +133,12 @@ module.exports = class DashboardIndex extends React.Component {
         </div>
       </section>
     ) : (
-      <div className="container">
+      <div className="box">
+        <h3>Select Organization</h3>
+        <div className="box-content">
         <ReactSelect
           name={'organizationSelect'}
+          defaultValue={0}
           value={selectedOrganization}
           options={this._user.organizations.map((org, i) => ({
             label: org.organization.name,
@@ -147,6 +150,7 @@ module.exports = class DashboardIndex extends React.Component {
             )
           }
         />
+        </div>
         {showOrg && (
           <Organization
             id={organizations[selectedOrganization].organizationId}
