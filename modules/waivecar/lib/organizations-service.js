@@ -192,7 +192,7 @@ module.exports = {
     let data = {};
     data.source = 'Statement Payment';
     data.amount = statement.amount;
-    data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by}`;
+    data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by ${_user.firstName} ${_user.lastName}`;
     data.userId = _user.id;
 
     try {
