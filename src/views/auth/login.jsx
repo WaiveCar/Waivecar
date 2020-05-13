@@ -69,10 +69,10 @@ class LoginView extends React.Component {
                 message : error.message
               });
             }
-            this.history.pushState(null, '/profile');
+            this.history.pushState(null, '/dashboard');
           });
         } else {
-          this.history.pushState(null, '/profile');
+          this.history.pushState(null, '/dashboard');
         }
 
       });

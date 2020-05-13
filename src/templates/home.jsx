@@ -62,7 +62,7 @@ class HomeTemplate extends React.Component {
   componentDidMount() {
     let user = auth.user();
     if (user) {
-      this.history.pushState(null, user.hasAccess('admin') ? '/dashboard' : '/profile');
+      this.history.pushState(null, '/dashboard');
     }
   }
 
