@@ -70,9 +70,11 @@ class LoginView extends React.Component {
               });
             }
             this.history.pushState(null, '/dashboard');
+            window.location.reload();
           });
         } else {
           this.history.pushState(null, '/dashboard');
+          window.location.reload();
         }
 
       });
