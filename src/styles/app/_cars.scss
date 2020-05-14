@@ -210,3 +210,16 @@
     background-color: #fafafa;
   }
 }
+
+.cars-index {
+  font-size: 100px !important;
+  .col-select {
+    display: flex;
+    justify-content: space-between;
+  }
+  @media(max-width: 768px) {
+    .col-select {
+      display: block;
+    }  
+  }
+}

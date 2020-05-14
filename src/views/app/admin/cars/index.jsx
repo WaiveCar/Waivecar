@@ -522,7 +522,7 @@ module.exports = class CarsIndex extends React.Component {
   selectColumns(mobile) {
     let {selectedCols} = this.state;
     return (
-      <div style={!mobile ? {display: 'flex', justifyContent: 'space-between'} : {}}>
+      <div className="col-select">
         {this.columns.filter(col => !col.noToggle).map((col, i) => (
           <div key={i}>
             <input
