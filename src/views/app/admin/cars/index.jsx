@@ -606,7 +606,7 @@ module.exports = class CarsIndex extends React.Component {
           <div className="row">
             <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
-                <div className="hidden-md-down">
+                <div>
                   <div className="griddle" >
                     <div className="top-section" >
                       <div className="griddle-filter" >
@@ -645,20 +645,6 @@ module.exports = class CarsIndex extends React.Component {
                     </div>
 
                   </div>
-                </div>
-                <div className="hidden-lg-up visible-md-down">
-                  { this.renderSearch() }
-                    <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
-                    {this.selectColumns(true)}
-                  <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a> (Showing { displayedCars.length })</small>
-                  <div className="list-group">
-                    {
-                      this.state.shownCars
-                        ? displayedCars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
-                        : <div className="list-group-item">Loading</div>
-                    }
-                  </div>
-                    { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
                 </div>
               </div>
             </div>
