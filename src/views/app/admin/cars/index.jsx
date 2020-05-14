@@ -18,7 +18,7 @@ module.exports = class CarsIndex extends React.Component {
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
     this.columns = [
-      {key : "license", title:"Car Name", type : "text", comparator : this.licenseComparator.bind(this), noToggle: true},
+      {key : "license", title:"Car Name", type : "license", comparator : this.licenseComparator.bind(this), noToggle: true},
       {key: 'vin', title: 'VIN', type: 'text', defaultHidden: true},
       {key : "charge", title:"Charge/Fuel Level", type : "text"},
       {key : "isLocked", title:"Locked", type : "bool"},
@@ -247,7 +247,7 @@ module.exports = class CarsIndex extends React.Component {
       return <td key={column.key}>{ value }</td>
     }
 
-    if (column.type === "status") {
+    if (column.type === 'status') {
       if (car.user) {
         let name = `${car.user.firstName } ${ car.user.lastName }`;
         value = <a title={name} href={ '/users/' + car.user.id }>{name}</a>
@@ -255,6 +255,13 @@ module.exports = class CarsIndex extends React.Component {
         value = car.isAvailable ? 'Available' : 'Unavailable';
       }
       return <td key={column.key}>{value}</td>
+    }
+    if (column.type === 'license') {
+      return (
+        <td key={column.key}>
+          <Link to={`/cars/${car.id}`}>{value}</Link>
+        </td>
+      );
     }
     if (!value) {
       value = 'Not Provided';
@@ -378,7 +385,7 @@ module.exports = class CarsIndex extends React.Component {
   renderCarRow(car) {
     let {selectedCols, selectedCars} = this.state;
     return (
-      <tr className="standard-row" key={car.id}>
+      <tr key={car.id}>
         <td>
           <input 
             type="checkbox" 
@@ -389,7 +396,6 @@ module.exports = class CarsIndex extends React.Component {
         {
           this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderCell(car, col))
         }
-        <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i>expand</a></div></td>
       </tr>
     )
   }
@@ -601,50 +607,40 @@ module.exports = class CarsIndex extends React.Component {
     let {selectedCols, selectedCars, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
-      <div className="cars-index" >
+      <div className="cars-index box full">
         <section className="container" >
           <div className="row">
             <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
                 <div>
-                  <div className="griddle" >
-                    <div className="top-section" >
-                      <div className="griddle-filter" >
-                        { this.renderSearch() }
-                      </div>
-                    </div>
-
-                    { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
-                    <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
-                    {this.selectColumns()}
-                    <div className="griddle-container">
-                      <div className="griddle-body">
-                        <div>
-                          <table ref="table-ref">
-                            <thead>
-                            <tr>
-                              <th>
-                                <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
-                              </th>
-                              {
-                                this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
-                              }
-                              <th data-title="actions" ></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                              displayedCars
-                                .sort((a, b) => this.sortComparator(a, b))
-                                .map((car) => this.renderCarRow(car))
-                            }
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-
+                  <div className="griddle-filter" >
+                    { this.renderSearch() }
                   </div>
+                </div>
+              { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+              <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
+              {this.selectColumns()}
+                <div className="box-content">
+                  <table className="box-table table-striped" ref="table-ref">
+                    <thead>
+                    <tr>
+                      <th>
+                        <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
+                      </th>
+                      {
+                        this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
+                      }
+                      <th data-title="actions" ></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      displayedCars
+                        .sort((a, b) => this.sortComparator(a, b))
+                        .map((car) => this.renderCarRow(car))
+                    }
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
