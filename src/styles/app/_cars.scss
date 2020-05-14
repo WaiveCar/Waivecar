@@ -212,13 +212,7 @@
 }
 
 .cars-index {
-  .col-select {
-    display: flex;
-    justify-content: space-between;
-  }
-  @media(max-width: 768px) {
-    .col-select {
-      display: block;
-    }  
+  .col-select, .get-csv {
+    margin: 1rem 0;
   }
 }

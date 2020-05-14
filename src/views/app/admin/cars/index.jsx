@@ -50,6 +50,7 @@ module.exports = class CarsIndex extends React.Component {
         new Set(JSON.parse(storedCols)) : 
         new Set(this.columns.map(col => !col.defaultHidden && col.key)),
       ),
+      showColumnSelected: false,
       selectedCars: new Set(),
       masterChecked: false,
     };
@@ -423,7 +424,7 @@ module.exports = class CarsIndex extends React.Component {
     })
 
     let text = <span>{ item.id } <small className="pull-right">{ durationMap.lastAction.str }</small></span>
-
+src/views/app/admin/cars/index.jsx
 
     if (item.license) {
       let name = '';
@@ -528,7 +529,8 @@ module.exports = class CarsIndex extends React.Component {
   selectColumns(mobile) {
     let {selectedCols} = this.state;
     return (
-      <div className="col-select">
+      <div>
+        <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
         {this.columns.filter(col => !col.noToggle).map((col, i) => (
           <div key={i}>
             <input
@@ -604,57 +606,62 @@ module.exports = class CarsIndex extends React.Component {
     if (!this.state.shownCars.length) {
       return false;
     }
-    let {selectedCols, selectedCars, masterChecked} = this.state;
+    let {showColumnSelected, selectedCols, selectedCars, masterChecked} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index box full">
         <section className="container" >
-          <div className="row">
-            <div className="col-xs-12" >
-              <div id="table-component" className="component-container" >
-                <div>
-                  <div className="griddle-filter" >
-                    { this.renderSearch() }
+            <h3>Cars</h3>
+          <div className="box-content">
+            <div className="row">
+              <div className="col-xs-12" >
+                <div id="table-component" className="component-container" >
+                  <div>
+                    <div className="griddle-filter" >
+                      { this.renderSearch() }
+                    </div>
                   </div>
-                </div>
-              { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
-              <h4 style={{marginTop: '1rem'}}>Selected Columns:</h4>
-              {this.selectColumns()}
-                <div className="box-content">
-                  <table className="box-table table-striped" ref="table-ref">
-                    <thead>
-                    <tr>
-                      <th>
-                        <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
-                      </th>
+                { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+                <button className="btn btn-sm btn-primary col-select" onClick={() => this.setState({showColumnSelected: !showColumnSelected})}>
+                  {!showColumnSelected ? 'Show' : 'Hide'} Column Selection
+                </button>
+                {showColumnSelected && this.selectColumns()}
+                  <div>
+                    <table className="box-table table-striped" ref="table-ref">
+                      <thead>
+                      <tr>
+                        <th>
+                          <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
+                        </th>
+                        {
+                          this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
+                        }
+                        <th data-title="actions" ></th>
+                      </tr>
+                      </thead>
+                      <tbody>
                       {
-                        this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
+                        displayedCars
+                          .sort((a, b) => this.sortComparator(a, b))
+                          .map((car) => this.renderCarRow(car))
                       }
-                      <th data-title="actions" ></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      displayedCars
-                        .sort((a, b) => this.sortComparator(a, b))
-                        .map((car) => this.renderCarRow(car))
-                    }
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div>
-            <button className="btn btn-primary" onClick={() => this.getCSVFromTable()}>Get CSV</button>
-          </div>
-          <div className="row">
-            <div className="col-xs-12" >
-              <div className="map-dynamic">
-                <GMap
-                    markerIcon = { '/images/map/active-waivecar.svg' }
-                    markers    = { displayedCars }
-                  />
+            <div>
+              <button className="btn btn-primary get-csv" onClick={() => this.getCSVFromTable()}>Get CSV</button>
+            </div>
+            <div className="row">
+              <div className="col-xs-12" >
+                <div className="map-dynamic">
+                  <GMap
+                      markerIcon = { '/images/map/active-waivecar.svg' }
+                      markers    = { displayedCars }
+                    />
+                </div>
               </div>
             </div>
           </div>
