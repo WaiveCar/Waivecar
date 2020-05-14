@@ -77,8 +77,12 @@ class UsersListView extends React.Component {
           />
         </td>
         <td>{ user.id }</td>
-        <td>{ user.firstName } { user.lastName }</td>
-        <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
+        <td>
+          <Link to={ `/users/${ user.id }` }>
+            { user.firstName } { user.lastName }
+          </Link>
+        </td>
+        <td className="hidden-sm-down"><a href={ 'tel:' + user.phone }>{ this.formatPhone(user.phone) }</a></td>
         <td>{ user.status }</td>
         <td style={{color}}>{ user.organizations.length ? user.organizations.map(orgUser => orgUser.organization.name).join(', ') : 'none'}</td>
         <td className="hidden-sm-down">
