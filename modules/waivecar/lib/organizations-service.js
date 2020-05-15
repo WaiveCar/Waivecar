@@ -149,7 +149,7 @@ module.exports = {
           };
           yield email.send(emailOpts);
         } catch (e) {
-          console.log('error sending email', e);
+          log.warn('error sending email', e.message);
         }
         successful.push(newUser);
       } catch(e) {
