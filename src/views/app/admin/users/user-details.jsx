@@ -482,25 +482,26 @@ module.exports = class UserDetails extends React.Component {
                   </div> 
                 : ''}
                 { this._user.hasAccess('waiveAdmin') ? this.tagList() : '' }
-                { this._user.hasAccess('waiveAdmin') ? ( 
+                { this._user.hasAccess('admin') ? ( 
                   <div className="form-group row">
                     <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                     <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
                       { this.state.showDanger && 
-                       <div>
-                         <div className="radio-inline">
-                           <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
-                         </div>
+                        <div>
+                          {this._user.hasAccess('waiveAdmin') && (
+                            <div className="radio-inline">
+                               <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
+                            </div>
+                          )}
+                          <div className="radio-inline">
+                            <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Admin</a>
+                          </div>
 
-                         <div className="radio-inline">
-                           <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
-                         </div>
+                          <div className="radio-inline">
+                            <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
+                          </div>
 
-                         <div className="radio-inline">
-                           <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
-                         </div>
-
-                       </div>
+                        </div>
                       }
                     </div>
                   </div>
