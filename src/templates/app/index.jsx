@@ -216,7 +216,7 @@ let order = 2;
   },
   {
     title     : 'License',
-    icon      : 'assignment_ind',
+    icon      : 'tab',
     path      : '/account/license',
     parent    : null,
     locations : [ 'sidebar-account' ],
@@ -224,21 +224,21 @@ let order = 2;
   },
   {
     title     : 'Statements',
-    icon      : 'assignment_ind',
+    icon      : 'receipt',
     path      : '/account/statements',
     parent    : null,
     locations : [ 'sidebar-account' ],
   },
   {
     title     : 'Insurance Policies',
-    icon      : 'assignment_ind',
+    icon      : 'note',
     path      : '/account/insurance',
     parent    : null,
     locations : [ 'sidebar-account' ],
   },
   {
     title     : 'Logos',
-    icon      : 'assignment_ind',
+    icon      : 'camera_alt',
     path      : '/account/logos',
     parent    : null,
     locations : [ 'sidebar-account' ],
@@ -319,7 +319,7 @@ let order = 2;
   */
   {
     title     : 'WaiveWork Signups',
-    icon      : 'building',
+    icon      : 'list',
     path      : '/admin/waivework/signups',
     parent    : null,
     locations : [ 'sidebar' ],
@@ -328,7 +328,7 @@ let order = 2;
   },
   {
     title     : 'Insurance Quotes',
-    icon      : 'building',
+    icon      : 'format_quote',
     path      : '/admin/waivework/insurance',
     parent    : null,
     locations : [ 'sidebar' ],
@@ -374,7 +374,7 @@ let order = 2;
   },
   {
     title     : 'Organizations',
-    icon      : 'location_on',
+    icon      : 'group_work',
     path      : '/organizations',
     parent    : null,
     locations : [ 'sidebar' ],
