@@ -3,9 +3,8 @@ import {auth} from 'bento';
 import {Link} from 'react-router';
 import Logo from '../../../app/admin/organizations/logo';
 
-let _user = auth.user();
-
 function Logos() {
+  let _user = auth.user();
   return (
     <div className="box">
       <h1>Logos</h1>

@@ -3,9 +3,9 @@ import {Link} from 'react-router';
 import {auth} from 'bento';
 import Statements from '../../../app/admin/organizations/statements.jsx';
 
-let _user = auth.user();
 
 function StatementList() {
+  let _user = auth.user();
   return (
     <div className="box">
       <h1>Statements</h1>
