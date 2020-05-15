@@ -208,7 +208,6 @@ class TableIndex extends React.Component {
                 />
               </div>
             </div>
-            <div id="isMobile" className="hidden-sm-down"></div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
