@@ -27,6 +27,15 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    organizationId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : true,
+      references : {
+        model : 'organizations',
+        key   : 'id',
+      }
+    },
+
     cartId : {
       type : Sequelize.STRING
     },

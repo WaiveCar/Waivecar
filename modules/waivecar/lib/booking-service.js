@@ -340,6 +340,7 @@ module.exports = class BookingService extends Service {
 
     booking = new Booking({
       carId  : data.carId,
+      organizationId : car.organizationId,
       userId : data.userId
     });
 
@@ -604,15 +605,6 @@ module.exports = class BookingService extends Service {
 
   static *index(query, _user) {
     let Organization = Bento.model('Organization');
-    let older
-    if (query.organizationIds) {
-      older = yield Organization.findOne({
-        where: {
-          id: {$in: JSON.parse(query.organizationIds)},
-        },
-        order: [['created_at', 'DESC']],
-      });
-    }
     let bookings    = [];
     let dbQuery     = queryParser(query, {
       where : {
@@ -621,10 +613,9 @@ module.exports = class BookingService extends Service {
         status : queryParser.IN
       }
     });
-    if (older) {
-      dbQuery.where.createdAt = {$gt: older.createdAt};
+    if (query.organizationIds) {
+      dbQuery.where.organizationId = {$in: JSON.parse(query.organizationIds)}
     }
-
     //
     // In order to understand this you should really look at
     // https://github.com/clevertech/Waivecar/issues/667 and 
