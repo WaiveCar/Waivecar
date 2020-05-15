@@ -168,7 +168,7 @@ module.exports = {
             // Note: The link below is being redirected on static-real.waivecar.com in the
             // machine's /etc/nginx/sites-enabled/default file. It sits outside any git
             // repository.
-            yield notify.sendTextMessage(_user, `We've put WaiveCar on hold for now. For more information go to https://waive.car/future`);
+            yield notify.sendTextMessage(_user, `We've put WaiveCar on hold for now. For more information go to https://waive.com/future`);
           }
         } else if(matchSet.includes(11)) {
           let check = yield _user.incrFlag('csula-1hr');

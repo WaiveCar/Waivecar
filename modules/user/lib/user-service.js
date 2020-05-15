@@ -106,7 +106,7 @@ module.exports = {
     let token = tokenObj.token;
     let user = tokenObj.user;
 
-    yield notify.sendTextMessage(user, `${token.token} is your password reset token.`);
+    yield notify.sendTextMessage(user, `${token.token} is your password reset token. Please visit ${resetUrl}?hash={{${token.hash}}}`);
     yield hooks.require('user:send-password-token', user, token, resetUrl);
   },
 

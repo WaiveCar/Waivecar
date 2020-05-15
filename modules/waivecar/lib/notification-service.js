@@ -132,7 +132,7 @@ module.exports = {
   *tellChris(what, body) {
     body = body || {};
     yield this.email({
-      to       : 'chris@waive.car',
+      to       : 'chris@waive.com',
       from     : config.email.sender,
       subject  : what,
       template : 'blank',
