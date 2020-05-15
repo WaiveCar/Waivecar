@@ -58,26 +58,6 @@ module.exports = {
   },
 
   *store(payload, _user, opts) {
-    if (payload.batch) {
-      let successful = [];
-      let failed = [];
-      for (let user of payload.batch) {
-        try {
-          let newUser = yield this.store(payload, _user, opts);
-          successful.push(newUser);
-        } catch(e) {
-          failed.push({user, error: e.message});
-        }
-      }
-      if (failed.length) {
-        throw bError.parse({
-          code    : 'SOME_USERS_FAILED',
-          message : 'Failed to add some of the users you tried to add',
-          data: {failed, successful},
-        });
-      }
-      return {successful};
-    }
     let data = yield hooks.require('user:store:before', payload, _user, opts);
 
     // ### Create User

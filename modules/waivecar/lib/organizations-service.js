@@ -100,65 +100,70 @@ module.exports = {
     }
   },
 
-  *addUser(payload, _user) {
-    try {
-      payload.status = 'active';
-      payload.isWaivework = true;
-      let user = yield UserService.store(payload);
-      let orgs = yield Organization.find({
-        where: {id: {$in: payload.organizations}},
-      });
-      for (let org of orgs) {
-        yield org.addUser({userId: user.id});
-      }
-      user.organizations = orgs;
-      if (payload.number) {
-        user.license = yield LicenseService.store(
-          {userId: user.id, ...payload},
-          _user,
-        );
-      }
-      yield notify.notifyAdmins(
-        `:heavy_plus_sign: ${_user.name()} added the new user ${user.link()}`,
-        ['slack'],
-        {channel: '#user-alerts'},
-      );
-      yield notify.sendTextMessage(
-        user.id,
-        `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`,
-      );
-      if (payload.isAdmin) {
-        yield UserService.update(user.id, {groupId: 1, groupRoleId: 3}, _user);
-      }
+  *addUsers(payload, _user) {
+    let successful = [];
+    let failed = [];
+    for (let user of payload.users) {
       try {
-        let res = yield UserService.generatePasswordToken(user, 7 * 24 * 60);
-        let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
-        let email = new Email();
-        let emailOpts = {
-          to: user.email,
-          from: config.email.sender,
-          subject: 'Your WaiveWork Password',
-          template: 'waivework-general',
-          context: {
-            name: user.name(),
-            text: `Welcome to WaiveWork! Please set your password by going <a href=${passwordLink}>here</a>.`,
-          },
-        };
-        yield email.send(emailOpts);
-      } catch (e) {
-        console.log('error sending email', e);
+        user.status = 'active';
+        user.isWaivework = true;
+        let newUser = yield UserService.store(payload);
+        let orgs = yield Organization.find({
+          where: {id: {$in: payload.organizations}},
+        });
+        for (let org of orgs) {
+          yield org.addUser({userId: newUser.id});
+        }
+        newUser.organizations = orgs;
+        if (newUser.number) {
+          newUser.license = yield LicenseService.store(
+            {userId: newUser.id, ...payload},
+            _user,
+          );
+        }
+        yield notify.notifyAdmins(
+          `:heavy_plus_sign: ${_user.name()} added the new user ${newUser.link()}`,
+          ['slack'],
+          {channel: '#user-alerts'},
+        );
+        yield notify.sendTextMessage(
+          newUser.id,
+          `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`,
+        );
+        if (user.isAdmin) {
+          yield UserService.update(newUser.id, {groupId: 1, groupRoleId: 3}, _user);
+        }
+        try {
+          let res = yield UserService.generatePasswordToken(user, 7 * 24 * 60);
+          let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
+          let email = new Email();
+          let emailOpts = {
+            to: user.email,
+            from: config.email.sender,
+            subject: 'Your WaiveWork Password',
+            template: 'waivework-general',
+            context: {
+              name: newUser.name(),
+              text: `Welcome to WaiveWork! Please set your password by going <a href=${passwordLink}>here</a>.`,
+            },
+          };
+          yield email.send(emailOpts);
+        } catch (e) {
+          console.log('error sending email', e);
+        }
+        successful.push(newUser);
+      } catch(e) {
+        failed.push({user, error: e.message});
       }
-      return user;
-    } catch (e) {
-      log.warn(e);
-      throw error.parse(
-        {
-          code: 'ERROR_ADDING_USER',
-          message: e.data ? e.data.type : e.message,
-        },
-        500,
-      );
     }
+    if (failed.length) {
+      throw error.parse({
+        code    : 'SOME_USERS_FAILED',
+        message : 'Failed to add some of the users you tried to add',
+        data: {failed, successful},
+      });
+    }
+    return {successful};
   },
 
   *getStatements(id) {

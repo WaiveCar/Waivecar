@@ -172,7 +172,7 @@ Route.post('/organizations', ['isAuthenticated', 'OrganizationsController@create
 Route.post('/organizations/statements', ['isAuthenticated', 'OrganizationsController@createStatement']);
 Route.put('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@payStatement']);
 Route.del('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@deleteStatement']);
-Route.post('/organizations/addUser', ['isAuthenticated', 'OrganizationsController@addUser']);
+Route.post('/organizations/addUsers', ['isAuthenticated', 'OrganizationsController@addUsers']);
 Route.get('/organizations/:id', ['isAuthenticated','OrganizationsController@show']);
 Route.put('/organizations/:id/:action', ['isAuthenticated', 'OrganizationsController@action']);
 Route.get('/organizations/:id/statements', ['isAuthenticated', 'OrganizationsController@getStatements']);
