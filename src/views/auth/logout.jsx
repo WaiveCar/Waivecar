@@ -7,7 +7,7 @@ import { auth }    from 'bento';
 class LogoutView extends React.Component {
   componentDidMount() {
     auth.logout();
-    this.history.pushState(null, '/');
+    this.history.pushState(null, '/login');
   }
   render() {
     return <div>Processing...</div>
