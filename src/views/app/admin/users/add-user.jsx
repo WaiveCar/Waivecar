@@ -79,8 +79,8 @@ class AddUser extends Component {
     );
   }
 
-  submitUser(e) {
-    let {currentOrganizations, isAdmin} = this.state;
+  submitUsers() {
+    let {currentOrganizations, usersToAdd} = this.state;
     let {history} = this.props;
     if (!currentOrganizations.length) {
       return snackbar.notify({
@@ -88,11 +88,15 @@ class AddUser extends Component {
         message: 'Users must be added with organizations.',
       });
     }
-    let form = this.refs.addUser;
-    let data = form.state.data;
+    if (!usersToAdd.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'You must add some users',
+      });
+    }
     data.organizations = currentOrganizations.map(org => org.id);
-    data.isAdmin = isAdmin;
-    api.post('/organizations/addUser', data, (err, res) => {
+    data.users = usersToAdd;
+    api.post('/organizations/addUsers', data, (err, res) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
@@ -101,7 +105,7 @@ class AddUser extends Component {
       }
       snackbar.notify({
         type: 'success',
-        message: 'User Successfully added.',
+        message: 'Users Successfully added.',
       });
       history.replaceState({}, '/users');
     });
@@ -231,6 +235,13 @@ class AddUser extends Component {
                   ))}
                 </tbody>
               </table>
+              <div className="row">
+                <button
+                  className="btn btn-primary col-md-3"
+                  onClick={() => this.submitUsers()}>
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
         </div>
