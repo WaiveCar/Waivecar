@@ -603,6 +603,7 @@ src/views/app/admin/cars/index.jsx
   }
 
   render() {
+    let {showBatchActions} = this.state;
     if (!this.state.shownCars.length) {
       return false;
     }
@@ -621,7 +622,34 @@ src/views/app/admin/cars/index.jsx
                       { this.renderSearch() }
                     </div>
                   </div>
-                { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+                  { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+                  { this._user.hasAccess('waiveAdmin') &&
+                    <div>
+                      <button className="btn btn-sm btn-primary" onClick={() => this.setState({showBatchActions: !showBatchActions})}>
+                        {!showBatchActions ? 'Show' : 'hide'} batch actions
+                      </button>
+                    </div>
+                  }
+                  {showBatchActions && this._user.hasAccess('waiveAdmin') ? (
+                    <div className="row">
+                      <div>
+                        <div className="box">
+                          <h3><span>Batch Car Actions</span><small>(on all selected)</small></h3>
+                          <div className="box-content">
+                            {this.actions.map((action, i) => (
+                              <button className="btn btn-primary" key={i} onClick={() => this.batchAction(action, displayedCars)}>
+                                {action}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <Organizations type={'cars'} 
+                          cars={displayedCars.filter(car => selectedCars.has(car.license))} 
+                          _user={this._user} 
+                          updateCars={() => this.update()}/> 
+                      </div>
+                    </div>
+                  ) : ''}
                 <button className="btn btn-sm btn-primary col-select" onClick={() => this.setState({showColumnSelected: !showColumnSelected})}>
                   {!showColumnSelected ? 'Show' : 'Hide'} Column Selection
                 </button>
@@ -666,28 +694,6 @@ src/views/app/admin/cars/index.jsx
             </div>
           </div>
         </section>
-        {this._user.hasAccess('waiveAdmin') ? (
-          <div className="row">
-            {selectedCars.size ? 
-                <div>
-                  <div className="box">
-                    <h3><span>Batch Car Actions</span><small>(on all selected)</small></h3>
-                    <div className="box-content">
-                      {this.actions.map((action, i) => (
-                        <button className="btn btn-primary" key={i} onClick={() => this.batchAction(action, displayedCars)}>
-                          {action}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <Organizations type={'cars'} 
-                    cars={displayedCars.filter(car => selectedCars.has(car.license))} 
-                    _user={this._user} 
-                    updateCars={() => this.update()}/> 
-                </div>
-            : ''}
-          </div>
-        ) : ''}
       </div>
     );
   }
