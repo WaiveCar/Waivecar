@@ -2,7 +2,7 @@ module.exports = {
   app : {
     name    : 'WaiveCar',
     version : '0.0.1',
-    uri     : 'https://waive.car',
+    uri     : 'https://waive.com',
     environment : 'production',
     log     : {
       silly   : false,
