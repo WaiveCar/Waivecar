@@ -1,6 +1,6 @@
 module.exports = {
   app : {
-    uri  : 'http://api-local.waivecar.com',
+    uri  : 'http://staging.waivecar.com',
     port : 8080
   }
 };

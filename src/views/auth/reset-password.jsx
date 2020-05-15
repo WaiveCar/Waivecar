@@ -14,7 +14,8 @@ class ResetPasswordView extends React.Component {
     this.state = {
       iswork: this.props.location.query.iswork,
       isnew: this.props.location.query.isnew,
-      hash: this.props.location.query.hash
+      hash: this.props.location.query.hash,
+      changing: false,
     };
     this.state.step = this.state.hash ? 3 : 1;
     this.state.verb = this.state.isnew ? 'Set' : 'Reset';
@@ -28,7 +29,6 @@ class ResetPasswordView extends React.Component {
   }
 
   step() {
-    console.log(new Date(), this.state.step);
     switch (this.state.step) {
       case 1 : return this.renderTokenRequest();
       case 2 : return this.renderTokenInput();
@@ -79,10 +79,9 @@ class ResetPasswordView extends React.Component {
         });
       }
       this.setState({
-        step  : 2
-      });
-      console.log(new Date(), "HERE");
-      this.forceUpdate();
+        step  : 2,
+        changing: true,
+      }, () => this.setState({changing: false}));
     });
   }
 
@@ -223,6 +222,7 @@ class ResetPasswordView extends React.Component {
   }
 
   render() {
+    let {changing} = this.state;
     return (
       <div className="login">
         <div className="title">
@@ -230,7 +230,7 @@ class ResetPasswordView extends React.Component {
           <span className="title-site">{ this.state.verb } Password</span>
         </div>
         {
-          this.step()
+          !changing && this.step()
         }
       </div>
     );

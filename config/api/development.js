@@ -1,9 +1,9 @@
 module.exports = {
   api : {
-    uri    : 'http://api-local.waivecar.com',
+    uri    : 'http://staging.waivecar.com',
     port   : 3080,
     socket : {
-      uri     : 'http://api-local.waivecar.com:3080',
+      uri     : 'http://staging.waivecar.com:3080',
       options : {
          path : '/socket/socket.io'
       }
