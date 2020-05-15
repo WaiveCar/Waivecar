@@ -12,6 +12,7 @@ class Insurance extends Component {
       uploading: false,
     };
     this.fileUpload = null;
+    this._user = this.props._user;
   }
 
   componentDidMount() {
@@ -91,51 +92,55 @@ class Insurance extends Component {
     let {uploading, insurance} = this.state;
     return (
       <div>
-        <div>
-          <input
-            type="date"
-            className="col-xs-6"
-            style={{marginTop: '1px', padding: '2px', height: '40px'}}
-            placeholder="Expiration Date (MM/DD/YYYY)"
-            onChange={e => this.setState({expireDate: e.target.value})}
-          />
-          <button
-            className="btn btn-primary btn-sm col-xs-6"
-            disabled={uploading}>
-            <label
-              htmlFor="newFile"
-              style={{
-                width: '100%',
-                height: '100%',
-                marginBottom: 0,
-                cursor: 'pointer',
-              }}>
-              Upload
-            </label>
+        {this._user.hasAccess('waiveAdmin') && (
+          <div>
             <input
-              style={{
-                opacity: 0,
-                overflow: 'hidden',
-                position: 'absolute',
-                top: '50%',
-                right: '50%',
-                zIndex: -1,
-              }}
-              type="file"
-              id="newFile"
-              accept="application/pdf, image/jpeg"
-              ref={ref => (this.fileUpload = ref)}
-              onInput={() => this.upload()}
+              type="date"
+              className="col-xs-6"
+              style={{marginTop: '1px', padding: '2px', height: '40px'}}
+              placeholder="Expiration Date (MM/DD/YYYY)"
+              onChange={e => this.setState({expireDate: e.target.value})}
             />
-          </button>
-        </div>
+            <button
+              className="btn btn-primary btn-sm col-xs-6"
+              disabled={uploading}>
+              <label
+                htmlFor="newFile"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  marginBottom: 0,
+                  cursor: 'pointer',
+                }}>
+                Upload
+              </label>
+              <input
+                style={{
+                  opacity: 0,
+                  overflow: 'hidden',
+                  position: 'absolute',
+                  top: '50%',
+                  right: '50%',
+                  zIndex: -1,
+                }}
+                type="file"
+                id="newFile"
+                accept="application/pdf, image/jpeg"
+                ref={ref => (this.fileUpload = ref)}
+                onInput={() => this.upload()}
+              />
+            </button>
+          </div>)
+        }
         <div style={{width: '100%'}}>
           <table className="box-table table-striped">
             <thead>
               <tr>
                 <th>Expiration Date</th>
                 <th>Added On:</th>
-                <th className="text-center">Delete</th>
+                {this._user.hasAccess('waiveAdmin') && (
+                  <th className="text-center">Delete</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -149,13 +154,15 @@ class Insurance extends Component {
                     </a>{' '}
                   </td>
                   <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
-                  <td className="text-center">
-                    <button
-                      className="test"
-                      onClick={() => this.deleteInsurance(each.id, i)}>
-                      <i className="material-icons">delete</i>
-                    </button>
-                  </td>
+                  {this._user.hasAccess('waiveAdmin') && (
+                    <td className="text-center">
+                      <button
+                        className="test"
+                        onClick={() => this.deleteInsurance(each.id, i)}>
+                        <i className="material-icons">delete</i>
+                      </button>
+                    </td>
+                  )}
                 </tr>
               )): <tr><td colSpan="3" className="text-center">No policies uploaded.</td></tr>}
             </tbody>
