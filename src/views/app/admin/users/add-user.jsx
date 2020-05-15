@@ -74,7 +74,9 @@ class AddUser extends Component {
     let form = this.refs.addUser;
     let data = form.state.data;
     data.isAdmin = isAdmin;
-    this.setState({usersToAdd: [...usersToAdd, data]}, () => form.reset());
+    this.setState({usersToAdd: [...usersToAdd, data], isAdmin: false}, () =>
+      form.reset(),
+    );
   }
 
   submitUser(e) {
@@ -118,7 +120,7 @@ class AddUser extends Component {
         <h3 style={{marginBottom: '1rem'}}>Add a User</h3>
         <div className="box-content">
           {this._user.organizations.length ? (
-            <div>
+            <div className="row">
               <h4>Organizations</h4>
               {this._user.organizations.map((org, i) => (
                 <div key={i}>
@@ -134,7 +136,7 @@ class AddUser extends Component {
               ))}
             </div>
           ) : (
-            <div>
+            <div className="row">
               <h4>Search for Organizations</h4>
               <div className="row" style={{marginTop: '10px'}}>
                 <input
@@ -205,12 +207,32 @@ class AddUser extends Component {
               buttons={buttons}
               submit={e => this.addUser(e)}
             />
-          </div>
-          {usersToAdd.map((user, i) => (
-            <div key={i}>
-              {user.firstName} {user.lastName} {user.isAdmin ? 'admin' : ''}
+            <div className="row">
+              <h4>Users to be added</h4>
+              <table className="box-table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Is Admin?</th>
+                    <th>Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {usersToAdd.map((user, i) => (
+                    <tr key={i}>
+                      <td>
+                        {user.firstName} {user.lastName}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.isAdmin ? 'admin' : ''}</td>
+                      <td>x</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     );
