@@ -9,7 +9,8 @@ class BookCars extends Component {
     this.state = {
       searchResults: [],
       carSearchWord: '',
-      currentBookin: null,
+      currentBooking: null,
+      loaded: false,
     };
     this._user = this.props._user;
   }
@@ -38,6 +39,7 @@ class BookCars extends Component {
         }
         this.setState({
           currentBooking: (bookings && bookings[0]) || null,
+          loaded: true,
         });
       },
     );
@@ -46,7 +48,9 @@ class BookCars extends Component {
   componentDidUpdate(prevProps) {
     let {user} = this.props;
     if (prevProps.user.id !== user.id) {
-      this.getBooking(user.id);
+      this.setState({loaded: false}, () => {
+        this.getBooking(user.id);
+      });
     }
   }
 
@@ -124,7 +128,7 @@ class BookCars extends Component {
   }
 
   render() {
-    let {searchResults, carSearchWord, currentBooking} = this.state;
+    let {searchResults, carSearchWord, currentBooking, loaded} = this.state;
     let {user, full} = this.props;
     return (
       <div className={`box ${full ? 'full' : ''}`}>
@@ -136,60 +140,66 @@ class BookCars extends Component {
               : ''}
           </small>
         </h3>
-        <div className="box-content">
-          {!currentBooking ? (
-            <div>
-              Selected User: {user.firstName} {user.lastName}
-              <div className="row" style={{marginTop: '10px'}}>
-                <input
-                  onChange={e => this.setState({carSearchWord: e.target.value})}
-                  value={carSearchWord}
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  className="col-xs-6"
-                  placeholder="Car Number"
-                />
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.carSearch()}>
-                  Find Car
-                </button>
-              </div>
-              {searchResults &&
-                searchResults.map((item, i) => (
-                  <div key={i} className="row">
-                    <div style={{padding: '10px 0'}} className="col-xs-6">
-                      <Link to={`/cars/${item.id}`} target="_blank">
-                        {item.license}
-                      </Link>
-                    </div>
-                    <button
-                      className="btn btn-link col-xs-6"
-                      onClick={() => this.book(item.id)}>
-                      {' '}
-                      book now
-                    </button>
-                  </div>
-                ))}
-            </div>
-          ) : (
-            <div>
+        {loaded ? (
+          <div className="box-content">
+            {!currentBooking ? (
               <div>
-                {user.firstName} {user.lastName} currently in booking{' '}
-                <Link to={`/bookings/${currentBooking.id}`}>
-                  #{currentBooking.id}
-                </Link>{' '}
-                in{' '}
+                Selected User: {user.firstName} {user.lastName}
+                <div className="row" style={{marginTop: '10px'}}>
+                  <input
+                    onChange={e =>
+                      this.setState({carSearchWord: e.target.value})
+                    }
+                    value={carSearchWord}
+                    style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                    className="col-xs-6"
+                    placeholder="Car Number"
+                  />
+                  <button
+                    className="btn btn-primary btn-sm col-xs-6"
+                    onClick={() => this.carSearch()}>
+                    Find Car
+                  </button>
+                </div>
+                {searchResults &&
+                  searchResults.map((item, i) => (
+                    <div key={i} className="row">
+                      <div style={{padding: '10px 0'}} className="col-xs-6">
+                        <Link to={`/cars/${item.id}`} target="_blank">
+                          {item.license}
+                        </Link>
+                      </div>
+                      <button
+                        className="btn btn-link col-xs-6"
+                        onClick={() => this.book(item.id)}>
+                        {' '}
+                        book now
+                      </button>
+                    </div>
+                  ))}
               </div>
-              <div style={{marginTop: '1rem'}}>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => this.instaEnd(currentBooking.carId)}>
-                  End And Complete Booking
-                </button>
+            ) : (
+              <div>
+                <div>
+                  {user.firstName} {user.lastName} currently in booking{' '}
+                  <Link to={`/bookings/${currentBooking.id}`}>
+                    #{currentBooking.id}
+                  </Link>{' '}
+                  in{' '}
+                </div>
+                <div style={{marginTop: '1rem'}}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => this.instaEnd(currentBooking.carId)}>
+                    End And Complete Booking
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <div />
+        )}
       </div>
     );
   }
