@@ -3,9 +3,8 @@ import {auth} from 'bento';
 import {Link} from 'react-router';
 import Insurance from '../../../app/admin/organizations/insurance.jsx';
 
-let _user = auth.user();
-
 function InsurancePolicies() {
+  let _user = auth.user();
   return (
     <div className="box">
       <h1>Insurance Policies</h1>

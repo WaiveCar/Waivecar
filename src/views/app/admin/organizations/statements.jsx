@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import {api} from 'bento';
+import {api, auth} from 'bento';
 import {snackbar} from 'bento-web';
 
 class Statements extends Component {
@@ -9,7 +9,7 @@ class Statements extends Component {
     this.state = {
       organizationStatements: props.organization.organizationStatements,
     };
-    this._user = props._user;
+    this._user = props._user || auth.user();
   }
 
   payStatement(id) {

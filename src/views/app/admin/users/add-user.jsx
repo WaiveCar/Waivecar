@@ -18,6 +18,7 @@ class AddUser extends Component {
     this.state = {
       currentOrganizations: [],
       searchResults: [],
+      usersToAdd: [],
       orgSearchWord: '',
       isAdmin: false,
     };
@@ -68,6 +69,14 @@ class AddUser extends Component {
     );
   }
 
+  addUser(e) {
+    let {usersToAdd, isAdmin} = this.state;
+    let form = this.refs.addUser;
+    let data = form.state.data;
+    data.isAdmin = isAdmin;
+    this.setState({usersToAdd: [...usersToAdd, data]}, () => form.reset());
+  }
+
   submitUser(e) {
     let {currentOrganizations, isAdmin} = this.state;
     let {history} = this.props;
@@ -102,6 +111,7 @@ class AddUser extends Component {
       searchResults,
       currentOrganizations,
       isAdmin,
+      usersToAdd,
     } = this.state;
     return (
       <div className="box">
@@ -193,9 +203,14 @@ class AddUser extends Component {
               className="bento-form-static"
               fields={require('./user-form')}
               buttons={buttons}
-              submit={e => this.submitUser(e)}
+              submit={e => this.addUser(e)}
             />
           </div>
+          {usersToAdd.map((user, i) => (
+            <div key={i}>
+              {user.firstName} {user.lastName} {user.isAdmin ? 'admin' : ''}
+            </div>
+          ))}
         </div>
       </div>
     );
