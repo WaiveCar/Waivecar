@@ -108,7 +108,7 @@ module.exports = class Input extends React.Component {
     logger.debug(`Form > Render input component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ this.state.className }>
-        <label>{ label }</label>
+        <label>{ label } {required && <span style={{color: 'red'}}>*</span>}</label>
         <input
           type        = { type }
           className   = "form-control"
