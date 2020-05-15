@@ -603,6 +603,16 @@ module.exports = class BookingService extends Service {
    */
 
   static *index(query, _user) {
+    let Organization = Bento.model('Organization');
+    let older
+    if (query.organizationIds) {
+      older = yield Organization.findOne({
+        where: {
+          id: {$in: JSON.parse(query.organizationIds)},
+        },
+        order: [['created_at', 'DESC']],
+      });
+    }
     let bookings    = [];
     let dbQuery     = queryParser(query, {
       where : {
@@ -611,6 +621,9 @@ module.exports = class BookingService extends Service {
         status : queryParser.IN
       }
     });
+    if (older) {
+      dbQuery.where.createdAt = {$gt: older.createdAt};
+    }
 
     //
     // In order to understand this you should really look at
