@@ -91,11 +91,13 @@ class AddUser extends Component {
     if (!usersToAdd.length) {
       return snackbar.notify({
         type: 'danger',
-        message: 'You must add some users',
+        message: 'You must add some users before submitting.',
       });
     }
-    data.organizations = currentOrganizations.map(org => org.id);
-    data.users = usersToAdd;
+    let data = {
+      organizations: currentOrganizations.map(org => org.id),
+      users: usersToAdd,
+    };
     api.post('/organizations/addUsers', data, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -103,11 +105,13 @@ class AddUser extends Component {
           message: err.message,
         });
       }
-      snackbar.notify({
-        type: 'success',
-        message: 'Users Successfully added.',
-      });
-      history.replaceState({}, '/users');
+      setTimeout(() => {
+        history.replaceState({}, '/users');
+        snackbar.notify({
+          type: 'success',
+          message: 'Users Successfully added.',
+        });
+      }, 1000);
     });
   }
 
