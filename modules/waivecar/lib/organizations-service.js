@@ -107,7 +107,7 @@ module.exports = {
       try {
         user.status = 'active';
         user.isWaivework = true;
-        let newUser = yield UserService.store(payload);
+        let newUser = yield UserService.store(user);
         let orgs = yield Organization.find({
           where: {id: {$in: payload.organizations}},
         });
@@ -134,11 +134,11 @@ module.exports = {
           yield UserService.update(newUser.id, {groupId: 1, groupRoleId: 3}, _user);
         }
         try {
-          let res = yield UserService.generatePasswordToken(user, 7 * 24 * 60);
+          let res = yield UserService.generatePasswordToken(newUser, 7 * 24 * 60);
           let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
           let email = new Email();
           let emailOpts = {
-            to: user.email,
+            to: newUser.email,
             from: config.email.sender,
             subject: 'Your WaiveWork Password',
             template: 'waivework-general',
