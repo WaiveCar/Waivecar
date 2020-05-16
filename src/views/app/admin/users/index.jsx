@@ -35,7 +35,6 @@ class UsersListView extends React.Component {
       selectedForBooking: null,
     };
     relay.subscribe(this, 'users');
-    console.log('constructing');
   }
 
   /**

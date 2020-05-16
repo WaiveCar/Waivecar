@@ -19,6 +19,7 @@ class AddUser extends Component {
       currentOrganizations: [],
       searchResults: [],
       usersToAdd: [],
+      failedUsers: [],
       orgSearchWord: '',
       isAdmin: false,
     };
@@ -100,10 +101,12 @@ class AddUser extends Component {
     };
     api.post('/organizations/addUsers', data, (err, res) => {
       if (err) {
-        return snackbar.notify({
+        console.log('err', err);
+        snackbar.notify({
           type: 'danger',
           message: err.message,
         });
+        return this.setState({failedUsers: err.data.failed});
       }
       setTimeout(() => {
         history.replaceState({}, '/users');
@@ -122,6 +125,7 @@ class AddUser extends Component {
       currentOrganizations,
       isAdmin,
       usersToAdd,
+      failedUsers,
     } = this.state;
     return (
       <div className="box">
@@ -227,16 +231,22 @@ class AddUser extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {usersToAdd.map((user, i) => (
-                    <tr key={i}>
-                      <td>
-                        {user.firstName} {user.lastName}
-                      </td>
-                      <td>{user.email}</td>
-                      <td>{user.isAdmin ? 'admin' : ''}</td>
-                      <td>x</td>
+                  {usersToAdd.length ? (
+                    usersToAdd.map((user, i) => (
+                      <tr key={i}>
+                        <td>
+                          {user.firstName} {user.lastName}
+                        </td>
+                        <td>{user.email}</td>
+                        <td>{user.isAdmin ? 'admin' : 'no'}</td>
+                        <td>x</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4">No Users Selected</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
               <div className="row">
@@ -246,6 +256,37 @@ class AddUser extends Component {
                   Submit
                 </button>
               </div>
+              {failedUsers.length ? (
+                <div>
+                  <h4>Failed Additions</h4>
+                  <table className="box-table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Error</th>
+                        <th>Is Admin?</th>
+                        <th>Edit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {failedUsers.map((fail, i) => (
+                        <tr key={i}>
+                          <td>
+                            {fail.user.firstName} {fail.lastName}
+                          </td>
+                          <td>{fail.user.email}</td>
+                          <td>{fail.error.message}</td>
+                          <td>{fail.user.isAdmin ? 'admin' : 'no'}</td>
+                          <td>x</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>
