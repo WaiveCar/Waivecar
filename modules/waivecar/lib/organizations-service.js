@@ -153,7 +153,7 @@ module.exports = {
         }
         successful.push(newUser);
       } catch(e) {
-        failed.push({user, error: e.message});
+        failed.push({user, error: e});
       }
     }
     if (failed.length) {
