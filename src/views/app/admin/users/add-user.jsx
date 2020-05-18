@@ -95,7 +95,7 @@ class AddUser extends Component {
   }
 
   submitUsers() {
-    let {currentOrganizations, currentUsers} = this.state;
+    let {currentOrganizations, currentUsers, currentFailedUsers} = this.state;
     let {history} = this.props;
     if (!currentOrganizations.length) {
       return snackbar.notify({
@@ -121,7 +121,7 @@ class AddUser extends Component {
           message: err.message,
         });
         return this.setState({
-          currentFailedUsers: err.data.failed,
+          currentFailedUsers: [...currentFailedUsers, ...err.data.failed],
           currentUsers: [],
         });
       }
@@ -250,7 +250,7 @@ class AddUser extends Component {
               <h4>Users to be added</h4>
               <table className="box-table table-striped">
                 <thead>
-                  <tr>
+                  <tr className="user-add-row">
                     <th>Name</th>
                     <th>Email</th>
                     <th>Is Admin?</th>
@@ -261,15 +261,20 @@ class AddUser extends Component {
                 <tbody>
                   {currentUsers.length ? (
                     currentUsers.map((user, i) => (
-                      <tr key={i}>
+                      <tr key={i} className="user-add-row">
                         <td>
                           {user.firstName} {user.lastName}
                         </td>
                         <td>{user.email}</td>
                         <td>{user.isAdmin ? 'yes' : 'no'}</td>
-                        <td onClick={() => this.edit('Users', user)}>X</td>
-                        <td onClick={() => this.toggleItem('Users', user)}>
-                          X
+                        <td onClick={() => this.edit('Users', user)}>
+                          <i className="material-icons">edit</i>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => this.toggleItem('Users', user)}>
+                            <i className="material-icons">delete</i>
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -307,7 +312,7 @@ class AddUser extends Component {
                         <th>Email</th>
                         <th>Error</th>
                         <th>Is Admin?</th>
-                        <th>Edit to try again?</th>
+                        <th>Edit</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -319,9 +324,8 @@ class AddUser extends Component {
                           <td>{fail.user.email}</td>
                           <td>{fail.error.message}</td>
                           <td>{fail.user.isAdmin ? 'admin' : 'no'}</td>
-                          <td
-                            onClick={() => this.edit('FailedUsers', fail.user)}>
-                            x
+                          <td onClick={() => this.edit('FailedUsers', fail.user)}>
+                            <i className="material-icons">edit</i>
                           </td>
                         </tr>
                       ))}
