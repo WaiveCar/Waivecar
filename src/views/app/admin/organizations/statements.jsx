@@ -98,11 +98,10 @@ class Statements extends Component {
                   {!this._user.hasAccess('waiveAdmin') ? (
                     <td>
                       {statement.status === 'outstanding' ? (
-                        <div
-                          className="btn btn-primary btn-sm"
+                        <button
                           onClick={() => this.payStatement(statement.id)}>
-                          Pay
-                        </div>
+                          <i style={{color: 'green'}} className="material-icons">attach_money</i>
+                        </button>
                       ) : (
                         'paid'
                       )}
@@ -110,11 +109,10 @@ class Statements extends Component {
                   ) : (
                     <td>
                       {statement.status === 'outstanding' ? (
-                        <div
-                          className="btn btn-danger btn-sm"
+                        <button
                           onClick={() => this.deleteStatement(statement.id)}>
-                          Delete
-                        </div>
+                          <i className="material-icons">delete</i>
+                        </button>
                       ) : (
                         'paid'
                       )}
