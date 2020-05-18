@@ -14,45 +14,49 @@ class Statements extends Component {
 
   payStatement(id) {
     let {organizationStatements} = this.state;
-    api.put(`/organizations/statements/pay/${id}`, {}, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      let temp = [...organizationStatements];
-      let idx = temp.findIndex(s => s.id === res.id);
-      temp[idx] = res;
-      this.setState({organizationStatements: temp}, () =>
-        snackbar.notify({
-          type: 'success',
-          message: 'Statement Paid',
-        }),
-      );
-    });
+    if (confirm('Are you sure you want to pay this statement?')) {
+      api.put(`/organizations/statements/pay/${id}`, {}, (err, res) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        let temp = [...organizationStatements];
+        let idx = temp.findIndex(s => s.id === res.id);
+        temp[idx] = res;
+        this.setState({organizationStatements: temp}, () =>
+          snackbar.notify({
+            type: 'success',
+            message: 'Statement Paid',
+          }),
+        );
+      });
+    }
   }
 
   deleteStatement(id) {
     let {organizationStatements} = this.state;
     let {hideHeader} = this.props;
-    api.delete(`/organizations/statements/pay/${id}`, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      let temp = [...organizationStatements];
-      let idx = temp.findIndex(s => s.id === res.id);
-      temp.splice(idx, 1);
-      this.setState({organizationStatements: temp}, () =>
-        snackbar.notify({
-          type: 'success',
-          message: 'Statement Deleted',
-        }),
-      );
-    });
+    if (confirm('Are you sure you want to delete this statement?')) {
+      api.delete(`/organizations/statements/pay/${id}`, (err, res) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        let temp = [...organizationStatements];
+        let idx = temp.findIndex(s => s.id === res.id);
+        temp.splice(idx, 1);
+        this.setState({organizationStatements: temp}, () =>
+          snackbar.notify({
+            type: 'success',
+            message: 'Statement Deleted',
+          }),
+        );
+      });
+    }
   }
 
   render() {
@@ -100,7 +104,7 @@ class Statements extends Component {
                           Pay
                         </div>
                       ) : (
-                        ''
+                        'paid'
                       )}
                     </td>
                   ) : (
@@ -120,7 +124,9 @@ class Statements extends Component {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center">No Statements Yet</td>
+                <td colSpan="7" className="text-center">
+                  No Statements Yet
+                </td>
               </tr>
             )}
           </tbody>
