@@ -18,7 +18,7 @@ class AddUser extends Component {
     this.state = {
       currentOrganizations: [],
       searchResults: [],
-      usersToAdd: [],
+      currentUsers: [],
       failedUsers: [],
       orgSearchWord: '',
       isAdmin: false,
@@ -34,18 +34,18 @@ class AddUser extends Component {
     }
   }
 
-  toggleOrg(org) {
-    let {currentOrganizations} = this.state;
-    let idx = currentOrganizations.findIndex(match => match.id === org.id);
+  toggleItem(item, org) {
+    let currentItems = this.state[`current${item}`];
+    let idx = currentItems.findIndex(match => match.id === org.id);
     if (idx >= 0) {
-      let temp = currentOrganizations.slice();
+      let temp = currentItems.slice();
       temp.splice(idx, 1);
       this.setState({
-        currentOrganizations: temp,
+        [`current${item}`]: temp,
       });
     } else {
       this.setState({
-        currentOrganizations: [...currentOrganizations, org],
+        [`current${item}`]: [...currentItems, org],
       });
     }
   }
@@ -71,17 +71,17 @@ class AddUser extends Component {
   }
 
   addUser(e) {
-    let {usersToAdd, isAdmin} = this.state;
+    let {currentUsers, isAdmin} = this.state;
     let form = this.refs.addUser;
     let data = form.state.data;
     data.isAdmin = isAdmin;
-    this.setState({usersToAdd: [...usersToAdd, data], isAdmin: false}, () =>
+    this.setState({currentUsers: [...currentUsers, data], isAdmin: false}, () =>
       form.reset(),
     );
   }
 
   submitUsers() {
-    let {currentOrganizations, usersToAdd} = this.state;
+    let {currentOrganizations, currentUsers} = this.state;
     let {history} = this.props;
     if (!currentOrganizations.length) {
       return snackbar.notify({
@@ -89,7 +89,7 @@ class AddUser extends Component {
         message: 'Users must be added with organizations.',
       });
     }
-    if (!usersToAdd.length) {
+    if (!currentUsers.length) {
       return snackbar.notify({
         type: 'danger',
         message: 'You must add some users before submitting.',
@@ -97,7 +97,7 @@ class AddUser extends Component {
     }
     let data = {
       organizations: currentOrganizations.map(org => org.id),
-      users: usersToAdd,
+      users: currentUsers,
     };
     api.post('/organizations/addUsers', data, (err, res) => {
       if (err) {
@@ -105,7 +105,7 @@ class AddUser extends Component {
           type: 'danger',
           message: err.message,
         });
-        return this.setState({failedUsers: err.data.failed, usersToAdd: []});
+        return this.setState({failedUsers: err.data.failed, currentUsers: []});
       }
       setTimeout(() => {
         history.replaceState({}, '/users');
@@ -127,7 +127,7 @@ class AddUser extends Component {
       searchResults,
       currentOrganizations,
       isAdmin,
-      usersToAdd,
+      currentUsers,
       failedUsers,
     } = this.state;
     return (
@@ -140,7 +140,7 @@ class AddUser extends Component {
               {this._user.organizations.map((org, i) => (
                 <div key={i}>
                   <input
-                    onChange={() => this.toggleOrg(org.organization)}
+                    onChange={() => this.toggleItem('Organizations', org.organization)}
                     type={'checkbox'}
                     name={`org-${i}`}
                     id={`org-${i}`}
@@ -193,7 +193,7 @@ class AddUser extends Component {
                       </div>
                       <button
                         className="btn btn-link col-xs-6"
-                        onClick={() => this.toggleOrg(each)}>
+                        onClick={() => this.toggleItem('Organizations', each)}>
                         Unselect
                       </button>
                     </div>
@@ -234,8 +234,8 @@ class AddUser extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {usersToAdd.length ? (
-                    usersToAdd.map((user, i) => (
+                  {currentUsers.length ? (
+                    currentUsers.map((user, i) => (
                       <tr key={i}>
                         <td>
                           {user.firstName} {user.lastName}
@@ -252,11 +252,11 @@ class AddUser extends Component {
                   )}
                 </tbody>
               </table>
-              <div className="row">
+              <div className="row" style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
                 <button
                   className="btn btn-primary col-md-3"
                   onClick={() => this.submitUsers()}>
-                  Submit
+                  Submit New Users
                 </button>
               </div>
               {failedUsers.length ? (
