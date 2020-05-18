@@ -101,12 +101,11 @@ class AddUser extends Component {
     };
     api.post('/organizations/addUsers', data, (err, res) => {
       if (err) {
-        console.log('err', err);
         snackbar.notify({
           type: 'danger',
           message: err.message,
         });
-        return this.setState({failedUsers: err.data.failed});
+        return this.setState({failedUsers: err.data.failed, usersToAdd: []});
       }
       setTimeout(() => {
         history.replaceState({}, '/users');
@@ -116,6 +115,10 @@ class AddUser extends Component {
         });
       }, 1000);
     });
+  }
+
+  edit(user) {
+    this.refs['addUser'].setState({data: user});
   }
 
   render() {
@@ -258,9 +261,9 @@ class AddUser extends Component {
               </div>
               {failedUsers.length ? (
                 <div>
-                  <h4>Failed Additions</h4>
+                  <h4 style={{color: 'red', marginTop: '1rem'}}>Failed Additions</h4>
                   <table className="box-table table-striped">
-                    <thead>
+                    <thead>                                                                                                        
                       <tr>
                         <th>Name</th>
                         <th>Email</th>
@@ -278,7 +281,7 @@ class AddUser extends Component {
                           <td>{fail.user.email}</td>
                           <td>{fail.error.message}</td>
                           <td>{fail.user.isAdmin ? 'admin' : 'no'}</td>
-                          <td>x</td>
+                          <td onClick={() => this.edit(fail.user)}>x</td>
                         </tr>
                       ))}
                     </tbody>
