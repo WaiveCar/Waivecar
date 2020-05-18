@@ -19,7 +19,7 @@ class AddUser extends Component {
       currentOrganizations: [],
       searchResults: [],
       currentUsers: [],
-      failedUsers: [],
+      currentFailedUsers: [],
       orgSearchWord: '',
       isAdmin: false,
     };
@@ -34,7 +34,7 @@ class AddUser extends Component {
     }
   }
 
-  toggleItem(item, org) {
+  toggleItem(item, org, cb) {
     let currentItems = this.state[`current${item}`];
     let idx = currentItems.findIndex(match => match.id === org.id);
     if (idx >= 0) {
@@ -42,10 +42,18 @@ class AddUser extends Component {
       temp.splice(idx, 1);
       this.setState({
         [`current${item}`]: temp,
+      }, () => {
+        if (cb) {
+          cb();
+        }
       });
     } else {
       this.setState({
         [`current${item}`]: [...currentItems, org],
+      }, () => {
+        if (cb) {
+          cb();
+        }
       });
     }
   }
@@ -86,7 +94,8 @@ class AddUser extends Component {
     if (!currentOrganizations.length) {
       return snackbar.notify({
         type: 'danger',
-        message: 'Users must be added with organizations.',
+        message:
+          'You must select at least one organization to add these users to.',
       });
     }
     if (!currentUsers.length) {
@@ -105,7 +114,10 @@ class AddUser extends Component {
           type: 'danger',
           message: err.message,
         });
-        return this.setState({failedUsers: err.data.failed, currentUsers: []});
+        return this.setState({
+          currentFailedUsers: err.data.failed,
+          currentUsers: [],
+        });
       }
       setTimeout(() => {
         history.replaceState({}, '/users');
@@ -118,7 +130,9 @@ class AddUser extends Component {
   }
 
   edit(user) {
-    this.refs['addUser'].setState({data: user});
+    this.toggleItem('FailedUsers', user, () => {
+      this.refs['addUser'].setState({data: user});
+    });
   }
 
   render() {
@@ -128,7 +142,7 @@ class AddUser extends Component {
       currentOrganizations,
       isAdmin,
       currentUsers,
-      failedUsers,
+      currentFailedUsers,
     } = this.state;
     return (
       <div className="box">
@@ -140,7 +154,9 @@ class AddUser extends Component {
               {this._user.organizations.map((org, i) => (
                 <div key={i}>
                   <input
-                    onChange={() => this.toggleItem('Organizations', org.organization)}
+                    onChange={() =>
+                      this.toggleItem('Organizations', org.organization)
+                    }
                     type={'checkbox'}
                     name={`org-${i}`}
                     id={`org-${i}`}
@@ -242,38 +258,50 @@ class AddUser extends Component {
                         </td>
                         <td>{user.email}</td>
                         <td>{user.isAdmin ? 'admin' : 'no'}</td>
-                        <td>x</td>
+                        <td onClick={() => this.toggleItem('Users', user)}>
+                          x
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4">No Users Selected</td>
+                      <td colSpan="4" className="text-center">
+                        No Users Selected
+                      </td>
                     </tr>
                   )}
                 </tbody>
               </table>
-              <div className="row" style={{display: 'flex', justifyContent: 'center', marginTop: '1rem'}}>
+              <div
+                className="row"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '1rem',
+                }}>
                 <button
-                  className="btn btn-primary col-md-3"
+                  className="btn btn-primary col-md-6"
                   onClick={() => this.submitUsers()}>
                   Submit New Users
                 </button>
               </div>
-              {failedUsers.length ? (
+              {currentFailedUsers.length ? (
                 <div>
-                  <h4 style={{color: 'red', marginTop: '1rem'}}>Failed Additions</h4>
+                  <h4 style={{color: 'red', marginTop: '1rem'}}>
+                    Failed Additions
+                  </h4>
                   <table className="box-table table-striped">
-                    <thead>                                                                                                        
+                    <thead>
                       <tr>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Error</th>
                         <th>Is Admin?</th>
-                        <th>Edit</th>
+                        <th>Edit to try again?</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {failedUsers.map((fail, i) => (
+                      {currentFailedUsers.map((fail, i) => (
                         <tr key={i}>
                           <td>
                             {fail.user.firstName} {fail.lastName}
