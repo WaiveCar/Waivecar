@@ -40,21 +40,27 @@ class AddUser extends Component {
     if (idx >= 0) {
       let temp = currentItems.slice();
       temp.splice(idx, 1);
-      this.setState({
-        [`current${item}`]: temp,
-      }, () => {
-        if (cb) {
-          cb();
-        }
-      });
+      this.setState(
+        {
+          [`current${item}`]: temp,
+        },
+        () => {
+          if (cb) {
+            cb();
+          }
+        },
+      );
     } else {
-      this.setState({
-        [`current${item}`]: [...currentItems, org],
-      }, () => {
-        if (cb) {
-          cb();
-        }
-      });
+      this.setState(
+        {
+          [`current${item}`]: [...currentItems, org],
+        },
+        () => {
+          if (cb) {
+            cb();
+          }
+        },
+      );
     }
   }
 
@@ -129,9 +135,13 @@ class AddUser extends Component {
     });
   }
 
-  edit(user) {
-    this.toggleItem('FailedUsers', user, () => {
-      this.refs['addUser'].setState({data: user});
+  edit(resource, user) {
+    console.log(resource);
+    this.toggleItem(resource, user, () => {
+      this.setState({isAdmin: user.isAdmin}, () => {
+        this.refs['addUser'].setState({data: user});
+        window.scrollTo(0, 0);
+      });
     });
   }
 
@@ -150,7 +160,7 @@ class AddUser extends Component {
         <div className="box-content">
           {this._user.organizations.length ? (
             <div className="row">
-              <h4>Organizations</h4>
+              <h4>Organizations (for all new users)</h4>
               {this._user.organizations.map((org, i) => (
                 <div key={i}>
                   <input
@@ -198,7 +208,7 @@ class AddUser extends Component {
                 </div>
               ))}
               <h4 style={{marginTop: '10px'}}>Selected</h4>
-              <ul>
+              <div>
                 {currentOrganizations.length ? (
                   currentOrganizations.map((each, i) => (
                     <div key={i} className="row">
@@ -217,20 +227,20 @@ class AddUser extends Component {
                 ) : (
                   <div>None Selected</div>
                 )}
-              </ul>
+              </div>
             </div>
           )}
-          <h4>
+          <h4></h4>
+          <div className="box-content">
             <input
               onInput={() => this.setState({isAdmin: !isAdmin})}
               type={'checkbox'}
               name={'is-admin'}
               id={'is-admin'}
+              checked={isAdmin}
               style={{verticalAlign: 'middle', marginRight: '5px'}}
             />
             <label htmlFor={'is-admin'}>Is this user an admin?</label>
-          </h4>
-          <div className="box-content">
             <Form
               ref="addUser"
               className="bento-form-static"
@@ -246,6 +256,7 @@ class AddUser extends Component {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Is Admin?</th>
+                    <th>Edit</th>
                     <th>Remove</th>
                   </tr>
                 </thead>
@@ -257,15 +268,16 @@ class AddUser extends Component {
                           {user.firstName} {user.lastName}
                         </td>
                         <td>{user.email}</td>
-                        <td>{user.isAdmin ? 'admin' : 'no'}</td>
+                        <td>{user.isAdmin ? 'yes' : 'no'}</td>
+                        <td onClick={() => this.edit('Users', user)}>X</td>
                         <td onClick={() => this.toggleItem('Users', user)}>
-                          x
+                          X
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="text-center">
+                      <td colSpan="5" className="text-center">
                         No Users Selected
                       </td>
                     </tr>
@@ -309,7 +321,10 @@ class AddUser extends Component {
                           <td>{fail.user.email}</td>
                           <td>{fail.error.message}</td>
                           <td>{fail.user.isAdmin ? 'admin' : 'no'}</td>
-                          <td onClick={() => this.edit(fail.user)}>x</td>
+                          <td
+                            onClick={() => this.edit('FailedUsers', fail.user)}>
+                            x
+                          </td>
                         </tr>
                       ))}
                     </tbody>

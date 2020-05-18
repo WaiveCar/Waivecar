@@ -25,9 +25,11 @@ module.exports = class Form extends React.Component {
    * @method componentWillReceiveProps
    */
   componentWillReceiveProps(nextProps, nextState) {
-    this.setState({
-      data : nextProps.default
-    });
+    if (Object.keys(nextState).length) {
+      this.setState({
+        data : nextProps.default
+      });
+    }
   }
 
   /**
