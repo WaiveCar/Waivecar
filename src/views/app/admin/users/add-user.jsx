@@ -136,11 +136,9 @@ class AddUser extends Component {
   }
 
   edit(resource, user) {
-    console.log(resource);
     this.toggleItem(resource, user, () => {
       this.setState({isAdmin: user.isAdmin}, () => {
         this.refs['addUser'].setState({data: user});
-        window.scrollTo(0, 0);
       });
     });
   }
