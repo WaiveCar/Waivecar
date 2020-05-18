@@ -98,9 +98,12 @@ class Statements extends Component {
                   {!this._user.hasAccess('waiveAdmin') ? (
                     <td>
                       {statement.status === 'outstanding' ? (
-                        <button
-                          onClick={() => this.payStatement(statement.id)}>
-                          <i style={{color: 'green'}} className="material-icons">attach_money</i>
+                        <button onClick={() => this.payStatement(statement.id)}>
+                          <i
+                            style={{color: 'green'}}
+                            className="material-icons">
+                            attach_money
+                          </i>
                         </button>
                       ) : (
                         'paid'

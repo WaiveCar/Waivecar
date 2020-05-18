@@ -267,8 +267,14 @@ class AddUser extends Component {
                         </td>
                         <td>{user.email}</td>
                         <td>{user.isAdmin ? 'yes' : 'no'}</td>
-                        <td onClick={() => this.edit('Users', user)}>
-                          <i className="material-icons">edit</i>
+                        <td>
+                          <button onClick={() => this.edit('Users', user)}>
+                            <i
+                              style={{color: 'green'}}
+                              className="material-icons">
+                              edit
+                            </i>
+                          </button>
                         </td>
                         <td>
                           <button
@@ -324,8 +330,17 @@ class AddUser extends Component {
                           <td>{fail.user.email}</td>
                           <td>{fail.error.message}</td>
                           <td>{fail.user.isAdmin ? 'admin' : 'no'}</td>
-                          <td onClick={() => this.edit('FailedUsers', fail.user)}>
-                            <i className="material-icons">edit</i>
+                          <td>
+                            <button
+                              onClick={() =>
+                                this.edit('FailedUsers', fail.user)
+                              }>
+                              <i
+                                style={{color: 'green'}}
+                                className="material-icons">
+                                edit
+                              </i>
+                            </button>
                           </td>
                         </tr>
                       ))}
