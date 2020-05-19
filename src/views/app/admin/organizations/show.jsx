@@ -66,7 +66,9 @@ class Organization extends Component {
           {organization && (
             <Statements _user={this._user} organization={organization} />
           )}
-          <h4 style={{marginTop: '1rem'}}>Users</h4>
+          <h4 style={{marginTop: '1rem'}}>
+            <Link to="/users">Users</Link>
+          </h4>
           <OrganizationResource
             ref="users-resource"
             resource={'users'}
@@ -97,7 +99,9 @@ class Organization extends Component {
               </tr>
             )}
           />
-          <h4 style={{marginTop: '1rem'}}>Cars</h4>
+          <h4 style={{marginTop: '1rem'}}>
+            <Link to="/cars">Cars</Link>
+          </h4>
           <OrganizationResource
             ref="cars-resource"
             resource={'cars'}
