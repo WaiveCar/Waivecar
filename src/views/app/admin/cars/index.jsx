@@ -222,7 +222,9 @@ module.exports = class CarsIndex extends React.Component {
       let color = car.organizationName ? 'green' : 'red';
       return (
         <td className="table-col-xs" style={{color}}key={column.key}>
-          {value}
+          {car.organization ? 
+            <Link to={`/organizations/${car.organization.id}`}>{value}</Link>
+            : value}
         </td>)
     }
     if (column.type == "bool") {
