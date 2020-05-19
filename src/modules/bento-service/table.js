@@ -11,13 +11,13 @@ module.exports = class Table {
    * @param  {String} [endpoint] Optional endpoint if resource name is not the same.
    * @return {Void}
    */
-  constructor(ctx, resource, filters, endpoint) {
+  constructor(ctx, resource, filters, endpoint, limit=10) {
     this.ctx      = ctx;
     this.resource = resource;
     this.filters  = filters;
     this.endpoint = endpoint || `/${ resource }`;
     this.timer    = null;
-    this.limit    = 20;
+    this.limit    = limit;
   }
 
   /**
@@ -25,10 +25,11 @@ module.exports = class Table {
    * @return {Void}
    */
   init(initialQuery) {
+    console.log(initialQuery);
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
       offset : this.ctx.state.offset,
-      limit  : 20,
+      limit  : this.limit,
       ...(initialQuery || {}),
     }, (err, data) => {
       if (err) {
@@ -38,7 +39,7 @@ module.exports = class Table {
         });
       }
       this.ctx.setState({
-        more   : data.length === 20,
+        more   : data.length === this.limit,
         offset : this.ctx.state.offset + data.length
       });
       this.data = data;

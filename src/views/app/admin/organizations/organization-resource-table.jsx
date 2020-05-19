@@ -14,6 +14,7 @@ class OrganizationResource extends Component {
       this.props.resource,
       null,
       `/${this.props.resourceUrl}?organizationIds=[${this.props.organizationId}]`,
+      10,
     );
     relay.subscribe(this, this.props.resource);
   }
