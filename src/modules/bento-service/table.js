@@ -11,7 +11,7 @@ module.exports = class Table {
    * @param  {String} [endpoint] Optional endpoint if resource name is not the same.
    * @return {Void}
    */
-  constructor(ctx, resource, filters, endpoint, limit=10) {
+  constructor(ctx, resource, filters, endpoint, limit=20) {
     this.ctx      = ctx;
     this.resource = resource;
     this.filters  = filters;
@@ -25,7 +25,6 @@ module.exports = class Table {
    * @return {Void}
    */
   init(initialQuery) {
-    console.log(initialQuery);
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
       offset : this.ctx.state.offset,

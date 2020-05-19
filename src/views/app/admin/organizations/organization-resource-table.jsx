@@ -7,6 +7,7 @@ class OrganizationResource extends Component {
     super(props);
     this.state = {
       offset: 0,
+      more   : false,
     };
     this.row = this.props.row;
     this.table = new Table(
