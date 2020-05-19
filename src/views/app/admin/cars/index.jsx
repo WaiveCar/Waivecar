@@ -217,13 +217,13 @@ module.exports = class CarsIndex extends React.Component {
         <td className="table-col-xs" key={column.key}>
           {airtableData.fields[column.key]}
         </td>
-      ) : <td className="table-col-xs">No Data</td>;
+      ) : <td key={column.key} className="table-col-xs">No Data</td>;
     }
     if (column.type === 'org') {
       value = car.organizationName || 'none';
       let color = car.organizationName ? 'green' : 'red';
       return (
-        <td className="table-col-xs" style={{color}}key={column.key}>
+        <td className="table-col-xs" style={{color}} key={column.key}>
           {car.organization ? 
             <Link to={`/organizations/${car.organization.id}`}>{value}</Link>
             : value}
