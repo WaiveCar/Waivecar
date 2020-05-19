@@ -4,6 +4,8 @@ import moment   from 'moment';
 import { GMap, snackbar }  from 'bento-web';
 import { api, relay, dom, auth }  from 'bento';
 import Organizations from '../organizations/organizations-search.jsx';
+import CarsTable from './cars-table';
+import ThSort from '../components/table-th';
 
 const oneDay = 1000 * 60 * 60 * 24;
 const shownList = ['work', 'waive', 'level', 'csula', 'other'];
@@ -656,6 +658,7 @@ src/views/app/admin/cars/index.jsx
                   {!showColumnSelected ? 'Show' : 'Hide'} Column Selection
                 </button>
                 {showColumnSelected && this.selectColumns()}
+                  {/*
                   <div>
                     <table className="box-table table-striped" ref="table-ref">
                       <thead>
@@ -678,6 +681,25 @@ src/views/app/admin/cars/index.jsx
                       </tbody>
                     </table>
                   </div>
+                  */}
+                  <CarsTable
+                    ref="cars-resource"
+                    organizationIds={this.userOrganizations}
+                    header={() => (
+                      <tr ref="sort">
+                        <th />
+                        {this.columns.filter(col => selectedCols.has(col.key)).map((col, i) => { 
+                          return <ThSort
+                            sort={col.key}
+                            value={col.title}
+                            ctx={this.refs['cars-resource']}
+                          />
+
+                        })}
+                      </tr>
+                    )}
+                    row={car => this.renderCarRow(car)}
+                  />
                 </div>
               </div>
             </div>

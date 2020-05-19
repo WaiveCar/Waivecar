@@ -78,6 +78,12 @@ module.exports = class Table {
       list = list.sort((a, b) => {
         a = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, a) : a[key];
         b = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, b) : b[key];
+        if (!a && typeof b === 'string') {
+          a = '';
+        }
+        if (!b && typeof a === 'string') {
+          b = '';
+        }
         if (a > b) { return order === 'DESC' ? 1 : -1; }
         if (a < b) { return order === 'DESC' ? -1 : 1; }
         return 0;
