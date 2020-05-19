@@ -690,6 +690,7 @@ src/views/app/admin/cars/index.jsx
                         <th />
                         {this.columns.filter(col => selectedCols.has(col.key)).map((col, i) => { 
                           return <ThSort
+                            key={col.key}
                             sort={col.key}
                             value={col.title}
                             ctx={this.refs['cars-resource']}
