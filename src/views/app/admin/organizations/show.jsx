@@ -67,7 +67,7 @@ class Organization extends Component {
             <Statements _user={this._user} organization={organization} />
           )}
           <h4 style={{marginTop: '1rem'}}>
-            <Link to="/users">Users</Link>
+            <Link to="/users">Recent Users</Link>
           </h4>
           <OrganizationResource
             ref="users-resource"
@@ -100,7 +100,7 @@ class Organization extends Component {
             )}
           />
           <h4 style={{marginTop: '1rem'}}>
-            <Link to="/cars">Cars</Link>
+            <Link to="/cars">Recent Cars</Link>
           </h4>
           <OrganizationResource
             ref="cars-resource"
