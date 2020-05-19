@@ -36,6 +36,7 @@ class Insurance extends Component {
     let {expireDate} = this.state;
     let {organizationId} = this.props;
     if (!expireDate || !this.fileUpload.files.length) {
+      this.fileUpload.value = '';
       return snackbar.notify({
         type: 'danger',
         message:
@@ -71,7 +72,6 @@ class Insurance extends Component {
         );
       },
     );
-
   }
   deleteInsurance(id, idx) {
     if (confirm('Are you sure you want to delete this insurance policy?')) {
@@ -131,9 +131,9 @@ class Insurance extends Component {
                 onInput={() => this.upload()}
               />
             </button>
-          </div>)
-        }
-        {loaded &&
+          </div>
+        )}
+        {loaded && (
           <div style={{width: '100%'}}>
             <table className="box-table table-striped">
               <thead>
@@ -146,31 +146,39 @@ class Insurance extends Component {
                 </tr>
               </thead>
               <tbody>
-                {insurance.length ? insurance.map((each, i) => (
-                  <tr key={i}>
-                    <td>
-                      <a
-                        href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
-                        target="_blank">
-                        {moment(each.comment).format('MM/DD/YYYY')}
-                      </a>{' '}
-                    </td>
-                    <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
-                    {this._user.hasAccess('waiveAdmin') && (
-                      <td className="text-center">
-                        <button
-                          className="test"
-                          onClick={() => this.deleteInsurance(each.id, i)}>
-                          <i className="material-icons">delete</i>
-                        </button>
+                {insurance.length ? (
+                  insurance.map((each, i) => (
+                    <tr key={i}>
+                      <td>
+                        <a
+                          href={`http://waivecar-prod.s3.amazonaws.com/${each.path}`}
+                          target="_blank">
+                          {moment(each.comment).format('MM/DD/YYYY')}
+                        </a>{' '}
                       </td>
-                    )}
+                      <td>{moment(each.createdAt).format('MM/DD/YYYY')}</td>
+                      {this._user.hasAccess('waiveAdmin') && (
+                        <td className="text-center">
+                          <button
+                            className="test"
+                            onClick={() => this.deleteInsurance(each.id, i)}>
+                            <i className="material-icons">delete</i>
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center">
+                      No policies uploaded.
+                    </td>
                   </tr>
-                )): <tr><td colSpan="3" className="text-center">No policies uploaded.</td></tr>}
+                )}
               </tbody>
             </table>
           </div>
-        }
+        )}
       </div>
     );
   }

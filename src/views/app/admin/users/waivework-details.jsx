@@ -230,7 +230,8 @@ class WaiveWorkDetails extends Component {
       });
     }
     if (
-      (action === 'complete' || action === 'ready') ||
+      action === 'complete' ||
+      action === 'ready' ||
       confirm(
         'Are you sure you want to end this waivework booking? Automatic Billing will be stopped.',
       )
@@ -301,6 +302,7 @@ class WaiveWorkDetails extends Component {
   upload() {
     let {expireDate} = this.state;
     if (!expireDate || !this.fileUpload.files.length) {
+      this.fileUpload.value = '';
       return snackbar.notify({
         type: 'danger',
         message:
@@ -744,6 +746,35 @@ class WaiveWorkDetails extends Component {
                 placeholder="Expiration Date"
                 onChange={e => this.setState({expireDate: e.target.value})}
               />
+              <button
+                className="btn btn-primary btn-sm col-xs-6"
+                disabled={uploading}>
+                <label
+                  htmlFor="newFile"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    marginBottom: 0,
+                    cursor: 'pointer',
+                  }}>
+                  Upload
+                </label>
+                <input
+                  style={{
+                    opacity: 0,
+                    overflow: 'hidden',
+                    position: 'absolute',
+                    top: '50%',
+                    right: '50%',
+                    zIndex: -1,
+                  }}
+                  type="file"
+                  id="newFile"
+                  accept="application/pdf, image/jpeg"
+                  ref={ref => (this.fileUpload = ref)}
+                  onInput={() => this.upload()}
+                />
+              </button>
             </div>
           </div>
           <div className="row">
