@@ -86,8 +86,8 @@ module.exports = class Storage {
         mime         : mime.lookup(filename),
         size         : stat.size,
         comment      : payload.comment || null,
-        organizationId,
-        store        : 'local'
+        store        : 'local',
+        ...(organizationId ? {organizationId} : {}),
       });
       yield file.save();
 

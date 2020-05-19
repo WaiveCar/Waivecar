@@ -20,6 +20,8 @@ Bento.Register.Model('OrganizationUser', 'sequelize', function register(
     },
   };
 
+  model.attributes = ['organization', 'organizationStatements', 'logo'];
+
   model.relations = [
     'Organization',
     'User',
