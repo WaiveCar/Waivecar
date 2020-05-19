@@ -354,6 +354,7 @@ module.exports = {
     let perf = [];
     let cars = [];
     function *join_method() {
+      console.log('join method');
       perf.push('table join');
 
       // See #1077. Super Admin can access all cars.
@@ -380,7 +381,7 @@ module.exports = {
         ],
         ...(query.order ? {order: [query.order.split(',')]}: {}),
         ...(query.offset ? {offset: Number(query.offset)}: {}),
-        ...(query.offset ? {offset: Number(query.limit)}: {}),
+        ...(query.limit ? {limit: Number(query.limit)}: {}),
       };
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
@@ -408,7 +409,6 @@ module.exports = {
       if (query.limit) {
         opts.limit = Number(query.limit);
       }
-
       let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 
