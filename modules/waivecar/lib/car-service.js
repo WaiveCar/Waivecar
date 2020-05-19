@@ -358,7 +358,7 @@ module.exports = {
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
-      cars = yield Car.find({
+      let q = {
         ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {}),
         include: [
           {
@@ -377,8 +377,12 @@ module.exports = {
             model: 'Organization',
             as: 'organization',
           },
-        ]
-      });
+        ],
+        ...(query.order ? {order: [query.order.split(',')]}: {}),
+        ...(query.offset ? {offset: Number(query.offset)}: {}),
+        ...(query.offset ? {offset: Number(query.limit)}: {}),
+      };
+      cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
 
@@ -394,6 +398,17 @@ module.exports = {
           as: 'organization',
         },
       ];
+      
+      if (query.order) {
+        opts.order = [query.order.split(',')];
+      }
+      if (query.offset) {
+        opts.offset = Number(query.offset);
+      }
+      if (query.limit) {
+        opts.limit = Number(query.limit);
+      }
+
       let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
 

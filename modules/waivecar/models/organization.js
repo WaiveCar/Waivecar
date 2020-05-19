@@ -26,7 +26,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       type : Sequelize.STRING,
     },
   };
-
+  model.attributes = [];
   model.methods = {
     link: function() {
       return `<${apiConfig.uri}/organizations/${this.id}|${this.name}>`;
