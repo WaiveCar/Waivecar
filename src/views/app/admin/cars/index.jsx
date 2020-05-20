@@ -374,26 +374,21 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   toggleSelectedCar(car) {
-    let {selectedCars, masterChecked, carMap} = this.state;
+    let {selectedCars, masterChecked} = this.state;
     if (selectedCars.has(car.license)) {
       selectedCars.delete(car.license);
-      delete carMap[car.license];
     } else {
       selectedCars.add(car.license);
-      carMap[car.license] = car;
     }
-    this.setState({selectedCars, carMap, masterChecked: false});
+    this.setState({selectedCars, masterChecked: false});
   } 
 
   toggleAllCars(e, carsWithBookings) {
-    let {selectedCars, carMap} = this.state;
+    let {selectedCars} = this.state;
     if (!e.target.checked) {
-      this.setState({selectedCars: new Set(), masterChecked: false, carMap: {}});
+      this.setState({selectedCars: new Set(), masterChecked: false});
     } else {
-      for (let car of carsWithBookings) {
-        carMap[car.license] = car; 
-      }
-      this.setState({selectedCars: new Set(carsWithBookings.map(car => car.license)), masterChecked: true, carMap});
+      this.setState({selectedCars: new Set(carsWithBookings.map(car => car.license)), masterChecked: true});
     }
   }
 
@@ -628,11 +623,12 @@ src/views/app/admin/cars/index.jsx
             <div className="row">
               <div className="col-xs-12" >
                 <div id="table-component" className="component-container" >
-                  <div>
+                  {/*<div>
                     <div className="griddle-filter" >
                       { this.renderSearch() }
                     </div>
                   </div>
+                  */}
                     {/* this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) */}
                   { this._user.hasAccess('waiveAdmin') &&
                     <div>
@@ -693,7 +689,17 @@ src/views/app/admin/cars/index.jsx
                     <CarsTable
                       ref="cars-resource"
                       organizationIds={this.userOrganizations}
-                      updateParent={(carsWithBookings) => this.setState({carsWithBookings})}
+                      updateParent={(carsWithBookings) => {
+                        let carMap = {};
+                        for (let car of carsWithBookings) {
+                          carMap[car.license] = car;
+                        }
+                        this.setState({
+                          carsWithBookings, 
+                          selectedCars: new Set(carsWithBookings.filter(car => selectedCars.has(car.license)).map(each => each.license)),
+                          carMap,
+                        })
+                      }}
                       header={() => (
                         <tr ref="sort">
                           <th>
