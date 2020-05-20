@@ -1,6 +1,22 @@
 import { api, relay } from 'bento';
 import { snackbar }   from 'bento-web';
 
+
+function licenseComparator(valA, valB) {
+  valA = valA.toLowerCase();
+  valB = valB.toLowerCase();
+  let partsA = valA.match(/([a-z]*)\s*(\d*)/i);
+  let partsB = valB.match(/([a-z]*)\s*(\d*)/i);
+
+  if(partsA[1] === partsB[1]) {
+    return parseInt(partsA[2], 10) - parseInt(partsB[2], 10);
+  } else {
+    // This strangeness is done in order to keep the groupings
+    // far enough away from each other in the quicksort calculation
+    return (partsA[1] < partsB[1]) ? 1000 : -1000;
+  }
+}
+
 module.exports = class Table {
 
   /**
@@ -55,11 +71,10 @@ module.exports = class Table {
    */
   index() {
     if (this.ctx.state.sort) {
-      var { key, order } = this.ctx.state.sort;
+      var { key, order, makeLowerCase } = this.ctx.state.sort;
     }
     let search         = this.ctx.state.search;
     let list           = this.ctx.state[this.resource];
-
     if (key) {
 
       // ### Adjust Classes
@@ -78,11 +93,22 @@ module.exports = class Table {
       list = list.sort((a, b) => {
         a = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, a) : a[key];
         b = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, b) : b[key];
+        if (makeLowerCase) {
+          if (a) {
+            a = a.toLowerCase();
+          }
+          if (b) {
+            b = b.toLowerCase();
+          }
+        }
         if (!a && typeof b === 'string') {
           a = '';
         }
         if (!b && typeof a === 'string') {
           b = '';
+        }
+        if (key === 'license') {
+          return (order === 'DESC' ? 1 : -1) * licenseComparator(a, b);
         }
         if (a > b) { return order === 'DESC' ? 1 : -1; }
         if (a < b) { return order === 'DESC' ? -1 : 1; }

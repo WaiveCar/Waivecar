@@ -20,13 +20,13 @@ module.exports = class CarsIndex extends React.Component {
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
     this.columns = [
-      {key : "license", title:"Car Name", type : "license", comparator : this.licenseComparator.bind(this), noToggle: true},
+      {key : 'license', title: 'Car Name', type : 'license', comparator : this.licenseComparator.bind(this), noToggle: true, makeLowerCase: true},
       {key: 'vin', title: 'VIN', type: 'text', defaultHidden: true},
-      {key : "charge", title:"Charge/Fuel Level", type : "text"},
-      {key : "isLocked", title:"Locked", type : "bool"},
-      {key : "isImmobilized", title:"Immobilized", type : "bool"},
-      {key : "isCharging", title:"Charging", type : "bool", defaultHidden: true},
-      {key : "statusColumn", title:"Status", type : "status", noToggle: true},
+      {key : 'charge', title:'Charge/Fuel Level', type : 'text'},
+      {key : 'isLocked', title:'Locked', type : 'bool'},
+      {key : 'isImmobilized', title:'Immobilized', type : 'bool'},
+      {key : 'isCharging', title:'Charging', type : 'bool', defaultHidden: true},
+      {key : 'statusColumn', title:'Status', type : 'status', noToggle: true},
       {key: 'Open Ticket Count', title: 'Open Tickets', type: 'airtable', defaultHidden: true},
       {key: 'plateNumber', title: 'Plate Number', type: 'text', defaultHidden: true},
       {key: 'plateState', title: 'Plate State', type: 'text', defaultHidden: true},
@@ -614,7 +614,6 @@ src/views/app/admin/cars/index.jsx
     let {showBatchActions} = this.state;
     let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
-    console.log(Array.from(selectedCars).map(license => carMap[license]));
     return (
       <div className="cars-index box full">
         <section className="container" >
@@ -696,6 +695,7 @@ src/views/app/admin/cars/index.jsx
                             sort={col.key}
                             value={col.title}
                             ctx={this.refs['cars-resource']}
+                            makeLowerCase={col.makeLowerCase}
                           />
 
                         })}

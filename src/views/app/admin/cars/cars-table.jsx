@@ -29,7 +29,7 @@ class CarsTable extends Component {
         order: 'DESC',
       },
       searchObj: {
-        order: 'id,DESC',
+        order: 'updated_at,DESC',
       },
     });
   }

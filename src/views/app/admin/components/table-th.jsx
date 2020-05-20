@@ -1,17 +1,20 @@
 import React from 'react';
 
 module.exports = class ThSort extends React.Component {
-
+  constructor(props) {
+    super(props);
+  }
   /**
    * Sorts the table list by the provided object field.
    * @param  {String} field
    * @return {Void}
    */
-  sort(field) {
+  sort(field, makeLowerCase) {
     let { key, order } = this.state.sort;
     this.setState({
       sort : {
         key   : field,
+        makeLowerCase,
         order : (() => {
           if (key !== field) {
             return 'DESC';
@@ -43,9 +46,9 @@ module.exports = class ThSort extends React.Component {
    * @return {Object}
    */
   render() {
-    let { value, className, style, sort, ctx } = this.props;
+    let { value, className, style, sort, ctx, makeLowerCase } = this.props;
     return (
-      <th id={ sort } className={ `${ className }${ sort ? ' sortable' : '' }` } style={ style } onClick={ this.sort.bind(ctx, sort) }>
+      <th id={ sort } className={ `${ className }${ sort ? ' sortable' : '' }` } style={ style } onClick={ this.sort.bind(ctx, sort, makeLowerCase) }>
         <span>{ value }</span>
         {
           this.renderSortState()
