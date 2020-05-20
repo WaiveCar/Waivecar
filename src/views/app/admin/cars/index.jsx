@@ -8,9 +8,9 @@ import CarsTable from './cars-table';
 import ThSort from '../components/table-th';
 
 const oneDay = 1000 * 60 * 60 * 24;
-const shownList = ['work', 'waive', 'level', 'csula', 'other'];
-const LEVEL = 7;
-const CSULA = 11;
+//const shownList = ['work', 'waive', 'level', 'csula', 'other'];
+//const LEVEL = 7;
+//const CSULA = 11;
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -20,7 +20,7 @@ module.exports = class CarsIndex extends React.Component {
     this.userOrganizations = this._user.organizations.map(each => each.organizationId);
 
     this.columns = [
-      {key : 'license', title: 'Car Name', type : 'license', comparator : this.licenseComparator.bind(this), noToggle: true, makeLowerCase: true},
+      {key : 'license', title: 'Car Name', type : 'license', /*comparator : this.licenseComparator.bind(this),*/ noToggle: true, makeLowerCase: true},
       {key: 'vin', title: 'VIN', type: 'text', defaultHidden: true},
       {key : 'charge', title:'Charge/Fuel Level', type : 'text'},
       {key : 'isLocked', title:'Locked', type : 'bool'},
@@ -39,7 +39,6 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'organizationName', title: 'Organization', type: 'org'},
     ];
     this.actions = ['lock', 'unlock', 'lock-immobilizer', 'unlock-immobilizer'];
-
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
       /*
@@ -87,7 +86,7 @@ module.exports = class CarsIndex extends React.Component {
   */
 
   componentDidMount() {
-    dom.setTitle("Cars");
+    dom.setTitle('Cars');
     //this.update();
   }
   /*
@@ -234,16 +233,16 @@ module.exports = class CarsIndex extends React.Component {
             : value}
         </td>)
     }
-    if (column.type == "bool") {
+    if (column.type == 'bool') {
       return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value)}</td>
     }
 
-    if (column.type == "datetime") {
+    if (column.type == 'datetime') {
       let date = moment(value).format('HH:mm:ss MM-DD-YY');
       return <td title={date} key={column.key}><span>{date}</span></td>
     }
 
-    if (column.type == "duration") {
+    if (column.type == 'duration') {
       if(!car[column.key]) {
         value = '-';
       } else {
@@ -278,7 +277,7 @@ module.exports = class CarsIndex extends React.Component {
     }
     return <td title={value} key={column.key}>{value}</td>
   }
-
+  /*
   sort(event) {
     var columnKey = event.target.dataset.title||event.target.parentElement.dataset.title;
 
@@ -372,7 +371,7 @@ module.exports = class CarsIndex extends React.Component {
       </th>
     )
   }
-
+  */
   toggleSelectedCar(car) {
     let {selectedCars, masterChecked} = this.state;
     if (selectedCars.has(car.license)) {
@@ -409,7 +408,7 @@ module.exports = class CarsIndex extends React.Component {
       </tr>
     )
   }
-
+  /*
   //
   // These are the colunns for the mobile view. 
   // They are special in that they aren't really 
@@ -433,7 +432,6 @@ module.exports = class CarsIndex extends React.Component {
     })
 
     let text = <span>{ item.id } <small className="pull-right">{ durationMap.lastAction.str }</small></span>
-src/views/app/admin/cars/index.jsx
 
     if (item.license) {
       let name = '';
@@ -483,7 +481,8 @@ src/views/app/admin/cars/index.jsx
       </Link>
     );
   }
-
+  */
+  /*
   renderShownFilters(count) {
     return (
       <div className="form-group row butnotfuckedup">
@@ -496,7 +495,6 @@ src/views/app/admin/cars/index.jsx
       </div>
     );
   }
-
   renderSearch() {
     return (
       <div className="filter-container" >
@@ -523,6 +521,7 @@ src/views/app/admin/cars/index.jsx
       </div>
     )
   }
+  */
 
   toggleColumn(key) {
     let {selectedCols} = this.state;
