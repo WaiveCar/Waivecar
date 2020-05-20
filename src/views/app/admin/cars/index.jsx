@@ -54,6 +54,7 @@ module.exports = class CarsIndex extends React.Component {
       ),
       showColumnSelected: false,
       selectedCars: new Set(),
+      carMap: {},
       masterChecked: false,
     };
   }
@@ -370,12 +371,15 @@ module.exports = class CarsIndex extends React.Component {
 
   toggleSelectedCar(car) {
     let {selectedCars, masterChecked} = this.state;
+    let {carMap} = this.state;
     if (selectedCars.has(car.license)) {
       selectedCars.delete(car.license);
+      delete carMap[car.license];
     } else {
       selectedCars.add(car.license);
+      carMap[car.license] = car;
     }
-    this.setState({selectedCars, masterChecked: false});
+    this.setState({selectedCars, carMap, masterChecked: false});
   } 
 
   toggleAllCars(e, displayedCars) {
@@ -608,11 +612,9 @@ src/views/app/admin/cars/index.jsx
 
   render() {
     let {showBatchActions} = this.state;
-    if (!this.state.shownCars.length) {
-      return false;
-    }
-    let {showColumnSelected, selectedCols, selectedCars, masterChecked} = this.state;
+    let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
+    console.log(Array.from(selectedCars).map(license => carMap[license]));
     return (
       <div className="cars-index box full">
         <section className="container" >
@@ -712,7 +714,7 @@ src/views/app/admin/cars/index.jsx
                 <div className="map-dynamic">
                   <GMap
                       markerIcon = { '/images/map/active-waivecar.svg' }
-                      markers    = { displayedCars }
+                      markers    = {Array.from(selectedCars).map(license => carMap[license])}
                     />
                 </div>
               </div>
