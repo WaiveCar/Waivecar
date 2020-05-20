@@ -689,29 +689,30 @@ src/views/app/admin/cars/index.jsx
                     </table>
                   </div>
                   */}
-                  <CarsTable
-                    ref="cars-resource"
-                    organizationIds={this.userOrganizations}
-                    updateParent={(carsWithBookings) => this.setState({carsWithBookings})}
-                    header={() => (
-                      <tr ref="sort">
-                        <th>
-                          <input type="checkbox" onChange={(e) => this.toggleAllCars(e, carsWithBookings)} checked={masterChecked}/>
-                        </th>
-                        {this.columns.filter(col => selectedCols.has(col.key)).map((col, i) => { 
-                          return <ThSort
-                            key={col.key}
-                            sort={col.key}
-                            value={col.title}
-                            ctx={this.refs['cars-resource']}
-                            makeLowerCase={col.makeLowerCase}
-                          />
-
-                        })}
-                      </tr>
-                    )}
-                    row={(car, i) => this.renderCarRow(car, i)}
-                  />
+                  <div ref="table-ref">
+                    <CarsTable
+                      ref="cars-resource"
+                      organizationIds={this.userOrganizations}
+                      updateParent={(carsWithBookings) => this.setState({carsWithBookings})}
+                      header={() => (
+                        <tr ref="sort">
+                          <th>
+                            <input type="checkbox" onChange={(e) => this.toggleAllCars(e, carsWithBookings)} checked={masterChecked}/>
+                          </th>
+                          {this.columns.filter(col => selectedCols.has(col.key)).map((col, i) => { 
+                            return <ThSort
+                              key={col.key}
+                              sort={col.key}
+                              value={col.title}
+                              ctx={this.refs['cars-resource']}
+                              makeLowerCase={col.makeLowerCase}
+                            />
+                          })}
+                        </tr>
+                      )}
+                      row={(car, i) => this.renderCarRow(car, i)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
