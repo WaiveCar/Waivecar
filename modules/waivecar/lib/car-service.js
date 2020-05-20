@@ -357,14 +357,16 @@ module.exports = {
 
     let searchObj = {};
     if (query.search) {
-      let org = yield Organization.findOne({where: {name: {$like: query.search}}});
-      if (org && (!query.organizationIds || JSON.parse(query.organizationIds).includes(org.id))) {
+      let org = yield Organization.findOne({where: {name: {$like: `%${query.search}%`}}});
+      if (org && query.organizationIds && JSON.parse(query.organizationIds).includes(org.id)) {
         searchObj.organizationId = org.id;
       } else if (!query.organizationIds && org) {
         searchObj.organizationId = org.id;
-        //searchObj.organizationId = query.organizationIds ? {$in: JSON.parse(query.organizationIds)} : undefined;
       } else {
         searchObj.license = {$like: `%${query.search}%`};
+        if (query.organizationIds) {
+          searchObj.organizationId = {$in: JSON.parse(query.organizationIds)}
+        }
       }
     }
     function *join_method() {
