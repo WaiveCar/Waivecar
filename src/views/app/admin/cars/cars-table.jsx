@@ -7,7 +7,7 @@ class CarsTable extends Component {
     super(props);
     this.state = {
       offset: 0,
-      more   : false,
+      more: false,
     };
     this.row = this.props.row;
     let {organizationIds} = this.props;
@@ -15,7 +15,11 @@ class CarsTable extends Component {
       this,
       'carsWithBookings',
       null,
-      `/carsWithBookings${organizationIds.length ? `?organizationIds=[${organizationIds.join(',')}]` : ''}`,
+      `/carsWithBookings${
+        organizationIds.length
+          ? `?organizationIds=[${organizationIds.join(',')}]`
+          : ''
+      }`,
       20,
     );
     relay.subscribe(this, 'carsWithBookings');
@@ -37,6 +41,14 @@ class CarsTable extends Component {
   render() {
     return (
       <div>
+        <div className="col-md-9">
+          <input
+            type="text"
+            className="form-control box-table-search"
+            placeholder="Search [car name, organization]"
+            onChange={e => this.table.search(e, e.target.value)}
+          />
+        </div>
         <table className="box-table table-striped">
           <thead>{this.props.header()}</thead>
           <tbody>{this.table.index()}</tbody>

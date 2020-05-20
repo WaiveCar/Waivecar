@@ -627,7 +627,7 @@ src/views/app/admin/cars/index.jsx
                       { this.renderSearch() }
                     </div>
                   </div>
-                  { this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) }
+                    {/* this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) */}
                   { this._user.hasAccess('waiveAdmin') &&
                     <div>
                       <button className="btn btn-sm btn-primary" onClick={() => this.setState({showBatchActions: !showBatchActions})}>
