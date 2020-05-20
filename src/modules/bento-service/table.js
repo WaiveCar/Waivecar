@@ -62,6 +62,9 @@ module.exports = class Table {
         type : 'index',
         data : data
       });
+      if (this.ctx.props.updateParent) {
+        this.ctx.props.updateParent(data);
+      }
     });
   }
 

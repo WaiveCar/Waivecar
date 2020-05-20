@@ -47,7 +47,7 @@ module.exports = class CarsIndex extends React.Component {
       allCars : [],
       filter : {},
       shown : this.getShown(),
-      sortBy: { key: "license", orderAsc: true },
+      sortBy: { key: 'license', orderAsc: true },
       selectedCols: new Set(storedCols ? 
         new Set(JSON.parse(storedCols)) : 
         new Set(this.columns.map(col => !col.defaultHidden && col.key)),
@@ -56,6 +56,7 @@ module.exports = class CarsIndex extends React.Component {
       selectedCars: new Set(),
       carMap: {},
       masterChecked: false,
+      carsWithBookings: [],
     };
   }
 
@@ -612,7 +613,7 @@ src/views/app/admin/cars/index.jsx
 
   render() {
     let {showBatchActions} = this.state;
-    let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap} = this.state;
+    let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap, carsWithBookings} = this.state;
     let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index box full">
@@ -642,7 +643,7 @@ src/views/app/admin/cars/index.jsx
                           <h3><span>Batch Car Actions</span><small>(on all selected)</small></h3>
                           <div className="box-content">
                             {this.actions.map((action, i) => (
-                              <button className="btn btn-primary" key={i} onClick={() => this.batchAction(action, displayedCars)}>
+                              <button className="btn btn-primary" key={i} onClick={() => this.batchAction(action, carsWithBookings)}>
                                 {action}
                               </button>
                             ))}
@@ -686,6 +687,7 @@ src/views/app/admin/cars/index.jsx
                   <CarsTable
                     ref="cars-resource"
                     organizationIds={this.userOrganizations}
+                    updateParent={(carsWithBookings) => this.setState({carsWithBookings})}
                     header={() => (
                       <tr ref="sort">
                         <th />
