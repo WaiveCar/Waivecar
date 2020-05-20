@@ -353,6 +353,17 @@ module.exports = {
     let start = new Date();
     let perf = [];
     let cars = [];
+
+    let searchObj = {};
+    if (query.search) {
+      let org = yield Organization.findOne({where: {name: {$like: query.search}}});
+      if (org && JSON.parse(query.organizationIds).includes(org.id)) {
+        searchObj.organizationId = org.id;
+      } else {
+        searchObj.organizationId = query.organizationIds ? {$in: JSON.parse(query.organizationIds)}}} : undefined;
+      }
+      query.$or = [{license: {$like: `${query.search}`}}, {status}];
+    }
     function *join_method() {
       perf.push('table join');
 
@@ -382,6 +393,9 @@ module.exports = {
         ...(query.offset ? {offset: Number(query.offset)}: {}),
         ...(query.limit ? {limit: Number(query.limit)}: {}),
       };
+      if (Object.keys(searchObj).length) {
+        q.where = searchObj;
+      }
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
@@ -407,6 +421,9 @@ module.exports = {
       }
       if (query.limit) {
         opts.limit = Number(query.limit);
+      }
+      if (Object.keys(searchObj).length) {
+        opts.where = searchObj;
       }
       let allCars = yield Car.find(opts);
       perf.push("cars " + (new Date() - start));
