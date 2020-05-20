@@ -42,12 +42,14 @@ module.exports = class CarsIndex extends React.Component {
 
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
+      /*
       shownCars : [],
       showHelp : false,
       allCars : [],
       filter : {},
       shown : this.getShown(),
       sortBy: { key: 'license', orderAsc: true },
+      */
       selectedCols: new Set(storedCols ? 
         new Set(JSON.parse(storedCols)) : 
         new Set(this.columns.map(col => !col.defaultHidden && col.key)),
@@ -59,7 +61,7 @@ module.exports = class CarsIndex extends React.Component {
       carsWithBookings: [],
     };
   }
-
+  /*
   update(cb) {
     let moment = require('moment');
     let start = moment();
@@ -82,12 +84,13 @@ module.exports = class CarsIndex extends React.Component {
       }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
     });
   }
+  */
 
   componentDidMount() {
     dom.setTitle("Cars");
-    this.update();
+    //this.update();
   }
-
+  /*
   onFilter(event) {
     this.toggleAllCars({target: {checked: false}});
     let filter = event.target.value.toLowerCase();
@@ -122,7 +125,7 @@ module.exports = class CarsIndex extends React.Component {
       filter: opts
     });
   }
-
+ 
   // this looks to be unavoidaly O(M*N)
   runShown(opts) {
     let cars = opts.cars || this.state.allCars;
@@ -198,7 +201,7 @@ module.exports = class CarsIndex extends React.Component {
     }
     return res;
   }
-
+  */
   renderCheckMark(checked) {
     if (checked) {
       return (
@@ -371,8 +374,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   toggleSelectedCar(car) {
-    let {selectedCars, masterChecked} = this.state;
-    let {carMap} = this.state;
+    let {selectedCars, masterChecked, carMap} = this.state;
     if (selectedCars.has(car.license)) {
       selectedCars.delete(car.license);
       delete carMap[car.license];
@@ -383,12 +385,15 @@ module.exports = class CarsIndex extends React.Component {
     this.setState({selectedCars, carMap, masterChecked: false});
   } 
 
-  toggleAllCars(e, displayedCars) {
-    let {selectedCars} = this.state;
+  toggleAllCars(e, carsWithBookings) {
+    let {selectedCars, carMap} = this.state;
     if (!e.target.checked) {
-      this.setState({selectedCars: new Set(), masterChecked: false});
+      this.setState({selectedCars: new Set(), masterChecked: false, carMap: {}});
     } else {
-      this.setState({selectedCars: new Set(displayedCars.map(car => car.license)), masterChecked: true});
+      for (let car of carsWithBookings) {
+        carMap[car.license] = car; 
+      }
+      this.setState({selectedCars: new Set(carsWithBookings.map(car => car.license)), masterChecked: true, carMap});
     }
   }
 
@@ -557,10 +562,10 @@ src/views/app/admin/cars/index.jsx
     );
   }
 
-  batchAction(action, displayedCars) {
+  batchAction(action, carsWithBookings) {
     let {selectedCars} = this.state;
     api.post(`/cars/batch/${action}`, {
-      carList: displayedCars.filter(car => selectedCars.has(car.license)),
+      carList: carsWithBookings.filter(car => selectedCars.has(car.license)),
     }, (err, res) => {
       if (err) {
         return snackbar.notify({
@@ -614,7 +619,7 @@ src/views/app/admin/cars/index.jsx
   render() {
     let {showBatchActions} = this.state;
     let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap, carsWithBookings} = this.state;
-    let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
+    //let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index box full">
         <section className="container" >
@@ -650,7 +655,7 @@ src/views/app/admin/cars/index.jsx
                           </div>
                         </div>
                         <Organizations type={'cars'} 
-                          cars={displayedCars.filter(car => selectedCars.has(car.license))} 
+                          cars={carsWithBookings.filter(car => selectedCars.has(car.license))} 
                           _user={this._user} 
                           updateCars={() => this.update()}/> 
                       </div>
@@ -690,7 +695,9 @@ src/views/app/admin/cars/index.jsx
                     updateParent={(carsWithBookings) => this.setState({carsWithBookings})}
                     header={() => (
                       <tr ref="sort">
-                        <th />
+                        <th>
+                          <input type="checkbox" onChange={(e) => this.toggleAllCars(e, carsWithBookings)} checked={masterChecked}/>
+                        </th>
                         {this.columns.filter(col => selectedCols.has(col.key)).map((col, i) => { 
                           return <ThSort
                             key={col.key}

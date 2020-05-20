@@ -83,7 +83,6 @@ module.exports = class GMap extends React.Component {
     if (!this.map) {
       return;
     }
-
     let markers = this.getMarkers(rawMarkers);
     this.getUser(function(err, userMarker) {
 
