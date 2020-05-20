@@ -354,7 +354,6 @@ module.exports = {
     let perf = [];
     let cars = [];
     function *join_method() {
-      console.log('join method');
       perf.push('table join');
 
       // See #1077. Super Admin can access all cars.
@@ -492,6 +491,7 @@ module.exports = {
 
       let airtableData = car.airtableData && JSON.parse(car.airtableData);
       car.maintenanceDueAt = airtableData && airtableData.fields['Next Service Due'];
+      car.openTicketCount = airtableData && airtableData.fields['Open Ticket Count'];
       car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
       car.organizationName = car.organization && car.organization.name;
       car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);

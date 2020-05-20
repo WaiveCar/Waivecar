@@ -662,6 +662,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'maintenanceDueIn',
     'organizationName',
     'serviceInterval',
+    'openTicketCount',
   ];
  
   model.relations = [
