@@ -27,7 +27,7 @@ module.exports = class CarsIndex extends React.Component {
       {key : 'isImmobilized', title:'Immobilized', type : 'bool'},
       {key : 'isCharging', title:'Charging', type : 'bool', defaultHidden: true},
       {key : 'statusColumn', title:'Status', type : 'status', noToggle: true},
-      {key: 'Open Ticket Count', title: 'Open Tickets', type: 'airtable', defaultHidden: true},
+      {key: 'openTicketCount', title: 'Open Tickets', type: 'text', defaultHidden: true},
       {key: 'plateNumber', title: 'Plate Number', type: 'text', defaultHidden: true},
       {key: 'plateState', title: 'Plate State', type: 'text', defaultHidden: true},
       {key: 'manufacturer', title: 'Make', type: 'text', defaultHidden: true},
@@ -391,10 +391,10 @@ module.exports = class CarsIndex extends React.Component {
     }
   }
 
-  renderCarRow(car) {
+  renderCarRow(car, i) {
     let {selectedCols, selectedCars} = this.state;
     return (
-      <tr key={car.id}>
+      <tr key={i}>
         <td>
           <input 
             type="checkbox" 
@@ -701,7 +701,7 @@ src/views/app/admin/cars/index.jsx
                         })}
                       </tr>
                     )}
-                    row={car => this.renderCarRow(car)}
+                    row={(car, i) => this.renderCarRow(car, i)}
                   />
                 </div>
               </div>

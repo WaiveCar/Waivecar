@@ -25,7 +25,7 @@ class CarsTable extends Component {
     this.table.init();
     this.setState({
       sort: {
-        key: 'createdAt',
+        key: 'updatedAt',
         order: 'DESC',
       },
       searchObj: {

@@ -89,7 +89,6 @@ module.exports = class Table {
 
       let isDeep   = key.match(/\./) ? true : false;
       let deepLink = isDeep ? key.split('.') : null;
-
       list = list.sort((a, b) => {
         a = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, a) : a[key];
         b = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, b) : b[key];
@@ -119,7 +118,7 @@ module.exports = class Table {
 
     // Paginate here...
     // this.ctx.state.offset === page
-    return list.map(item => this.ctx.row(item));
+    return list.map((item, i) => this.ctx.row(item, i));
   }
 
   // Performs a search against the api.
