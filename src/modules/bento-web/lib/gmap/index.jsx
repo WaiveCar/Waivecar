@@ -94,7 +94,7 @@ module.exports = class GMap extends React.Component {
       if (this.markers.length > 0) {
         this.clearMarkers();
         this.addMarkers(markers);
-      } else {
+      } else if (rawMarkers.length) {
         this.addMarkers(markers);
         this.centerPosition(markers);
       }
@@ -291,7 +291,6 @@ module.exports = class GMap extends React.Component {
           if(val.user) {
             content += `<div><a style="color:darkgreen" href=/users/${ val.user.id }>${ val.user.firstName } ${ val.user.lastName }</a></div>`;
           }
-          console.log(val);
           if(val.booking) {
             if(val.booking.length) {
               let bid = val.booking[0].id;
@@ -305,7 +304,6 @@ module.exports = class GMap extends React.Component {
         });
       } else if ('radius' in val) {
         marker.addListener('click', (e) => {
-          console.log('val: ', val);
           val.description = val.description || '';
           let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
           infoWindow.setContent(`<b>${linkText}</b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
