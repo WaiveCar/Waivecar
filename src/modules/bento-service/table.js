@@ -171,6 +171,9 @@ module.exports = class Table {
           type : 'index',
           data : data
         });
+        if (this.ctx.props.updateParent) {
+          this.ctx.props.updateParent(data);
+        }
       });
     } else {
       this.init();
@@ -235,6 +238,9 @@ module.exports = class Table {
         ];
       }
       this.data = data;
+      if (this.ctx.props.updateParent) {
+        this.ctx.props.updateParent(data);
+      }
       relay.dispatch(this.resource, {
         type : 'index',
         data : data
