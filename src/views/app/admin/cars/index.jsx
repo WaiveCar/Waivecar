@@ -698,6 +698,7 @@ src/views/app/admin/cars/index.jsx
                           carsWithBookings, 
                           selectedCars: new Set(carsWithBookings.filter(car => selectedCars.has(car.license)).map(each => each.license)),
                           carMap,
+                          masterChecked: false,
                         })
                       }}
                       header={() => (

@@ -42,7 +42,7 @@ module.exports = class Table {
    */
   init(initialQuery) {
     api.get(this.endpoint, {
-      order  : 'created_at,DESC',
+      order  : initialQuery && initialQuery.order ? initialQuery.order : 'created_at,DESC',
       offset : this.ctx.state.offset,
       limit  : this.limit,
       ...(initialQuery || {}),

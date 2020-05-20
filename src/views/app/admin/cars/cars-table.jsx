@@ -26,7 +26,7 @@ class CarsTable extends Component {
   }
 
   componentDidMount() {
-    this.table.init();
+    this.table.init({order: 'updated_at,DESC'});
     this.setState({
       sort: {
         key: 'updatedAt',
