@@ -221,7 +221,7 @@ module.exports = class GMap extends React.Component {
       var 
         lastFormatted = '',
         marker = false,
-        importance = 0, 
+        importance = 1, 
         label = val.name;
       if (val.shape) {
         var coor = val.shape.map(function(row) { return {lat: row[1], lng: row[0] }; });
@@ -235,6 +235,7 @@ module.exports = class GMap extends React.Component {
         });
         marker.setMap(this.map);
       } else if (val.license) {
+        console.log('car', val);
         let duration = (moment.duration(moment.utc().diff(moment(val.lastActionTime)))).asMilliseconds();
         let lastAction = parseInt(moment.utc(duration).format('H'), 10);
         lastFormatted = moment.utc(duration).format('H:mm');
