@@ -437,11 +437,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           where: {organizationId: each.organization.id}
         });
         each.organization.organizationStatements = statements;
-        /*
-        for (let s of statements) {
-          each.organization.organizationStatements.push(s);
-        }
-        */
+        each.organization.cards = yield OrganizationCard.find({where: {organizationId: each.organization.id}});
       }
       return orgUsers;
     },
