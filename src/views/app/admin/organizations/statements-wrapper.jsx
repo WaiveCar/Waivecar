@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Statements from './statements';
 import {Link} from 'react-router';
 import {api, auth} from 'bento';
+import {snackbar} from 'bento-web';
 
 class StatementsWrapper extends Component {
   constructor(props) {
@@ -12,10 +13,12 @@ class StatementsWrapper extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
     api.get(`/organizations/${this.props.params.id}`, (err, organization) => {
       if (err) {
-        console.log(err);
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
       }
       this.setState({organization});
     });
@@ -29,7 +32,8 @@ class StatementsWrapper extends Component {
         {organization ? (
           <div className="box-content">
             <h4>
-              Statements for <Link to={`/organizations/${id}`}>{organization.name}</Link>
+              Statements for{' '}
+              <Link to={`/organizations/${id}`}>{organization.name}</Link>
             </h4>
             <Statements hideHeader={true} organization={organization} />
           </div>
