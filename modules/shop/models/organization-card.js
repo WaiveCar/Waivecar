@@ -1,32 +1,29 @@
-Bento.Register.Model('OrganzationCard', 'sequelize', (model, Sequelize) => {
+Bento.Register.Model('OrganizationCard', 'sequelize', (model, Sequelize) => {
   model.table = 'organization_cards';
 
   model.schema = {
-    organizationId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'organizations',
-        key   : 'id'
-      }
+    organizationId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'organizations',
+        key: 'id',
+      },
     },
-    cardId : {
-      type      : Sequelize.INTEGER,
-      allowNull : false
-    }
+    shop_payment_card_id: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
   };
-  
 
-  model.attributes = [
-  ];
+  model.attributes = [];
 
   model.relations = [
     'Shop/Card',
-    function(ShopCard) {
-      this.hasMany(ShopCard, { as : 'cards'});
-    }
+    function (ShopCard) {
+      this.belongsTo(ShopCard, {as: 'card', foreignKey: 'shopPaymentCardId'});
+    },
   ];
- 
-  return model;
 
+  return model;
 });
