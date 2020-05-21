@@ -2,6 +2,7 @@ import React from 'react';
 import Shop from '../../../lib/shop-service';
 import { auth, api } from 'bento';
 import { snackbar } from 'bento-web';
+import { Link } from 'react-router'
 
 class CardList extends React.Component {
 
@@ -209,7 +210,7 @@ class CardList extends React.Component {
     }
   }
 
-  renderCardTable() {
+  renderCardTable(org, i) {
     let cards = this.shop.getState('cards');
     let credit = false;
     if(this.state.user) {
@@ -252,7 +253,7 @@ class CardList extends React.Component {
     );
 
     return (
-      <div>
+      <div key={i}>
         { header } 
         { !cards.length ?
             <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>
@@ -318,8 +319,13 @@ class CardList extends React.Component {
         <div className="box-content">
           {this.props.user.organizations.length ? 
             this.props.user.organizations.map((org, i) => 
-              this.renderCardTable(org, i)
-            ) : this.renderCardTable()
+              <div>
+                <h4>
+                  <Link to={`/organizations/${org.organizationId}`}>{org.organization.name}</Link>
+                </h4>
+                {this.renderCardTable(org, i)}
+              </div>
+            ) : this.renderCardTable(org, i)
           }
         </div>
       </div>
