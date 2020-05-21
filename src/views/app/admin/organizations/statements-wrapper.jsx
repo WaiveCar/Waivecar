@@ -13,6 +13,10 @@ class StatementsWrapper extends Component {
   }
 
   componentDidMount() {
+    let {id} = this.props.params;
+    if (!auth.user().canSee('organization', {id})) {
+      return this.props.history.replaceState({}, '/forbidden');
+    }
     api.get(`/organizations/${this.props.params.id}`, (err, organization) => {
       if (err) {
         return snackbar.notify({
@@ -38,7 +42,9 @@ class StatementsWrapper extends Component {
             <Statements hideHeader={true} organization={organization} />
           </div>
         ) : (
-          <div>Loading</div>
+          <div id="booking-view">
+            <div className="booking-message">Loading ...</div>
+          </div>
         )}
       </div>
     );
