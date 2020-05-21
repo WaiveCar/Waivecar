@@ -24,7 +24,14 @@ module.exports = class ShopService extends Service {
    * @param {Object} user
    */
   ensureCustomer(user) {
-    if (!user.stripeId) {
+    if (user.organizations && user.organizations.length) {
+      for (let org of user.organizations) {
+        if (!org.organization.stripeId) {
+          console.log(user.email);
+          this.addCustomer({...org.organization, email: user.email}, false, true);
+        }
+      }
+    } else if (!user.stripeId) {
       this.addCustomer(user, true);
     }
   }
@@ -34,12 +41,14 @@ module.exports = class ShopService extends Service {
    * @param {Object}  user         The user to register with stripe.
    * @param {Boolean} shouldNotify
    */
-  addCustomer(user, shouldNotify) {
+  addCustomer(user, shouldNotify, isOrganization) {
     api.post('/shop/customers', {
       userId   : user.id,
+      isOrganization: true,
       customer : {
         description : 'WaiveCar customer registered via web.'
-      }
+      },
+      email: user.email,
     }, (err, res) => {
       if (err) {
         return this.error(err.message);

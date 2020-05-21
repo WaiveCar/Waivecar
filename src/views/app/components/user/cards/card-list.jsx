@@ -211,7 +211,7 @@ class CardList extends React.Component {
   }
 
   renderCardTable(org, i) {
-    let cards = this.shop.getState('cards');
+    let cards = org ? org.organization.cards : this.shop.getState('cards');
     let credit = false;
     if(this.state.user) {
       credit = this.state.user.credit;
