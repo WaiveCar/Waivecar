@@ -18,13 +18,19 @@ module.exports = class Customers extends Service {
    * @return {Object}         Returns with the registered user.
    */
   static *create(payload, _user) {
-    let user    = yield this.getUser(payload.userId);
+    let customer, data;
     let service = this.getService(config.service, 'customers');
-    let data    = yield hooks.require('shop:store:customer:before', payload.customer, _user);
-
-    this.hasAccess(user, _user);
-
-    return yield service.create(user, data);
+    if (!payload.isOrganization) {
+      customer = yield this.getUser(payload.userId);
+      data = yield hooks.require('shop:store:customer:before', payload.customer, _user);
+      this.hasAccess(user, _user);
+    } else {
+      let Organization = Bento.model('Organization');  
+      customer = yield Organization.findById(payload.userId);
+      customer.firstName = customer.name;
+      customer.email = payload.email;
+    }
+    return yield service.create(customer, data);
   }
 
   /**

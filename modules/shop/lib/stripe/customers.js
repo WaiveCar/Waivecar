@@ -41,8 +41,8 @@ module.exports = class StripeCustomers {
     yield user.update({
       stripeId : customer.id
     });
-
     return user;
+    
   }
 
   /**
@@ -102,7 +102,7 @@ module.exports = class StripeCustomers {
    * @param  {Objcet} data
    * @return {Object}
    */
-  prepareData(user, data) {
+  prepareData(user, data = {}) {
     let metaData = Object.assign({
       id        : user.id,
       firstName : user.firstName,

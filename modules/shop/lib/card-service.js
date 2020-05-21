@@ -18,39 +18,43 @@ module.exports = class Cards extends Service {
    * @return {Object}       Returns a api record of the card.
    */
   static *create(data, _user) {
-    let user    = yield this.getUser(data.userId);
     let service = this.getService(config.service, 'cards');
+    console.log(config.service);
+    if (!_user.isOrganization) {
+      customer = yield this.getUser(data.userId);
+      this.hasAccess(user, _user);
+      // Credit card must match either first or last name #476
+      //
+      // This should exist above the stripe lib.
+      // A little bit of sanitization will be done beforehand.
+      //
+      // The CC name that comes in is a single unit with spaces.
 
-    this.hasAccess(user, _user);
+      let hasMatch = false;
 
-    // Credit card must match either first or last name #476
-    //
-    // This should exist above the stripe lib.
-    // A little bit of sanitization will be done beforehand.
-    //
-    // The CC name that comes in is a single unit with spaces.
-    let hasMatch = false;
+      if(data.card.name) {
+        let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
+        let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
 
-    if(data.card.name) {
-      let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
-      let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
+        userNameParts.forEach(function(name) {
+          hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
+        });
+      }
 
-      userNameParts.forEach(function(name) {
-        hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
-      });
-    }
-
-    if (!hasMatch) {
-      throw error.parse({
-        code    : 'NAME_ON_CARD',
-        message : 'The name on the credit card must be close to the one on the account.'
-      }, 400);
+      if (!hasMatch) {
+        throw error.parse({
+          code    : 'NAME_ON_CARD',
+          message : 'The name on the credit card must be close to the one on the account.'
+        }, 400);
+      }
+    } else {
+      // for organizations
     }
 
     
     let card = false;
     try {
-      card = yield service.create(user, data.card);
+      card = yield service.create(cusomter, data.card);
     } catch (ex) {
       throw error.parse(ex, 400);
     }
