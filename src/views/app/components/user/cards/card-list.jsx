@@ -21,7 +21,7 @@ class CardList extends React.Component {
     this.state = {
       topUpDisabled: '',
     };
-    this.user = auth.user();
+    this._user = auth.user();
     this.shop = new Shop(this);
   }
 
@@ -219,14 +219,16 @@ class CardList extends React.Component {
     }
 
     let header = (
-      <div className='credit'>{this.user.hasAccess('admin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
+      <div className='credit'>{this._user.hasAccess('waiveAdmin') ? <span>Current Credit:<sup>*</sup> { this.amount(credit)}</span> : <span /> }
         {this.props.addCard && <button onClick={ () => this.props.addCard() } className='btn btn-link btn-sm'>Add Card</button>}
       {
-        this.user.hasAccess('waiveAdmin') ? 
-          <div className="pull-right">
-            <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
+        this._user.hasAccess('waiveAdmin') &&
+          <div>
+            <div className="pull-right">
+              <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
+            </div>
+            {this.renderNotice(credit)}
           </div>
-          : this.renderNotice(credit)
       }
       </div>
     );
@@ -234,7 +236,7 @@ class CardList extends React.Component {
     let footer = (
       <div style={{ textAlign: 'right' }}>
         { 
-          this.user.hasAccess('waiveAdmin') ? 
+          this._user.hasAccess('waiveAdmin') ? 
             <div>
               <em>The buttons below are not to be used for WaiveWork charges or WaiveWork late fees. Please use the proper avenues for these types of charges.</em>
               <span>
@@ -244,7 +246,7 @@ class CardList extends React.Component {
             </div>
             : '' 
         }
-        {!this.user.hasAccess('waiveAdmin') &&
+        {!this._user.hasAccess('waiveAdmin') &&
             <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>} 
       </div>
     );
@@ -314,8 +316,10 @@ class CardList extends React.Component {
           </small>
         </h3>
         <div className="box-content">
-          {
-            this.renderCardTable()
+          {this.props.user.organizations.length ? 
+            this.props.user.organizations.map((org, i) => 
+              this.renderCardTable(org, i)
+            ) : this.renderCardTable()
           }
         </div>
       </div>

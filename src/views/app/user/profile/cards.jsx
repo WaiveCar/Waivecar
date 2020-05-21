@@ -8,17 +8,17 @@ module.exports = class ProfileCardsView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this._user = auth.user();
   }
 
   componentDidMount() {
   }
 
   render() {
-    let user = auth.user();
     return (
       <div className="profile">
-        <CardList user={ user }></CardList>
-        <AddCard user={ user }></AddCard>
+        <CardList user={ this._user }></CardList>
+        <AddCard user={ this._user }></AddCard>
       </div>
     );
   }
