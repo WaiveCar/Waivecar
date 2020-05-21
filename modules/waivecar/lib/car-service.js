@@ -354,7 +354,6 @@ module.exports = {
     let start = new Date();
     let perf = [];
     let cars = [];
-
     let searchObj = {};
     if (query.search) {
       let org = yield Organization.findOne({where: {name: {$like: `%${query.search}%`}}});

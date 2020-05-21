@@ -75,6 +75,15 @@ module.exports = {
       q.include.push({model: 'File', as: 'logo'});
     }
     let org = yield Organization.findOne(q);
+    if (!org) {
+      throw error.parse(
+        {
+          code: 'NOT_FOUND',
+          message: 'Organization not found.',
+        },
+        404,
+      );
+    }
     // What is done below is only done because the current implementation of the
     // ORM is broken and and nested includes do not work at all.
     let ids = org.organizationUsers.map(orgUser => orgUser.userId);
@@ -131,10 +140,17 @@ module.exports = {
           `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`,
         );
         if (user.isAdmin) {
-          yield UserService.update(newUser.id, {groupId: 1, groupRoleId: 3}, _user);
+          yield UserService.update(
+            newUser.id,
+            {groupId: 1, groupRoleId: 3},
+            _user,
+          );
         }
         try {
-          let res = yield UserService.generatePasswordToken(newUser, 7 * 24 * 60);
+          let res = yield UserService.generatePasswordToken(
+            newUser,
+            7 * 24 * 60,
+          );
           let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
           let email = new Email();
           let emailOpts = {
@@ -152,14 +168,14 @@ module.exports = {
           log.warn('error sending email', e.message);
         }
         successful.push(newUser);
-      } catch(e) {
+      } catch (e) {
         failed.push({user, error: e});
       }
     }
     if (failed.length) {
       throw error.parse({
-        code    : 'SOME_USERS_FAILED',
-        message : 'Failed to add some of the users you tried to add',
+        code: 'SOME_USERS_FAILED',
+        message: 'Failed to add some of the users you tried to add',
         data: {failed, successful},
       });
     }
