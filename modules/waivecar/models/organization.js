@@ -26,7 +26,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       type : Sequelize.STRING,
     },
   };
-  model.attributes = [];
+  model.attributes = ['organizationStatements'];
   model.methods = {
     link: function() {
       return `<${apiConfig.uri}/organizations/${this.id}|${this.name}>`;
@@ -177,11 +177,13 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     'OrganizationStatement',
     'Car',
     'File',
-    function(OrganizationUser, OrganizationStatement, Car, File) {
+    'OrganizationCard',
+    function(OrganizationUser, OrganizationStatement, Car, File, OrganizationCard) {
       this.hasMany(OrganizationUser, {as: 'organizationUsers'});
       this.hasMany(OrganizationStatement, {as: 'organizationStatements'});
       this.hasMany(Car, {as: 'cars'});
       this.belongsTo(File, { as : 'logo', foreignKey: 'logoId'});
+      this.hasMany(OrganizationCard, {as: 'organizationCards'});
     },
   ];
   return model;

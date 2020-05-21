@@ -219,6 +219,8 @@ module.exports = {
     try {
       let charge = (yield OrderService.quickCharge(data, _user, {
         overrideAdminCheck: true,
+        nocredit: true,
+        nodebt: true,
       })).order;
       yield notify.slack(
         {

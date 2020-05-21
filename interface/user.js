@@ -416,6 +416,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     *getOrganizations() {
       let OrganizationUser = Bento.model('OrganizationUser');
       let OrganizationStatement = Bento.model('OrganizationStatement');
+      let OrganizationCard = Bento.model('OrganizationCard');
       let File = Bento.model('File');
       let orgUsers = yield OrganizationUser.find({
         where: {
@@ -431,13 +432,16 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       orgUsers = orgUsers.map(each => each.toJSON());
       for (let each of orgUsers) {
         each.organization.logo = (yield File.findById(each.organization.logoId));
-        each.organization.organizationStatements = []
+        each.organization.organizationStatements = [];
         let statements = yield OrganizationStatement.find({
           where: {organizationId: each.organization.id}
         });
+        each.organization.organizationStatements = statements;
+        /*
         for (let s of statements) {
           each.organization.organizationStatements.push(s);
         }
+        */
       }
       return orgUsers;
     },
