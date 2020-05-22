@@ -26,6 +26,11 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
       }
     },
 
+    organizationId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : true,
+    },
+
     // ### Public Info
     // The publicly accessible card information.
 
