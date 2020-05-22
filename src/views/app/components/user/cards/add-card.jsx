@@ -25,7 +25,7 @@ class AddCard extends React.Component {
 
     this.user = this.props.user;
     this.state = {
-      selectedOrganization: this.user.organizations[0].organization.id,
+      selectedOrganization: this.user.organizations.length ? this.user.organizations[0].organization.id: null,
     };
     this.shop = new Shop(this);
   }
@@ -48,20 +48,21 @@ class AddCard extends React.Component {
           <small>Add a new payment card to your waivecar account.</small>
         </h3>
         <div className="box-content">
-          <ReactSelect
-            name={'organizationSelect'}
-            defaultValue={this.user.organizations[0].organization.id}
-            value={selectedOrganization}
-            options={this.user.organizations.map((org, i) => ({
-              label: org.organization.name,
-              value: org.organizationId,
-            }))}
-            onChange={e =>
-              this.setState({selectedOrganization: e, showOrg: false}, () =>
-                this.setState({showOrg: true}),
-              )
-            }
-          />
+          {selectedOrganization &&
+            <ReactSelect
+              name={'organizationSelect'}
+              defaultValue={this.user.organizations[0].organization.id}
+              value={selectedOrganization}
+              options={this.user.organizations.map((org, i) => ({
+                label: org.organization.name,
+                value: org.organizationId,
+              }))}
+              onChange={e =>
+                this.setState({selectedOrganization: e, showOrg: false}, () =>
+                  this.setState({showOrg: true}),
+                )
+              }
+            />}
           <Form
             ref="personal"
             className="bento-form-static"
@@ -75,7 +76,7 @@ class AddCard extends React.Component {
               },
             ]}
             submit={(data, reset) => {
-              this.shop.submitCard(this.props.user, data, reset);
+              this.shop.submitCard(this.props.user, {...data, selectedOrganization}, reset);
             }}
           />
         </div>
