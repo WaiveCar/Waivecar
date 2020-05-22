@@ -19,9 +19,12 @@ module.exports = class Cards extends Service {
    */
   static *create(data, _user) {
     let service = this.getService(config.service, 'cards');
-    if (!_user.isOrganization) {
+    console.log(data);
+    let customer;
+    if (!data.card.selectedOrganization) {
+      console.log('not with org');
       customer = yield this.getUser(data.userId);
-      this.hasAccess(user, _user);
+      this.hasAccess(customer, _user);
       // Credit card must match either first or last name #476
       //
       // This should exist above the stripe lib.
@@ -33,7 +36,7 @@ module.exports = class Cards extends Service {
 
       if(data.card.name) {
         let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
-        let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
+        let userNameParts = [customer.firstName, customer.lastName].join(' ').toLowerCase().split(/\s+/);
 
         userNameParts.forEach(function(name) {
           hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
@@ -47,13 +50,17 @@ module.exports = class Cards extends Service {
         }, 400);
       }
     } else {
+      console.log('with org');
+      let Organization = Bento.model('Organization');
+      let org = yield Organization.findById(data.card.selectedOrganization);
+      console.log(org);
+
       // for organizations
     }
-
     
     let card = false;
     try {
-      card = yield service.create(cusomter, data.card);
+      card = yield service.create(customer, data.card);
     } catch (ex) {
       throw error.parse(ex, 400);
     }
