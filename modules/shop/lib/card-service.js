@@ -19,7 +19,6 @@ module.exports = class Cards extends Service {
    */
   static *create(data, _user) {
     let service = this.getService(config.service, 'cards');
-    console.log(config.service);
     if (!_user.isOrganization) {
       customer = yield this.getUser(data.userId);
       this.hasAccess(user, _user);

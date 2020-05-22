@@ -67,8 +67,10 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
 
   model.relations = [
     'User',
-    function(User, Booking) {
+    'Organization',
+    function(User, Booking, Organization) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+      this.belongsTo(User, { as : 'organization', foreignKey : 'organizationId' });
     }
   ];
 

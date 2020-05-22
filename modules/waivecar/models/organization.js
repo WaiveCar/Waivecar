@@ -181,13 +181,13 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     'OrganizationStatement',
     'Car',
     'File',
-    'OrganizationCard',
-    function(OrganizationUser, OrganizationStatement, Car, File, OrganizationCard) {
+    'Shop/Card',
+    function(OrganizationUser, OrganizationStatement, Car, File, ShopCard) {
       this.hasMany(OrganizationUser, {as: 'organizationUsers'});
       this.hasMany(OrganizationStatement, {as: 'organizationStatements'});
       this.hasMany(Car, {as: 'cars'});
       this.belongsTo(File, { as : 'logo', foreignKey: 'logoId'});
-      this.hasMany(OrganizationCard, {as: 'organizationCards'});
+      this.hasMany(ShopCard, {as: 'cards'});
     },
   ];
   return model;
