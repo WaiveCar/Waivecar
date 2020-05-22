@@ -319,7 +319,7 @@ class CardList extends React.Component {
         <div className="box-content">
           {this.props.user.organizations.length ? 
             this.props.user.organizations.map((org, i) => 
-              <div>
+              <div key={i}>
                 <h4>
                   <Link to={`/organizations/${org.organizationId}`}>{org.organization.name}</Link>
                 </h4>
