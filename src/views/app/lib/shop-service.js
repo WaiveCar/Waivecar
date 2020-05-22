@@ -82,7 +82,7 @@ module.exports = class ShopService extends Service {
         ...this.getState('cards'),
         card
       ]);
-      this.success(`Your new payment card was added successfully`);
+      this.success('Your new payment card was added successfully');
       reset();
     });
   }
@@ -94,10 +94,10 @@ module.exports = class ShopService extends Service {
    * @param {Function} done
    */
   addCard(user, card, done) {
-    if (!user.stripeId) {
+    if (!user.stripeId || (card.organizationUser && !card.organizationUser.organization.stripeId)) {
       return snackbar.notify({
-        type    : `danger`,
-        message : `You are not yet registered with a payment service.`
+        type    : 'danger',
+        message : 'You are not yet registered with a payment service.'
       });
     }
     api.post('/shop/cards', {
@@ -170,7 +170,7 @@ module.exports = class ShopService extends Service {
         // ### Notify
         // Notify client of successfull card removal.
 
-        this.success(`Your payment card was successfully removed from your account`);
+        this.success('Your payment card was successfully removed from your account');
       });
     
     }

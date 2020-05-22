@@ -25,7 +25,9 @@ class AddCard extends React.Component {
 
     this.user = this.props.user;
     this.state = {
-      selectedOrganization: this.user.organizations.length ? this.user.organizations[0].organization.id: null,
+      selectedOrganization: this.user.organizations.length
+        ? this.user.organizations[0].organization.id
+        : null,
     };
     this.shop = new Shop(this);
   }
@@ -48,7 +50,7 @@ class AddCard extends React.Component {
           <small>Add a new payment card to your waivecar account.</small>
         </h3>
         <div className="box-content">
-          {selectedOrganization &&
+          {selectedOrganization && (
             <ReactSelect
               name={'organizationSelect'}
               defaultValue={this.user.organizations[0].organization.id}
@@ -62,7 +64,8 @@ class AddCard extends React.Component {
                   this.setState({showOrg: true}),
                 )
               }
-            />}
+            />
+          )}
           <Form
             ref="personal"
             className="bento-form-static"
@@ -76,7 +79,17 @@ class AddCard extends React.Component {
               },
             ]}
             submit={(data, reset) => {
-              this.shop.submitCard(this.props.user, {...data, selectedOrganization}, reset);
+              this.shop.submitCard(
+                this.props.user,
+                {
+                  ...data,
+                  selectedOrganization,
+                  organizationUser: this.user.organizations.find(
+                    org => org.organizationId === selectedOrganization,
+                  ),
+                },
+                reset,
+              );
             }}
           />
         </div>
