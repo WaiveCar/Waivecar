@@ -25,7 +25,7 @@ class AddCard extends React.Component {
 
     this.user = this.props.user;
     this.state = {
-      selectedOrganization: this.user.organizations[0].organization.name,
+      selectedOrganization: this.user.organizations[0].organization.id,
     };
     this.shop = new Shop(this);
   }
@@ -50,11 +50,11 @@ class AddCard extends React.Component {
         <div className="box-content">
           <ReactSelect
             name={'organizationSelect'}
-            defaultValue={0}
+            defaultValue={this.user.organizations[0].organization.id}
             value={selectedOrganization}
             options={this.user.organizations.map((org, i) => ({
               label: org.organization.name,
-              value: i,
+              value: org.organizationId,
             }))}
             onChange={e =>
               this.setState({selectedOrganization: e, showOrg: false}, () =>
