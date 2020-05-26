@@ -124,7 +124,32 @@ module.exports = class Cards extends Service {
   }
 
   static *update(cardId, data, _user) {
-    let card    = yield this.getCard(cardId);
+    let card = yield this.getCard(cardId);
+    let user;
+    if (card.userId) {
+      user = yield this.getUser(card.userId);
+    } else if (card.organizationId) {
+      let Organization = Bento.model('Organization');
+      user = yield Organization.findById(card.organizationId);
+    }
+    let service = this.getService(config.service, 'cards');
+
+    // ### Ensure Access
+    // We need to make sure that the request is made by authorized parties.
+    if (card.userId) {
+      this.hasAccess(user, _user);
+    }
+    let result = yield service.update(user.stripeId, cardId, data);
+    yield card.update({
+      expMonth : result.exp_month || card.expMonth,
+      expYear  : result.exp_year  || card.expYear
+    });
+    return card;
+  }
+
+  // Deletes a card from the customer records.
+  static *delete(cardId, _user) {
+    let card = yield this.getCard(cardId);
     let user;
     if (card.userId) {
       user = yield this.getUser(card.userId);
@@ -140,24 +165,13 @@ module.exports = class Cards extends Service {
       this.hasAccess(user, _user);
     }
     // ### Request Update
-
-    let result = yield service.update(user.stripeId, cardId, data);
-    yield card.update({
-      expMonth : result.exp_month || card.expMonth,
-      expYear  : result.exp_year  || card.expYear
-    });
-    return card;
-  }
-
-  // Deletes a card from the customer records.
-  static *delete(cardId, _user) {
-    let card    = yield this.getCard(cardId);
-    let user    = yield this.getUser(card.userId);
-    let service = this.getService(config.service, 'cards');
-
-    this.hasAccess(user, _user);
-
-    let cards = yield Card.find({ where : { userId : user.id } });
+    let cards;
+    if (card.userId) {
+      cards = yield Card.find({ where : { userId : user.id } });
+    } else {
+      // Deleting organization cards
+      cards = yield Card.find({ where : { organizationId : card.organizationId } });
+    }
     if (!_user.isAdmin() && cards.length <= 1) {
       throw error.parse({
         code    : 'CARD_COUNT',
