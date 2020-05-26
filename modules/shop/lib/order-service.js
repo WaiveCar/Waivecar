@@ -1168,7 +1168,7 @@ module.exports = class OrderService extends Service {
         }
       });
     } catch (err) {
-      log.warn('Failed to deliver notification email: ', err);
+        log.warn('Failed to deliver notification email: ', err);
     }
   }
 
@@ -1179,6 +1179,32 @@ module.exports = class OrderService extends Service {
       return;
     }
     */
+    let users;
+    console.log('item', item, '\nuser', user, '\nopts', opts);
+    if (item.forOrganization) {
+      // getting all org admins to send e-mail receipt
+      users = yield User.find({
+        where: {
+
+        },
+        include: [
+          {
+            model: 'OrganizationUser',
+            as: 'organizationUsers',
+            where: {
+              organizationId: item.organization.id,
+            }
+          }, {
+            model: 'GroupUser',
+            as: 'tagList',
+            where: {
+              groupRoleId: 3,
+            }
+          }
+        ],
+      });
+      console.log(users);
+    }
     let useWorkCredit = item.useWorkCredit;
     let email = new Email();
     let word = false;
@@ -1242,6 +1268,7 @@ module.exports = class OrderService extends Service {
         });
       }
     } catch (err) {
+      console.log(err);
       log.warn(`Failed to deliver ${word} notification email: `, err);
     }
   }
