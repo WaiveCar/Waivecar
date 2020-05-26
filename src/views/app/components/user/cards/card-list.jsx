@@ -205,7 +205,7 @@ class CardList extends React.Component {
             message : err.message
           });
         }
-        this.shop.setCards(this.props.user.id);
+        this.shop.setCards(this.props.user.id, card);
       }); 
     }
   }
@@ -247,8 +247,8 @@ class CardList extends React.Component {
             </div>
             : '' 
         }
-        {!this._user.hasAccess('waiveAdmin') &&
-            <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>} 
+            {/*!this._user.hasAccess('waiveAdmin') &&
+            <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, null, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button>*/} 
       </div>
     );
 

@@ -27,7 +27,6 @@ module.exports = class ShopService extends Service {
     if (user.organizations && user.organizations.length) {
       for (let org of user.organizations) {
         if (!org.organization.stripeId) {
-          console.log(user.email);
           this.addCustomer({...org.organization, email: user.email}, false, true);
         }
       }
@@ -114,9 +113,10 @@ module.exports = class ShopService extends Service {
   /**
    * Loads cards from the api and adds them to the cards array on the ctx.
    */
-  setCards(userId) {
+  setCards(userId, card) {
     api.get('/shop/cards?showSelected=true', {
-      userId : userId
+      userId : userId,
+      organizationId: card && card.organizationId,
     }, (err, cards) => {
       if (err) {
         return this.error(err.message);
