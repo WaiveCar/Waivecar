@@ -84,9 +84,6 @@ class AddCard extends React.Component {
                 {
                   ...data,
                   selectedOrganization,
-                  organizationUser: this.user.organizations.find(
-                    org => org.organizationId === selectedOrganization,
-                  ),
                 },
                 reset,
               );

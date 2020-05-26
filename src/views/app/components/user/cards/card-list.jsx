@@ -325,7 +325,7 @@ class CardList extends React.Component {
                 </h4>
                 {this.renderCardTable(org, i)}
               </div>
-            ) : this.renderCardTable(org, i)
+            ) : this.renderCardTable()
           }
         </div>
       </div>

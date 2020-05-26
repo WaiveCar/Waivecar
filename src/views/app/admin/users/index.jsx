@@ -87,7 +87,7 @@ class UsersListView extends React.Component {
           <td style={{color}}>{ user.organizations && user.organizations.length ? ( 
             <div>
               {user.organizations.map((orgUser, i) => 
-                <Link key={i} to={`/organizations/${orgUser.organization.id}`}>{orgUser.organization.name}</Link>
+                <Link key={i} to={`/organizations/${orgUser.organization.id}`}>{orgUser.organization.name}{i < user.organizations.length -1 ? ', ' : ''}</Link>
               )}
             </div>)
             : 'none'}
