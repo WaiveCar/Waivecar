@@ -122,17 +122,20 @@ module.exports = class OrderService extends Service {
       // otherwise the previous assignment sticks.
       charge = yield this.charge(order, user, opts);
       if(data.amount > 0) {
-        let addendum = user.getCredit(opts.useWorkCredit);
-        if (charge.creditUsed) {
-          order.creditUsed = charge.creditUsed;
-          addendum += `(used: $${(charge.creditUsed / 100).toFixed(2)}) used.`
-          yield order.update({description: order.description + `. (credit used: $${(charge.creditUsed / 100).toFixed(2)})`})
-          // This must be done to make sure the amount of credit used is included in the e-mail
-          data.description = order.description;
-          data.amount = order.amount;
-        }
-        if(opts.nocredit) {
-          addendum += " (credit not used)";
+        let addendum = '';
+        if (!opts.forOrganization) {
+          let addendum = user.getCredit(opts.useWorkCredit);
+          if (charge.creditUsed) {
+            order.creditUsed = charge.creditUsed;
+            addendum += `(used: $${(charge.creditUsed / 100).toFixed(2)}) used.`
+            yield order.update({description: order.description + `. (credit used: $${(charge.creditUsed / 100).toFixed(2)})`})
+            // This must be done to make sure the amount of credit used is included in the e-mail
+            data.description = order.description;
+            data.amount = order.amount;
+          }
+          if(opts.nocredit) {
+            addendum += " (credit not used)";
+          }
         }
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }. ${ addendum }`, [ 'slack' ], { channel : '#reservations' });
       } else if(data.amount < 0) {
@@ -160,6 +163,7 @@ module.exports = class OrderService extends Service {
         }), user);
       }
     } catch (err) {
+      console.log('err in quickCharge', err);
       if (data.evgoCharges) {
         yield this.notifyOfCharge(Object.assign(opts, {
           quantity: 1,
@@ -823,6 +827,7 @@ module.exports = class OrderService extends Service {
   // order is the core object here. It effectively gets passed
   // through to stripe as-is in shop/lib/stripe/charges.js
   static *charge(order, user, opts) {
+    console.log('charge opts', opts)
     // The amount needs to be rounded because Stripe will throw an error if it is not an INT
     order.amount = Math.floor(order.amount);
     let start = new Date();
@@ -960,6 +965,7 @@ module.exports = class OrderService extends Service {
           t("order-update");
         }
       } catch (ex) {
+        console.log('error charging', ex);
         // This more or less says we were unable to charge the user.
         // If we are capturing, as in, we expected to charge them,
         // this is a splendid time to modify their credit with us.
@@ -1049,6 +1055,7 @@ module.exports = class OrderService extends Service {
         });
       }
     }
+    console.log('bottom of charge func', charge);
     return charge;
   }
 
