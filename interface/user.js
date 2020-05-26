@@ -438,6 +438,18 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
         });
         each.organization.organizationStatements = statements;
         each.organization.cards = yield Card.find({where: {organizationId: each.organization.id}});
+        if (each.organization.cards.length) {
+          let cards = each.organization.cards;
+          let currentMax = null;
+          let maxIdx = null;
+          for (let i = 0; i < cards.length; i++) {
+            if (!currentMax || new Date(cards[i].updatedAt) > new Date(currentMax)) {
+              currentMax = cards[i].updatedAt;
+              maxIdx = i;
+            }
+          }
+          cards[maxIdx].selected = true;
+        }
       }
       return orgUsers;
     },

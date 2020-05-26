@@ -62,7 +62,8 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
   };
 
   model.attributes = [
-    'user'
+    'user',
+    'selected',
   ];
 
   model.relations = [

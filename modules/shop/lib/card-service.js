@@ -19,7 +19,6 @@ module.exports = class Cards extends Service {
    */
   static *create(data, _user) {
     let service = this.getService(config.service, 'cards');
-    console.log(data);
     let customer;
     if (!data.card.selectedOrganization) {
       customer = yield this.getUser(data.userId);
@@ -126,14 +125,20 @@ module.exports = class Cards extends Service {
 
   static *update(cardId, data, _user) {
     let card    = yield this.getCard(cardId);
-    let user    = yield this.getUser(card.userId);
+    let user;
+    if (card.userId) {
+      user = yield this.getUser(card.userId);
+    } else if (card.organizationId) {
+      let Organization = Bento.model('Organization');
+      user = yield Organization.findById(card.organizationId);
+    }
     let service = this.getService(config.service, 'cards');
 
     // ### Ensure Access
     // We need to make sure that the request is made by authorized parties.
-
-    this.hasAccess(user, _user);
-
+    if (card.userId) {
+      this.hasAccess(user, _user);
+    }
     // ### Request Update
 
     let result = yield service.update(user.stripeId, cardId, data);

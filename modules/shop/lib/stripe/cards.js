@@ -69,7 +69,7 @@ module.exports = class StripeCards {
     // ### Local Storage
     // Store quick view information about the card in the api database.
 
-    card        = new Card(result);
+    card = new Card(result);
     if (user.isOrg) {
       card.organizationId = user.id;
     } else {
