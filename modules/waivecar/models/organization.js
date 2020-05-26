@@ -22,20 +22,20 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       allowNull: false,
       unique: true,
     },
-    logoId : {
-      type : Sequelize.STRING,
+    logoId: {
+      type: Sequelize.STRING,
     },
     stripeId: {
       type: Sequelize.INTEGER,
       allowNull: true,
-    }
+    },
   };
   model.attributes = ['organizationStatements', 'cards'];
   model.methods = {
-    link: function() {
+    link: function () {
       return `<${apiConfig.uri}/organizations/${this.id}|${this.name}>`;
     },
-    addCar: function*(payload) {
+    addCar: function* (payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
       if (car.organizationId) {
@@ -55,7 +55,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       );
       return this;
     },
-    removeCar: function*(payload) {
+    removeCar: function* (payload) {
       let {carId} = payload;
       let car = yield Car.findOne({where: {id: carId}});
       if (this.id === car.organizationId) {
@@ -68,7 +68,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       }
       return this;
     },
-    addUser: function*(payload) {
+    addUser: function* (payload) {
       let {userId} = payload;
       let user = yield User.findById(userId);
       let prevUser = yield OrganizationUser.findOne({
@@ -95,7 +95,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       );
       return this;
     },
-    removeUser: function*(payload) {
+    removeUser: function* (payload) {
       let {userId} = payload;
       let user = yield User.findById(userId);
       let orgUser = yield OrganizationUser.findOne({
@@ -105,7 +105,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         },
       });
       if (orgUser) {
-      yield orgUser.delete();
+        yield orgUser.delete();
         yield notify.notifyAdmins(
           `:metro: ${user.link()} removed from ${this.link()}`,
           ['slack'],
@@ -114,7 +114,7 @@ Bento.Register.Model('Organization', 'sequelize', function register(
         return orgUser;
       }
     },
-    addCars: function*(payload) {
+    addCars: function* (payload) {
       let {carsList} = payload;
       let errs = [];
       for (let car of carsList) {
@@ -137,14 +137,14 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       }
       return this;
     },
-    removeCars: function*(payload) {
+    removeCars: function* (payload) {
       let {carsList} = payload;
       for (let car of carsList) {
         yield this.removeCar({carId: car.id});
       }
       return this;
     },
-    addUsers: function*(payload) {
+    addUsers: function* (payload) {
       let {usersList} = payload;
       let errs = [];
       for (let user of usersList) {
@@ -167,12 +167,33 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       }
       return this;
     },
-    removeUsers: function*(payload) {
+    removeUsers: function* (payload) {
       let {usersList} = payload;
       for (let user of usersList) {
         yield this.removeUser({userId: user.id});
       }
       return this;
+    },
+
+    *getAdmins() {
+      return yield User.find({
+        include: [
+          {
+            model: 'OrganizationUser',
+            as: 'organizationUsers',
+            where: {
+              organizationId: this.id,
+            },
+          },
+          {
+            model: 'GroupUser',
+            as: 'tagList',
+            where: {
+              groupRoleId: 3,
+            },
+          },
+        ],
+      });
     },
   };
 
@@ -182,11 +203,11 @@ Bento.Register.Model('Organization', 'sequelize', function register(
     'Car',
     'File',
     'Shop/Card',
-    function(OrganizationUser, OrganizationStatement, Car, File, ShopCard) {
+    function (OrganizationUser, OrganizationStatement, Car, File, ShopCard) {
       this.hasMany(OrganizationUser, {as: 'organizationUsers'});
       this.hasMany(OrganizationStatement, {as: 'organizationStatements'});
       this.hasMany(Car, {as: 'cars'});
-      this.belongsTo(File, { as : 'logo', foreignKey: 'logoId'});
+      this.belongsTo(File, {as: 'logo', foreignKey: 'logoId'});
       this.hasMany(ShopCard, {as: 'cards'});
     },
   ];
