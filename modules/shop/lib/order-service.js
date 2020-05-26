@@ -175,7 +175,7 @@ module.exports = class OrderService extends Service {
       if (!data.waiveworkWeekly) {
         yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
       }
-      yield this.suspendIfMultipleFailed(user);
+      //yield this.suspendIfMultipleFailed(user);
       throw {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
@@ -1180,7 +1180,6 @@ module.exports = class OrderService extends Service {
     }
     */
     let users;
-    console.log('item', item, '\nuser', user, '\nopts', opts);
     if (item.forOrganization) {
       // getting all org admins to send e-mail receipt
       users = yield User.find({
@@ -1203,7 +1202,6 @@ module.exports = class OrderService extends Service {
           }
         ],
       });
-      console.log(users);
     }
     let useWorkCredit = item.useWorkCredit;
     let email = new Email();
@@ -1241,19 +1239,37 @@ module.exports = class OrderService extends Service {
       if (word === 'Charges' && !opts.isTopUp) {
         opts.subject = opts.subject || `$${ item.total } charged to your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
-        yield email.send({
-          to       : user.email,
-          from     : emailConfig.sender,
-          subject  : opts.subject,
-          template : 'miscellaneous-charge',
-          context  : {
-            leadin   : opts.leadin,
-            name   : user.name(),
-            word   : word,
-            charge : item,
-            chargeList,
+        if (!users) {
+          yield email.send({
+            to       : user.email,
+            from     : emailConfig.sender,
+            subject  : opts.subject,
+            template : 'miscellaneous-charge',
+            context  : {
+              leadin   : opts.leadin,
+              name   : user.name(),
+              word   : word,
+              charge : item,
+              chargeList,
+            }
+          });
+        } else {
+          for (let user of users) {
+            yield email.send({
+              to       : user.email,
+              from     : emailConfig.sender,
+              subject  : opts.subject,
+              template : 'miscellaneous-charge',
+              context  : {
+                leadin   : opts.leadin,
+                name   : user.name(),
+                word   : word,
+                charge : item,
+                chargeList,
+              }
+            });
           }
-        });
+        }
       } else {
         yield email.send({
           to: user.email,
