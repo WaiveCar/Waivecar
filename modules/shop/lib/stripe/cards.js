@@ -24,7 +24,6 @@ module.exports = class StripeCards {
   }
 
   *create(user, card) {
-    console.log('inside stripe create');
     // This just checks for a property on the user object existing
     // and throws an error if it doesn't ... probably a bad way
     // of doing things since that error gets hidden by a secondary

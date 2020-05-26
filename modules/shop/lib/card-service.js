@@ -22,7 +22,6 @@ module.exports = class Cards extends Service {
     console.log(data);
     let customer;
     if (!data.card.selectedOrganization) {
-      console.log('not with org');
       customer = yield this.getUser(data.userId);
       this.hasAccess(customer, _user);
       // Credit card must match either first or last name #476
@@ -50,20 +49,16 @@ module.exports = class Cards extends Service {
         }, 400);
       }
     } else {
-      console.log('with org');
       let Organization = Bento.model('Organization');
       let org = yield Organization.findById(data.card.selectedOrganization);
-      console.log(org);
       customer = org;
       customer.isOrg = true;
-      // for organizations
     }
     
     let card = false;
     try {
       card = yield service.create(customer, data.card);
     } catch (ex) {
-      console.log('err', ex);
       throw error.parse(ex, 400);
     }
     return card;
