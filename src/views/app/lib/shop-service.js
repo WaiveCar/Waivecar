@@ -114,12 +114,23 @@ module.exports = class ShopService extends Service {
    * Loads cards from the api and adds them to the cards array on the ctx.
    */
   setCards(userId, card) {
-    api.get('/shop/cards?showSelected=true', {
-      userId : userId,
-      organizationId: card && card.organizationId,
-    }, (err, cards) => {
+    let q = {};
+    if (!card) {
+      q.userId = userId;
+    } else {
+      q.organizationId = card.organizationId;
+    }
+    api.get('/shop/cards?showSelected=true', q, (err, cards) => {
       if (err) {
         return this.error(err.message);
+      }
+      if (card) {
+        let orgIdx = this.ctx.state.user.organizations.findIndex(found => found.organizationId === card.organizationId);
+        let temp = {...this.ctx.state.user.organizations};
+        temp[orgIdx].organization.cards = cards;
+        this.setState({
+          user: {...this.ctx.state.user, organizations: temp}
+        })
       }
       this.setState('cards', cards);
     });
