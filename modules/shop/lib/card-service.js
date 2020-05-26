@@ -76,6 +76,7 @@ module.exports = class Cards extends Service {
     query = queryParser(query, {
       where : {
         userId   : queryParser.NUMBER,
+        organizationId: queryParser.NUMBER,
         last4    : queryParser.STRING,
         brand    : queryParser.STRING,
         expMonth : queryParser.NUMBER,
@@ -90,7 +91,11 @@ module.exports = class Cards extends Service {
     }
 
     // ### User Query
-    query.where.userId = query.where.userId || _user.id;
+    if (query.userId) {
+      query.where.userId = query.where.userId || _user.id;
+    } else if (query.organizationId) {
+      query.where.organizationid = query.organizationId;
+    }
     let cards = yield Card.find(query);
     if (cards.length && showSelected) {
       let currentMax = null;
