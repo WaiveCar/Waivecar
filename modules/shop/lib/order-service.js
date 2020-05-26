@@ -163,7 +163,6 @@ module.exports = class OrderService extends Service {
         }), user);
       }
     } catch (err) {
-      console.log('err in quickCharge', err);
       if (data.evgoCharges) {
         yield this.notifyOfCharge(Object.assign(opts, {
           quantity: 1,
@@ -827,7 +826,6 @@ module.exports = class OrderService extends Service {
   // order is the core object here. It effectively gets passed
   // through to stripe as-is in shop/lib/stripe/charges.js
   static *charge(order, user, opts) {
-    console.log('charge opts', opts)
     // The amount needs to be rounded because Stripe will throw an error if it is not an INT
     order.amount = Math.floor(order.amount);
     let start = new Date();
@@ -965,7 +963,6 @@ module.exports = class OrderService extends Service {
           t("order-update");
         }
       } catch (ex) {
-        console.log('error charging', ex);
         // This more or less says we were unable to charge the user.
         // If we are capturing, as in, we expected to charge them,
         // this is a splendid time to modify their credit with us.
@@ -1055,7 +1052,6 @@ module.exports = class OrderService extends Service {
         });
       }
     }
-    console.log('bottom of charge func', charge);
     return charge;
   }
 
