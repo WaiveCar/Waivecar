@@ -1182,12 +1182,7 @@ module.exports = class OrderService extends Service {
     let users;
     if (item.forOrganization) {
       // getting all org admins to send e-mail receipt
-      try {
       users = yield item.organization.getAdmins();
-      } catch(e) {
-        console.log('err', e)
-      }
-      console.log('users', users);
     }
     let useWorkCredit = item.useWorkCredit;
     let email = new Email();
