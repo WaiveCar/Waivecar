@@ -19,7 +19,7 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
 
     userId : {
       type       : Sequelize.INTEGER,
-      allowNull  : false,
+      allowNull  : true,
       references : {
         model : 'users',
         key   : 'id'

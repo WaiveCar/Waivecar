@@ -24,14 +24,17 @@ module.exports = class StripeCards {
   }
 
   *create(user, card) {
+    console.log('inside stripe create');
     // This just checks for a property on the user object existing
     // and throws an error if it doesn't ... probably a bad way
     // of doing things since that error gets hidden by a secondary
     // error catcher higher up but that's the way it goes.
     this.verifyStripeId(user);
 
-    let isDebitUser = yield user.hasTag('debit');
+    let isDebitUser = (user.hasTag && (yield user.hasTag('debit'))) || user.isOrg;
     let result = yield new Promise((resolve, reject) => {
+      // selected org must be deleted for addition to stripe
+      delete card.selectedOrganization;
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
         if (err) return reject(err);
 
@@ -68,7 +71,11 @@ module.exports = class StripeCards {
     // Store quick view information about the card in the api database.
 
     card        = new Card(result);
-    card.userId = user.id;
+    if (user.isOrg) {
+      card.organizationId = user.id;
+    } else {
+      card.userId = user.id;
+    }
     card.type   = result.funding;
     card.name   = result.name;
 

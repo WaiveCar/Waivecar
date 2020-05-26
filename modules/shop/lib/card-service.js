@@ -54,7 +54,8 @@ module.exports = class Cards extends Service {
       let Organization = Bento.model('Organization');
       let org = yield Organization.findById(data.card.selectedOrganization);
       console.log(org);
-
+      customer = org;
+      customer.isOrg = true;
       // for organizations
     }
     
@@ -62,6 +63,7 @@ module.exports = class Cards extends Service {
     try {
       card = yield service.create(customer, data.card);
     } catch (ex) {
+      console.log('err', ex);
       throw error.parse(ex, 400);
     }
     return card;
