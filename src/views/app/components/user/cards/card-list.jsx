@@ -311,7 +311,8 @@ class CardList extends React.Component {
     return (
       <div className="box">
         <h3>
-          { this.props.currentUser ? 'Your Cards' : 'User Cards' }
+          { this.props.currentUser ? (this.props.user.organizations.length ? 'Your Organization\'s cards' : 'Your Cards') : 
+              (this.props.user.organizations.length ? 'Organization Cards' : 'User Cards') }
           <small>
             List of payment cards registered with { this.props.currentUser ? 'your' : 'user\'s' } waivecar account.
           </small>
