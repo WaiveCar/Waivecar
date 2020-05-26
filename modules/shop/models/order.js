@@ -22,11 +22,16 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
      */
     userId : {
       type       : Sequelize.INTEGER,
-      allowNull  : false,
+      allowNull  : true,
       references : {
         model : 'users',
         key   : 'id'
       }
+    },
+
+    organizationId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : true,
     },
 
     /**
