@@ -41,7 +41,12 @@ module.exports = class OrderService extends Service {
   // removing all the overlapping dependency anti-patterned nonsense.
   // I mean god damn...
   static *quickCharge(data, _user, opts) {
-    let user = yield this.getUser(data.userId);
+    let user;
+    if (data.userId) {
+      user = yield this.getUser(data.userId);
+    } else { // if for organization
+      user = opts.organization;
+    }
     let charge = {amount: data.amount};
     // Since we don't have two objects coming in from the api level we
     // are kinda messy here ... ideally it should be fixed but oh well.
@@ -88,11 +93,12 @@ module.exports = class OrderService extends Service {
     let order = new Order({
       createdBy   : _user.id,
       userId      : data.userId,
+      organizationId: data.organizationId,
       source      : data.source,
       description : data.description,
       metadata    : data.metadata,
       currency    : data.currency,
-      amount      : data.amount
+      amount      : data.amount,
     });
     yield order.save();
 
@@ -858,8 +864,12 @@ module.exports = class OrderService extends Service {
     // we really should be fixing them here and make sure that we don't have 
     // stale information about the user so we pull it again.
     //
-    user = yield User.findById(user.id);
-
+    if (!opts.organization) {
+      user = yield User.findById(user.id);
+    } else {
+      user = opts.organization;
+      user.forOrganization = opts.forOrganization;
+    }
     // Normally we try to capture the payment (as in, we actually charge
     // the user). We can do this two-step thing where we just see if the
     // CC is valid by specifying an opts.nocapture

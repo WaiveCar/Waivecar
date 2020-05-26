@@ -214,13 +214,15 @@ module.exports = {
     data.source = 'Statement Payment';
     data.amount = statement.amount;
     data.description = `Payment for statement ${statement.id} for ${statement.organization.name} by ${_user.firstName} ${_user.lastName}`;
-    data.userId = _user.id;
+    data.organizationId = statement.organization.id;
 
     try {
       let charge = (yield OrderService.quickCharge(data, _user, {
         overrideAdminCheck: true,
         nocredit: true,
         nodebt: true,
+        forOrganization: true,
+        organization: statement.organization,
       })).order;
       yield notify.slack(
         {
@@ -232,11 +234,13 @@ module.exports = {
         },
         {channel: '#waivework-charges'},
       );
+      /*
       yield statement.update({
         status: 'paid',
         paidDate: moment(),
         paymentId: charge.id,
       });
+      */
       return statement;
     } catch (e) {
       yield notify.slack(
