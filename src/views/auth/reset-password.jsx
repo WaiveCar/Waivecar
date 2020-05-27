@@ -14,6 +14,7 @@ class ResetPasswordView extends React.Component {
     this.state = {
       iswork: this.props.location.query.iswork,
       isnew: this.props.location.query.isnew,
+      admin: this.props.location.query.admin,
       hash: this.props.location.query.hash,
       changing: false,
     };
@@ -208,8 +209,8 @@ class ResetPasswordView extends React.Component {
         }
         {this.state.iswork && 
             <div className="message-success">
-              You are now ready to start driving for Waivework! Please login and setup your account{' '} 
-              <a href="https://waivework.com/login">here</a> before your pickup appointment.
+              You are now ready to use Waive! Please login and setup your account{' '} 
+              <a href={this.state.admin ? 'https://lb.waivecar.com/login?new=true' : 'https://waivework.com/login'}>here</a>.
             </div>
         }
         { !this.state.isnew && 
