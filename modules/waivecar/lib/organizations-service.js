@@ -205,7 +205,9 @@ module.exports = {
           context: {
             name: '',
             text: `You have a new WaiveWork statement due on ${moment(
-              statement.dueDate.format('MM/DD/YYYY'),
+              statement.dueDate,
+            ).format(
+              'MM/DD/YYYY',
             )}. Please click <a href="https://lb.waivecar.com/organizations/${
               statement.organizationId
             }/statements">here</a> to see it.`,
@@ -215,6 +217,7 @@ module.exports = {
         };
         yield email.send(emailOpts);
       } catch (e) {
+        console.log(e);
         log.warn('error sending email', e.message);
       }
       return statement;
