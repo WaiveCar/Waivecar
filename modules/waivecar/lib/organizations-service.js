@@ -10,6 +10,7 @@ let error = Bento.Error;
 let log = Bento.Log;
 let config = Bento.config;
 let moment = require('moment');
+let scheduler = Bento.provider('queue').scheduler;
 
 module.exports = {
   *index(query) {
@@ -219,6 +220,7 @@ module.exports = {
       } catch (e) {
         log.warn('error sending email', e.message);
       }
+      
       return statement;
     } catch (e) {
       log.warn(e);

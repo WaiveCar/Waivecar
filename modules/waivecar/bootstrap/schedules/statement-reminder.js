@@ -12,6 +12,7 @@ scheduler.process('waivework-reminder', function* (job) {
     let users = yield org.getAdmins();
     try {
       let dueDate = moment(updatedStatement.dueDate);
+      let isPastDue = moment(updatedStatement.dueDate).isBefore(moment());
       let printedDate = dueDate.isSame(moment(), 'days')
         ? dueDate.format('MM/DD/YYYY')
         : 'today';
@@ -26,7 +27,7 @@ scheduler.process('waivework-reminder', function* (job) {
           text: `You have a new WaiveWork statement due ${printedDate}. Please click <a href="https://lb.waivecar.com/organizations/${
             updatedStatements.organizationId
           }/statements">here</a> to see or pay your outstanding statements. ${
-            printedDate === 'today'
+            isPastDue
               ? 'Your fleet may be immobilized if it is not paid in a timely manner'
               : ''
           }`,
@@ -35,6 +36,14 @@ scheduler.process('waivework-reminder', function* (job) {
         },
       };
       yield email.send(emailOpts);
+      scheduler.add('statement-reminder', {
+        unique: true,
+        uid: `statement-reminder-${updatedStatement.id}`
+        timer: {value: 3, type: 'days'},
+        data: {
+          id: updatedStatement.id,
+        }
+      }); 
     } catch (e) {
       log.warn('error sending email', e.message);
     }
