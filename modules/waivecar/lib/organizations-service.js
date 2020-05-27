@@ -191,7 +191,8 @@ module.exports = {
   },
 
   *createStatement(payload) {
-    console.log(payload);
+    payload.dueDate = moment(payload.dueDate).hours(12);
+    payload.billingDate = moment(payload.billingDate).hours(12);
     try {
       let statement = new OrganizationStatement(payload);
       yield statement.save();

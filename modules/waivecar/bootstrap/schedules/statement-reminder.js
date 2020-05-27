@@ -50,7 +50,6 @@ scheduler.process('statement-reminder', function* (job) {
         },
       });
     } catch (e) {
-      console.log('err', e);
       log.warn('error sending email', e.message);
     }
   }
