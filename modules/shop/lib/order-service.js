@@ -1220,37 +1220,19 @@ module.exports = class OrderService extends Service {
       if (word === 'Charges' && !opts.isTopUp) {
         opts.subject = opts.subject || `$${ item.total } charged to your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
-        if (!users) {
-          yield email.send({
-            to       : user.email,
-            from     : emailConfig.sender,
-            subject  : opts.subject,
-            template : 'miscellaneous-charge',
-            context  : {
-              leadin   : opts.leadin,
-              name   : user.name(),
-              word   : word,
-              charge : item,
-              chargeList,
-            }
-          });
-        } else {
-          for (let user of users) {
-            yield email.send({
-              to       : user.email,
-              from     : emailConfig.sender,
-              subject  : opts.subject,
-              template : 'miscellaneous-charge',
-              context  : {
-                leadin   : opts.leadin,
-                name   : user.name(),
-                word   : word,
-                charge : item,
-                chargeList,
-              }
-            });
+        yield email.send({
+          to       : !users ? user.email : users.map(u => u.email).join(','),
+          from     : emailConfig.sender,
+          subject  : opts.subject,
+          template : 'miscellaneous-charge',
+          context  : {
+            leadin   : opts.leadin,
+            name   : !users ? ` ${user.name()}` : '',
+            word   : word,
+            charge : item,
+            chargeList,
           }
-        }
+        });
       } else {
         yield email.send({
           to: user.email,
