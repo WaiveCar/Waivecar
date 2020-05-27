@@ -9,7 +9,7 @@ let Email = Bento.provider('email');
 let error = Bento.Error;
 let log = Bento.Log;
 let config = Bento.config;
-let moment = require('moment');
+let moment = require('moment-timezone');
 let scheduler = Bento.provider('queue').scheduler;
 
 module.exports = {
@@ -191,6 +191,7 @@ module.exports = {
   },
 
   *createStatement(payload) {
+    console.log(payload);
     try {
       let statement = new OrganizationStatement(payload);
       yield statement.save();
