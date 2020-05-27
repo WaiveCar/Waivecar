@@ -1180,7 +1180,8 @@ module.exports = class OrderService extends Service {
     }
     */
     let users;
-    if (item.forOrganization) {
+    let forOrganization = item.forOrganization;
+    if (forOrganization) {
       // getting all org admins to send e-mail receipt
       users = yield item.organization.getAdmins();
     }
@@ -1231,6 +1232,7 @@ module.exports = class OrderService extends Service {
             word   : word,
             charge : item,
             chargeList,
+            forOrganization,
           }
         });
       } else {
