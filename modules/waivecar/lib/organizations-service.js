@@ -204,14 +204,17 @@ module.exports = {
           template: 'waivework-general',
           context: {
             name: '',
-            text: `You have a new WaiveWork statement due please click <a href="https://lb.waivecar.com/organizations/${statement.organizationId}/statements">here</a> to see it.`,
+            text: `You have a new WaiveWork statement due on ${moment(
+              statement.dueDate.format('MM/DD/YYYY'),
+            )}. Please click <a href="https://lb.waivecar.com/organizations/${
+              statement.organizationId
+            }/statements">here</a> to see it.`,
             forOrganization: true,
             isAdmin: true,
           },
         };
         yield email.send(emailOpts);
       } catch (e) {
-        console.log('e', e);
         log.warn('error sending email', e.message);
       }
       return statement;
