@@ -210,14 +210,13 @@ module.exports = {
               'MM/DD/YYYY',
             )}. Please click <a href="https://lb.waivecar.com/organizations/${
               statement.organizationId
-            }/statements">here</a> to see it.`,
+            }/statements">here</a> to see or pay your outstanding statements.`,
             forOrganization: true,
             isAdmin: true,
           },
         };
         yield email.send(emailOpts);
       } catch (e) {
-        console.log(e);
         log.warn('error sending email', e.message);
       }
       return statement;
