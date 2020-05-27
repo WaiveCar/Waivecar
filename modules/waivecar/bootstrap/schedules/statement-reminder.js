@@ -3,12 +3,15 @@ let Email = Bento.provider('email');
 let Organization = Bento.model('Organization');
 let OrganizationStatement = Bento.model('OrganizationStatement');
 let config = Bento.config;
+let log = Bento.Log;
+let moment = require('moment');
 
-scheduler.process('waivework-reminder', function* (job) {
+scheduler.process('statement-reminder', function* (job) {
+  console.log('job', job.data);
   let updatedStatement = yield OrganizationStatement.findById(job.data.id);
-  let text = '';
-  if (!updatedStatement.paidDate) {
-    let org = yield updatedStatement.findById(updatedStatement.organizationId);
+  console.log('updated statement', updatedStatement);
+  if (updatedStatement && !updatedStatement.paidDate) {
+    let org = yield Organization.findById(updatedStatement.organizationId);
     let users = yield org.getAdmins();
     try {
       let dueDate = moment(updatedStatement.dueDate);
@@ -25,7 +28,7 @@ scheduler.process('waivework-reminder', function* (job) {
         context: {
           name: '',
           text: `You have a new WaiveWork statement due ${printedDate}. Please click <a href="https://lb.waivecar.com/organizations/${
-            updatedStatements.organizationId
+            updatedStatement.organizationId
           }/statements">here</a> to see or pay your outstanding statements. ${
             isPastDue
               ? 'Your fleet may be immobilized if it is not paid in a timely manner'
@@ -38,13 +41,14 @@ scheduler.process('waivework-reminder', function* (job) {
       yield email.send(emailOpts);
       scheduler.add('statement-reminder', {
         unique: true,
-        uid: `statement-reminder-${updatedStatement.id}`
-        timer: {value: 3, type: 'days'},
+        uid: `statement-reminder-${updatedStatement.id}`,
+        timer: {value: 10, type: 'seconds'},
         data: {
           id: updatedStatement.id,
         }
       }); 
     } catch (e) {
+      console.log('err', e);
       log.warn('error sending email', e.message);
     }
   }
