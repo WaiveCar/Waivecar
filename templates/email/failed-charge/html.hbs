@@ -1,11 +1,15 @@
 <div class="main">
-  <h3>Hello, {{ name }}</h3>
+  <h3>Hello{{ name }},</h3>
   <p>
     Sorry, but we were unable to charge your card {{ message }}.
   </p>
   {{#if advanceCharge}}
     <p>
       To resolve any issues with payment methods, please visit our website at <a href="https://waivework.com">waivework.com</a>.
+    </p>
+  {{else if forOrganization}}
+    <p>
+      To resolve any issues with payment methods, please visit our website at <a href="https://lb.waivecar.com">lb.waivecar.com</a>.
     </p>
   {{else}}
     <p>

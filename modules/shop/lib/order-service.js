@@ -173,7 +173,7 @@ module.exports = class OrderService extends Service {
         }), user);
       }
       if (!data.waiveworkWeekly) {
-        yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge});
+        yield this.failedCharge(data.amount || charge.amount, user, err, {advanceCharge: data.advanceCharge, forOrganization: opts.forOrganization, organization: opts.organization});
       }
       //yield this.suspendIfMultipleFailed(user);
       throw {
@@ -1120,10 +1120,14 @@ module.exports = class OrderService extends Service {
   }
 
   static *failedCharge(amountInCents, user, err, extra) {
+    let users;
+    if (extra.forOrganization) {
+      users = yield extra.organization.getAdmins();
+    }
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ !users ? user.link() :extra.organization.link() } $${ amountInDollars }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
@@ -1156,15 +1160,16 @@ module.exports = class OrderService extends Service {
     let email = new Email();
     try {
       yield email.send({
-        to       : user.email,
+        to       : !users ? user.email : users.map(u => u.email).join(','),
         from     : emailConfig.sender,
         subject  : 'Important! Failed Charge.',
         template : 'failed-charge',
         context  : {
-          name   : user.name(),
+          name   : !users ? ` ${user.name()}` : '',
           charge : amountInDollars,
           message: message,
-          advanceCharge: extra.advanceCharge
+          advanceCharge: extra.advanceCharge,
+          forOrganization: extra.forOrganization
         }
       });
     } catch (err) {
