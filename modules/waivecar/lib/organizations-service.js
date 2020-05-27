@@ -304,7 +304,8 @@ module.exports = {
   *deleteStatement(id) {
     try {
       let statement = yield OrganizationStatement.findById(id);
-      return yield statement.delete();
+      yield statement.delete();
+      return statement;
     } catch (e) {
       throw error.parse(
         {
