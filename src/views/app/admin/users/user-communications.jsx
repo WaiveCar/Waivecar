@@ -121,7 +121,7 @@ export default class UserCommunications extends Component {
       marginTop: '1rem',
     };
     return (
-      <div className="rides">
+      <div>
         <div className="box">
           <h3>
             User Communications
@@ -238,7 +238,7 @@ export default class UserCommunications extends Component {
               ) : (
                 <div className="box-content no-padding">
                   <div>
-                    <table className="table-rides">
+                    <table className="box-table table-striped">
                       <thead>
                         <tr>
                           <th width="24" />
