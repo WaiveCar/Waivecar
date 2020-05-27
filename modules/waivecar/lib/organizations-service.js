@@ -226,7 +226,7 @@ module.exports = {
       })).order;
       yield notify.slack(
         {
-          text: `:ok_hand: ${statement.organization.name} charged $${(
+          text: `:ok_hand: ${statement.organization.link()} charged $${(
             data.amount / 100
           ).toFixed(2)} for the statement due on ${moment(
             statement.dueDate,
@@ -243,7 +243,7 @@ module.exports = {
     } catch (e) {
       yield notify.slack(
         {
-          text: `:imp: ${statement.organization.name} failed to charge $${(
+          text: `:imp: ${statement.organization.link()} failed to charge $${(
             data.amount / 100
           ).toFixed(2)} for their statement due on ${moment(
             statement.dueDate,
