@@ -29,7 +29,7 @@ module.exports = class DashboardIndex extends React.Component {
   }
 
   update() {
-    api.get(`/dashboard`, (err, data) => {
+    api.get('/dashboard', (err, data) => {
       this.setState({
         bookingsCount: data.bookingsCount,
         usersCount: data.usersCount,
@@ -39,7 +39,7 @@ module.exports = class DashboardIndex extends React.Component {
       });
     });
 
-    api.get(`/carsWithBookings`, (err, cars) => {
+    api.get('/carsWithBookings', (err, cars) => {
       this.setState({
         cars: cars,
       });
@@ -124,10 +124,12 @@ module.exports = class DashboardIndex extends React.Component {
         <div className="row">
           <div className="col-xs-12">
             <div className="map-dynamic">
-              <Map
-                markerIcon={'/images/map/active-waivecar.svg'}
-                markers={this.state.cars}
-              />
+              {this.state.cars.length &&
+                <Map
+                  markerIcon={'/images/map/active-waivecar.svg'}
+                  markers={this.state.cars}
+                />
+              }
             </div>
           </div>
         </div>
