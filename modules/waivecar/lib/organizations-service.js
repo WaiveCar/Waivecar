@@ -234,13 +234,11 @@ module.exports = {
         },
         {channel: '#waivework-charges'},
       );
-      /*
       yield statement.update({
         status: 'paid',
         paidDate: moment(),
         paymentId: charge.id,
       });
-      */
       return statement;
     } catch (e) {
       yield notify.slack(
