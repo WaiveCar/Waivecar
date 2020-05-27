@@ -138,7 +138,7 @@ module.exports = {
         );
         yield notify.sendTextMessage(
           newUser.id,
-          `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password.`,
+          `Hi. Welcome to WaiveWork! Please check your e-mail for a link to set your password and setup your account.`,
         );
         if (user.isAdmin) {
           yield UserService.update(
@@ -152,7 +152,9 @@ module.exports = {
             newUser,
             7 * 24 * 60,
           );
-          let passwordLink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes&iswork=yes`;
+          let passwordLink = `https://lb.waivecar.com/reset-password?hash=${
+            res.token.hash
+          }&isnew=yes&iswork=yes${user.isAdmin ? '&admin=true' : ''}`;
           let email = new Email();
           let emailOpts = {
             to: newUser.email,
@@ -228,8 +230,8 @@ module.exports = {
         timer: {value: 10, type: 'seconds'},
         data: {
           id: statement.id,
-        }
-      }); 
+        },
+      });
       return statement;
     } catch (e) {
       log.warn(e);
