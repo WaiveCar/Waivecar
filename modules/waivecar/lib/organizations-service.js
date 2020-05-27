@@ -161,6 +161,9 @@ module.exports = {
             context: {
               name: newUser.name(),
               text: `Welcome to WaiveWork! Please set your password by going <a href=${passwordLink}>here</a>.`,
+              forOrganization: true,
+              isNewAdmin: user.isAdmin,
+              isNewUser: !user.isAdmin,
             },
           };
           yield email.send(emailOpts);
@@ -190,6 +193,27 @@ module.exports = {
     try {
       let statement = new OrganizationStatement(payload);
       yield statement.save();
+      let organization = yield Organization.findById(payload.organizationId);
+      let users = yield organization.getAdmins();
+      try {
+        let email = new Email();
+        let emailOpts = {
+          to: users.map(u => u.email).join(','),
+          from: config.email.sender,
+          subject: 'New WaiveWork Statement',
+          template: 'waivework-general',
+          context: {
+            name: '',
+            text: `You have a new WaiveWork statement due please click <a href="https://lb.waivecar.com/organizations/${statement.organizationId}/statements">here</a> to see it.`,
+            forOrganization: true,
+            isAdmin: true,
+          },
+        };
+        yield email.send(emailOpts);
+      } catch (e) {
+        console.log('e', e);
+        log.warn('error sending email', e.message);
+      }
       return statement;
     } catch (e) {
       log.warn(e);

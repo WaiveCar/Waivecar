@@ -1,10 +1,25 @@
-<div class="main"><h3>Hello {{name}},</h3>
+<div class="main"><h3>Hello{{#if name}} {{/if}}{{name}},</h3>
   <p>
     {{{text}}}
   </p>
-  <p>
-  Please visit our site at <a href="http://waivework.com">waivework.com</a> for managing your account and payments. If you need any further assistance, you can reach out to cutomer support at <a href="mailto:support@waive.com">support@waive.com</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.
-  </p>
+  {{#unless forOrganization}}
+    <p>
+      Please visit our site at <a href="http://waivework.com">waivework.com</a> for managing your account and payments. If you need any further assistance, you can reach out to cutomer support at <a href="mailto:support@waive.com">support@waive.com</a> or by calling <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.
+    </p>
+  {{/unless}}
+  {{#if forOrganization}}
+    <p>
+      {{#if isNewAdmin}}
+        Please visit our site at <a href="http://lb.waivecar.com?new=true">lb.waivecar.com</a> to setup your account.
+      {{else if isAdmin}}
+        Please visit our site at <a href="http://lb.waivecar.com">lb.waivecar.com</a> for managing your account and payments.
+      {{else if isNewUser}}
+        Please visit our site at <a href="http://waivework.com?new=true">waivework.com</a> to setup your account.
+      {{else}}
+        Please visit our site at <a href="http://waivework.com?new=true">waivework.com</a> to manage your account.
+      {{/if}}
+    </p>
+  {{/if}}
   <p>
     Thanks,<br>
     Waive
