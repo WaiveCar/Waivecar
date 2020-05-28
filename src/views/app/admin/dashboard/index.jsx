@@ -49,17 +49,6 @@ module.exports = class DashboardIndex extends React.Component {
         },
       );
     });
-
-    /* api.get(`/bookings?limit=100`, (err, bookings) => {
-      this.setState( {
-        bookings: bookings
-      } );
-    });
-    api.get(`/users?limit=100`, (err, users) => {
-      this.setState( {
-        users: users
-      } );
-    });*/
   }
 
   componentDidMount() {
