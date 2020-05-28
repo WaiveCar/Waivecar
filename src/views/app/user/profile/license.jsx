@@ -89,7 +89,6 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Object}
    */
   renderLicense(license) {
-    console.log(license);
     license.birthDate = moment(license.birthDate).format('YYYY-MM-DD');
     license.expirationDate = moment(license.expirationDate).format('YYYY-MM-DD');
     return (
@@ -155,7 +154,6 @@ module.exports = class ProfileLicenseView extends React.Component {
   }
 
   renderStatus(status, outcome) {
-    console.log(this.state);
     if (status !== 'provided' || auth.user().isWaivework) {
       return (
         <div className="license-verification text-center">

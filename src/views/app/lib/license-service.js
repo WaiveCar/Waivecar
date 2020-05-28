@@ -24,7 +24,7 @@ module.exports = class License extends Service {
         ...this.getState('licenses'),
         license
       ]);
-      this.success(`Your license was stored successfully. Request for it to be verified prior to booking a WaiveCar.`);
+      this.success(`Your license was stored successfully.`);
     });
   }
 
@@ -146,7 +146,6 @@ module.exports = class License extends Service {
 
   }
   update = (event) => {
-    console.log(event);
     api.put(`/licenses/${ event.id }`, event, (err) => {
       if (err) {
         return snackbar.notify({
