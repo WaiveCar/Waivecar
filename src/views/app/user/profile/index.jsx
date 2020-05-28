@@ -170,7 +170,7 @@ module.exports = class ProfileView extends React.Component {
             submit = { this.account.submitUser }
           />
         </div>
-        {this.user.organizations.length ? 
+        {!this.props.onlyTop && this.user.organizations.length ? 
           <Organizations type={'user'} user={this.user} _user={this.user}/> : ''
         }
       </div>
@@ -255,6 +255,7 @@ module.exports = class ProfileView extends React.Component {
   }
 
   render() {
+    let {onlyTop} = this.props;
     return (
       <div className="profile">
         <div className="profile-header">
@@ -272,14 +273,17 @@ module.exports = class ProfileView extends React.Component {
             </div>
           </div>
         </div>
-
-        {/*this.renderFacebookConnect() */}
         { this.renderPersonalDetails() }
-        { this.renderCards() }
-        {/*<UserParking admin={false} userId={ this.user.id }/>*/}
-        { this.user.hasAccess('waiveAdmin') && this.renderRides() }
-        { this.renderCharges() }
-        { this.user.hasAccess('waiveAdmin') && this.renderAccountStatus() }
+        {!onlyTop &&
+          <div>
+            {/*this.renderFacebookConnect() */}
+            { this.renderCards() }
+            {/*<UserParking admin={false} userId={ this.user.id }/>*/}
+            { this.user.hasAccess('waiveAdmin') && this.renderRides() }
+            { this.renderCharges() }
+            { this.user.hasAccess('waiveAdmin') && this.renderAccountStatus() }
+          </div>
+        }
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { api, auth, dom, helpers } from 'bento';
+import { snackbar } from 'bento-web';
 import Service                     from './component-service';
 import async                       from 'async';
 
@@ -143,6 +144,21 @@ module.exports = class License extends Service {
       this.success(`Your license was successfully removed from your account`);
     });
 
+  }
+  update = (event) => {
+    console.log(event);
+    api.put(`/licenses/${ event.id }`, event, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : 'success',
+        message : 'User license successfully updated'
+      });
+    });
   }
 
 }

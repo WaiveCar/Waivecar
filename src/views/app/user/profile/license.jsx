@@ -1,4 +1,5 @@
 import React                     from 'react';
+import moment                    from 'moment'
 import { auth, relay, dom, api } from 'bento';
 import { Form }                  from 'bento-web';
 import config                    from 'config';
@@ -7,6 +8,14 @@ import License                   from '../../lib/license-service';
 let formFields = {
   license : require('./form-fields/license'),
 };
+
+let buttons = [
+  {
+    value: 'Update License',
+    type: 'submit',
+    class: 'btn btn-primary btn-profile-submit',
+  },
+];
 
 module.exports = class ProfileLicenseView extends React.Component {
 
@@ -80,6 +89,9 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Object}
    */
   renderLicense(license) {
+    console.log(license);
+    license.birthDate = moment(license.birthDate).format('YYYY-MM-DD');
+    license.expirationDate = moment(license.expirationDate).format('YYYY-MM-DD');
     return (
       <div className="box">
         <h3>
@@ -92,8 +104,10 @@ module.exports = class ProfileLicenseView extends React.Component {
             disabled  = { true }
             fields    = { formFields.license }
             default   = { license }
+            buttons={buttons}
+            submit={this.license.update}
           />
-          { this.renderStatus(license.status, license.outcome) }
+          {/* this.renderStatus(license.status, license.outcome) */}
         </div>
       </div>
     )
@@ -141,6 +155,7 @@ module.exports = class ProfileLicenseView extends React.Component {
   }
 
   renderStatus(status, outcome) {
+    console.log(this.state);
     if (status !== 'provided' || auth.user().isWaivework) {
       return (
         <div className="license-verification text-center">
