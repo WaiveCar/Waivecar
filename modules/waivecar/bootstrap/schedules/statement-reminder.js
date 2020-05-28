@@ -44,7 +44,7 @@ scheduler.process('statement-reminder', function* (job) {
       scheduler.add('statement-reminder', {
         unique: true,
         uid: `statement-reminder-${updatedStatement.id}`,
-        timer: {value: 10, type: 'seconds'},
+        timer: {value: 2, type: 'days'},
         data: {
           id: updatedStatement.id,
         },

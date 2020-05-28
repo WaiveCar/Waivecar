@@ -227,7 +227,7 @@ module.exports = {
       scheduler.add('statement-reminder', {
         unique: true,
         uid: `statement-reminder-${statement.id}`,
-        timer: {value: 10, type: 'seconds'},
+        timer: {value: 2, type: 'days'},
         data: {
           id: statement.id,
         },
