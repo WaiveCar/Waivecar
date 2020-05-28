@@ -32,11 +32,20 @@ class Wizard extends Component {
           </button>
           <button
             className="btn btn-primary"
-            onClick={() => selectedPage < pages.length - 1 ? this.setState({selectedPage: selectedPage + 1}) : history.pushState(null, '/dashboard')}>
+            onClick={() =>
+              selectedPage < pages.length - 1
+                ? this.setState({selectedPage: selectedPage + 1})
+                : history.pushState(null, '/dashboard')
+            }>
             {selectedPage < pages.length - 1 ? 'next' : 'done'}
           </button>
         </div>
-        <SelectedComp _user={this._user} type={'user'} user={this._user} onlyTop={true} />
+        <SelectedComp
+          _user={this._user}
+          type={'user'}
+          user={this._user}
+          onlyTop={true}
+        />
       </div>
     );
   }
