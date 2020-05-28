@@ -27,9 +27,6 @@ module.exports = class DashboardIndex extends React.Component {
       showOrg: true,
       loaded: false,
     };
-    if (this._user.organizations.length && arguments[0].location.query.new) {
-      arguments[0].history.pushState(null, '/wizard');
-    }
   }
 
   update() {
