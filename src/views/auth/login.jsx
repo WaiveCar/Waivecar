@@ -56,13 +56,10 @@ class LoginView extends React.Component {
         // Stores the user with the local store via the auth object.
 
         auth.set(user);
-        console.log(user);
-        console.log('_user', auth.user());
-
         // ### Remember
         // Check if remember check was requested and send a remember request
         // back to the API.
-
+        
         if (remember) {
           api.get('/auth/remember', (error) => {
             if (error) {
@@ -71,10 +68,10 @@ class LoginView extends React.Component {
                 message : error.message
               });
             }
-            this.history.pushState(null, '/dashboard');
+            this.history.pushState(null, `/dashboard${this.props.location.query.new ? '?new=true' : ''}`);
           });
         } else {
-          this.history.pushState(null, '/dashboard');
+          this.history.pushState(null, `/dashboard${this.props.location.query.new ? '?new=true' : ''}`);
         }
       });
     });
