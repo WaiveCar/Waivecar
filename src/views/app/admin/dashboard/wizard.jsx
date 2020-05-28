@@ -7,11 +7,21 @@ import Cards from '../../user/profile/cards';
 import License from '../../user/profile/license';
 import Logos from '../../user/profile/logos';
 
+function LastPage() {
+  return (
+    <div className="box-content" style={{marginTop: '2.5rem', textAlign: 'center'}}>
+      <p>
+        Thanks for setting up your account. You are now ready to add users and book cars!
+      </p>
+    </div>
+  );
+}
+
 class Wizard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pages: [Profile, Organizations, License, Cards, Logos],
+      pages: [Profile, Organizations, License, Cards, Logos, LastPage],
       selectedPage: 0,
     };
     this._user = auth.user();
@@ -23,6 +33,7 @@ class Wizard extends Component {
     let SelectedComp = pages[selectedPage];
     return (
       <div className="box">
+        <h3 className="text-center">Please Setup Your Account</h3>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <button
             disabled={selectedPage === 0}
