@@ -11,7 +11,7 @@ function LastPage() {
   return (
     <div className="box-content" style={{marginTop: '2.5rem', textAlign: 'center'}}>
       <p>
-        Thanks for setting up your account. You are now ready to add users and book cars!
+        Thanks for setting up your account. You are now ready to add new users and book cars!
       </p>
     </div>
   );

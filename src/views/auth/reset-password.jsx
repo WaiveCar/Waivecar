@@ -189,6 +189,7 @@ class ResetPasswordView extends React.Component {
   }
 
   success() {
+    console.log(this.props);
     return (
       <div>
         <div className="message-success">
@@ -210,7 +211,8 @@ class ResetPasswordView extends React.Component {
         {this.state.iswork && 
             <div className="message-success">
               You are now ready to use Waive! Please login and setup your account{' '} 
-              <a href={this.state.admin ? 'https://lb.waivecar.com/login?new=true' : 'https://waivework.com/login'}>here</a>.
+              <a href={this.state.admin ? 'https://lb.waivecar.com/login?new=true' : `https://waivework.com/login${this.state.isnew ? '?new=true' : ''}  
+              `}>here</a>.
             </div>
         }
         { !this.state.isnew && 
