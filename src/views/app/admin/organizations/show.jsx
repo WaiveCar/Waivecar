@@ -38,13 +38,14 @@ class Organization extends Component {
         organization: result,
         users: result.users,
         cars: result.cars,
+        loaded: true,
       });
     });
   }
 
   render() {
-    let {cars, users, id, organization} = this.state;
-    return (
+    let {cars, users, id, organization, loaded} = this.state;
+    return loaded ? (
       <div className="box">
         <h3>
           {organization ? organization.name : ''}{' '}
@@ -135,6 +136,10 @@ class Organization extends Component {
           <h4 style={{marginTop: '1rem'}}>Insurance</h4>
           <Insurance _user={this._user} organizationId={id} />
         </div>
+      </div>
+    ) : (
+      <div id="booking-view">
+        <div className="booking-message">Loading ...</div>
       </div>
     );
   }

@@ -25,24 +25,32 @@ module.exports = class DashboardIndex extends React.Component {
       organizations: this._user.organizations,
       selectedOrganization: 0,
       showOrg: true,
+      loaded: false,
     };
+    if (this._user.organizations.length && arguments[0].location.query.new) {
+      arguments[0].history.pushState(null, '/wizard');
+    }
   }
 
   update() {
     api.get('/dashboard', (err, data) => {
-      this.setState({
-        bookingsCount: data.bookingsCount,
-        usersCount: data.usersCount,
-        currentWaiveworkBookingsCount: data.currentWaiveworkBookingsCount,
-        carsInRepairCount: data.carsInRepairCount,
-        carsInWaiveworkCount: data.carsInWaiveworkCount,
-      });
-    });
-
-    api.get('/carsWithBookings', (err, cars) => {
-      this.setState({
-        cars: cars,
-      });
+      this.setState(
+        {
+          bookingsCount: data.bookingsCount,
+          usersCount: data.usersCount,
+          currentWaiveworkBookingsCount: data.currentWaiveworkBookingsCount,
+          carsInRepairCount: data.carsInRepairCount,
+          carsInWaiveworkCount: data.carsInWaiveworkCount,
+        },
+        () => {
+          api.get('/carsWithBookings', (err, cars) => {
+            this.setState({
+              cars: cars,
+              loaded: true,
+            });
+          });
+        },
+      );
     });
 
     /* api.get(`/bookings?limit=100`, (err, bookings) => {
@@ -75,83 +83,89 @@ module.exports = class DashboardIndex extends React.Component {
   }
 
   render() {
-    let {selectedOrganization, organizations, showOrg} = this.state;
+    let {selectedOrganization, organizations, showOrg, loaded} = this.state;
     return this._user.hasAccess('waiveAdmin') ? (
-      <section className="container">
-        <div className="row">
-          <div className="col-xs-6">
-            <div className="mini-chart2-container chart-bluegray">
-              <div className="count">
-                <small>Users</small>
-                {this.renderCount(this.state.usersCount)}
+      loaded ? (
+        <section className="container">
+          <div className="row">
+            <div className="col-xs-6">
+              <div className="mini-chart2-container chart-bluegray">
+                <div className="count">
+                  <small>Users</small>
+                  {this.renderCount(this.state.usersCount)}
+                </div>
+              </div>
+            </div>
+            <div className="col-xs-6">
+              <div className="mini-chart2-container chart-bluegray">
+                <div className="count">
+                  <small>Bookings</small>
+                  {this.renderCount(this.state.bookingsCount)}
+                </div>
+              </div>
+            </div>
+            <div className="col-xs-6">
+              <div className="mini-chart2-container chart-bluegray">
+                <div className="count">
+                  <small>Current WaiveWork Bookings</small>
+                  {this.state.currentWaiveworkBookingsCount}
+                </div>
+              </div>
+            </div>
+            <div className="col-xs-6">
+              <div className="mini-chart2-container chart-bluegray">
+                <div className="count">
+                  <small>Cars in Repair</small>
+                  {this.state.carsInRepairCount}
+                </div>
+              </div>
+            </div>
+            <div className="col-xs-6">
+              <div className="mini-chart2-container chart-bluegray">
+                <div className="count">
+                  <small>Cars in WaiveWork</small>
+                  {this.state.carsInWaiveworkCount}
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-xs-6">
-            <div className="mini-chart2-container chart-bluegray">
-              <div className="count">
-                <small>Bookings</small>
-                {this.renderCount(this.state.bookingsCount)}
-              </div>
-            </div>
-          </div>
-          <div className="col-xs-6">
-            <div className="mini-chart2-container chart-bluegray">
-              <div className="count">
-                <small>Current WaiveWork Bookings</small>
-                {this.state.currentWaiveworkBookingsCount}
-              </div>
-            </div>
-          </div>
-          <div className="col-xs-6">
-            <div className="mini-chart2-container chart-bluegray">
-              <div className="count">
-                <small>Cars in Repair</small>
-                {this.state.carsInRepairCount}
-              </div>
-            </div>
-          </div>
-          <div className="col-xs-6">
-            <div className="mini-chart2-container chart-bluegray">
-              <div className="count">
-                <small>Cars in WaiveWork</small>
-                {this.state.carsInWaiveworkCount}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="row">
-          <div className="col-xs-12">
-            <div className="map-dynamic">
-              {this.state.cars.length &&
-                <Map
-                  markerIcon={'/images/map/active-waivecar.svg'}
-                  markers={this.state.cars}
-                />
-              }
+          <div className="row">
+            <div className="col-xs-12">
+              <div className="map-dynamic">
+                {this.state.cars.length && (
+                  <Map
+                    markerIcon={'/images/map/active-waivecar.svg'}
+                    markers={this.state.cars}
+                  />
+                )}
+              </div>
             </div>
           </div>
+        </section>
+      ) : (
+        <div id="booking-view">
+          <div className="booking-message">Loading ...</div>
         </div>
-      </section>
+      )
     ) : (
       <div className="box">
         <h3>Select Organization</h3>
         <div className="box-content">
-        <ReactSelect
-          name={'organizationSelect'}
-          defaultValue={0}
-          value={selectedOrganization}
-          options={this._user.organizations.map((org, i) => ({
-            label: org.organization.name,
-            value: i,
-          }))}
-          onChange={e =>
-            this.setState({selectedOrganization: e, showOrg: false}, () =>
-              this.setState({showOrg: true}),
-            )
-          }
-        />
+          <ReactSelect
+            name={'organizationSelect'}
+            defaultValue={0}
+            value={selectedOrganization}
+            options={this._user.organizations.map((org, i) => ({
+              label: org.organization.name,
+              value: i,
+            }))}
+            onChange={e =>
+              this.setState({selectedOrganization: e, showOrg: false}, () =>
+                this.setState({showOrg: true}),
+              )
+            }
+          />
         </div>
         {showOrg && (
           <Organization
