@@ -1686,7 +1686,7 @@ module.exports = class BookingService extends Service {
 
     yield redis.doneWithIt(lockKeys);
 
-    if (booking.isFlagged('Waivework')) {
+    if (booking.isFlagged('Waivework') && !car.organizationId) {
       let waiveworkPayment = yield WaiveworkPayment.findOne({
         where: {
           bookingId: booking.id,
