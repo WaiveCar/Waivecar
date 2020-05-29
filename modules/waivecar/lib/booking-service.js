@@ -1136,7 +1136,7 @@ module.exports = class BookingService extends Service {
       let message = yield this.updateState('started', _user, user);
       yield notify.notifyAdmins(`:octopus: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
-        yield notify.sendTextMessage(user, `Thanks for using Waive! Your booking has started. ${car.organizationId ? 'To end your current booking, text "end ride" to this number or manage it on waivework.com' : ''}`);
+        yield notify.sendTextMessage(user, `Thanks for using Waive! Your booking has started. ${car.organizationId ? 'To end your current booking, text "finish" to this number or manage it on waivework.com.' : ''}`);
       } else {
         let isLevel = yield car.hasTag('level');
         let isCsula = yield car.hasTag('csula');
@@ -1947,11 +1947,10 @@ module.exports = class BookingService extends Service {
     let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
     let stats = "(" + [
       ((details[1].mileage - details[0].mileage) * 0.621371).toFixed(2) + "mi",
-      (details[1].charge  - details[0].charge) + "%",
       Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
     ].join(" ") + ")";
 
-    yield notify.sendTextMessage(user, `You're done! Reply "rebook" to rebook for $${rebookCost}. Forget something? Reply "retrieve" to get it in the next 5min.`);
+    yield notify.sendTextMessage(user, `You're booking is finished! Info: ${stats} Ended at: ${zoneString} Thanks for using Waive!`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ stats } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
