@@ -1971,10 +1971,8 @@ module.exports = class BookingService extends Service {
             text, 
           },
         };
-        console.log(emailOpts);
         yield email.send(emailOpts);
       } catch(err) {
-        console.log('err', err);
         log.warn('email error: ', err);
       }
     }
