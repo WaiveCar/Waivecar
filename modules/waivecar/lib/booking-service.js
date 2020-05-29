@@ -1136,7 +1136,7 @@ module.exports = class BookingService extends Service {
       let message = yield this.updateState('started', _user, user);
       yield notify.notifyAdmins(`:octopus: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
-        yield notify.sendTextMessage(user, `Thanks for using Waive! Your booking has started. ${car.organizationId ? 'To end your current booking, text "end ride" to this number or manage it on waivework.com'}`);
+        yield notify.sendTextMessage(user, `Thanks for using Waive! Your booking has started. ${car.organizationId ? 'To end your current booking, text "end ride" to this number or manage it on waivework.com' : ''}`);
       } else {
         let isLevel = yield car.hasTag('level');
         let isCsula = yield car.hasTag('csula');
