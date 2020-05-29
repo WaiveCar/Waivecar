@@ -172,13 +172,21 @@ class CarsShowView extends React.Component {
       
       } else {
         let data = { 'source': 'web', 'userId': user_id, 'carId': this.state.car.cars[0].id };
-        api.post('/bookings', data, (err, user) => {
+        api.post('/bookings', data, (err, booking) => {
           if(err) {
             return snackbar.notify({
               type    : 'danger',
               message : err.message
             });
           }
+          api.put(`/bookings/${booking.id}/ready`, {}, (err, response) => {
+            if (err) {
+              return snackbar.notify({
+                type: 'danger',
+                message: `Error completing action: ${err.message}`,
+              });
+            }
+          });
           // This seems to update the screen. There's probably better ways
           // but I have no idea how this rube goldberg contraption works.
           this.service.setCar(this.id());
