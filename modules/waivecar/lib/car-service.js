@@ -1508,7 +1508,7 @@ module.exports = {
     } catch(ex) {
       yield bookingService.cancel(car.bookingId, _user);
     }
-
+    
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
     car = yield this.updateAvailabilityAnonymous(id, true, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instaended ${ car.license }.`, ['slack'], {channel: '#reservations'});

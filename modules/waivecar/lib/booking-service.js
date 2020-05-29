@@ -170,7 +170,11 @@ module.exports = class BookingService extends Service {
       // means that if an admin is booking a driver who is not
       // themselves, this code is still run.
       try {
-        yield this.hasBookingAccess(driver, data.skipPayment);
+        if (!car.organizationId) {
+          yield this.hasBookingAccess(driver, data.skipPayment);
+        } else {
+          // run checklist for orgs here
+        }
       } catch(err) {
         yield bail(err);
       } 
@@ -246,7 +250,6 @@ module.exports = class BookingService extends Service {
           } 
         }
       } catch (err) {
-        console.log(err);
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
         // details.
@@ -1739,7 +1742,6 @@ module.exports = class BookingService extends Service {
     try { 
       return yield this._complete(id, _user, query, payload);
     } catch(ex) {
-      console.log(ex);
       throw error.parse(ex, 400);
     }
   }
@@ -1950,26 +1952,31 @@ module.exports = class BookingService extends Service {
       Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
     ].join(" ") + ")";
 
-    yield notify.sendTextMessage(user, `You're booking is finished! Info: ${stats} Ended at: ${zoneString} ${address} Thanks for using Waive!`);
+    yield notify.sendTextMessage(user, `You're booking is finished! Info: ${stats} Ended at: ${zoneString} Thanks for using Waive!`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ stats } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
-
     if (car.organizationId) {
-      let Organization = Bento.module('Organization');
-      let org = yield Organization.findById(car.organizationId);
-      let admins = (yield org.getAdmins()).map(u => u.email).join(',');
-      let email = new Email();
-      let text = `${user.name()} has just completed a booking in ${car.license}. Stats: ${stats}, Ended At: ${zoneString} ${address}`;
-      let emailOpts = {
-        to: admins,
-        from: Bento.config.email.sender,
-        subject: `Booking Summary for ${user.name()}`,
-        template: 'waivework-general',
-        context: {
-          text, 
-        },
-      };
-      yield email.send(emailOpts);
+      try {
+        let Organization = Bento.model('Organization');
+        let org = yield Organization.findById(car.organizationId);
+        let admins = (yield org.getAdmins()).map(u => u.email).join(',');
+        let email = new Email();
+        let text = `${user.name()} has just completed a booking in ${car.license}. Stats: ${stats}, Ended At: ${zoneString}`;
+        let emailOpts = {
+          to: admins,
+          from: Bento.config.email.sender,
+          subject: `Booking Summary for ${user.name()}`,
+          template: 'waivework-general',
+          context: {
+            text, 
+          },
+        };
+        console.log(emailOpts);
+        yield email.send(emailOpts);
+      } catch(err) {
+        console.log('err', err);
+        log.warn('email error: ', err);
+      }
     }
     queue.scheduler.add('user-liability-release', {
       uid: `user-liability-release-${booking.id}`,
