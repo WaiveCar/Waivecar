@@ -336,12 +336,12 @@ module.exports = {
    */
   *get(id, _user, fromShow) {
     let user = (yield User.findById(id));
+    if (!user) {
+      throw error.userNotFound();
+    }
     let orgs = yield user.getOrganizations();
     if (fromShow) {
       user = user.toJSON();
-    }
-    if (!user) {
-      throw error.userNotFound();
     }
     user.organizations = orgs;
 
