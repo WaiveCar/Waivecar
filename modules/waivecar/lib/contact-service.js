@@ -505,7 +505,7 @@ module.exports = {
                       // We can just try to end the booking if we aren't in 
                       // a zone it will fail - no need to ask for any time
                       //                                 V
-      let bypass = (yield booking.isAtHub(car)) || !(yield booking.getZone(car));
+      let bypass = (yield booking.isAtHub(car)) || !(yield booking.getZone(car)) || car.organizationId;
       //                          ^ 
       // If we are at a homebase or hub then we don't need the
       // magic end string and we can just end the ride without it
