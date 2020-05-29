@@ -157,14 +157,14 @@ class CarsShowView extends React.Component {
     }
   }
 
-  bookCar(user_id) {
+  bookCar(user_id, car) {
     // Looking at the code I belive it's a POST to /bookings
     // with a userId of the driver to drive and the carId of
     //
     // Why the carId is so deeply entrenched is bs I'm not willing
     // to get into right now.
     api.get(`/users/${user_id}`, (err, user) => {
-      if (user.isWaivework) {
+      if (user.isWaivework && !car.organizationId) {
         return snackbar.notify({
           type    : 'danger',
           message : 'To book a user into WaiveWork, please use the WaiveWork section of their profile.',
@@ -513,7 +513,7 @@ class CarsShowView extends React.Component {
       return (
         <div className='row' key={i}>
           <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ user_id }` }>#{user_id}</a> { user_name }</div>
-          <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this, user_id) }>Book { car.license }</button>
+          <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this, user_id, car) }>Book { car.license }</button>
         </div>
       )
     });
