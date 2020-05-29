@@ -51,7 +51,7 @@ var checkBooking = co.wrap(function *(booking) {
     let trigger = freetime + 60;
     
     // This increments the sitCount if it seems the car has been sitting since the last check
-    if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i)) {
+    if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i) && !booking.car.organizationId) {
       // console.log("Checking for booking " + booking.car.license);
       let sitStart = +(yield redis.hget('sitStart', booking.id));
       let now = +new Date();
@@ -152,7 +152,7 @@ var checkBooking = co.wrap(function *(booking) {
         if (duration >= trigger && !booking.isFlagged('rush') && !booking.isFlagged('hour-over-notice')) {
           yield booking.flag('hour-over-notice');
           let hour = Math.floor(trigger / 60);
-          yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ car.license }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
+          yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ car.license }. If you feel this is a mistake, please get in touch. Otherwise enjoy your ride!`);
         }
       }
 
