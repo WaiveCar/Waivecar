@@ -1950,10 +1950,27 @@ module.exports = class BookingService extends Service {
       Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
     ].join(" ") + ")";
 
-    yield notify.sendTextMessage(user, `You're booking is finished! Info: ${stats} Ended at: ${zoneString} Thanks for using Waive!`);
+    yield notify.sendTextMessage(user, `You're booking is finished! Info: ${stats} Ended at: ${zoneString} ${address} Thanks for using Waive!`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ stats } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
+    if (car.organizationId) {
+      let Organization = Bento.module('Organization');
+      let org = yield Organization.findById(car.organizationId);
+      let admins = (yield org.getAdmins()).map(u => u.email).join(',');
+      let email = new Email();
+      let text = `${user.name()} has just completed a booking in ${car.license}. Stats: ${stats}, Ended At: ${zoneString} ${address}`;
+      let emailOpts = {
+        to: admins,
+        from: Bento.config.email.sender,
+        subject: `Booking Summary for ${user.name()}`,
+        template: 'waivework-general',
+        context: {
+          text, 
+        },
+      };
+      yield email.send(emailOpts);
+    }
     queue.scheduler.add('user-liability-release', {
       uid: `user-liability-release-${booking.id}`,
       timer: {value: (zone.parkingTime || 0), type: 'hours'},
