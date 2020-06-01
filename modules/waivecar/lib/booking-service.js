@@ -95,6 +95,43 @@ module.exports = class BookingService extends Service {
       `${ _user.name() } ${ state } for ${ driver.link() }`;
   }
 
+  static *orgHasAccess(car, user) {
+    let Organization = Bento.model('Organization');
+    let org = yield Organization.findById(car.organizationId);
+    let missing = [];
+    // The searching for valid insurance should later be made to check for if the insurance is currently valid,
+    // but due to expiration stored in the comment field, this cannot be done.OB
+    let insurance = yield File.findOne({
+      where: {
+        organizationId: car.organizationId,
+        collectionId: 'insurance',
+      }
+    });
+    if (!insurance) {
+      missing.push('insurance not found');
+    }
+    let OrganizationStatement = Bento.model('OrganizationStatement');
+    let pastDueStatement = yield OrganizationStatement.findOne({
+      where: {
+        organizationId: car.organizationId,
+        dueDate: {$lt: moment()},
+        status: {$not: 'paid'}
+      }
+    });
+    if (pastDueStatement) {
+      missing.push('past due statements');
+    }
+    if (user.status !== 'active') {
+      missing.push('user status not active');
+    }
+    if (missing.length) {
+      throw error.parse({
+        code    : 'BOOKING_AUTHORIZATION',
+        message : `Unable to start booking. There are the following problems with this booking: ${missing.join(',')}.`
+      }, 400);
+    }
+  }
+
   // Creates a new booking.
   static *create(data, _user) {
     let start = new Date();
@@ -163,7 +200,7 @@ module.exports = class BookingService extends Service {
 
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
-    if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
+    if ((driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) && !car.organizationId) {
       // skip access check...
     } else {
       // Otherwise we check to see if the driver can drive. This
@@ -174,6 +211,7 @@ module.exports = class BookingService extends Service {
           yield this.hasBookingAccess(driver, data.skipPayment);
         } else {
           // run checklist for orgs here
+          yield this.orgHasAccess(car, driver);
         }
       } catch(err) {
         yield bail(err);
