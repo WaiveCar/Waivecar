@@ -26,6 +26,7 @@ Route.put('/bookings/:id/:time?/extendForFree', [ 'isAuthenticated', 'isAdmin', 
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsFixTikd',        [ 'BookingsController@fixTikd' ]);
+Route.get('/bookingsRemoveCar',        [ 'BookingsController@removeCarFromTikd' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
 Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
 Route.get('/waiveworkPayment/calculateProratedCharge', [ 'isAuthenticated', 'BookingsController@calculateProratedCharge' ]);

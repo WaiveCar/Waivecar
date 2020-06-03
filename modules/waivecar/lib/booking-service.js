@@ -2762,6 +2762,10 @@ module.exports = class BookingService extends Service {
     return;
   }
 
+  static *removeCarFromTikd(id) {
+    yield Tikd.removeCarById(id);
+  }
+
   static *fixTikd() {
     let bookingList = yield Booking.find({
       where: {

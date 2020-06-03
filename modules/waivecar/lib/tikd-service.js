@@ -70,7 +70,89 @@ module.exports = {
 
     return res;
   },
+/*
+  *fakeAdd(what, which) {
+    let 
+      state = which,
+      car = {
+        license: '234',
+        plateNumberWork: '1ABC1243',
+        state: 'CA',
+        plateState: 'CA',
+        metroArea: 'LosAngeles',
+        vin: 'KMHC75LH3JU023611',
+      },
+      license = {
+        email: 'kristopolous@yahoo.com',
+        firstName: "Chris",
+        lastName: "McKenzie",
+        licenseNumber: 'B9633859',
+        licenseStateIssued: 'CA',
+        address: {
+          street1: '3344 Mentone Ave #2',
+          street2: '',
+          zip: '90034',
+          state: 'CA',
+        }
+      },
+      user = {
+        email: 'kristopolous@yahoo.com',
+        stripeId: '123',
+      },
+      booking = {
+        getEndTime: () => {}
+      };
 
+    if(what == 'car') {
+
+      return yield this.post('fleets', {
+        transactionId: 'car-' + car.license,
+        eventName: state,
+        serviceType: "streaming",
+        vehicleInfo: {
+          plateNumber: car.plateNumberWork,
+          plateState: car.plateState,
+          vin: car.vin,
+          metroArea: car.metroArea,
+          ownerInfo: {
+            email: 'chris@waivecar.com'
+          }
+        },
+        metaData: {
+          partnerCarId: car.license
+        }
+      }, { Accept : 'application.vnd.fleets.v1+json' });
+    } else if (what == 'person') {
+
+      return yield this.post('renters', {
+        rentalId : "booking-" + booking.id,
+        eventName : state,
+        transactionDate : booking.getEndTime() || new Date().toISOString(),
+        rentalVehicle : {
+          plateNumber : car.plateNumber,
+          plateState : car.plateState
+        },
+        renterInfo : {
+          email : user.email,
+          firstName : license.firstName,
+          lastName : license.lastName,
+          licenseNumber : license.number,
+          licenseStateIssued : license.state,
+          address: {
+            street1: license.street1,
+            street2: license.street2,
+            city: license.city,
+            state: license.state,
+            zip: license.zip
+          }
+        },
+        metaData: {
+          partnerStripeId: user.stripeId,
+        }
+      }, { Accept : 'application.vnd.renters.v1+json' });
+    }
+  },
+*/
   *addCarIfNeeded(car, isUpdate) {
     if (isUpdate || !(yield car.hasTag('tikd'))) {
       console.log("adding " + car.license);
@@ -87,6 +169,11 @@ module.exports = {
       return res;
     }
     return true;
+  },
+
+  *removeCarById(car) {
+    let newCar = yield Car.findById(car);
+    yield this.changeCar('unsubscribe', newCar);
   },
 
   *removeCar(car) {
