@@ -31,6 +31,11 @@ Route.get('/bookingsFixTikd',        [ 'BookingsController@fixTikd' ]);
 Route.get('/bookingsRemoveCar/:id',        [ 'BookingsController@removeCarFromTikd' ]);
 Route.get('/bookingsAddCar/:id',        [ 'BookingsController@addCarToTikd' ]);
 
+Route.get('/bookingsAddLiability/:id',        [ 'BookingsController@addLiabilityByBookingId' ]);
+Route.get('/bookingsRemoveLiability/:id',        [ 'BookingsController@removeLiabilityByBookingId' ]);
+Route.get('/bookingsForceAddLiability/:id',        [ 'BookingsController@forceAddLiabilityByBookingId' ]);
+Route.get('/bookingsForceRemoveLiability/:id',        [ 'BookingsController@forceRemoveLiabilityByBookingId' ]);
+
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
 Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
 Route.get('/waiveworkPayment/calculateProratedCharge', [ 'isAuthenticated', 'BookingsController@calculateProratedCharge' ]);

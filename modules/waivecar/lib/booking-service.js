@@ -2762,11 +2762,12 @@ module.exports = class BookingService extends Service {
     return;
   }
 
-  static *addCarUserById(car,user) {
-    yield Tikd.addCarUserById(car,user);
+  static *addLiabilityByBookingId(bookingId, force) {
+    yield Tikd.addLiabilityByBookingId(bookingId, force);
   }
-  static *removeCarUserById(car,user) {
-    yield Tikd.removeCarUserById(car,user);
+
+  static *removeLiabilityByBookingId(bookingId, force) {
+    yield Tikd.removeLiabilityByBookingId(bookingId, force);
   }
 
   static *addCarToTikd(id) {

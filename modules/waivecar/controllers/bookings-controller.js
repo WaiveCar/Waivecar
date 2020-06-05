@@ -120,11 +120,17 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.fixTikd();
   }
 
-  controller.addCarUserById = function*(car,user) {
-    yield booking.addCarUserById(car,user);
+  controller.forceAddLiabilityByBookingId = function*(bookingId) {
+    yield booking.addLiabilityByBookingId(bookingId, true);
   }
-  controller.removeCarUserById = function*(car,user) {
-    yield booking.removeCarUserById(car,user);
+  controller.forceRemoveLiabilityByBookingId = function*(bookingId) {
+    yield booking.removeLiabilityByBookingId(bookingId, true);
+  }
+  controller.addLiabilityByBookingId = function*(bookingId) {
+    yield booking.addLiabilityByBookingId(bookingId, false);
+  }
+  controller.removeLiabilityByBookingId = function*(bookingId) {
+    yield booking.removeLiabilityByBookingId(bookingId, false);
   }
 
   controller.addCarToTikd = function*(id) {

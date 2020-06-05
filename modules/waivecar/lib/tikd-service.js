@@ -186,15 +186,26 @@ module.exports = {
     return true;
   },
 
-  *addCarUserById(carId, userId) {
-    let car = yield Car.findById(carId);
-    let user = yield User.findById(userId);
-    
+  *addLiabilityByBookingId(bookingId, force) {
+    let Booking     = Bento.model('Booking');
+    let booking = yield Booking.findById(bookingId);
+    let car = yield booking.getCar();
+    let user = yield booking.getUser();
+    if (!force) {
+      return yield this.addLiability(car, booking);
+    } 
+    return yield this.changeLiability('service-started', car, booking, user);
   },
 
-  *removeCarUserById(carId, userId) {
-    let car = yield Car.findById(carId);
-    let user = yield User.findById(userId);
+  *removeLiabilityByBookingId(bookingId, force) {
+    let Booking     = Bento.model('Booking');
+    let booking = yield Booking.findById(bookingId);
+    let car = yield booking.getCar();
+    let user = yield booking.getUser();
+    if (!force) {
+      return yield this.removeLiability(car, booking, user);
+    }
+    return yield this.changeLiability('service-ended', car, booking, user);
   },
 
   *addCarById(carId) {
