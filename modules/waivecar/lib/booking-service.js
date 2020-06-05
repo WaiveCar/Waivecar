@@ -1128,7 +1128,7 @@ module.exports = class BookingService extends Service {
         yield Tikd.removeLiability(car, lastBooking, lastUser);
       }
       */
-      yield Tikd.addLiability(car, booking, _user);
+      yield Tikd.addLiability(car, booking, user);
 
       // yield cars.openDoor(car.id, _user);
 
@@ -2760,6 +2760,17 @@ module.exports = class BookingService extends Service {
       console.log('error sending email', e);
     }
     return;
+  }
+
+  static *addCarUserById(car,user) {
+    yield Tikd.addCarUserById(car,user);
+  }
+  static *removeCarUserById(car,user) {
+    yield Tikd.removeCarUserById(car,user);
+  }
+
+  static *addCarToTikd(id) {
+    yield Tikd.addCarById(id);
   }
 
   static *removeCarFromTikd(id) {

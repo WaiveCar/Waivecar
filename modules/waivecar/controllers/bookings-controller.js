@@ -120,6 +120,21 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.fixTikd();
   }
 
+  controller.addCarUserById = function*(car,user) {
+    yield booking.addCarUserById(car,user);
+  }
+  controller.removeCarUserById = function*(car,user) {
+    yield booking.removeCarUserById(car,user);
+  }
+
+  controller.addCarToTikd = function*(id) {
+    yield booking.addCarToTikd(id);
+  }
+
+  controller.removeCarFromTikd = function*(id) {
+    yield booking.removeCarFromTikd(id);
+  }
+
   /**
    * Initiates the booking and starts the ride.
    * @param  {Number} id

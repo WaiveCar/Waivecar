@@ -16,10 +16,12 @@ let redis     = require('./redis-service');
 module.exports = {
 
   *post(url, payload, opts) {
+    /*
     if(process.env.NODE_ENV !== 'production') {
       console.log([url,payload]);
       return true;
     }
+    */
     var response, responseJSON;
 
     var startCommand =  {
@@ -39,13 +41,17 @@ module.exports = {
 
       // for debugging
       startCommand.body = payload;
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([new Date(), url, payload, response.body]) + "\n",function(){});
+      if('error' in responseJSON) {
+        throw error.parse({message: responseJSON.error}, 400);
+        return false;
+      }
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([new Date(), url, payload, responseJSON]) + "\n",function(){});
+
       return responseJSON;
     } catch(ex) {
-      console.log(ex);
-      if(response) {
-        return response.body;
-      }
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([new Date(), url, payload, ex, response]) + "\n",function(){});
+      throw ex;
+      return false;
     }
   },
 
@@ -154,37 +160,80 @@ module.exports = {
   },
 */
   *addCarIfNeeded(car, isUpdate) {
+    var res;
     if (isUpdate || !(yield car.hasTag('tikd'))) {
       console.log("adding " + car.license);
-      let res = yield this.changeCar('subscribe', car);
-      if(res) {
-        yield notify.slack(
-          { text: `:hatching_chick: Hurrah, ${ car.link() } is now registered with tikd.` },
-          { channel: '#rental-alerts' }
-        );
-        yield car.addTag('tikd');
-      } else {
-        console.log('failure', res);
+      try {
+        res = yield this.changeCar('subscribe', car);
+        if(res) {
+          yield notify.slack(
+            { text: `:hatching_chick: Hurrah, ${ car.link() } is now registered with tikd.` },
+            { channel: '#rental-alerts' }
+          );
+          yield car.addTag('tikd');
+        } else {
+          console.log('failure', res);
+        }
+      } catch(ex) {
+        if('message' in ex && ex.message.indexOf('already registered') !== -1) {
+          // add it if tikd says we already have it.
+          yield car.addTag('tikd');
+        }
+        console.log(ex);
       }
       return res;
     }
     return true;
   },
 
-  *removeCarById(car) {
-    let newCar = yield Car.findById(car);
-    yield this.changeCar('unsubscribe', newCar);
+  *addCarUserById(carId, userId) {
+    let car = yield Car.findById(carId);
+    let user = yield User.findById(userId);
+    
+  },
+
+  *removeCarUserById(carId, userId) {
+    let car = yield Car.findById(carId);
+    let user = yield User.findById(userId);
+  },
+
+  *addCarById(carId) {
+    let car = yield Car.findById(carId);
+    if (car) {
+      return yield this.addCarIfNeeded(car, true);
+    }
+  },
+
+  *removeCarById(carId) {
+    let car = yield Car.findById(carId);
+    if (car) {
+      return yield this.removeCar(car);
+    }
   },
 
   *removeCar(car) {
-    yield this.changeCar('unsubscribe', car);
+    if (yield car.hasTag('tikd')) {
+      if (yield this.changeCar('unsubscribe', car)) {
+        yield car.delTag('tikd');
+        return true;
+      } else {
+        throw error.parse({
+          message : `Car ${car.license} is flagged as being on tikd, but we failed anyway!`
+        }, 400);
+      }
+    } else {
+      throw error.parse({
+        message : `Car ${car.license} is not flagged as being on tikd!`
+      }, 400);
+    }
   },
 
-  *addLiability(car, booking, user) {
+  *addLiability(car, booking) {
     // There are bugs I (cjm) haven't been able to find in some bookings not
     // ending their previous liability. Ostensibly this should be a clean system
     // as far as I can tell but there's apparently a bug in it somewhere
     let hasLiability = yield redis.hget('tikd', car.license);
+    let user = yield booking.getUser();
 
     if(hasLiability && hasLiability !== booking.id) {
       let oldData = yield this.getFields(hasLiability);
@@ -196,7 +245,6 @@ module.exports = {
     }
     if (yield this.addCarIfNeeded(car)) {
       let res = yield this.changeLiability('service-started', car, booking, user);
-      console.log(res);
       if(!res) {
         console.log(`Can't add liability for booking ${booking.id}`);
       } else {
@@ -211,6 +259,8 @@ module.exports = {
     if(booking.isFlagged('tikdEnd')) {
       return true;
     }
+    user = yield booking.getUser();
+
     let res = yield this.changeLiability('service-ended', car, booking, user, noslack);
     if(!res) {
       yield booking.flag('tikdFailedEnd');
@@ -223,7 +273,8 @@ module.exports = {
   },
 
   *changeCar(state, car) {
-    if(car.vin && car.plateNumberWork && car.plateState) {
+    let plate = car.plateNumber || car.plateNumberWork;
+    if(car.vin && plate && car.plateState) {
       let metroArea = 'LosAngeles';
       if(yield car.hasTag('level')) {
         metroArea = 'NewYorkCity';
@@ -233,7 +284,7 @@ module.exports = {
         eventName: state,
         serviceType: "streaming",
         vehicleInfo: {
-          plateNumber: car.plateNumberWork,
+          plateNumber: plate,
           plateState: car.plateState,
           vin: car.vin,
           metroArea: metroArea,
@@ -247,7 +298,7 @@ module.exports = {
       }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
       let missing = [];
-      if (!car.plateNumberWork) {
+      if (!plate) {
         missing.push('license plate number');
       }
       if(!car.vin) {
@@ -260,6 +311,7 @@ module.exports = {
         { text: `:beers: A booking with ${ car.link() } started which CANNOT be added to tikd because the following is missing: ${ missing.join(', ') }` },
         { channel: '#rental-alerts' },
       );
+      return false;
     }
   },
 
