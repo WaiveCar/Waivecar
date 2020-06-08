@@ -368,6 +368,7 @@ module.exports = {
         }
       }
     }
+
     function *join_method() {
       perf.push('table join');
 
@@ -386,7 +387,8 @@ module.exports = {
           },
           { 
             model : 'Booking',
-            as: 'currentBooking'
+            as: 'currentBooking',
+            ...(query.started ? {where: {status: {$not: 'completed'}}} : {}),
           },
           {
             model: 'Organization',
@@ -403,7 +405,7 @@ module.exports = {
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
-
+    /*
     function *separate_method() {
       perf.push('separate');
 
@@ -462,12 +464,13 @@ module.exports = {
       cars = allCars;
       perf.push("car " + (new Date() - start));
     }
+    */
 
-    if(Math.random() < 0.5) {
+    //if(Math.random() < 0.5) {
       yield join_method();
-    } else {
-      yield separate_method();
-    }
+    //} else {
+    //yield separate_method();
+    //}
     if (!cars.length) {
       return cars;
     }
