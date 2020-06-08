@@ -101,12 +101,13 @@ class Organization extends Component {
             )}
           />
           <h4 style={{marginTop: '1rem'}}>
-            <Link to="/cars">Recent Cars</Link>
+            <Link to="/cars">Cars in bookings</Link>
           </h4>
           <OrganizationResource
             ref="cars-resource"
             resource={'cars'}
             resourceUrl={'carsWithBookings'}
+            queryOpts={'&started=true'}
             organizationId={id}
             header={() => (
               <tr ref="sort">
