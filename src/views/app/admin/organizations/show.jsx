@@ -107,7 +107,7 @@ class Organization extends Component {
             ref="cars-resource"
             resource={'cars'}
             resourceUrl={'carsWithBookings'}
-            queryOpts={'&started=true'}
+            queryOpts={'&incomplete=true'}
             organizationId={id}
             header={() => (
               <tr ref="sort">
