@@ -388,7 +388,7 @@ module.exports = {
           { 
             model : 'Booking',
             as: 'currentBooking',
-            ...(query.started ? {where: {status: {$not: 'completed'}}} : {}),
+            ...(query.incomplete ? {where: {status: {$not: 'completed'}}} : {}),
           },
           {
             model: 'Organization',
