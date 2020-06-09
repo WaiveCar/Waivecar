@@ -29,6 +29,10 @@ Bento.Register.Model('Organization', 'sequelize', function register(
       type: Sequelize.INTEGER,
       allowNull: true,
     },
+    sections: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    }
   };
   model.attributes = ['organizationStatements', 'cards'];
   model.methods = {
