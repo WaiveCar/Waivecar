@@ -64,6 +64,11 @@ templates.register('app', {
         onEnter   : policies.isAuthenticated
       },
       {
+        path      : '/account/select-sections',
+        component : require('../../views/app/admin/organizations/select-sections'),
+        onEnter   : policies.isAuthenticated
+      },
+      {
         path      : '/account/password',
         component : require('../../views/app/user/profile/password'),
         onEnter   : policies.isAuthenticated
@@ -250,6 +255,13 @@ let order = 2;
     title     : 'Logos',
     icon      : 'camera_alt',
     path      : '/account/logos',
+    parent    : null,
+    locations : [ 'sidebar-account' ],
+  },
+  {
+    title     : 'WaiveWork.com Sections',
+    icon      : 'check_box',
+    path      : '/account/select-sections',
     parent    : null,
     locations : [ 'sidebar-account' ],
   },

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {api, auth} from 'bento';
 
-class SelectSections {
+class SelectSections extends Component {
   constructor(props) {
     super(props);
     this._user = auth.user();
