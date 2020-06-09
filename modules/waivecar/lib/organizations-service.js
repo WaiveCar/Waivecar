@@ -63,6 +63,24 @@ module.exports = {
     }
   },
 
+  *update(id, payload,_user) {
+    try {
+      let {name} = payload;
+      let org = yield Organization.findById(id);
+      yield org.update(payload);
+      return org;
+    } catch (e) {
+      log.warn(e);
+      throw error.parse(
+        {
+          code: 'ERROR_UPDATING_ORGANIZATION',
+          message: e.data ? e.data.type : e.message,
+        },
+        500,
+      );
+    }
+  },
+
   *show(id, query) {
     let q = {
       where: {id},
