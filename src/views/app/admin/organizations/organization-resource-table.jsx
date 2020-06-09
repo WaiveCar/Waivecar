@@ -7,14 +7,16 @@ class OrganizationResource extends Component {
     super(props);
     this.state = {
       offset: 0,
-      more   : false,
+      more: false,
     };
     this.row = this.props.row;
     this.table = new Table(
       this,
       this.props.resource,
       null,
-      `/${this.props.resourceUrl}?organizationIds=[${this.props.organizationId}]${this.props.queryOpts}`,
+      `/${this.props.resourceUrl}?organizationIds=[${
+        this.props.organizationId
+      }]${this.props.queryOpts ? this.props.queryOpts : ''}`,
       10,
     );
     relay.subscribe(this, this.props.resource);
