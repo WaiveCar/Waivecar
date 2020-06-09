@@ -19,9 +19,11 @@ class SelectSections extends Component {
     let initialState = {};
     this._user.organizations.forEach(org => {
       let sections = {};
+      console.log('before', org.organization.sections);
       if (org.organization.sections) {
         let json = JSON.parse(org.organization.sections);
-        json.forEach(key => {
+        console.log('json', json);
+        Object.keys(json).forEach(key => {
           sections[key] = json[key];
         });
       } else {
@@ -43,18 +45,22 @@ class SelectSections extends Component {
 
   updateOrg(id, e) {
     e.preventDefault();
-    api.put(`/organizations/${id}`, this.state[id], (err, res) => {
-      if (err) {
+    api.put(
+      `/organizations/${id}`,
+      {sections: JSON.stringify(this.state.orgs[id])},
+      (err, res) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
         return snackbar.notify({
-          type: 'danger',
-          message: err.message,
+          type: 'success',
+          message: 'Organization Updated',
         });
-      }
-      return snackbar.notify({
-        type: 'success',
-        message: 'Organization Updated',
-      });
-    });
+      },
+    );
   }
 
   render() {
@@ -77,6 +83,7 @@ class SelectSections extends Component {
                       <input
                         type="checkbox"
                         checked={orgs[org.organizationId][key]}
+                        id={`${org.orgainzation}-${key}`}
                         onChange={e =>
                           this.updateField(
                             org.organizationId,
@@ -86,6 +93,11 @@ class SelectSections extends Component {
                           )
                         }
                       />
+                      <label
+                        style={{marginLeft: '0.5rem'}}
+                        htmlFor={`${org.orgainzation}-${key}`}>
+                        {key}
+                      </label>
                     </div>
                   ))}
                   <input
