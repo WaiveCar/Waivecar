@@ -3,7 +3,7 @@ import {api, auth} from 'bento';
 import {Link} from 'react-router';
 import {Form, snackbar} from 'bento-web';
 
-let sections = {
+let initialSections = {
   bookingInfo: true,
   registration: true,
   personal: true,
@@ -16,10 +16,34 @@ class SelectSections extends Component {
   constructor(props) {
     super(props);
     this._user = auth.user();
+    let initialState = {};
+    this._user.organizations.forEach(org => {
+      let sections = {};
+      if (org.organization.sections) {
+        let json = JSON.parse(org.organization.sections);
+        json.forEach(key => {
+          sections[key] = json[key];
+        });
+      } else {
+        sections = initialSections;
+      }
+      initialState[org.organizationId] = sections;
+    });
+    this.state = {orgs: initialState};
   }
 
-  updateOrg(id, payload) {
-    api.put(`/organizations/${id}`, (err, res) => {
+  updateField(id, key, checked) {
+    let {orgs} = this.state;
+    let toUpdate = {...orgs[id]};
+    toUpdate[key] = !checked;
+    this.setState({
+      orgs: {...orgs, [id]: toUpdate},
+    });
+  }
+
+  updateOrg(id, e) {
+    e.preventDefault();
+    api.put(`/organizations/${id}`, this.state[id], (err, res) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
@@ -34,6 +58,7 @@ class SelectSections extends Component {
   }
 
   render() {
+    let {orgs} = this.state;
     return (
       <div className="box">
         <h1>Sections for users of WaiveWork.com</h1>
@@ -46,12 +71,28 @@ class SelectSections extends Component {
                 </Link>
               </h3>
               <div key={i} className="box-content">
-                <form>
-                  {org.organization.sections
-                    ? JSON.parse(org.organization.sections).map(section => (
-                        <div></div>
-                      ))
-                    : Object.keys(sections).map(section => <div></div>)}
+                <form onSubmit={e => this.updateOrg(org.organizationId, e)}>
+                  {Object.keys(initialSections).map((key, i) => (
+                    <div key={i}>
+                      <input
+                        type="checkbox"
+                        checked={orgs[org.organizationId][key]}
+                        onChange={e =>
+                          this.updateField(
+                            org.organizationId,
+                            key,
+                            orgs[org.organizationId][key],
+                            e,
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                  <input
+                    type="submit"
+                    className="btn btn-primary"
+                    name="update"
+                  />
                 </form>
               </div>
             </div>
