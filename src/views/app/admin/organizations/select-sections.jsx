@@ -19,10 +19,8 @@ class SelectSections extends Component {
     let initialState = {};
     this._user.organizations.forEach(org => {
       let sections = {};
-      console.log('before', org.organization.sections);
       if (org.organization.sections) {
         let json = JSON.parse(org.organization.sections);
-        console.log('json', json);
         Object.keys(json).forEach(key => {
           sections[key] = json[key];
         });
