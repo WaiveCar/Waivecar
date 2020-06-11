@@ -4,13 +4,16 @@ import {Link} from 'react-router';
 import {Form, snackbar} from 'bento-web';
 
 let initialSections = {
-  'Information': true,
+  'Current Booking': true,
+  Account: true,
+  Information: true,
   Insurance: true,
   Registration: true,
   'Personal Info': true,
   'My License': true,
   'Change Password': true,
   Contact: true,
+
 };
 
 class SelectSections extends Component {
