@@ -13,7 +13,7 @@ let initialSections = {
   'My License': true,
   'Change Password': true,
   Contact: true,
-
+  insuranceFiles: true,
 };
 
 class SelectSections extends Component {
