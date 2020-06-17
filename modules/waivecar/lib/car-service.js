@@ -1867,7 +1867,9 @@ module.exports = {
         ...(query.organizationIds ? {
           organizationId: {$in: JSON.parse(query.organizationIds)},
         } : {}),
-      }
+      },
+      ...(query.limit ? {limit: query.limit} : {}),
+      ...(query.offset ? {offset: query.offset} : {}),
     });
     return cars;
   }
