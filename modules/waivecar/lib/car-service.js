@@ -1862,7 +1862,7 @@ module.exports = {
     let cars = yield Car.find({
       where: {
         license: {
-          $and: [{$like: `%${query.search}`}]
+          $and: [{$like: `%${query.search}%`}]
         },
         ...(query.organizationIds ? {
           organizationId: {$in: JSON.parse(query.organizationIds)},
