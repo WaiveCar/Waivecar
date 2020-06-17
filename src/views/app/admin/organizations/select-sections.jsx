@@ -4,7 +4,7 @@ import {Link} from 'react-router';
 import {Form, snackbar} from 'bento-web';
 
 let initialSections = {
-  'Current Booking': true,
+  Bookings: true,
   Account: true,
   Information: true,
   Insurance: true,
