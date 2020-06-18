@@ -24,7 +24,6 @@ let formFields = {
   car   : fields.mergeFromLayout('cars', [
     [
       { name : 'license', className : 'col-md-4 bento-form-input' },
-      { name : 'id',      className : 'col-md-4 bento-form-input' },
       { name : 'vin',     className : 'col-md-4 bento-form-input' },
     ],
     [
@@ -283,6 +282,7 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>Details</h3>
         <div className="box-content">
+          <div>Car Id: {car.id}</div> 
           <Form
             ref       = "car"
             className = "bento-form-static"
