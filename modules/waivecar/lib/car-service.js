@@ -668,7 +668,11 @@ module.exports = {
       }
     }
     if (!payload.documents && !(payload.hasOwnProperty('isTotalLoss') || payload.hasOwnProperty('isOutOfService'))) {
-      device = yield this.getDevice(car.id, _user, 'update');
+      try {
+        device = yield this.getDevice(car.id, _user, 'update');
+      } catch(e) {
+        console.log("We were unable to contact the car, but will continue the update.", id, payload);
+      }
     } else {
       console.log("Skipping over trying to get remote device update.", id, payload);
     }
