@@ -8,7 +8,7 @@ let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
 let GroupUser = Bento.model('GroupUser');
 let Role      = Bento.model('Role');
-
+let moment = require('moment');
 
 let notify  = require('../notification-service');
 
@@ -185,7 +185,8 @@ module.exports = class Service {
     })
     let File = Bento.model('File');
     let insurance = yield File.find({where: {organizationId, collectionId: 'insurance'}});
-    console.log(insurance);
+    let validInsurance = insurance.find(each => moment(each.comment).isAfter(moment()));
+    console.log(validInsurance);
   }
 
   static *hasBookingAccess(user, skipPayment) {
