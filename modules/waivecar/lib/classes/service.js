@@ -187,10 +187,31 @@ module.exports = class Service {
     let File = Bento.model('File');
     let insurance = yield File.find({where: {organizationId, collectionId: 'insurance'}});
     let validInsurance = insurance.find(each => moment(each.comment).isAfter(moment()));
+
     if (!validInsurance) {
       missing.push('expired insurance');
     }
+
     let pastDueStatement = org.organizationStatements.find(each => moment(each.dueDate).isBefore(moment()));
+
+    if (pastDueStatement) {
+      missing.push('past due statement(s)');
+    }
+
+    if (driver.status !== 'active') {
+      missing.push('user does not have active status');
+    }
+    
+    let license = yield License.findOne({ where : { userId : driver.id } });
+
+    if (!license) {
+      missing.push('user has not added a license');
+    }
+
+    if (license && moment(license.expirationDate).isBefore(moment())) {
+      missing.push('user\'s license is expired');
+    }
+
     if (missing.length) {
       yield car.update({isAvailable: true});
       throw error.parse({
