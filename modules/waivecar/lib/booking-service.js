@@ -163,7 +163,7 @@ module.exports = class BookingService extends Service {
     this.hasAccess(driver, _user);
 
     if (car.organizationId) {
-      yield this.orgHasAccess(car.organizationId, driver);
+      yield this.orgHasAccess(car.organizationId, driver, car);
     }
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.

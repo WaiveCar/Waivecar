@@ -172,9 +172,10 @@ module.exports = class Service {
    * @param  {Object}  user
    * @return {Void}
    */
-  static *orgHasAccess(organizationId, driver) {
+  static *orgHasAccess(organizationId, driver, car) {
+    let missing = [];
     let Organization = Bento.model('Organization');
-    let org = yield Organization.find({
+    let org = yield Organization.findOne({
       where: {id: organizationId},
       include: [
         {
@@ -186,7 +187,17 @@ module.exports = class Service {
     let File = Bento.model('File');
     let insurance = yield File.find({where: {organizationId, collectionId: 'insurance'}});
     let validInsurance = insurance.find(each => moment(each.comment).isAfter(moment()));
-    console.log(validInsurance);
+    if (!validInsurance) {
+      missing.push('expired insurance');
+    }
+    let pastDueStatement = org.organizationStatements.find(each => moment(each.dueDate).isBefore(moment()));
+    if (missing.length) {
+      yield car.update({isAvailable: true});
+      throw error.parse({
+        code    : `BOOKING_INVALID_REQUEST`,
+        message : `You have a few problems with your account that you will need to fix before you can book. They are: ${missing.join(', ')}.`,
+      }, 400);
+    }
   }
 
   static *hasBookingAccess(user, skipPayment) {
