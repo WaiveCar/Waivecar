@@ -173,7 +173,19 @@ module.exports = class Service {
    * @return {Void}
    */
   static *orgHasAccess(organizationId, driver) {
-    console.log('here');
+    let Organization = Bento.model('Organization');
+    let org = yield Organization.find({
+      where: {id: organizationId},
+      include: [
+        {
+          model: 'OrganizationStatement',
+          as: 'organizationStatements',
+        }
+      ]
+    })
+    let File = Bento.model('File');
+    let insurance = yield File.find({where: {organizationId, collectionId: 'insurance'}});
+    console.log(insurance);
   }
 
   static *hasBookingAccess(user, skipPayment) {
