@@ -202,6 +202,10 @@ module.exports = class Service {
       missing.push('user does not have active status');
     }
     
+    if (!driver.phone) {
+      missing.push('user has not provided a phone number');
+    }
+
     let license = yield License.findOne({ where : { userId : driver.id } });
 
     if (!license) {
