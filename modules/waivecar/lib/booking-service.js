@@ -97,6 +97,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
+    console.log('data', data);
     let start = new Date();
     let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 5 * 1000);
 
@@ -161,6 +162,9 @@ module.exports = class BookingService extends Service {
 
     this.hasAccess(driver, _user);
 
+    if (car.organizationId) {
+      yield this.orgHasAccess(car.organzationId, driver);
+    }
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
     if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
@@ -170,11 +174,8 @@ module.exports = class BookingService extends Service {
       // means that if an admin is booking a driver who is not
       // themselves, this code is still run.
       try {
-        if (!car.organizationId) {
-          yield this.hasBookingAccess(driver, data.skipPayment);
-        } else {
-          // run checklist for orgs here
-        }
+        yield this.hasBookingAccess(driver, data.skipPayment);
+        // run checklist for orgs here
       } catch(err) {
         yield bail(err);
       } 
@@ -1128,7 +1129,7 @@ module.exports = class BookingService extends Service {
         yield Tikd.removeLiability(car, lastBooking, lastUser);
       }
       */
-      yield Tikd.addLiability(car, booking, user);
+      //yield Tikd.addLiability(car, booking, user);
 
       // yield cars.openDoor(car.id, _user);
 
@@ -1903,7 +1904,7 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.removeDriver();
-    yield Tikd.removeLiability(car, booking, user);
+    //yield Tikd.removeLiability(car, booking, user);
 
     if (user.isProbation()){
       yield user.setActive();

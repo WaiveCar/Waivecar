@@ -172,6 +172,10 @@ module.exports = class Service {
    * @param  {Object}  user
    * @return {Void}
    */
+  static *orgHasAccess(organizationId, driver) {
+    console.log('here');
+  }
+
   static *hasBookingAccess(user, skipPayment) {
     let missing = [];
     let after = '';
