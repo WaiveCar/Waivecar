@@ -8,9 +8,6 @@ import CarsTable from './cars-table';
 import ThSort from '../components/table-th';
 
 const oneDay = 1000 * 60 * 60 * 24;
-//const shownList = ['work', 'waive', 'level', 'csula', 'other'];
-//const LEVEL = 7;
-//const CSULA = 11;
 
 module.exports = class CarsIndex extends React.Component {
 

@@ -302,9 +302,10 @@ module.exports = class GMap extends React.Component {
           infoWindow.open(this.map);
         });
       } else if ('radius' in val) {
+        let {forOrg, orgId} = this.props;
         marker.addListener('click', (e) => {
           val.description = val.description || '';
-          let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
+          let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : forOrg ? `<a href=/organizations/${orgId}/hubs/${val.id}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
           infoWindow.setContent(`<b>${linkText}</b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
           infoWindow.setPosition(e.latLng);
           infoWindow.open(this.map);

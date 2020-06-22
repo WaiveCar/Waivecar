@@ -21,7 +21,7 @@ class HubsWrapper extends Component {
   render() {
     return (
       <div className="box">
-        <Hubs orgId={this.id} />
+        <Hubs orgId={this.id} organization={this.org.organization}/>
       </div>)
   }
 }

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {GMap, snackbar, api} from 'bento-web';
 import OrganizationResource from './organization-resource-table';
 import ThSort from '../components/table-th';
 
@@ -10,9 +11,22 @@ class BaseStations extends Component {
 
   render() {
     let {orgId} = this.props;
+    let {hubs} = this.state;
     return (
       <div className="box">
         <div className="box-content">
+          <div className="row" style={{marginBottom: '1.5rem'}}>
+            <div className="col-xs-12">
+              <div className="map-dynamic">
+                <GMap
+                  markerIcon={'/images/map/active-waivecar.svg'}
+                  markers={hubs}
+                  orgId={orgId}
+                  forOrg
+                />
+              </div>
+            </div>
+          </div>
           <OrganizationResource
             ref="hub-resource"
             resource={'hub'}
