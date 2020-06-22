@@ -17,8 +17,10 @@ class HubsWrapper extends Component {
 
   render() {
     let {id} = this.props.params;
-    console.log(id);
-    return <Hubs orgId={id} />;
+    return (
+      <div className="box">
+        <Hubs orgId={id} />
+      </div>)
   }
 }
 
