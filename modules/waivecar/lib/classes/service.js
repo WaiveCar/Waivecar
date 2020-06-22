@@ -189,7 +189,7 @@ module.exports = class Service {
     let validInsurance = insurance.find(each => moment(each.comment).isAfter(moment()));
 
     if (!validInsurance) {
-      missing.push('expired insurance');
+      missing.push('expired or no insurance');
     }
 
     let pastDueStatement = org.organizationStatements.find(each => moment(each.dueDate).isBefore(moment()));
