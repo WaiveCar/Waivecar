@@ -626,7 +626,6 @@ class CarsShowView extends React.Component {
         },
       ]),
     ];
-    console.log(switches);
 
     let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
     let me = auth.user();
@@ -667,13 +666,15 @@ class CarsShowView extends React.Component {
                 <Switch { ...switches[4] } />
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-6">
-                <Switch { ...switches[6] } />
+            {this._user.hasAccess('waiveAdmin') &&
+              <div className="row">
+                <div className="col-md-6">
+                  <Switch { ...switches[6] } />
+                </div>
+                <div className="col-md-6">
+                </div>
               </div>
-              <div className="col-md-6">
-              </div>
-            </div>
+            }
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
                 {
