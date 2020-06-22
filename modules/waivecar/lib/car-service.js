@@ -1597,6 +1597,16 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
+  *superImmobilize(id, _user) {
+    let car = yield Car.findById(id);
+    yield this.lockImmobilizer(id, _user, car);
+  },
+
+  *superUnimmobilize(id, user) {
+    let car = yield Car.findById(id);
+    yield this.unlockImmobilizer(id, _user);
+  },
+
   *lockAndImmobilize(carId, _user) {
     let existingCar = yield Car.findById(carId);
     // The line below allows for the resassignment of telematics devices

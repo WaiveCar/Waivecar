@@ -70,6 +70,8 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'horn'               : return yield car.horn(id, this.auth.user);
       case 'lock-immobilizer'   : return yield car.lockImmobilizer(id, this.auth.user);
       case 'unlock-immobilizer' : return yield car.unlockImmobilizer(id, this.auth.user);
+      case 'super-immobilize'   : return yield car.superImmobilize(id, this.auth.user);
+      case 'super-unimmobilize' : return yield car.superUnimmobilize(id, this.auth.user);
       case 'refresh'            : return yield car.refresh(id, this.auth.user);
       case 'available'          : return yield car.updateAvailability(id, true, this.auth.user);
       case 'unavailable'        : return yield car.updateAvailability(id, false, this.auth.user);
