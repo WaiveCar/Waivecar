@@ -6,6 +6,9 @@ class HubsWrapper extends Component {
   constructor(props) {
     super(props);
     this._user = auth.user();
+    let {id} = this.props.params;
+    this.id = id;
+    this.org = this._user.organizations.find(org => org.organizationId === Number(this.id))
   }
 
   componentDidMount() {
@@ -16,10 +19,9 @@ class HubsWrapper extends Component {
   }
 
   render() {
-    let {id} = this.props.params;
     return (
       <div className="box">
-        <Hubs orgId={id} />
+        <Hubs orgId={this.id} />
       </div>)
   }
 }
