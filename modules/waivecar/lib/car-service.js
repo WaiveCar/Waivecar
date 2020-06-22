@@ -1617,8 +1617,8 @@ module.exports = {
       }, 400);
     }
     let car = yield Car.findById(id);
-    yield this.unlockImmobilizer(id, _user);
     yield car.delTag('super-immobilized')
+    yield this.unlockImmobilizer(id, _user);
   },
 
 
@@ -1666,6 +1666,13 @@ module.exports = {
   *executeCommand(carId, part, command, _user, existingCar, opts) {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(carId));
+
+    if (part === 'immobilizer' && (yield existingCar.hasTag('super-immobilized'))) {
+      throw error.parse({
+        code    : 'WAIVE_IMMOBILIZED',
+        message : 'This car has been immobilized by waive. Please contact customer service to fix this situation.'
+      }, 400);
+    }
 
     let actualDevice = (yield Telematics.findOne({where: {carId}}));
     let actualDeviceId = actualDevice && actualDevice.telemId;
