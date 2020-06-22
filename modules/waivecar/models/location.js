@@ -13,7 +13,7 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
     organizationId: {
       type: Sequelize.INTEGER,
-    }
+    },
 
     name : { 
       type : Sequelize.STRING
