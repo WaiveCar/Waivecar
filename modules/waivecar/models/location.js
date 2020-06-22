@@ -11,6 +11,10 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
       defaultValue : 'station'
     },
 
+    organizationId: {
+      type: Sequelize.INTEGER,
+    }
+
     name : { 
       type : Sequelize.STRING
     },
