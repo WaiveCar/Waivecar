@@ -616,8 +616,17 @@ class CarsShowView extends React.Component {
         ref : 6,
         label    : 'Refresh',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
-      }
+      },
+      ...(!this._user.hasAccess('waiveAdmin') ? [] : [
+        {
+          ref : 7,
+          label    : !this.hasTag('super-immobilized') ? 'Super Immobilize' : 'Super Unimmobilize',
+          checked  : this.hasTag('super-immobilized'),
+          onChange : this.service.executeCommand.bind(this, car, this.hasTag('super-immobilized') ? 'super-unimmobilize' : 'super-immobilize')
+        },
+      ]),
     ];
+    console.log(switches);
 
     let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
     let me = auth.user();
@@ -656,6 +665,13 @@ class CarsShowView extends React.Component {
               </div>
               <div className="col-md-6">
                 <Switch { ...switches[4] } />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <Switch { ...switches[6] } />
+              </div>
+              <div className="col-md-6">
               </div>
             </div>
             <div className="row" style={{ marginTop: 10 }}>
