@@ -38,7 +38,15 @@ module.exports = class CarsIndex extends React.Component {
       {key: 'totalMileage', title: 'Mileage', type: 'text', defaultHidden: true},
       {key: 'organizationName', title: 'Organization', type: 'org'},
     ];
-    this.actions = ['lock', 'unlock', 'lock-immobilizer', 'unlock-immobilizer'];
+    this.actions = [
+      'lock', 
+      'unlock', 
+      'lock-immobilizer', 
+      'unlock-immobilizer', 
+    ];
+    if (this._user.hasAccess('waiveAdmin')) {
+      this.actions.push('super-immobilize', 'super-unimmobilize');
+    }
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
       /*
