@@ -211,6 +211,11 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
+        path: '/organizations/:id/hubs/:hubId',
+        component : require('../../views/app/admin/organizations/hub'),
+        onEnter   : policies.isAdmin,
+      },
+      {
         path      : '/organizations/:id/statements/create',
         component : require('../../views/app/admin/organizations/create-statement'),
         onEnter   : policies.isWaiveAdmin,
