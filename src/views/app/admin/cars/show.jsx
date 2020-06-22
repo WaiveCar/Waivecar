@@ -619,10 +619,14 @@ class CarsShowView extends React.Component {
       },
       ...(!this._user.hasAccess('waiveAdmin') ? [] : [
         {
-          ref : 7,
-          label    : !this.hasTag('super-immobilized') ? 'Super Immobilize' : 'Super Unimmobilize',
-          checked  : this.hasTag('super-immobilized'),
-          onChange : this.service.executeCommand.bind(this, car, this.hasTag('super-immobilized') ? 'super-unimmobilize' : 'super-immobilize')
+          ref: 7,
+          label: 'Super Immobilize',
+          onChange : this.service.executeCommand.bind(this, car, 'super-immobilize')
+        },
+        {
+          ref: 8,
+          label: 'Super Unimmobilize',
+          onChange : this.service.executeCommand.bind(this, car, 'super-unimmobilize')
         },
       ]),
     ];
@@ -667,11 +671,22 @@ class CarsShowView extends React.Component {
               </div>
             </div>
             {this._user.hasAccess('waiveAdmin') &&
-              <div className="row">
+              <div className="row" style={{marginTop: '1rem'}}>
                 <div className="col-md-6">
-                  <Switch { ...switches[6] } />
-                </div>
-                <div className="col-md-6">
+                  <Button
+                    key       = { switches[6].ref }
+                    className = { 'btn btn-sm col-xs-6' }
+                    type      = { 'button' }
+                    value     = { switches[6].label }
+                    onClick   = { switches[6].onChange }
+                  />
+                  <Button
+                    key       = { switches[7].ref }
+                    className = { 'btn btn-sm col-xs-6' }
+                    type      = { 'button' }
+                    value     = { switches[7].label }
+                    onClick   = { switches[7].onChange }
+                  />
                 </div>
               </div>
             }
