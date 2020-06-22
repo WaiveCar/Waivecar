@@ -430,7 +430,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     },
 
     *isWaiveAdmin() {
-      return (yield this.getOrgUsers().length) === 1;
+      return (yield this.getOrgUsers()).length === 0;
     },
 
     *getOrganizations() {

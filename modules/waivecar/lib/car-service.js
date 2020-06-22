@@ -1604,22 +1604,23 @@ module.exports = {
         message : 'If you are not a Waive employee, you do in have access to this feature',
       }, 400);
     }
-    yield this.lockImmobilizer(id, _user, car);
     let car = yield Car.findById(id);
+    yield this.lockImmobilizer(id, _user, car);
     yield car.addTag('super-immobilized')
   },
 
-  *superUnimmobilize(id, user) {
+  *superUnimmobilize(id, _user) {
     if (!(yield _user.isWaiveAdmin())) {
       throw error.parse({
         code    : 'WAIVE_ADMIN_FEATURE',
         message : 'If you are not a Waive employee, you do in have access to this feature',
       }, 400);
     }
-    yield this.unlockImmobilizer(id, _user);
     let car = yield Car.findById(id);
+    yield this.unlockImmobilizer(id, _user);
     yield car.delTag('super-immobilized')
   },
+
 
   *lockAndImmobilize(carId, _user) {
     let existingCar = yield Car.findById(carId);
