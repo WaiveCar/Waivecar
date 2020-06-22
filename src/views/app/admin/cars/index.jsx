@@ -49,14 +49,6 @@ module.exports = class CarsIndex extends React.Component {
     }
     let storedCols = localStorage.getItem('selectedCols');
     this.state = {
-      /*
-      shownCars : [],
-      showHelp : false,
-      allCars : [],
-      filter : {},
-      shown : this.getShown(),
-      sortBy: { key: 'license', orderAsc: true },
-      */
       selectedCols: new Set(storedCols ? 
         new Set(JSON.parse(storedCols)) : 
         new Set(this.columns.map(col => !col.defaultHidden && col.key)),
@@ -68,147 +60,11 @@ module.exports = class CarsIndex extends React.Component {
       carsWithBookings: [],
     };
   }
-  /*
-  update(cb) {
-    let moment = require('moment');
-    let start = moment();
-    api.get(`/carsWithBookings${this.userOrganizations.length ?
-      `?organizationIds=[${this.userOrganizations}]` : ''
-    }`, (err, cars) => {
-      cars.forEach((row) => {
-        row.licenseLower = row.license.toLowerCase();
-        row.plateLower = row.plateNumber ? row.plateNumber.toLowerCase() : '';
-        if(row.user) {
-          row.name = [row.user.firstName, row.user.lastName].join(' ').toLowerCase();
-        } else {
-          row.name = '';
-        }
-      });
-      this.setState( {
-        updated: moment().format('HH:mm:ss'),
-        allCars: cars,
-        shownCars: this.runShown({cars: cars}),
-      }, () => console.log('Time elapsed during cars route call: ', moment().diff(start, 'seconds')));
-    });
-  }
-  */
 
   componentDidMount() {
     dom.setTitle('Cars');
-    //this.update();
-  }
-  /*
-  onFilter(event) {
-    this.toggleAllCars({target: {checked: false}});
-    let filter = event.target.value.toLowerCase();
-    let opts = { raw: filter };
-    let isFlagged = false;
-    let bMap = [ 
-      [ 'available', 'ava' ],
-      [ 'notavailable', 'noava' ],
-      [ 'booked', 'boo' ],
-      [ 'notbooked', 'noboo' ],
-      [ 'charging', 'char' ],
-      [ 'notcharging', 'nochar'],
-      [ 'low', 'low' ],
-      [ 'high', 'high' ]
-    ];
-    bMap.forEach((row) => {
-      if(filter.includes(row[1])) {
-        opts[row[0]] = true;
-        isFlagged = true;
-      } else {
-        opts[row[0]] = false;
-      }
-    });
-    // ex: charging is a string subset of !charging
-    ['charging', 'available', 'booked'].forEach((row) => {
-      opts[row] &= !opts['not' + row];
-    });
-
-    opts.isFlagged = isFlagged;
-    this.setState({
-      showHelp: filter === 'help',
-      filter: opts
-    });
-  }
- 
-  // this looks to be unavoidaly O(M*N)
-  runShown(opts) {
-    let cars = opts.cars || this.state.allCars;
-    let shown = opts.shown || this.state.shown;
-    let shownMap = {};
-
-    shown.forEach((what) => {
-      shownMap[what] = true;
-    });
-
-    let shownList = cars.filter((car) => {
-      let lic = car.license.toLowerCase();
-      let res = {
-        waive: lic.includes('waive'),
-        work: lic.includes('work'),
-        level: car.tagList.length ? car.tagList[0].groupRoleId === LEVEL : false,
-        csula: car.tagList.length ? car.tagList[0].groupRoleId === CSULA : false
-      };
-
-      return (
-        (shownMap.level && res.level) ||
-        (shownMap.waive && (res.waive && !res.csula && !res.level)) ||
-        (shownMap.csula && res.csula) ||
-        (shownMap.work && res.work)   ||
-        (shownMap.other && !res.csula && !res.level && !res.work && !res.waive)  
-      );
-    });
-    return shownList;
   }
 
-  updateShown(e) {
-    this.toggleAllCars({target: {checked: false}});
-    let shown = this.state.shown;
-    if(e.target.checked) {
-      shown.push(e.target.value);
-    } else {
-      shown = _.without(shown, e.target.value);
-    }
-    localStorage['carShown'] = shown.join(',');
-    this.setState({
-      shown: shown,
-      shownCars: this.runShown({shown: shown})
-    });
-  }
-
-  getShown() {
-    if(localStorage['carShown']) {
-      return localStorage['carShown'].split(',');
-    }
-    return shownList;
-  }
-
-  isShown(what) {
-    return this.state.shown.indexOf(what) > -1;
-  }
-
-  isCarIncludes(car, opts) {
-    let res = true;
-    if (opts.raw) { 
-      res = car.licenseLower.includes(opts.raw) || car.name.includes(opts.raw) || car.plateLower.includes(opts.raw);
-      if(!res && opts.isFlagged) {
-        res = true;
-        // this allows us to search for say "low available"
-        if(opts.available) { res &= car.isAvailable; }
-        if(opts.notavailable) { res &= (!car.isAvailable && !car.name); }
-        if(opts.booked) { res &= car.name.length; }
-        if(opts.notbooked) { res &= !car.name; }
-        if(opts.charging) { res &= car.isCharging; }
-        if(opts.notcharging) { res &= !car.isCharging; }
-        if(opts.low) { res &= car.charge < 30; }
-        if(opts.high) { res &= car.charge > 70; }
-      }
-    }
-    return res;
-  }
-  */
   renderCheckMark(checked) {
     if (checked) {
       return (
@@ -285,101 +141,7 @@ module.exports = class CarsIndex extends React.Component {
     }
     return <td title={value} key={column.key}>{value}</td>
   }
-  /*
-  sort(event) {
-    var columnKey = event.target.dataset.title||event.target.parentElement.dataset.title;
 
-    var orderAsc = true;
-
-    if (this.state.sortBy) {
-       if (this.state.sortBy.key == columnKey) {
-         orderAsc = !this.state.sortBy.orderAsc;
-       }
-    }
-    this.setState({
-      sortBy : {key : columnKey, orderAsc: orderAsc}
-    })
-  }
-
-  defaultComparator(valA, valB) {
-    if (!isNaN(valA - valB)) {
-      return valA - valB;
-    }
-    if (valA < valB || !valB) {
-      return -1;
-    }
-    if (valB < valA || !valA) {
-      return 1;
-    }
-    return 0;
-  }
-
-  licenseComparator(valA, valB) {
-    if (valA.hasOwnProperty('license')) {
-      valA = valA.license;
-      valB = valB.license;
-    }
-
-    valA = valA.toLowerCase();
-    valB = valB.toLowerCase();
-    let partsA = valA.match(/([a-z]*)\s*(\d*)/i);
-    let partsB = valB.match(/([a-z]*)\s*(\d*)/i);
-
-    if(partsA[1] === partsB[1]) {
-      return parseInt(partsA[2], 10) - parseInt(partsB[2], 10);
-    } else {
-      // This strangeness is done in order to keep the groupings
-      // far enough away from each other in the quicksort calculation
-      return (partsA[1] < partsB[1]) ? 1000 : -1000;
-    }
-  }
-
-  sortComparator(a, b) {
-    let sortBy = this.state.sortBy;
-    if (!sortBy) {
-      return 0;
-    }
-
-    let comparator = this.defaultComparator;
-
-    let sortingCol = this.columns.filter((col) => col.key == sortBy.key);
-    if (sortingCol.length && sortingCol[0].comparator) {
-      comparator = sortingCol[0].comparator;
-    }
-
-    var comparisonResult = comparator(a[sortBy.key], b[sortBy.key])
-    if (!sortBy.orderAsc) {
-      comparisonResult = -comparisonResult;
-    }
-
-    return comparisonResult;
-  }
-
-  renderColumnHeader(column) {
-    var className = "";
-
-    if (column.type == "bool") {
-      className = "table-col-xs";
-    }
-
-    if (column.type == "datetime") {
-      className="table-col-lg"
-    }
-
-    var sortBy = this.state.sortBy;
-
-    return (
-      <th data-title={column.key} className={className} key={column.key} onClick={ (e) => this.sort(e) } >
-        <span>{column.title}</span>
-        {
-          sortBy && sortBy.key == column.key
-            ? <span>{sortBy.orderAsc ? " ▲" : " ▼" }</span>
-            : ""
-        }
-      </th>
-    )
-  }
-  */
   toggleSelectedCar(car) {
     let {selectedCars, masterChecked} = this.state;
     if (selectedCars.has(car.license)) {
@@ -416,120 +178,6 @@ module.exports = class CarsIndex extends React.Component {
       </tr>
     )
   }
-  /*
-  //
-  // These are the colunns for the mobile view. 
-  // They are special in that they aren't really 
-  // "columns" in a tabular sense nor are they
-  // sortable.
-  //
-  renderListLinkItem(item, index) {
-    let route = `/cars/${ item.id }`;
-
-    let durationMap = {
-      lastAction: { num: (moment.duration(moment.utc().diff(moment(item.lastActionTime)))).asMilliseconds() },
-      lastSeen: { num: (moment.duration(moment.utc().diff(moment(item.lastTimeAtHq)))).asMilliseconds() }
-    };
-
-    Object.keys(durationMap).forEach((key) => {
-      let str = moment.utc(durationMap[key].num).format('H:mm');
-      if(durationMap[key] > oneDay) {
-        str = Math.floor(durationMap[key].num/oneDay) + 'd ' + str;
-      }
-      durationMap[key].str = str;
-    })
-
-    let text = <span>{ item.id } <small className="pull-right">{ durationMap.lastAction.str }</small></span>
-
-    if (item.license) {
-      let name = '';
-
-      if (item.user) {
-        name = [item.user.firstName, item.user.lastName];
-        if (item.booking) {
-          let duration = moment.duration(moment.utc().diff(moment(item.booking[0].createdAt)));
-          name.unshift( moment.utc(duration.asMilliseconds()).format('H:mm') );
-        }
-        name = name.join(' ');
-      } else {
-        let word = item.statusColumn;
-        let home = '';
-        let repair = '';
-        let lock = '';
-        let charge = '';
-        if (item.isCharging) { 
-          charge = <i style={{ color: 'blue' }} className="fa fa-bolt"></i>
-        }
-        if (word == 'Available') {
-          word = <b>{ word }</b>
-        }
-        if (item.latitude > 34.019708 && item.latitude < 34.02 && item.longitude > -118.468597 && item.longitude < -118.467835) {
-          home = <i className="fa fa-home"></i>;
-          // This is the pico office.
-          if(!item.isLocked) {
-            if(item.isImmobilized) {
-              lock = <i className="fa fa-unlock"></i>
-            } else {
-              lock = <i style={{ color: 'red', fontWeight: 'bold', fontSize: '120%' }} className="fa fa-unlock"></i>
-            }
-          }
-        }
-        if (item.inRepair) {
-          repair = <i className="fa fa-wrench"></i>
-        }
-        name = <em>{item.charge}% { word } { home }{ repair } { charge } { lock }</em>
-      }
-
-      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ durationMap.lastAction.str }</small></span>
-    }
-
-    return (
-      <Link target="_blank" key={ index } className="list-group-item" to={ route }>
-        { text }
-      </Link>
-    );
-  }
-  */
-  /*
-  renderShownFilters(count) {
-    return (
-      <div className="form-group row butnotfuckedup">
-        { shownList.map((what, i) =>
-           <div className="radio-inline" key={i}> 
-             <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
-           </div>
-          )
-        }
-      </div>
-    );
-  }
-  renderSearch() {
-    return (
-      <div className="filter-container" >
-        <input type="text"
-               name="filter"
-               placeholder="Filter Results"
-               className="form-control"
-               autoComplete="off"
-               onChange={ (e) => this.onFilter(e)}
-          />
-          { this.state.showHelp && <ul className="help">
-            <li> (term) - (meaning) </li>
-            <li> ava - available </li>
-            <li> noava - unavailable </li>
-            <li> char - charging </li>
-            <li> nochar - not charging </li>
-            <li> book - booked </li>
-            <li> nobook - not booked </li>
-            <li> high - over 70% </li>
-            <li> low - under 30% </li>
-            <li> help - this screen </li>
-            </ul>
-          }
-      </div>
-    )
-  }
-  */
 
   toggleColumn(key) {
     let {selectedCols} = this.state;
@@ -621,7 +269,6 @@ module.exports = class CarsIndex extends React.Component {
   render() {
     let {showBatchActions} = this.state;
     let {showColumnSelected, selectedCols, selectedCars, masterChecked, carMap, carsWithBookings} = this.state;
-    //let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index box full">
         <section className="container" >
@@ -630,13 +277,6 @@ module.exports = class CarsIndex extends React.Component {
             <div className="row">
               <div className="col-xs-12" >
                 <div id="table-component" className="component-container" >
-                  {/*<div>
-                    <div className="griddle-filter" >
-                      { this.renderSearch() }
-                    </div>
-                  </div>
-                  */}
-                    {/* this._user.hasAccess('waiveAdmin') && this.renderShownFilters(displayedCars.length) */}
                   { this._user.hasAccess('waiveAdmin') &&
                     <div>
                       <button className="btn btn-sm btn-primary" onClick={() => this.setState({showBatchActions: !showBatchActions})}>
@@ -668,30 +308,6 @@ module.exports = class CarsIndex extends React.Component {
                   {!showColumnSelected ? 'Show' : 'Hide'} Column Selection
                 </button>
                 {showColumnSelected && this.selectColumns()}
-                  {/*
-                  <div>
-                    <table className="box-table table-striped" ref="table-ref">
-                      <thead>
-                      <tr>
-                        <th>
-                          <input type="checkbox" onChange={(e) => this.toggleAllCars(e, displayedCars)} checked={masterChecked}/>
-                        </th>
-                        {
-                          this.columns.filter(col => selectedCols.has(col.key)).map((col) => this.renderColumnHeader(col))
-                        }
-                        <th data-title="actions" ></th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {
-                        displayedCars
-                          .sort((a, b) => this.sortComparator(a, b))
-                          .map((car) => this.renderCarRow(car))
-                      }
-                      </tbody>
-                    </table>
-                  </div>
-                  */}
                   <div ref="table-ref">
                     <CarsTable
                       ref="cars-resource"
