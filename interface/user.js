@@ -413,11 +413,8 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    *getOrganizations() {
+    *getOrgUsers() {
       let OrganizationUser = Bento.model('OrganizationUser');
-      let OrganizationStatement = Bento.model('OrganizationStatement');
-      let Card = Bento.model('Shop/Card');
-      let File = Bento.model('File');
       let orgUsers = yield OrganizationUser.find({
         where: {
           userId: this.id,
@@ -429,6 +426,18 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           },
         ],
       });
+      return orgUsers;
+    },
+
+    *isWaiveAdmin() {
+      return (yield this.getOrgUsers().length) === 1;
+    },
+
+    *getOrganizations() {
+      let orgUsers = yield this.getOrgUsers();
+      let OrganizationStatement = Bento.model('OrganizationStatement');
+      let Card = Bento.model('Shop/Card');
+      let File = Bento.model('File');
       orgUsers = orgUsers.map(each => each.toJSON());
       for (let each of orgUsers) {
         each.organization.logo = (yield File.findById(each.organization.logoId));
