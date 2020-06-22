@@ -206,8 +206,8 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
-        path: '/organizations/:id/base-stations',
-        component : require('../../views/app/admin/organizations/stations-wrapper'),
+        path: '/organizations/:id/hubs',
+        component : require('../../views/app/admin/organizations/hubs-wrapper'),
         onEnter   : policies.isAdmin,
       },
       {
