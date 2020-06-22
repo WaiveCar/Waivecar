@@ -206,6 +206,11 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
+        path: '/organizations/:id/base-stations',
+        component : require('../../views/app/admin/organizations/stations-wrapper'),
+        onEnter   : policies.isAdmin,
+      },
+      {
         path      : '/organizations/:id/statements/create',
         component : require('../../views/app/admin/organizations/create-statement'),
         onEnter   : policies.isWaiveAdmin,
