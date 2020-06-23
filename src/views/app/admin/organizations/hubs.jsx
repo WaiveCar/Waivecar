@@ -1,19 +1,25 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {GMap, snackbar, api} from 'bento-web';
 import OrganizationResource from './organization-resource-table';
 import ThSort from '../components/table-th';
 
-class BaseStations extends Component {
+class Hubs extends Component {
   constructor(props) {
     super(props);
     this.state = {hubs: []};
   }
 
   render() {
-    let {orgId} = this.props;
+    let {orgId, organization} = this.props;
     let {hubs} = this.state;
     return (
       <div className="box">
+        <h2>
+          <Link to={`/organizations/${organization.id}`}>
+            {organization.name}
+          </Link>
+        </h2>
         <div className="box-content">
           <div className="row" style={{marginBottom: '1.5rem'}}>
             <div className="col-xs-12">
@@ -62,4 +68,4 @@ class BaseStations extends Component {
   }
 }
 
-export default BaseStations;
+export default Hubs;
