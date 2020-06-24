@@ -114,6 +114,38 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
         );
       }
     },
+    addCars: function* (payload) {
+      let Car = Bento.model(car);
+      let {carList} = payload;
+      let errs = [];
+      for (let carId of carList) {
+        let car = yield Car.findById(carId);
+        try {
+          yield this.addUser(car);
+        } catch (e) {
+          errs.push(car.license);
+        }
+      }
+      if (errs.length) {
+        throw error.parse(
+          {
+            code: 'CARS_ALREADY_ADDED',
+            message: `${errs.join(
+              ', ',
+            )} have already been added to this location.`,
+          },
+          400,
+        );
+      }
+      return this;
+    },
+    removeCars: function* (payload) {
+      let {carList} = payload;
+      for (let carId of usersList) {
+        yield this.removeUser({id: carId});
+      }
+      return this;
+    },
   };
 
   model.relations = [
