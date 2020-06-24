@@ -88,23 +88,31 @@ class Hub extends Component {
                     Find Car
                   </button>
                 </div>
-                {searchResults.length ? searchResults.map((item, i) => (
-                  <div key={i} className="row">
-                    <div style={{padding: '10px 0'}} className="col-xs-6">
-                      <Link to={`/cars/${item.id}`} target="_blank">
-                        {item.license}
-                      </Link>
-                    </div>
-                    <button
-                      className="btn btn-link col-xs-6"
-                      onClick={() =>
-                        this.setState({selected: [...selected, item]})
-                      }>
-                      {' '}
-                      Select
-                    </button>
-                  </div>
-                )) : ''}
+                {searchResults.length
+                  ? searchResults.map((item, i) => (
+                      <div key={i} className="row">
+                        <div style={{padding: '10px 0'}} className="col-xs-6">
+                          <Link to={`/cars/${item.id}`} target="_blank">
+                            {item.license}
+                          </Link>
+                        </div>
+                        <button
+                          className="btn btn-link col-xs-6"
+                          onClick={() =>
+                            this.setState({
+                              selected: !selected.find(
+                                car => car.id === item.id,
+                              )
+                                ? [...selected, item]
+                                : selected,
+                            })
+                          }>
+                          {' '}
+                          Select
+                        </button>
+                      </div>
+                    ))
+                  : ''}
                 {selected.length ? (
                   <div>
                     <h4>Selected Cars</h4>
@@ -130,7 +138,9 @@ class Hub extends Component {
                       </div>
                     ))}{' '}
                   </div>
-                ) : ''}
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           )}
