@@ -15,9 +15,12 @@ class Hubs extends Component {
     let {hubs} = this.state;
     return (
       <div className="box">
-        <h2>
+        <h2 style={{display: 'flex', justifyContent: 'space-between'}}>
           <Link to={`/organizations/${organization.id}`}>
             {organization.name}
+          </Link>
+          <Link to={`/organizations/${organization.id}/hubs/create`}>
+            create
           </Link>
         </h2>
         <div className="box-content">
