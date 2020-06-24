@@ -18,8 +18,8 @@ Bento.Register.Model('LocationCar', 'sequelize', function(model, Sequelize) {
     'Location',
     'Car',
     function(Location, Car) {
-      this.belongsTo(Location, {foreignKey: 'locationId', as: 'location'});
-      this.belongsTo(Car, {foreignKey: 'carId', as: 'car'});
+      this.belongsTo(Location, {as: 'location'});
+      this.belongsTo(Car, {as: 'car'});
     }
   ];
 

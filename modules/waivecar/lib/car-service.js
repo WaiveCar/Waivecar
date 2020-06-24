@@ -368,7 +368,6 @@ module.exports = {
         }
       }
     }
-    console.log(query, query.hubId ? {model: 'LocationCar', as: 'hub'} : {});
     function *join_method() {
       perf.push('table join');
 
@@ -394,8 +393,7 @@ module.exports = {
             model: 'Organization',
             as: 'organization',
           },
-          //{model: 'LocationCar', as: 'hubs'},
-          //...(query.hubId ? {model: 'LocationCar', as: 'hub'} : {}),
+          (query.hubId ? {model: 'LocationCar', as: 'locationCars', where: {hubId: Number(query.hubId)}, required: true} : {}),
         ],
         ...(query.order ? {order: [query.order.split(',')]}: {}),
         ...(query.offset ? {offset: Number(query.offset)}: {}),
@@ -407,72 +405,8 @@ module.exports = {
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
-    /*
-    function *separate_method() {
-      perf.push('separate');
+    yield join_method();
 
-      // See #1077. Super Admin can access all cars.
-      // But still we need car's group on UI
-      let opts = query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {};
-      opts.include = [
-        {
-          model: 'Organization',
-          as: 'organization',
-        },
-      ];
-      
-      if (query.order) {
-        opts.order = [query.order.split(',')];
-      }
-      if (query.offset) {
-        opts.offset = Number(query.offset);
-      }
-      if (query.limit) {
-        opts.limit = Number(query.limit);
-      }
-      if (Object.keys(searchObj).length) {
-        opts.where = searchObj;
-      }
-      let allCars = yield Car.find(opts);
-      perf.push("cars " + (new Date() - start));
-
-      let carsOfInterest = allCars.filter((row) => row.bookingId);
-
-      let bookingIdList = carsOfInterest.map((row) => row.bookingId);
-      let userIdList = carsOfInterest.map((row) => row.userId);
-      let carIdList = allCars.map((row) => row.id);
-
-      let bookingList = yield Booking.find({where: { id: { $in: bookingIdList } } });
-      perf.push("bookings " + (new Date() - start));
-      let userList = yield User.find({where: { id: { $in: userIdList } } });
-      perf.push("users " + (new Date() - start));
-      let groupList = yield GroupCar.find({where: { carId: { $in: carIdList } } });
-      perf.push("groups " + (new Date() - start));
-
-      let carMap = {};
-      let userMap = {};
-
-      allCars.forEach((row) => { 
-        carMap[row.id] = row; 
-        // there will be multipls groupCars ... see below.
-        carMap[row.id].tagList = [];
-      });
-      userList.forEach((row) => { userMap[row.id] = row; });
-
-      groupList.forEach((row) => { carMap[row.carId].tagList.push( row ); });
-      bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
-      allCars.forEach((row) => { row.user = userMap[row.userId]; });
-
-      cars = allCars;
-      perf.push("car " + (new Date() - start));
-    }
-    */
-
-    //if(Math.random() < 0.5) {
-      yield join_method();
-    //} else {
-    //yield separate_method();
-    //}
     if (!cars.length) {
       return cars;
     }
