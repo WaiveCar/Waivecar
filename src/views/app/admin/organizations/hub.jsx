@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {auth} from 'bento';
+import OrganizationResource from './organization-resource-table.jsx';
+import {auth, api} from 'bento';
 
 class Hub extends Component {
   constructor(props) {
@@ -8,10 +9,16 @@ class Hub extends Component {
   }
 
   componentDidMount() {
-    let {id} = this.props.params;
+    let {id, hubId} = this.props.params;
     if (!this._user.canSee('organization', {id})) {
       return this.props.history.replaceState({}, '/forbidden');
     }
+    api.get(`/locations/${hubId}`, (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(res);
+    });
   }
 
   render() {
