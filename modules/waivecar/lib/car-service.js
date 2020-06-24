@@ -373,28 +373,31 @@ module.exports = {
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
+      let include = [
+        {
+          model: 'GroupCar',
+          as :'tagList'
+        },
+        { 
+          model : 'User',
+          as: 'user'
+        },
+        { 
+          model : 'Booking',
+          as: 'currentBooking',
+          ...(query.incomplete ? {where: {status: {$not: 'completed'}}} : {}),
+        },
+        {
+          model: 'Organization',
+          as: 'organization',
+        },
+      ];
+      if (query.hubId) {
+        include.push({model: 'LocationCar', as: 'locationCars', where: {locationId: Number(query.hubId)}, required: true});
+      } 
       let q = {
         ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {}),
-        include: [
-          {
-            model: 'GroupCar',
-            as :'tagList'
-          },
-          { 
-            model : 'User',
-            as: 'user'
-          },
-          { 
-            model : 'Booking',
-            as: 'currentBooking',
-            ...(query.incomplete ? {where: {status: {$not: 'completed'}}} : {}),
-          },
-          {
-            model: 'Organization',
-            as: 'organization',
-          },
-          (query.hubId ? {model: 'LocationCar', as: 'locationCars', where: {hubId: Number(query.hubId)}, required: true} : {}),
-        ],
+        include,
         ...(query.order ? {order: [query.order.split(',')]}: {}),
         ...(query.offset ? {offset: Number(query.offset)}: {}),
         ...(query.limit ? {limit: Number(query.limit)}: {}),

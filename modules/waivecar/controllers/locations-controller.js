@@ -260,12 +260,12 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
 
   controller.addCars = function *(id) {
     let location = yield Location.findById(id);
-    yield location.addCars(this.payload); 
+    return yield location.addCars(this.payload); 
   }
 
   controller.removeCars = function *(id) {
     let location = yield Location.findById(id);
-    yield location.removeCars(this.payload); 
+    return yield location.removeCars(this.payload); 
   }
 
   return controller;

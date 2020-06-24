@@ -1,4 +1,5 @@
 'use strict';
+let error = Bento.Error;
 
 Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
   model.table = 'locations';
@@ -81,8 +82,8 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
 
   model.methods = {
     addCar: function* (car) {
-      let LocationCar = Bento.model('locationCar');
-      let current = yield LocationCar.find({where: {locationId: this.id, carId: car.id}});
+      let LocationCar = Bento.model('LocationCar');
+      let current = yield LocationCar.findOne({where: {locationId: this.id, carId: car.id}});
       if (!current) {
         let locationCar = new LocationCar({
           locationId: this.id,
@@ -100,8 +101,8 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
       } 
     },
     removeCar: function* (car) {
-      let LocationCar = Bento.model('locationCar');
-      let current = yield LocationCar.find({where: {locationId: this.id, carId: car.id}});
+      let LocationCar = Bento.model('LocationCar');
+      let current = yield LocationCar.findOne({where: {locationId: this.id, carId: car.id}});
       if (current) {
         yield current.delete();
       } else {
@@ -115,14 +116,15 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
       }
     },
     addCars: function* (payload) {
-      let Car = Bento.model(car);
+      let Car = Bento.model('Car');
       let {carList} = payload;
       let errs = [];
       for (let carId of carList) {
         let car = yield Car.findById(carId);
         try {
-          yield this.addUser(car);
+          yield this.addCar(car);
         } catch (e) {
+          console.log('e', e);
           errs.push(car.license);
         }
       }
@@ -142,7 +144,7 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
     removeCars: function* (payload) {
       let {carList} = payload;
       for (let carId of usersList) {
-        yield this.removeUser({id: carId});
+        yield this.removeCar({id: carId});
       }
       return this;
     },
