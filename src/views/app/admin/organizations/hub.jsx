@@ -21,12 +21,7 @@ class Hub extends Component {
     if (!this._user.canSee('organization', {id})) {
       return this.props.history.replaceState({}, '/forbidden');
     }
-    api.get(`/locations/${hubId}`, (err, res) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(res);
-    });
+    api.get(`/locations/${hubId}`, (err, hub) => this.setState({hub}));
   }
 
   render() {
@@ -39,7 +34,7 @@ class Hub extends Component {
             ref="cars-resource"
             resource={'cars'}
             resourceUrl={'carsWithBookings'}
-            queryOpts={'&incomplete=true'}
+            queryOpts={`&hubId=${hubId}`}
             organizationId={id}
             header={() => (
               <tr ref="sort">
