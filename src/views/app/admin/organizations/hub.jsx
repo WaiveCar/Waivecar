@@ -5,6 +5,35 @@ import OrganizationResource from './organization-resource-table.jsx';
 import {auth, api} from 'bento';
 import {snackbar} from 'bento-web';
 
+function SelectedList({list, word, ctx}) {
+  return (
+    <div>
+      <h4>Selected To {word}</h4>
+      {list.map((item, i) => (
+        <div key={i} className="row">
+          <div style={{padding: '10px 0'}} className="col-xs-6">
+            <Link to={`/cars/${item.id}`} target="_blank">
+              {item.license}
+            </Link>
+          </div>
+          <button
+            className="btn btn-link col-xs-6"
+            onClick={() =>
+              ctx.setState({
+                [`selectedTo${word}`]: list
+                  .slice(0, i)
+                  .concat(list.slice(i + 1)),
+              })
+            }>
+            {' '}
+            Unselect
+          </button>
+        </div>
+      ))}{' '}
+    </div>
+  );
+}
+
 class Hub extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +44,8 @@ class Hub extends Component {
       hubId,
       showAddCars: false,
       searchResults: [],
-      selected: [],
+      selectedToAdd: [],
+      selectedToRemove: [],
       carSearchWord: '',
     };
     this._user = auth.user();
@@ -50,16 +80,45 @@ class Hub extends Component {
   }
 
   addCars() {
+    let {selectedToAdd, hubId} = this.state;
+    api.post(
+      `/locations/${hubId}/addCars`,
+      {carList: selectedToAdd.map(c => c.id)},
+      (err, res) => {
+        if (err) {
+          snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+          return setTimeout(() => window.location.reload(), 2000);
+        }
+        this.setState(
+          {carSearchWork: '', searchResults: [], selectedToAdd: []},
+          () => window.location.reload(),
+        );
+      },
+    );
+  }
+
+  removeCars() {
     let {selected, hubId} = this.state;
-    api.post(`/locations/${hubId}/addCars`, {carList: selected.map(c => c.id)}, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: err.message,
-        });
-      }
-      this.setState({carSearchWork: '', searchResults: [], selected: []});
-    });
+    api.post(
+      `/locations/${hubId}/addCars`,
+      {carList: selected.map(c => c.id)},
+      (err, res) => {
+        if (err) {
+          snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+          return setTimeout(() => window.location.reload(), 2000);
+        }
+        this.setState(
+          {carSearchWork: '', searchResults: [], selected: []},
+          () => window.location.reload(),
+        );
+      },
+    );
   }
 
   render() {
@@ -69,7 +128,8 @@ class Hub extends Component {
       showAddCars,
       carSearchWord,
       searchResults,
-      selected,
+      selectedToAdd,
+      selectedToRemove,
     } = this.state;
     return (
       <div className="box">
@@ -83,6 +143,7 @@ class Hub extends Component {
           {showAddCars && (
             <div>
               <div>
+                <h4>Car Search</h4>
                 <div className="row" style={{marginTop: '10px'}}>
                   <input
                     onChange={e =>
@@ -111,11 +172,11 @@ class Hub extends Component {
                           className="btn btn-link col-xs-6"
                           onClick={() =>
                             this.setState({
-                              selected: !selected.find(
+                              selectedToAdd: !selectedToAdd.find(
                                 car => car.id === item.id,
                               )
-                                ? [...selected, item]
-                                : selected,
+                                ? [...selectedToAdd, item]
+                                : selectedToAdd,
                             })
                           }>
                           {' '}
@@ -124,31 +185,8 @@ class Hub extends Component {
                       </div>
                     ))
                   : ''}
-                {selected.length ? (
-                  <div>
-                    <h4>Selected Cars</h4>
-                    {selected.map((item, i) => (
-                      <div key={i} className="row">
-                        <div style={{padding: '10px 0'}} className="col-xs-6">
-                          <Link to={`/cars/${item.id}`} target="_blank">
-                            {item.license}
-                          </Link>
-                        </div>
-                        <button
-                          className="btn btn-link col-xs-6"
-                          onClick={() =>
-                            this.setState({
-                              selected: selected
-                                .slice(0, i)
-                                .concat(selected.slice(i + 1)),
-                            })
-                          }>
-                          {' '}
-                          Unselect
-                        </button>
-                      </div>
-                    ))}{' '}
-                  </div>
+                {selectedToAdd.length ? (
+                  <SelectedList list={selectedToAdd} word={'Add'} ctx={this} />
                 ) : (
                   ''
                 )}
@@ -168,6 +206,7 @@ class Hub extends Component {
             organizationId={id}
             header={() => (
               <tr ref="sort">
+                <th>Select</th>
                 <ThSort sort="id" value="Id" ctx={this.refs['cars-resource']} />
                 <ThSort
                   sort="license"
@@ -183,6 +222,9 @@ class Hub extends Component {
             )}
             row={car => (
               <tr key={car.id}>
+                <td>
+                  <input type="checkbox" />
+                </td>
                 <td>{car.id}</td>
                 <td>
                   <Link to={`/cars/${car.id}`}>{car.license}</Link>
@@ -192,6 +234,11 @@ class Hub extends Component {
             )}
           />
         </div>
+        {selectedToRemove ? (
+          <SelectedList list={selectedToRemove} word={'Remove'} ctx={this} />
+        ) : (
+          ''
+        )}
       </div>
     );
   }
