@@ -10,7 +10,7 @@ class Hub extends Component {
     super(props);
     let {id, hubId} = this.props.params;
     this.state = {
-      location: null,
+      hub: null,
       id,
       hubId,
       showAddCars: false,
@@ -30,13 +30,11 @@ class Hub extends Component {
   }
 
   carSearch() {
-    let {carSearchWord} = this.state;
+    let {carSearchWord, hub} = this.state;
     api.get(
       `/cars/search/?search=${carSearchWord}${
         this._user.organizations.length
-          ? `&organizationIds=[${this._user.organizations.map(
-              org => org.organizationId,
-            )}]`
+          ? `&organizationIds=[${hub.organizationId}]`
           : ''
       }`,
       (err, response) => {
@@ -49,6 +47,19 @@ class Hub extends Component {
         this.setState({searchResults: response});
       },
     );
+  }
+
+  addCars() {
+    let {selected, hubId} = this.state;
+    api.post(`/locations/${hubId}/addCars`, {carList: selected.map(c => c.id)}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: err.message,
+        });
+      }
+      this.setState({carSearchWork: '', searchResults: [], selected: []});
+    });
   }
 
   render() {
@@ -142,6 +153,11 @@ class Hub extends Component {
                   ''
                 )}
               </div>
+              <button
+                className="btn btn-primary"
+                onClick={() => this.addCars()}>
+                Add to hub
+              </button>
             </div>
           )}
           <OrganizationResource
