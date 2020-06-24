@@ -155,7 +155,7 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
     function relations(UserParking, GroupLocation, LocationCar) {
       this.hasOne(UserParking, {as: 'parking', foreignKey: 'locationId'});
       this.hasMany(GroupLocation, {as: 'tagList', foreignKey: 'locationId'});
-      this.hasMany(LocationCar, {as: 'car', foreignKey: 'locationId'});
+      this.hasMany(LocationCar, {as: 'locationCars'});
     },
   ];
 

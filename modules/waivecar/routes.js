@@ -92,6 +92,8 @@ Route.post('/locations', [ 'isAuthenticated', 'isAdmin', 'LocationsController@cr
 Route.get('/locations', 'LocationsController@index');
 Route.get('/locations/:id', 'LocationsController@show');
 Route.put('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@update' ]);
+Route.post('/locations/:id/addCars', ['isAuthenticated', 'isAdmin', 'LocationsController@addCars']);
+Route.post('/locations/:id/removeCars', ['isAuthenticated', 'isAdmin', 'LocationsController@removeCars']);
 Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@delete' ]);
 
 Route.get('/locations/dropoff', 'LocationsController@dropoff');

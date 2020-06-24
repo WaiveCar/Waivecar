@@ -368,7 +368,7 @@ module.exports = {
         }
       }
     }
-
+    console.log(query, query.hubId ? {model: 'LocationCar', as: 'hub'} : {});
     function *join_method() {
       perf.push('table join');
 
@@ -394,6 +394,8 @@ module.exports = {
             model: 'Organization',
             as: 'organization',
           },
+          //{model: 'LocationCar', as: 'hubs'},
+          //...(query.hubId ? {model: 'LocationCar', as: 'hub'} : {}),
         ],
         ...(query.order ? {order: [query.order.split(',')]}: {}),
         ...(query.offset ? {offset: Number(query.offset)}: {}),

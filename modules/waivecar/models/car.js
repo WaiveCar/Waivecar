@@ -671,7 +671,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'GroupCar',
     'File',
     'Organization',
-    function(User, Booking, GroupCar, File, Organization) {
+    'LocationCar',
+    function(User, Booking, GroupCar, File, Organization, LocationCar) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.belongsTo(Booking, { as : 'currentBooking', foreignKey : 'bookingId' });
       this.hasMany(Booking, { as : 'bookings' });
@@ -680,6 +681,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       this.belongsTo(File, { as : 'inspectionFile', foreignKey : 'inspectionFileId' });
       this.belongsTo(File, { as : 'videoFile', foreignKey : 'videoFileId' });
       this.belongsTo(Organization, { as: 'organization', foreignKey: 'organizationId' });
+      this.hasMany(LocationCar, {as: 'hubs', foreignKey: 'carId'});
     }
   ];
 

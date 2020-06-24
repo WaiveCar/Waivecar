@@ -32,7 +32,6 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
     return yield organizations.deleteStatement(statementId);
   };
   controller.hubs = function*(id) {
-    console.log(this.query);
     return yield organizations.hubs(id, this.query);
   };
   return controller;

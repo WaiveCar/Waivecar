@@ -7,30 +7,11 @@ Bento.Register.Model('LocationCar', 'sequelize', function(model, Sequelize) {
     locationId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
-      references : {
-        model : 'locations',
-        key   : 'id'
-      }
     },
-
     carId : {
       type       : Sequelize.STRING,
       allowNull  : false,
-      references : {
-        model : 'cars',
-        key   : 'id'
-      }
     },
-
-    latitude : {
-      type      : Sequelize.DECIMAL(10, 8),
-      allowNull : false
-    },
-
-    longitude : {
-      type      : Sequelize.DECIMAL(11, 8),
-      allowNull : false
-    }
   };
 
   model.relations = [
