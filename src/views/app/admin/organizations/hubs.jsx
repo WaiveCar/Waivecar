@@ -56,7 +56,11 @@ class Hubs extends Component {
             )}
             row={hub => (
               <tr key={hub.createdAt}>
-                <td>{hub.id}</td>
+                <td>
+                  <Link to={`/organizations/${orgId}/hubs/${hub.id}`}>
+                    {hub.id}
+                  </Link>
+                </td>
                 <td>{hub.name}</td>
                 <td>{hub.createdAt}</td>
               </tr>
