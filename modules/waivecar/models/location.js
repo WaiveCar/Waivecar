@@ -124,7 +124,6 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
         try {
           yield this.addCar(car);
         } catch (e) {
-          console.log('e', e);
           errs.push(car.license);
         }
       }
