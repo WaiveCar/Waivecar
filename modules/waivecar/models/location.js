@@ -142,7 +142,7 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
     },
     removeCars: function* (payload) {
       let {carList} = payload;
-      for (let carId of usersList) {
+      for (let carId of carList) {
         yield this.removeCar({id: carId});
       }
       return this;
