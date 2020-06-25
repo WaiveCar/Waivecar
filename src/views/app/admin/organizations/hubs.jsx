@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
-import {GMap, snackbar, api} from 'bento-web';
+import {GMap, snackbar} from 'bento-web';
 import OrganizationResource from './organization-resource-table';
 import ThSort from '../components/table-th';
 

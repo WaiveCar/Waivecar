@@ -3,9 +3,9 @@ import ThSort from '../components/table-th';
 import {Link} from 'react-router';
 import OrganizationResource from './organization-resource-table.jsx';
 import {auth, api} from 'bento';
-import {snackbar} from 'bento-web';
+import {snackbar, GMap} from 'bento-web';
 
-function SelectedList({list, word, ctx, unSelect}) {
+function SelectedList({list, word, ctx, unSelect, action}) {
   return (
     <div>
       <h4 style={{marginTop: '2rem'}}>Selected To {word}</h4>
@@ -26,6 +26,9 @@ function SelectedList({list, word, ctx, unSelect}) {
           </div>
         ))}{' '}
       </div>
+      <button className="btn btn-primary" onClick={() => action()}>
+        {word} cars
+      </button>
     </div>
   );
 }
@@ -57,7 +60,6 @@ class Hub extends Component {
 
   carSearch() {
     let {carSearchWord, hub} = this.state;
-    console.log(hub.organizationId);
     api.get(
       `/cars/search/?search=${carSearchWord}&organizationIds=[${hub.organizationId}]`,
       (err, response) => {
@@ -94,10 +96,10 @@ class Hub extends Component {
   }
 
   removeCars() {
-    let {selected, hubId} = this.state;
+    let {selectedCurrent, hubId} = this.state;
     api.post(
-      `/locations/${hubId}/addCars`,
-      {carList: selected.map(c => c.id)},
+      `/locations/${hubId}/removeCars`,
+      {carList: selectedCurrent.map(c => c.id)},
       (err, res) => {
         if (err) {
           snackbar.notify({
@@ -127,68 +129,152 @@ class Hub extends Component {
       searchResults,
       selectedToAdd,
       selectedCurrent,
+      hub,
     } = this.state;
     return (
-      <div className="box">
-        <h3></h3>
-        <div className="box-content">
-          <button
-            className="btn btn-primary"
-            onClick={() => this.setState({showAddCars: !showAddCars})}>
-            {!showAddCars ? 'Add Cars' : 'hide'}
-          </button>
-          {showAddCars && (
-            <div>
-              <div>
-                <h4 style={{marginTop: '2rem'}}>Car Search</h4>
-                <div
-                  className="row"
-                  style={{margin: '2rem', marginBottom: '0.5rem'}}>
-                  <input
-                    onChange={e =>
-                      this.setState({carSearchWord: e.target.value})
-                    }
-                    value={carSearchWord}
-                    style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                    className="col-xs-6"
-                    placeholder="Car Name"
+      hub && (
+        <div className="box">
+          <h3>{hub.name}</h3>
+          <div className="box-content">
+            <div className="row" style={{marginBottom: '1.5rem'}}>
+              <div className="col-xs-12">
+                <div className="map-dynamic">
+                  <GMap
+                    markerIcon={'/images/map/active-waivecar.svg'}
+                    markers={[hub]}
+                    orgId={hub.organizationId}
+                    forOrg
                   />
-                  <button
-                    className="btn btn-primary btn-sm col-xs-6"
-                    onClick={() => this.carSearch()}>
-                    Find Car
-                  </button>
                 </div>
-                {searchResults.length
-                  ? searchResults.map((item, i) => (
-                      <div
-                        key={i}
-                        className="row"
-                        style={{marginLeft: '2rem', marginRight: '2rem'}}>
-                        <div style={{padding: '10px 0'}} className="col-xs-6">
-                          <Link to={`/cars/${item.id}`} target="_blank">
-                            {item.license}
-                          </Link>
+              </div>
+            </div>
+            <h4 style={{marginTop: '1rem'}}>Current Cars</h4>
+            <OrganizationResource
+              ref="cars-resource"
+              resource={'cars'}
+              resourceUrl={'carsWithBookings'}
+              queryOpts={`&hubId=${hubId}`}
+              organizationId={id}
+              header={() => (
+                <tr ref="sort">
+                  <ThSort
+                    sort="id"
+                    value="Id"
+                    ctx={this.refs['cars-resource']}
+                  />
+                  <ThSort
+                    sort="license"
+                    value="Name"
+                    ctx={this.refs['cars-resource']}
+                  />
+                  <ThSort
+                    sort="maintenanceDueIn"
+                    value="Maintenance Due In"
+                    ctx={this.refs['cars-resource']}
+                  />
+                  <th>Select</th>
+                </tr>
+              )}
+              row={item => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>
+                    <Link to={`/cars/${item.id}`}>{item.license}</Link>
+                  </td>
+                  <td>{item.maintenanceDueIn} miles</td>
+                  <td>
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() => {
+                        let {selectedCurrent} = this.state;
+                        this.setState({
+                          selectedCurrent: !selectedCurrent.find(
+                            car => car.id === item.id,
+                          )
+                            ? [...selectedCurrent, item]
+                            : selectedCurrent,
+                        });
+                      }}>
+                      Click
+                    </button>
+                  </td>
+                </tr>
+              )}
+            />
+            {selectedCurrent.length ? (
+              <SelectedList
+                list={selectedCurrent}
+                word={'Remove'}
+                ctx={this}
+                unSelect={i => {
+                  this.setState({
+                    selectedCurrent: selectedCurrent
+                      .slice(0, i)
+                      .concat(selectedCurrent.slice(i + 1)),
+                  });
+                }}
+                action={() => this.removeCars()}
+              />
+            ) : (
+              ''
+            )}
+            <button
+              className="btn btn-primary"
+              style={{marginTop: '1rem'}}
+              onClick={() => this.setState({showAddCars: !showAddCars})}>
+              {!showAddCars ? 'Add Cars' : 'hide'}
+            </button>
+            {showAddCars && (
+              <div>
+                <div>
+                  <h4 style={{marginTop: '2rem'}}>Car Search</h4>
+                  <div
+                    className="row"
+                    style={{margin: '2rem', marginBottom: '0.5rem'}}>
+                    <input
+                      onChange={e =>
+                        this.setState({carSearchWord: e.target.value})
+                      }
+                      value={carSearchWord}
+                      style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                      className="col-xs-6"
+                      placeholder="Car Name"
+                    />
+                    <button
+                      className="btn btn-primary btn-sm col-xs-6"
+                      onClick={() => this.carSearch()}>
+                      Find Car
+                    </button>
+                  </div>
+                  {searchResults.length
+                    ? searchResults.map((item, i) => (
+                        <div
+                          key={i}
+                          className="row"
+                          style={{marginLeft: '2rem', marginRight: '2rem'}}>
+                          <div style={{padding: '10px 0'}} className="col-xs-6">
+                            <Link to={`/cars/${item.id}`} target="_blank">
+                              {item.license}
+                            </Link>
+                          </div>
+                          <button
+                            className="btn btn-link col-xs-6"
+                            onClick={() =>
+                              this.setState({
+                                selectedToAdd: !selectedToAdd.find(
+                                  car => car.id === item.id,
+                                )
+                                  ? [...selectedToAdd, item]
+                                  : selectedToAdd,
+                              })
+                            }>
+                            {' '}
+                            Select
+                          </button>
                         </div>
-                        <button
-                          className="btn btn-link col-xs-6"
-                          onClick={() =>
-                            this.setState({
-                              selectedToAdd: !selectedToAdd.find(
-                                car => car.id === item.id,
-                              )
-                                ? [...selectedToAdd, item]
-                                : selectedToAdd,
-                            })
-                          }>
-                          {' '}
-                          Select
-                        </button>
-                      </div>
-                    ))
-                  : ''}
-                {selectedToAdd.length ? (
-                  <div>
+                      ))
+                    : ''}
+                  {selectedToAdd.length ? (
                     <SelectedList
                       list={selectedToAdd}
                       word={'Add'}
@@ -200,86 +286,17 @@ class Hub extends Component {
                             .concat(selectedToAdd.slice(i + 1)),
                         });
                       }}
+                      action={() => this.addCars()}
                     />
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => this.addCars()}>
-                      Add to hub
-                    </button>
-                  </div>
-                ) : (
-                  ''
-                )}
+                  ) : (
+                    ''
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-          <h4 style={{marginTop: '1rem'}}>This Hub's Car</h4>
-          <OrganizationResource
-            ref="cars-resource"
-            resource={'cars'}
-            resourceUrl={'carsWithBookings'}
-            queryOpts={`&hubId=${hubId}`}
-            organizationId={id}
-            header={() => (
-              <tr ref="sort">
-                <ThSort sort="id" value="Id" ctx={this.refs['cars-resource']} />
-                <ThSort
-                  sort="license"
-                  value="Name"
-                  ctx={this.refs['cars-resource']}
-                />
-                <ThSort
-                  sort="maintenanceDueIn"
-                  value="Maintenance Due In"
-                  ctx={this.refs['cars-resource']}
-                />
-                <th>Select</th>
-              </tr>
             )}
-            row={item => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>
-                  <Link to={`/cars/${item.id}`}>{item.license}</Link>
-                </td>
-                <td>{item.maintenanceDueIn} miles</td>
-                <td>
-                  <button
-                    className="btn btn-link col-xs-6"
-                    onClick={() => {
-                      let {selectedCurrent} = this.state;
-                      this.setState({
-                        selectedCurrent: !selectedCurrent.find(
-                          car => car.id === item.id,
-                        )
-                          ? [...selectedCurrent, item]
-                          : selectedCurrent,
-                      });
-                    }}>
-                    Click
-                  </button>
-                </td>
-              </tr>
-            )}
-          />
-          {selectedCurrent.length ? (
-            <SelectedList
-              list={selectedCurrent}
-              word={'Remove'}
-              ctx={this}
-              unSelect={i => {
-                this.setState({
-                  selectedCurrent: selectedCurrent
-                    .slice(0, i)
-                    .concat(selectedCurrent.slice(i + 1)),
-                });
-              }}
-            />
-          ) : (
-            ''
-          )}
+          </div>
         </div>
-      </div>
+      )
     );
   }
 }
