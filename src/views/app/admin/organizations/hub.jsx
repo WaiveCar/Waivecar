@@ -7,8 +7,8 @@ import {snackbar} from 'bento-web';
 
 function SelectedList({list, word, ctx, unSelect}) {
   return (
-    <div>
-      <h4>Selected To {word}</h4>
+    <div style={{margin: '3rem', marginBottom: '0.5rem'}}>
+      <h4 style={{marginTop: '2rem'}}>Selected To {word}</h4>
       {list.map((item, i) => (
         <div key={i} className="row">
           <div style={{padding: '10px 0'}} className="col-xs-6">
@@ -139,8 +139,10 @@ class Hub extends Component {
           {showAddCars && (
             <div>
               <div>
-                <h4>Car Search</h4>
-                <div className="row" style={{marginTop: '10px'}}>
+                <h4 style={{marginTop: '2rem'}}>Car Search</h4>
+                <div
+                  className="row"
+                  style={{margin: '2rem', marginBottom: '0.5rem'}}>
                   <input
                     onChange={e =>
                       this.setState({carSearchWord: e.target.value})
@@ -158,7 +160,10 @@ class Hub extends Component {
                 </div>
                 {searchResults.length
                   ? searchResults.map((item, i) => (
-                      <div key={i} className="row">
+                      <div
+                        key={i}
+                        className="row"
+                        style={{marginLeft: '2rem', marginRight: '2rem'}}>
                         <div style={{padding: '10px 0'}} className="col-xs-6">
                           <Link to={`/cars/${item.id}`} target="_blank">
                             {item.license}
