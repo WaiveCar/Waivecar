@@ -234,18 +234,21 @@ class Hub extends Component {
                   <Link to={`/cars/${item.id}`}>{item.license}</Link>
                 </td>
                 <td>{item.maintenanceDueIn} miles</td>
-                <td
-                  onClick={() => {
-                    let {selectedCurrent} = this.state
-                    this.setState({
-                      selectedCurrent: !selectedCurrent.find(
-                        car => car.id === item.id,
-                      )
-                        ? [...selectedCurrent, item]
-                        : selectedCurrent,
-                    });
-                  }}>
-                  x
+                <td>
+                  <button
+                    className="btn btn-link col-xs-6"
+                    onClick={() => {
+                      let {selectedCurrent} = this.state;
+                      this.setState({
+                        selectedCurrent: !selectedCurrent.find(
+                          car => car.id === item.id,
+                        )
+                          ? [...selectedCurrent, item]
+                          : selectedCurrent,
+                      });
+                    }}>
+                    Click
+                  </button>
                 </td>
               </tr>
             )}
