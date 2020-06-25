@@ -5,7 +5,7 @@ import OrganizationResource from './organization-resource-table.jsx';
 import {auth, api} from 'bento';
 import {snackbar} from 'bento-web';
 
-function SelectedList({list, word, ctx}) {
+function SelectedList({list, word, ctx, unSelect}) {
   return (
     <div>
       <h4>Selected To {word}</h4>
@@ -16,15 +16,7 @@ function SelectedList({list, word, ctx}) {
               {item.license}
             </Link>
           </div>
-          <button
-            className="btn btn-link col-xs-6"
-            onClick={() =>
-              ctx.setState({
-                [`selectedTo${word}`]: list
-                  .slice(0, i)
-                  .concat(list.slice(i + 1)),
-              })
-            }>
+          <button className="btn btn-link col-xs-6" onClick={() => unSelect(i)}>
             {' '}
             Unselect
           </button>
@@ -45,7 +37,7 @@ class Hub extends Component {
       showAddCars: false,
       searchResults: [],
       selectedToAdd: [],
-      selectedToRemove: [],
+      selectedCurrent: [],
       carSearchWord: '',
     };
     this._user = auth.user();
@@ -121,6 +113,10 @@ class Hub extends Component {
     );
   }
 
+  toggleForDelete(i) {
+    let {toDelete} = this.state;
+  }
+
   render() {
     let {
       id,
@@ -129,7 +125,7 @@ class Hub extends Component {
       carSearchWord,
       searchResults,
       selectedToAdd,
-      selectedToRemove,
+      selectedCurrent,
     } = this.state;
     return (
       <div className="box">
@@ -186,7 +182,18 @@ class Hub extends Component {
                     ))
                   : ''}
                 {selectedToAdd.length ? (
-                  <SelectedList list={selectedToAdd} word={'Add'} ctx={this} />
+                  <SelectedList
+                    list={selectedToAdd}
+                    word={'Add'}
+                    ctx={this}
+                    unSelect={i => {
+                      this.setState({
+                        selectedToAdd: selectedToAdd
+                          .slice(0, i)
+                          .concat(selectedToAdd.slice(i + 1)),
+                      });
+                    }}
+                  />
                 ) : (
                   ''
                 )}
@@ -206,7 +213,6 @@ class Hub extends Component {
             organizationId={id}
             header={() => (
               <tr ref="sort">
-                <th>Select</th>
                 <ThSort sort="id" value="Id" ctx={this.refs['cars-resource']} />
                 <ThSort
                   sort="license"
@@ -218,27 +224,49 @@ class Hub extends Component {
                   value="Maintenance Due In"
                   ctx={this.refs['cars-resource']}
                 />
+                <th>Select</th>
               </tr>
             )}
-            row={car => (
-              <tr key={car.id}>
+            row={item => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
                 <td>
-                  <input type="checkbox" />
+                  <Link to={`/cars/${item.id}`}>{item.license}</Link>
                 </td>
-                <td>{car.id}</td>
-                <td>
-                  <Link to={`/cars/${car.id}`}>{car.license}</Link>
+                <td>{item.maintenanceDueIn} miles</td>
+                <td
+                  onClick={() => {
+                    let {selectedCurrent} = this.state
+                    this.setState({
+                      selectedCurrent: !selectedCurrent.find(
+                        car => car.id === item.id,
+                      )
+                        ? [...selectedCurrent, item]
+                        : selectedCurrent,
+                    });
+                  }}>
+                  x
                 </td>
-                <td>{car.maintenanceDueIn} miles</td>
               </tr>
             )}
           />
+          {selectedCurrent.length ? (
+            <SelectedList
+              list={selectedCurrent}
+              word={'Remove'}
+              ctx={this}
+              unSelect={i => {
+                this.setState({
+                  selectedCurrent: selectedCurrent
+                    .slice(0, i)
+                    .concat(selectedCurrent.slice(i + 1)),
+                });
+              }}
+            />
+          ) : (
+            ''
+          )}
         </div>
-        {selectedToRemove ? (
-          <SelectedList list={selectedToRemove} word={'Remove'} ctx={this} />
-        ) : (
-          ''
-        )}
       </div>
     );
   }
