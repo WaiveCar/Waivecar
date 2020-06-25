@@ -7,21 +7,25 @@ import {snackbar} from 'bento-web';
 
 function SelectedList({list, word, ctx, unSelect}) {
   return (
-    <div style={{margin: '3rem', marginBottom: '0.5rem'}}>
+    <div>
       <h4 style={{marginTop: '2rem'}}>Selected To {word}</h4>
-      {list.map((item, i) => (
-        <div key={i} className="row">
-          <div style={{padding: '10px 0'}} className="col-xs-6">
-            <Link to={`/cars/${item.id}`} target="_blank">
-              {item.license}
-            </Link>
+      <div style={{marginLeft: '3rem', marginRight: '3rem'}}>
+        {list.map((item, i) => (
+          <div key={i} className="row">
+            <div style={{padding: '10px 0'}} className="col-xs-6">
+              <Link to={`/cars/${item.id}`} target="_blank">
+                {item.license}
+              </Link>
+            </div>
+            <button
+              className="btn btn-link col-xs-6"
+              onClick={() => unSelect(i)}>
+              {' '}
+              Unselect
+            </button>
           </div>
-          <button className="btn btn-link col-xs-6" onClick={() => unSelect(i)}>
-            {' '}
-            Unselect
-          </button>
-        </div>
-      ))}{' '}
+        ))}{' '}
+      </div>
     </div>
   );
 }
@@ -53,12 +57,9 @@ class Hub extends Component {
 
   carSearch() {
     let {carSearchWord, hub} = this.state;
+    console.log(hub.organizationId);
     api.get(
-      `/cars/search/?search=${carSearchWord}${
-        this._user.organizations.length
-          ? `&organizationIds=[${hub.organizationId}]`
-          : ''
-      }`,
+      `/cars/search/?search=${carSearchWord}&organizationIds=[${hub.organizationId}]`,
       (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -187,29 +188,32 @@ class Hub extends Component {
                     ))
                   : ''}
                 {selectedToAdd.length ? (
-                  <SelectedList
-                    list={selectedToAdd}
-                    word={'Add'}
-                    ctx={this}
-                    unSelect={i => {
-                      this.setState({
-                        selectedToAdd: selectedToAdd
-                          .slice(0, i)
-                          .concat(selectedToAdd.slice(i + 1)),
-                      });
-                    }}
-                  />
+                  <div>
+                    <SelectedList
+                      list={selectedToAdd}
+                      word={'Add'}
+                      ctx={this}
+                      unSelect={i => {
+                        this.setState({
+                          selectedToAdd: selectedToAdd
+                            .slice(0, i)
+                            .concat(selectedToAdd.slice(i + 1)),
+                        });
+                      }}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => this.addCars()}>
+                      Add to hub
+                    </button>
+                  </div>
                 ) : (
                   ''
                 )}
               </div>
-              <button
-                className="btn btn-primary"
-                onClick={() => this.addCars()}>
-                Add to hub
-              </button>
             </div>
           )}
+          <h4 style={{marginTop: '1rem'}}>This Hub's Car</h4>
           <OrganizationResource
             ref="cars-resource"
             resource={'cars'}
