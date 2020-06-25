@@ -45,6 +45,7 @@ class Hub extends Component {
       searchResults: [],
       selectedToAdd: [],
       selectedCurrent: [],
+      currentCars: [],
       carSearchWord: '',
     };
     this._user = auth.user();
@@ -130,6 +131,7 @@ class Hub extends Component {
       selectedToAdd,
       selectedCurrent,
       hub,
+      currentCars,
     } = this.state;
     return (
       hub && (
@@ -140,8 +142,14 @@ class Hub extends Component {
               <div className="col-xs-12">
                 <div className="map-dynamic">
                   <GMap
-                    markerIcon={'/images/map/active-waivecar.svg'}
-                    markers={[hub]}
+                    markerIcon={'/images/map/icon-homebase.svg'}
+                    markers={[
+                      hub,
+                      ...currentCars.map(car => {
+                        car.type = 'start';
+                        return car;
+                      }),
+                    ]}
                     orgId={hub.organizationId}
                     forOrg
                   />
@@ -155,6 +163,7 @@ class Hub extends Component {
               resourceUrl={'carsWithBookings'}
               queryOpts={`&hubId=${hubId}`}
               organizationId={id}
+              updateParent={data => this.setState({currentCars: data})}
               header={() => (
                 <tr ref="sort">
                   <ThSort
@@ -167,11 +176,6 @@ class Hub extends Component {
                     value="Name"
                     ctx={this.refs['cars-resource']}
                   />
-                  <ThSort
-                    sort="maintenanceDueIn"
-                    value="Maintenance Due In"
-                    ctx={this.refs['cars-resource']}
-                  />
                   <th>Select</th>
                 </tr>
               )}
@@ -181,7 +185,6 @@ class Hub extends Component {
                   <td>
                     <Link to={`/cars/${item.id}`}>{item.license}</Link>
                   </td>
-                  <td>{item.maintenanceDueIn} miles</td>
                   <td>
                     <button
                       className="btn btn-link col-xs-6"
