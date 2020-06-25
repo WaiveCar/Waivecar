@@ -117,10 +117,6 @@ class Hub extends Component {
     );
   }
 
-  toggleForDelete(i) {
-    let {toDelete} = this.state;
-  }
-
   render() {
     let {
       id,

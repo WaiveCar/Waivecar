@@ -5,7 +5,7 @@ import {Link} from 'react-router';
 
 let buttons = [
   {
-    value: 'Add User',
+    value: 'Add Users',
     type: 'submit',
     class: 'btn btn-primary btn-profile-submit',
   },
@@ -154,7 +154,7 @@ class AddUser extends Component {
     } = this.state;
     return (
       <div className="box">
-        <h3 style={{marginBottom: '1rem'}}>Add a User</h3>
+        <h3 style={{marginBottom: '1rem'}}>Add Users</h3>
         <div className="box-content">
           {this._user.organizations.length ? (
             <div className="row">
