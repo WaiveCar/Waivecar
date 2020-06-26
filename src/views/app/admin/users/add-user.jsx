@@ -160,7 +160,7 @@ class AddUser extends Component {
             <div className="row">
               <h4>Organizations (for all new users)</h4>
               {this._user.organizations.map((org, i) => (
-                <div key={i}>
+                <div key={i} style={{marginLeft: '3rem'}}>
                   <input
                     onChange={() =>
                       this.toggleItem('Organizations', org.organization)
@@ -211,7 +211,7 @@ class AddUser extends Component {
                   </div>
                 ))}
               </div>
-              <h4 style={{marginTop: '10px'}}>Selected</h4>
+              <h4 style={{marginTop: '1rem'}}>Selected</h4>
               <div style={{margin: '2rem', marginTop: 0}}>
                 {currentOrganizations.length ? (
                   currentOrganizations.map((each, i) => (

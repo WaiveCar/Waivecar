@@ -16,7 +16,9 @@ class HubsCreate extends Component {
   orgSearch() {
     let {orgSearchWord, currentOrganization} = this.state;
     api.get(
-      `/organizations/?name=${orgSearchWord}${currentOrganization ? `&excluded=[${currentOrganization.id}]` : ''}`,
+      `/organizations/?name=${orgSearchWord}${
+        currentOrganization ? `&excluded=[${currentOrganization.id}]` : ''
+      }`,
       (err, res) => {
         if (err) {
           return snackbar.notify({
@@ -36,10 +38,10 @@ class HubsCreate extends Component {
         <h3 style={{marginBottom: '1rem'}}>Add A Station</h3>
         <div className="box-content">
           {this._user.organizations.length ? (
-            <div className="row">
+            <div>
               <h4>Organization</h4>
               {this._user.organizations.map((org, i) => (
-                <div key={i}>
+                <div key={i} style={{marginLeft: '2rem'}}>
                   <input
                     onChange={() =>
                       this.setState({currentOrganization: org.organization})
@@ -60,39 +62,52 @@ class HubsCreate extends Component {
           ) : (
             <div className="row">
               <h4>Search for Organizations</h4>
-              <div className="row" style={{marginTop: '10px'}}>
-                <input
-                  onChange={e => this.setState({orgSearchWord: e.target.value})}
-                  value={orgSearchWord}
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  className="col-xs-6"
-                  placeholder="Organizations Name"
-                />
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.orgSearch()}>
-                  Find Organization
-                </button>
-              </div>
-              {searchResults.map((item, i) => (
-                <div key={i} className="row">
-                  <div style={{padding: '10px 0'}} className="col-xs-6">
-                    <Link to={`/organizations/${item.id}`} target="_blank">
-                      {item.name}
-                    </Link>
-                  </div>
+              <div style={{marginLeft: '2rem', marginRight: '2rem'}}>
+                <div
+                  className="row"
+                  style={{
+                    marginTop: '10px',
+                  }}>
+                  <input
+                    onChange={e =>
+                      this.setState({orgSearchWord: e.target.value})
+                    }
+                    value={orgSearchWord}
+                    style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                    className="col-xs-6"
+                    placeholder="Organizations Name"
+                  />
                   <button
-                    className="btn btn-link col-xs-6"
-                    onClick={() => this.setState({currentOrganization: item})}>
-                    Add
+                    className="btn btn-primary btn-sm col-xs-6"
+                    onClick={() => this.orgSearch()}>
+                    Find Organization
                   </button>
                 </div>
-              ))}
-              {currentOrganization && (
-                <h4 style={{marginTop: '10px'}}>
-                  Selected: {currentOrganization.name}
-                </h4>
-              )}
+                {searchResults.map((item, i) => (
+                  <div
+                    key={i}
+                    className="row"
+                    style={{marginLeft: '2rem', marginRight: '2rem'}}>
+                    <div style={{padding: '10px 0'}} className="col-xs-6">
+                      <Link to={`/organizations/${item.id}`} target="_blank">
+                        {item.name}
+                      </Link>
+                    </div>
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() =>
+                        this.setState({currentOrganization: item})
+                      }>
+                      Add
+                    </button>
+                  </div>
+                ))}
+                {currentOrganization && (
+                  <h4 style={{marginTop: '10px'}}>
+                    Selected: {currentOrganization.name}
+                  </h4>
+                )}
+              </div>
             </div>
           )}
         </div>
