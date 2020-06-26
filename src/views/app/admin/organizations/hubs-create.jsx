@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {api, auth} from 'bento';
 
 class HubsCreate extends Component {
@@ -15,11 +16,7 @@ class HubsCreate extends Component {
   orgSearch() {
     let {orgSearchWord, currentOrganization} = this.state;
     api.get(
-      `/organizations/?name=${orgSearchWord}${
-        currentOrganizations.length
-          ? `&excluded=[${currentOrganizations.map(org => org.id)}]`
-          : ''
-      }`,
+      `/organizations/?name=${orgSearchWord}${currentOrganization ? `&excluded=[${currentOrganization.id}]` : ''}`,
       (err, res) => {
         if (err) {
           return snackbar.notify({
@@ -48,7 +45,10 @@ class HubsCreate extends Component {
                       this.setState({currentOrganization: org.organization})
                     }
                     type={'radio'}
-                    checked={currentOrganization && (org.organizationId === currentOrganization.id)}
+                    checked={
+                      currentOrganization &&
+                      org.organizationId === currentOrganization.id
+                    }
                     name={`org-${i}`}
                     id={`org-${i}`}
                     style={{verticalAlign: 'middle', marginRight: '5px'}}
@@ -83,32 +83,16 @@ class HubsCreate extends Component {
                   </div>
                   <button
                     className="btn btn-link col-xs-6"
-                    onClick={() => this.addOrg(item)}>
+                    onClick={() => this.setState({currentOrganization: item})}>
                     Add
                   </button>
                 </div>
               ))}
-              <h4 style={{marginTop: '10px'}}>Selected</h4>
-              <div>
-                {currentOrganizations.length ? (
-                  currentOrganizations.map((each, i) => (
-                    <div key={i} className="row">
-                      <div style={{padding: '10px 0'}} className="col-xs-6">
-                        <Link to={`/organizations/${each.id}`} target="_blank">
-                          {each.name}
-                        </Link>
-                      </div>
-                      <button
-                        className="btn btn-link col-xs-6"
-                        onClick={() => this.toggleItem('Organizations', each)}>
-                        Unselect
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div>None Selected</div>
-                )}
-              </div>
+              {currentOrganization && (
+                <h4 style={{marginTop: '10px'}}>
+                  Selected: {currentOrganization.name}
+                </h4>
+              )}
             </div>
           )}
         </div>

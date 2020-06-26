@@ -177,36 +177,42 @@ class AddUser extends Component {
           ) : (
             <div className="row">
               <h4>Search for Organizations</h4>
-              <div className="row" style={{marginTop: '10px'}}>
-                <input
-                  onChange={e => this.setState({orgSearchWord: e.target.value})}
-                  value={orgSearchWord}
-                  style={{marginTop: '1px', padding: '2px', height: '40px'}}
-                  className="col-xs-6"
-                  placeholder="Organizations Name"
-                />
-                <button
-                  className="btn btn-primary btn-sm col-xs-6"
-                  onClick={() => this.orgSearch()}>
-                  Find Organization
-                </button>
-              </div>
-              {searchResults.map((item, i) => (
-                <div key={i} className="row">
-                  <div style={{padding: '10px 0'}} className="col-xs-6">
-                    <Link to={`/organizations/${item.id}`} target="_blank">
-                      {item.name}
-                    </Link>
-                  </div>
+              <div style={{margin: '2rem', marginBottom: 0}}>
+                <div className="row" style={{marginTop: '10px'}}>
+                  <input
+                    onChange={e =>
+                      this.setState({orgSearchWord: e.target.value})
+                    }
+                    value={orgSearchWord}
+                    style={{marginTop: '1px', padding: '2px', height: '40px'}}
+                    className="col-xs-6"
+                    placeholder="Organizations Name"
+                  />
                   <button
-                    className="btn btn-link col-xs-6"
-                    onClick={() => this.addOrg(item)}>
-                    Add
+                    className="btn btn-primary btn-sm col-xs-6"
+                    onClick={() => this.orgSearch()}>
+                    Find Organization
                   </button>
                 </div>
-              ))}
+              </div>
+              <div style={{margin: '2rem', marginTop: 0}}>
+                {searchResults.map((item, i) => (
+                  <div key={i} className="row">
+                    <div style={{padding: '10px 0'}} className="col-xs-6">
+                      <Link to={`/organizations/${item.id}`} target="_blank">
+                        {item.name}
+                      </Link>
+                    </div>
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() => this.addOrg(item)}>
+                      Add
+                    </button>
+                  </div>
+                ))}
+              </div>
               <h4 style={{marginTop: '10px'}}>Selected</h4>
-              <div>
+              <div style={{margin: '2rem', marginTop: 0}}>
                 {currentOrganizations.length ? (
                   currentOrganizations.map((each, i) => (
                     <div key={i} className="row">
