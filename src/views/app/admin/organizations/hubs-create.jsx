@@ -1,6 +1,15 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api, auth} from 'bento';
+import {Form} from 'bento-web';
+
+let buttons = [
+  {
+    value: 'Create Hub',
+    type: 'submit',
+    class: 'btn btn-primary btn-profile-submit',
+  },
+];
 
 class HubsCreate extends Component {
   constructor(props) {
@@ -35,7 +44,7 @@ class HubsCreate extends Component {
     let {orgSearchWord, currentOrganization, searchResults} = this.state;
     return (
       <div className="box">
-        <h3 style={{marginBottom: '1rem'}}>Add A Station</h3>
+        <h3 style={{marginBottom: '1rem'}}>Add A Hub</h3>
         <div className="box-content">
           {this._user.organizations.length ? (
             <div>
@@ -110,6 +119,15 @@ class HubsCreate extends Component {
               </div>
             </div>
           )}
+          <div className="box-content">
+            <Form
+              ref="createStatement"
+              className="bento-form-static"
+              fields={require('./hub-form')}
+              buttons={buttons}
+              submit={e => this.createStatement(e)}
+            />
+          </div>
         </div>
       </div>
     );
