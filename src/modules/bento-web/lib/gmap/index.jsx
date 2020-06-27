@@ -43,6 +43,15 @@ module.exports = class GMap extends React.Component {
     };
 
     this.map = new google.maps.Map(ReactDOM.findDOMNode(this.refs.map), mapConfig);
+    /*
+    google.maps.event.addDomListener(this.refs.map, 'click', (e) => {
+      this.addMarker(e)
+    });
+    */
+    this.map.addListener('click', (e) => {
+      this.addMarker(e.latLng)
+    });
+
     if (this.props.markers) {
       this.prepareMarkers(this.props.markers);
     }
@@ -338,10 +347,10 @@ module.exports = class GMap extends React.Component {
     };
   }
 
-  addMarker(location) {
+  addMarker(latLng) {
     let marker = new google.maps.Marker({
-      position: location,
-      map: this.refs.map,
+      position: latLng,
+      map: this.map,
     });
     console.log(marker)
   }
@@ -349,7 +358,7 @@ module.exports = class GMap extends React.Component {
   render() {
     return (
       <div className="map-wrapper">
-        <div ref="map" className="map-container" onClick={(e) => addMarker(e.latLng)}/>
+        <div ref="map" className="map-container" />
       </div>
     );
   }
