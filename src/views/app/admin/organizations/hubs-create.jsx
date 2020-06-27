@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api, auth} from 'bento';
-import {Form} from 'bento-web';
+import {Form, GMap} from 'bento-web';
 
 let buttons = [
   {
@@ -18,6 +18,11 @@ class HubsCreate extends Component {
       orgSearchWord: '',
       currentOrganization: null,
       searchResults: [],
+      addToSubmit: {
+        type: 'hub',
+        latitude: null,
+        longitude: null,
+      },
     };
     this._user = auth.user();
   }
@@ -40,12 +45,27 @@ class HubsCreate extends Component {
     );
   }
 
+  createHub(e) {
+    e.preventDefault();
+  }
+
   render() {
     let {orgSearchWord, currentOrganization, searchResults} = this.state;
     return (
       <div className="box">
         <h3 style={{marginBottom: '1rem'}}>Add A Hub</h3>
         <div className="box-content">
+          <h4>Location</h4>
+          <div className="row" style={{marginBottom: '1.5rem'}}>
+            <div className="col-xs-12">
+              <div className="map-dynamic">
+                <GMap
+                  markerIcon={'/images/map/icon-homebase.svg'}
+                  markers={[]}
+                />
+              </div>
+            </div>
+          </div>
           {this._user.organizations.length ? (
             <div>
               <h4>Organization</h4>
@@ -125,7 +145,7 @@ class HubsCreate extends Component {
               className="bento-form-static"
               fields={require('./hub-form')}
               buttons={buttons}
-              submit={e => this.createStatement(e)}
+              submit={e => this.createHub(e)}
             />
           </div>
         </div>

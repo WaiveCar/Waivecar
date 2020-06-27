@@ -338,10 +338,18 @@ module.exports = class GMap extends React.Component {
     };
   }
 
+  addMarker(location) {
+    let marker = new google.maps.Marker({
+      position: location,
+      map: this.refs.map,
+    });
+    console.log(marker)
+  }
+
   render() {
     return (
       <div className="map-wrapper">
-        <div ref="map" className="map-container" />
+        <div ref="map" className="map-container" onClick={(e) => addMarker(e.latLng)}/>
       </div>
     );
   }
