@@ -1,15 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api, auth} from 'bento';
-import {Form, GMap} from 'bento-web';
-
-let buttons = [
-  {
-    value: 'Create Hub',
-    type: 'submit',
-    class: 'btn btn-primary btn-profile-submit',
-  },
-];
+import {GMap} from 'bento-web';
 
 class HubsCreate extends Component {
   constructor(props) {
@@ -22,7 +14,7 @@ class HubsCreate extends Component {
       type: 'hub',
       latitude: null,
       longitude: null,
-      address: '',
+      location: '',
     };
     this._user = auth.user();
   }
@@ -43,7 +35,7 @@ class HubsCreate extends Component {
         this.setState({
           latitude: coord.lat(),
           longitude: coord.lng(),
-          address: place.formatted_address,
+          location: place.formatted_address,
         });
       });
     });
@@ -72,12 +64,7 @@ class HubsCreate extends Component {
   }
 
   render() {
-    let {
-      orgSearchWord,
-      currentOrganization,
-      searchResults,
-      address,
-    } = this.state;
+    let {orgSearchWord, currentOrganization, searchResults} = this.state;
     let organizationId = this.props.params.id;
     return (
       <div className="box">
@@ -97,7 +84,7 @@ class HubsCreate extends Component {
                       this.setState({
                         latitude: loc.lat(),
                         longitude: loc.lng(),
-                        address: res[0].formatted_address,
+                        location: res[0].formatted_address,
                       });
                     });
                   }}
@@ -182,28 +169,21 @@ class HubsCreate extends Component {
           ) : (
             ''
           )}
-          <div className="form-group row">
-            <div className="col-xs-12 bento-form-input focus">
-              <label>Location</label>
-              <input
-                type="text"
-                className="form-control"
-                name="location"
-                ref="location"
-                onChange={e => this.setState({address: e.target.value})}
-                value={address}
-              />
+          {['location', 'name', 'description', 'radius'].map((field, i) => (
+            <div key={i} className="form-group row">
+              <div className="col-xs-12 bento-form-input focus">
+                <label>{field}</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name={field}
+                  ref={field}
+                  onChange={e => this.setState({[field]: e.target.value})}
+                  value={this.state[field]}
+                />
+              </div>
             </div>
-          </div>
-          <div className="box-content">
-            <Form
-              ref="createStatement"
-              className="bento-form-static"
-              fields={require('./hub-form')}
-              buttons={buttons}
-              submit={e => this.createHub(e)}
-            />
-          </div>
+          ))}
         </div>
       </div>
     );
