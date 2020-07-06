@@ -18,11 +18,10 @@ class HubsCreate extends Component {
       orgSearchWord: '',
       currentOrganization: null,
       searchResults: [],
-      addToSubmit: {
-        type: 'hub',
-        latitude: null,
-        longitude: null,
-      },
+      type: 'hub',
+      latitude: null,
+      longitude: null,
+      address: '',
     };
     this._user = auth.user();
   }
@@ -72,7 +71,12 @@ class HubsCreate extends Component {
   }
 
   render() {
-    let {orgSearchWord, currentOrganization, searchResults} = this.state;
+    let {
+      orgSearchWord,
+      currentOrganization,
+      searchResults,
+      address,
+    } = this.state;
     return (
       <div className="box">
         <h3 style={{marginBottom: '1rem'}}>Add A Hub</h3>
@@ -91,7 +95,7 @@ class HubsCreate extends Component {
                       this.setState({
                         latitude: loc.lat(),
                         longitude: loc.lng(),
-                        address: res[0].name,
+                        address: res[0].formatted_address,
                       });
                     });
                   }}
@@ -180,6 +184,8 @@ class HubsCreate extends Component {
                 className="form-control"
                 name="location"
                 ref="location"
+                onChange={e => this.setState({address: e.target.value})}
+                value={address}
               />
             </div>
           </div>

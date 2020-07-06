@@ -351,6 +351,7 @@ module.exports = class GMap extends React.Component {
       map: this.map,
     });
     this.markers.push(marker);
+    this.map.setCenter(latLng);
     if (onMarkerChange) {
       onMarkerChange(latLng);
     }
