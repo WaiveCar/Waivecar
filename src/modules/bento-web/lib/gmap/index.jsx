@@ -17,11 +17,10 @@ let icons = [
 
 module.exports = class GMap extends React.Component {
 
-  constructor(...args) {
-    super(...args);
+  constructor(props) {
+    super(props);
     this.map = null;
     this.markers = [];
-
     this.addMarkers   = this.addMarkers.bind(this);
     this.clearMarkers = this.clearMarkers.bind(this);
   }
@@ -43,14 +42,13 @@ module.exports = class GMap extends React.Component {
     };
 
     this.map = new google.maps.Map(ReactDOM.findDOMNode(this.refs.map), mapConfig);
-    /*
-    google.maps.event.addDomListener(this.refs.map, 'click', (e) => {
-      this.addMarker(e)
-    });
-    */
-    this.map.addListener('click', (e) => {
-      this.addMarker(e.latLng)
-    });
+
+    if (this.props.handleMarker) {
+      this.map.addListener('click', (e) => {
+        this.clearMarkers();
+        this.addMarker(e.latLng, this.props.onMarkerChange);
+      });
+    }
 
     if (this.props.markers) {
       this.prepareMarkers(this.props.markers);
@@ -332,6 +330,7 @@ module.exports = class GMap extends React.Component {
 
   clearMarkers() {
     this.markers.forEach(function (marker) {
+      console.log('marker', marker)
       marker.setMap(null);
     });
 
@@ -347,12 +346,15 @@ module.exports = class GMap extends React.Component {
     };
   }
 
-  addMarker(latLng) {
+  addMarker(latLng, onMarkerChange) {
     let marker = new google.maps.Marker({
       position: latLng,
       map: this.map,
     });
-    console.log(marker)
+    this.markers.push(marker);
+    if (onMarkerChange) {
+      onMarkerChange(latLng);
+    }
   }
 
   render() {

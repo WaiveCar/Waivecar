@@ -61,7 +61,8 @@ class HubsCreate extends Component {
               <div className="map-dynamic">
                 <GMap
                   markerIcon={'/images/map/icon-homebase.svg'}
-                  markers={[]}
+                  handleMarker={true}
+                  onMarkerChange={(loc) => this.setState({latitude: loc.lat(), longitude: loc.lng()}, () => console.log(this.state))}
                 />
               </div>
             </div>
