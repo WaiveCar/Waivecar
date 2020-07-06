@@ -51,6 +51,11 @@ class Hubs extends Component {
                   ctx={this.refs['hub-resource']}
                 />
                 <ThSort
+                  sort="address"
+                  value="Address"
+                  ctx={this.refs['hub-resource']}
+                />
+                <ThSort
                   sort="createdAt"
                   value="Created"
                   ctx={this.refs['hub-resource']}
@@ -65,6 +70,7 @@ class Hubs extends Component {
                   </Link>
                 </td>
                 <td>{hub.name}</td>
+                <td>{hub.address}</td>
                 <td>{hub.createdAt}</td>
               </tr>
             )}
