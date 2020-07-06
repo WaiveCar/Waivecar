@@ -27,6 +27,28 @@ class HubsCreate extends Component {
     this._user = auth.user();
   }
 
+  componentDidMount() {
+    this.locationInput = this.refs.location;
+    this.autocomplete = new google.maps.places.Autocomplete(
+      this.locationInput,
+      {
+        types: ['establishment', 'geocode'],
+      },
+    );
+    this.autocomplete.addListener('place_changed', () => {
+      let place = this.autocomplete.getPlace();
+      let coord = place.geometry.location;
+      this.refs['location-map'].clearMarkers();
+      this.refs['location-map'].addMarker(coord, () => {
+        this.setState({
+          latitude: coord.lat(),
+          longitude: coord.lng(),
+          address: place.formatted_address,
+        });
+      });
+    });
+  }
+
   orgSearch() {
     let {orgSearchWord, currentOrganization} = this.state;
     api.get(
@@ -60,9 +82,12 @@ class HubsCreate extends Component {
             <div className="col-xs-12">
               <div className="map-dynamic">
                 <GMap
+                  ref={'location-map'}
                   markerIcon={'/images/map/icon-homebase.svg'}
                   handleMarker={true}
-                  onMarkerChange={(loc) => this.setState({latitude: loc.lat(), longitude: loc.lng()}, () => console.log(this.state))}
+                  onMarkerChange={loc =>
+                    this.setState({latitude: loc.lat(), longitude: loc.lng()})
+                  }
                 />
               </div>
             </div>
@@ -140,6 +165,17 @@ class HubsCreate extends Component {
               </div>
             </div>
           )}
+          <div className="form-group row">
+            <div className="col-xs-12 bento-form-input focus">
+              <label>Location</label>
+              <input
+                type="text"
+                className="form-control"
+                name="location"
+                ref="location"
+              />
+            </div>
+          </div>
           <div className="box-content">
             <Form
               ref="createStatement"
