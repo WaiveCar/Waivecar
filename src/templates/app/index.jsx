@@ -176,6 +176,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/locations/create-hub',
+        component : require('../../views/app/admin/organizations/hubs-create'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/locations/:id',
         component : require('../../views/app/admin/locations/update'),
         onEnter   : policies.isAdministrator
