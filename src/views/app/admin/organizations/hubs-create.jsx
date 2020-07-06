@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {api, auth} from 'bento';
-import {GMap} from 'bento-web';
+import {GMap, snackbar} from 'bento-web';
 
 class HubsCreate extends Component {
   constructor(props) {
@@ -61,6 +61,7 @@ class HubsCreate extends Component {
   handleSubmit(e) {
     e.preventDefault();
     let {location, organization} = this.state;
+    let {history} = this.props;
     let organizationId = this.props.params.id;
     api.post(
       '/locations',
@@ -76,7 +77,10 @@ class HubsCreate extends Component {
             message: err.message,
           });
         }
-        console.log(res);
+        history.replaceState(
+          {},
+          `/organizations/${organizationId || organization.id}/hubs`,
+        );
       },
     );
   }
@@ -89,7 +93,7 @@ class HubsCreate extends Component {
         <h3 style={{marginBottom: '1rem'}}>Add A Hub</h3>
         <div className="box-content">
           <form className="bento-form" onSubmit={e => this.handleSubmit(e)}>
-            <h4>Location</h4>
+            <h4>Choose Location</h4>
             <div className="row" style={{marginBottom: '1.5rem'}}>
               <div className="col-xs-12">
                 <div className="map-dynamic">
