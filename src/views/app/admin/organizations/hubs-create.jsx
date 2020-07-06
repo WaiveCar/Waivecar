@@ -85,9 +85,16 @@ class HubsCreate extends Component {
                   ref={'location-map'}
                   markerIcon={'/images/map/icon-homebase.svg'}
                   handleMarker={true}
-                  onMarkerChange={loc =>
-                    this.setState({latitude: loc.lat(), longitude: loc.lng()})
-                  }
+                  onMarkerChange={loc => {
+                    let geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({location: loc}, res => {
+                      this.setState({
+                        latitude: loc.lat(),
+                        longitude: loc.lng(),
+                        address: res[0].name,
+                      });
+                    });
+                  }}
                 />
               </div>
             </div>

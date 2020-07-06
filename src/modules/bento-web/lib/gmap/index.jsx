@@ -330,7 +330,6 @@ module.exports = class GMap extends React.Component {
 
   clearMarkers() {
     this.markers.forEach(function (marker) {
-      console.log('marker', marker)
       marker.setMap(null);
     });
 
