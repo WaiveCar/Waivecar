@@ -17,6 +17,7 @@ function MultiHub() {
                 organization={org.organization}
                 orgId={org.organization.id}
                 inDash={true}
+                showTitle={true}
               />
             </div>
           </div>

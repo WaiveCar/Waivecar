@@ -11,10 +11,10 @@ class Hubs extends Component {
   }
 
   render() {
-    let {orgId, organization, inDash} = this.props;
+    let {orgId, organization, inDash, showTitle} = this.props;
     let {hubs} = this.state;
     return (
-      <div className={!inDash && 'box'}>
+      <div className={!inDash || showTitle &&  'box'}>
         {!inDash ? (
           <h3 style={{display: 'flex', justifyContent: 'space-between'}}>
             <Link to={`/organizations/${organization.id}`}>
@@ -33,7 +33,7 @@ class Hubs extends Component {
           </h4>
         )}
 
-        <div className={!inDash && 'box-content'}>
+        <div className={!inDash || showTitle && 'box-content'}>
           <div className="row" style={{marginBottom: '1.5rem'}}>
             <div className="col-xs-12">
               <div className={inDash ? 'map-short' : 'map-dynamic'}>
