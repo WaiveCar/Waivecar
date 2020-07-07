@@ -339,7 +339,6 @@ module.exports = {
   },
 
   *hubs(organizationId, query) {
-    console.log(query);
     return yield Location.find({
       where: {organizationId, type: 'hub'},
       ...(query.limit ? {limit: Number(query.limit)} : {}),
