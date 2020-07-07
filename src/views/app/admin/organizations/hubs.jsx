@@ -26,9 +26,7 @@ class Hubs extends Component {
           </h3>
         ) : (
           <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
-            <Link to={`/organizations/${organization.id}/hubs`}>
-              Hubs
-            </Link>
+            <Link to={`/organizations/${organization.id}/hubs`}>Hubs</Link>
             <Link to={`/organizations/${organization.id}/hubs/create`}>
               create
             </Link>
@@ -56,21 +54,25 @@ class Hubs extends Component {
             updateParent={hubs => this.setState({hubs})}
             header={() => (
               <tr ref="sort">
-                <ThSort sort="id" value="Id" ctx={this.refs['hub-resource']} />
+                <ThSort
+                  sort="id"
+                  value="Id"
+                  ctx={this.refs[`hub-resource-${orgId}`]}
+                />
                 <ThSort
                   sort="name"
                   value="Name"
-                  ctx={this.refs['hub-resource']}
+                  ctx={this.refs[`hub-resource-${orgId}`]}
                 />
                 <ThSort
                   sort="address"
                   value="Address"
-                  ctx={this.refs['hub-resource']}
+                  ctx={this.refs[`hub-resource-${orgId}`]}
                 />
                 <ThSort
                   sort="createdAt"
                   value="Created"
-                  ctx={this.refs['hub-resource']}
+                  ctx={this.refs[`hub-resource-${orgId}`]}
                 />
               </tr>
             )}
@@ -86,6 +88,7 @@ class Hubs extends Component {
                 <td>{hub.createdAt}</td>
               </tr>
             )}
+            skipDispatch
           />
         </div>
       </div>

@@ -3,8 +3,9 @@ import {auth} from 'bento';
 import Hubs from './hubs';
 import Link from 'react-router';
 
+let _user = auth.user();
+
 function MultiHub() {
-  let _user = auth.user();
   return (
     <div className="box">
       <h1>Hubs</h1>
@@ -13,9 +14,9 @@ function MultiHub() {
           <div key={i}>
             <div key={i} className="box-content">
               <Hubs
-                key={i}
                 organization={org.organization}
-                orgId={org.organizationId}
+                orgId={org.organization.id}
+                inDash={true}
               />
             </div>
           </div>
