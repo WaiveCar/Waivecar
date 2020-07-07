@@ -175,9 +175,6 @@ class TableIndex extends React.Component {
             <Link className="btn btn-primary" to={ `/locations/create` }>
               Add Location
             </Link>
-            <Link className="btn btn-primary" to={ `/locations/create-hub` }>
-              Add Hub
-            </Link>
           </div>
         </div>
       </div>

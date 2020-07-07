@@ -11,19 +11,23 @@ class Hubs extends Component {
   }
 
   render() {
-    let {orgId, organization} = this.props;
+    let {orgId, organization, inDash} = this.props;
     let {hubs} = this.state;
     return (
-      <div className="box">
-        <h2 style={{display: 'flex', justifyContent: 'space-between'}}>
-          <Link to={`/organizations/${organization.id}`}>
-            {organization.name}
-          </Link>
+      <div className={!inDash && 'box'}>
+        <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
+          {!inDash ? (
+            <Link to={`/organizations/${organization.id}`}>
+              {organization.name}
+            </Link>
+          ) : (
+            <div>Hubs</div>
+          )}
           <Link to={`/organizations/${organization.id}/hubs/create`}>
             create
           </Link>
-        </h2>
-        <div className="box-content">
+        </h4>
+        <div className={!inDash && 'box-content'}>
           <div className="row" style={{marginBottom: '1.5rem'}}>
             <div className="col-xs-12">
               <div className="map-dynamic">

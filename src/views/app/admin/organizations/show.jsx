@@ -8,6 +8,7 @@ import moment from 'moment';
 import Insurance from './insurance';
 import Logo from './logo';
 import Statements from './statements';
+import Hubs from './hubs';
 
 class Organization extends Component {
   constructor(props) {
@@ -136,6 +137,15 @@ class Organization extends Component {
           />
           <h4 style={{marginTop: '1rem'}}>Insurance</h4>
           <Insurance _user={this._user} organizationId={id} />
+          <div style={{marginTop: '1rem'}}>
+            {organization && (
+              <Hubs
+                organization={organization}
+                orgId={organization.id}
+                inDash={true}
+              />
+            )}
+          </div>
         </div>
       </div>
     ) : (
