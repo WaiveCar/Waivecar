@@ -231,6 +231,11 @@ templates.register('app', {
         onEnter   : policies.isWaiveAdmin,
       },
       {
+        path: '/hubs',
+        component : require('../../views/app/admin/organizations/multi-hub'),
+        onEnter   : policies.isAdmin,
+      },
+      {
         path: '/forbidden',
         component: require('../../views/app/user/forbidden/index'),
       },
@@ -413,6 +418,14 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++,
     waiveAdmin: true,
+  },
+  {
+    title     : 'Hubs',
+    icon      : 'location_on',
+    path      : '/hubs',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++,
   },
   {
     title     : 'Organizations',
