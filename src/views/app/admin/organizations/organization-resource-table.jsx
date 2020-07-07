@@ -39,6 +39,7 @@ class OrganizationResource extends Component {
   render() {
     let rows = this.table.index();
     let {loaded} = this.state;
+    let {resource} = this.props;
     return (
       <div>
         <table className="box-table table-striped">
@@ -48,7 +49,7 @@ class OrganizationResource extends Component {
               rows
             ) : (
               <tr>
-                <td colSpan={'100%'} style={{textAlign: 'center'}}>{loaded? 'No Results' : 'Loading...'}</td>
+                <td colSpan={'100%'} style={{textAlign: 'center'}}>{loaded? `No ${resource} found.` : 'Loading...'}</td>
               </tr>
             )}
           </tbody>

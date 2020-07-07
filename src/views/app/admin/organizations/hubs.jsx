@@ -48,7 +48,7 @@ class Hubs extends Component {
           </div>
           <OrganizationResource
             ref={`hub-resource-${orgId}`}
-            resource={'hub'}
+            resource={'hubs'}
             resourceUrl={`/organizations/${orgId}/hubs`}
             organizationId={orgId}
             updateParent={hubs => this.setState({hubs})}
