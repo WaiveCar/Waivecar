@@ -47,7 +47,7 @@ class Hubs extends Component {
             </div>
           </div>
           <OrganizationResource
-            ref="hub-resource"
+            ref={`hub-resource-${orgId}`}
             resource={'hub'}
             resourceUrl={`/organizations/${orgId}/hubs`}
             organizationId={orgId}

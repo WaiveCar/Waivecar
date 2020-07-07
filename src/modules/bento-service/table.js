@@ -57,6 +57,7 @@ module.exports = class Table {
         more   : data.length === this.limit,
         offset : this.ctx.state.offset + data.length,
         [this.ctx.props.resource]: data,
+        loaded: true,
       });
       this.data = data;
       if (!this.ctx.props.skipDispatch) {

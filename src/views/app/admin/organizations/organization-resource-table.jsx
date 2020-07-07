@@ -8,6 +8,7 @@ class OrganizationResource extends Component {
     this.state = {
       offset: 0,
       more: false,
+      loaded: false,
     };
     this.row = this.props.row;
     this.table = new Table(
@@ -36,11 +37,21 @@ class OrganizationResource extends Component {
   }
 
   render() {
+    let rows = this.table.index();
+    let {loaded} = this.state;
     return (
       <div>
         <table className="box-table table-striped">
           <thead>{this.props.header()}</thead>
-          <tbody>{this.table.index()}</tbody>
+          <tbody>
+            {rows.length ? (
+              rows
+            ) : (
+              <tr>
+                <td colSpan={'100%'} style={{textAlign: 'center'}}>{loaded? 'No Results' : 'Loading...'}</td>
+              </tr>
+            )}
+          </tbody>
         </table>
         {this.state.more ? (
           <div className="text-center" style={{marginTop: 20}}>
