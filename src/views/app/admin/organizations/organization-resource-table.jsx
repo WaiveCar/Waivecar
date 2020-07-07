@@ -49,7 +49,9 @@ class OrganizationResource extends Component {
               rows
             ) : (
               <tr>
-                <td colSpan={'100%'} style={{textAlign: 'center'}}>{loaded? `No ${resource} found.` : 'Loading...'}</td>
+                <td colSpan={'100%'} style={{textAlign: 'center'}}>
+                  {loaded ? `No ${resource} found` : 'Loading...'}
+                </td>
               </tr>
             )}
           </tbody>
