@@ -15,22 +15,30 @@ class Hubs extends Component {
     let {hubs} = this.state;
     return (
       <div className={!inDash && 'box'}>
-        <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
-          {!inDash ? (
+        {!inDash ? (
+          <h3 style={{display: 'flex', justifyContent: 'space-between'}}>
             <Link to={`/organizations/${organization.id}`}>
               {organization.name}
             </Link>
-          ) : (
-            <div>Hubs</div>
-          )}
-          <Link to={`/organizations/${organization.id}/hubs/create`}>
-            create
-          </Link>
-        </h4>
+            <Link to={`/organizations/${organization.id}/hubs/create`}>
+              create
+            </Link>
+          </h3>
+        ) : (
+          <h4 style={{display: 'flex', justifyContent: 'space-between'}}>
+            <Link to={`/organizations/${organization.id}/hubs`}>
+              Hubs
+            </Link>
+            <Link to={`/organizations/${organization.id}/hubs/create`}>
+              create
+            </Link>
+          </h4>
+        )}
+
         <div className={!inDash && 'box-content'}>
           <div className="row" style={{marginBottom: '1.5rem'}}>
             <div className="col-xs-12">
-              <div className="map-dynamic">
+              <div className={inDash ? 'map-short' : 'map-dynamic'}>
                 <GMap
                   markerIcon={'/images/map/active-waivecar.svg'}
                   markers={hubs}
