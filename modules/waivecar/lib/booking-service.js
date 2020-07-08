@@ -1290,10 +1290,11 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
     */
-    if(zone) {
+    /*if(zone) {
       zone.isZone = true;
       return zone;
-    } else if(!isAdmin) {
+    } else */
+    if(!isAdmin) {
       throw error.parse({
         code    : `OUTSIDE_ZONE`,
         message : `You cannot return the WaiveCar here. Please end your ride at one of the hubs that it is assigned to.`
@@ -1487,7 +1488,6 @@ module.exports = class BookingService extends Service {
     }
 
     let end = yield this._canEndHere(car, isAdmin, user);
-    console.log('after canEndHere')
     // Immobilize the engine.
     let status;
     try {
