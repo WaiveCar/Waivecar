@@ -1434,6 +1434,7 @@ module.exports = class BookingService extends Service {
     let LocationCar = Bento.model('LocationCar');
     let locCar = yield LocationCar.findOne({where: {carId: car.id}});
     if (locCar) {
+      // this makes it so that the booker does not have access to all features for Waive admins if they are not
       isAdmin = yield _user.isWaiveAdmin();
     }
 
