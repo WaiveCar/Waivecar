@@ -97,7 +97,6 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    console.log('data', data);
     let start = new Date();
     let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 5 * 1000);
 
@@ -1181,7 +1180,8 @@ module.exports = class BookingService extends Service {
       where: {
         type: { 
           $in: ['hub', 'homebase'] 
-        }
+        },
+        organizationId: car.organizationId,
       } 
     })).forEach(function(row) {
       let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
@@ -1288,7 +1288,6 @@ module.exports = class BookingService extends Service {
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
       }, 400);
     }
-
     if(zone) {
       zone.isZone = true;
       return zone;
@@ -1298,7 +1297,6 @@ module.exports = class BookingService extends Service {
         message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
       }, 400);
     }
-
     return isAdmin;
   }
 
@@ -1419,13 +1417,20 @@ module.exports = class BookingService extends Service {
   }
 
   // Ends the ride by calculating costs and setting the booking into pending payment state.
-  static * end(id, _user, query, payload) {
+  static *end(id, _user, query, payload) {
     let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
 
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
     let isAdmin = _user.isAdmin();
+    // if the car belongs to a hub, the ride cannot be ended elsewhere and only Waive admins can end the ride anywhere
+    let LocationCar = Bento.model('LocationCar');
+    let locCar = yield LocationCar.findOne({where: {carId: car.id}});
+    if (locCar) {
+      isAdmin = yield _user.isWaiveAdmin();
+    }
+
     let warnings = [];
 
     function *bail(err) {
@@ -1440,7 +1445,6 @@ module.exports = class BookingService extends Service {
     let freeTime = booking.getFreeTime(isLevel);
 
     this.hasAccess(user, _user);
-
     // ### Status Check
     // Go through end booking checklist.
     if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
@@ -1481,6 +1485,7 @@ module.exports = class BookingService extends Service {
     }
 
     let end = yield this._canEndHere(car, isAdmin, user);
+    console.log('after canEndHere')
     // Immobilize the engine.
     let status;
     try {
@@ -1709,7 +1714,6 @@ module.exports = class BookingService extends Service {
       );
       // TODO: Possibly make it refund a prorated amount to the user here?
     }
-
     return {
       isCarReachable : isCarReachable
     };
@@ -2096,7 +2100,7 @@ module.exports = class BookingService extends Service {
       // just ignore it and don't worry about it.
       return true;
     }
-
+    console.log('inside cancel', booking.status);
     if (states.indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,

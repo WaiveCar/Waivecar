@@ -1448,7 +1448,7 @@ module.exports = {
       yield bookingService.end(car.bookingId, _user, {}, {}); 
       yield bookingService.complete(car.bookingId, _user, {}, {}); 
     } catch(ex) {
-      yield bookingService.cancel(car.bookingId, _user);
+      throw error.parse({message: ex.message, code: ex.code}, ex.httpStatus);
     }
     
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
