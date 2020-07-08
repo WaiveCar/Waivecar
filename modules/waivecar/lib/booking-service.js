@@ -161,34 +161,37 @@ module.exports = class BookingService extends Service {
 
     this.hasAccess(driver, _user);
 
-    if (car.organizationId) {
+    if (car.organizationId && !(yield _user.isWaiveAdmin())) {
       yield this.orgHasAccess(car.organizationId, driver, car);
+      t('has access');
     }
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
-    if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
-      // skip access check...
-    } else {
-      // Otherwise we check to see if the driver can drive. This
-      // means that if an admin is booking a driver who is not
-      // themselves, this code is still run.
-      try {
-        yield this.hasBookingAccess(driver, data.skipPayment);
-        // run checklist for orgs here
-      } catch(err) {
-        yield bail(err);
-      } 
-      t("has access");
-
-      if(!_user.hasAccess('admin')) {
-        // This is in #1510 ... we need to have their address on file before we can continue.
+    if (!car.organizationId) {
+      if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
+        // skip access check...
+      } else {
+        // Otherwise we check to see if the driver can drive. This
+        // means that if an admin is booking a driver who is not
+        // themselves, this code is still run.
         try {
-          yield this.makeSureWeHaveLicenseAddress(driver, data);
-        } catch (err) {
+          yield this.hasBookingAccess(driver, data.skipPayment);
+          // run checklist for orgs here
+        } catch(err) {
           yield bail(err);
+        } 
+        t("has access");
+
+        if(!_user.hasAccess('admin')) {
+          // This is in #1510 ... we need to have their address on file before we can continue.
+          try {
+            yield this.makeSureWeHaveLicenseAddress(driver, data);
+          } catch (err) {
+            yield bail(err);
+          }
         }
+        t("address check");
       }
-      t("address check");
     }
 
 
@@ -197,7 +200,7 @@ module.exports = class BookingService extends Service {
     if(driver.credit < -100) {
       yield bail(error.parse({
         code    : 'BOOKING_OUTSTANDING_CREDIT',
-        message : `You have an outstanding balance of <b>$${ (-driver.credit / 100).toFixed(2) }</b>. This needs to be resolved before making a booking.`
+        message : `You have an outstanding balance of $${ (-driver.credit / 100).toFixed(2) }. This needs to be resolved before making a booking.`
       }, 400));
     }
 
@@ -2102,7 +2105,6 @@ module.exports = class BookingService extends Service {
       // just ignore it and don't worry about it.
       return true;
     }
-    console.log('inside cancel', booking.status);
     if (states.indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,

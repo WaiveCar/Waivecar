@@ -1417,12 +1417,14 @@ module.exports = {
   *instaBook(id, _user) {
     // This will allow admins to instantly book into cars and is designed to be a replacement for the "retrieve" api call
     // it creates a booking and starts it immediately.
+    /* We don't need to block this for now
     if (!_user.hasAccess('admin')) {
       throw error.parse({
         code    : 'NON_ADMIN_CANNOT_INSTABOOK',
         message : 'Users that are not admins cannot use instabook.',
       }, 401);
     }
+    */
     let bookingService = require('./booking-service');
 
     let car = yield this.updateAvailabilityAnonymous(id, true, _user);
@@ -1440,12 +1442,14 @@ module.exports = {
 
   *instaEnd(id, _user) {
     let car = yield Car.findById(id);
+    /* We don't need to block this for now
     if (!_user.hasAccess('admin')) {
       throw error.parse({
         code    : 'NON_ADMIN_CANNOT_INSTABOOK',
         message : 'Users that are not admins cannot use instabook.',
       }, 401);
     }
+    */
     let bookingService = require('./booking-service');
 
     try {

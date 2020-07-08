@@ -215,7 +215,6 @@ module.exports = class Service {
     if (license && moment(license.expirationDate).isBefore(moment())) {
       missing.push('user\'s license is expired');
     }
-
     if (missing.length) {
       yield car.update({isAvailable: true});
       throw error.parse({
