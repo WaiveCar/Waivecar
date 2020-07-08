@@ -570,7 +570,7 @@ class CarsShowView extends React.Component {
         if (err) {
           return snackbar.notify({
             type    : 'danger',
-            message : err,
+            message : err.message,
           });
         }
         this.service.setCar(this.id());
