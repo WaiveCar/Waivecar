@@ -157,7 +157,7 @@ class Hub extends Component {
               ref="cars-resource"
               resource={'cars'}
               resourceUrl={'carsWithBookings'}
-              queryOpts={`&hubId=${hubId}`}
+              queryOpts={`&hubId=${hubId}&checkForHub=true`}
               organizationId={id}
               updateParent={data => this.setState({currentCars: data})}
               header={() => (
@@ -172,15 +172,21 @@ class Hub extends Component {
                     value="Name"
                     ctx={this.refs['cars-resource']}
                   />
+                  <ThSort
+                    sort="isAtHub"
+                    value="isAtHub"
+                    ctx={this.refs['cars-resource']}
+                  />
                   <th>Select</th>
                 </tr>
               )}
-              row={item => (
-                <tr key={item.id}>
+              row={(item, idx) => (
+                <tr key={idx}>
                   <td>{item.id}</td>
                   <td>
                     <Link to={`/cars/${item.id}`}>{item.license}</Link>
                   </td>
+                    <td>{item.isAtHub ? 'yes' : 'no'}</td>
                   <td>
                     <button
                       className="btn btn-link col-xs-6"

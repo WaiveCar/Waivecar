@@ -31,7 +31,7 @@ class OrganizationResource extends Component {
         order: 'DESC',
       },
       searchObj: {
-        order: 'id,DESC',
+        order: 'created_at,DESC',
       },
     });
   }
