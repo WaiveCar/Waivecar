@@ -24,14 +24,14 @@ class OrganizationResource extends Component {
   }
 
   componentDidMount() {
-    this.table.init();
+    this.table.init({order: 'updated_at,DESC'});
     this.setState({
       sort: {
-        key: 'createdAt',
+        key: 'updatedAt',
         order: 'DESC',
       },
       searchObj: {
-        order: 'created_at,DESC',
+        order: 'updated_at,DESC',
       },
     });
   }

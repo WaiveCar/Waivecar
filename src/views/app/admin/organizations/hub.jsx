@@ -174,19 +174,33 @@ class Hub extends Component {
                   />
                   <ThSort
                     sort="isAtHub"
-                    value="isAtHub"
+                    value="At Hub"
                     ctx={this.refs['cars-resource']}
                   />
                   <th>Select</th>
                 </tr>
               )}
-              row={(item, idx) => (
-                <tr key={idx}>
+              row={item => (
+                <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>
                     <Link to={`/cars/${item.id}`}>{item.license}</Link>
                   </td>
-                    <td>{item.isAtHub ? 'yes' : 'no'}</td>
+                  <td>
+                    {item.isAtHub ? (
+                      <span className="text-success">
+                        <i className="material-icons" role="true">
+                          check
+                        </i>
+                      </span>
+                    ) : (
+                      <span className="text-muted">
+                        <i className="material-icons" role="true">
+                          close
+                        </i>
+                      </span>
+                    )}
+                  </td>
                   <td>
                     <button
                       className="btn btn-link col-xs-6"
