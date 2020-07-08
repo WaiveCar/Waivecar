@@ -460,7 +460,7 @@ module.exports = {
       car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
       if (query.checkForHub) {
         let bookingService = require('./booking-service');
-        car.isAtHub = yield bookingService.isAtHub(car);
+        car.isAtHub = (yield bookingService.isAtHub(car)) ? true : false;
       }
     };
     perf.push("misc " + (new Date() - start));
