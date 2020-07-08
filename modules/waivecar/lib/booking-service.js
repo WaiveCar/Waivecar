@@ -1181,7 +1181,7 @@ module.exports = class BookingService extends Service {
         type: { 
           $in: ['hub', 'homebase'] 
         },
-        organizationId: car.organizationId,
+        ...(car.organizationId ? {organizationId: car.organizationId} : {}),
       } 
     })).forEach(function(row) {
       let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
@@ -1282,19 +1282,21 @@ module.exports = class BookingService extends Service {
     // we are in a zone.
     let zone = yield this.getZone(car);
     // otherwise if we aren't there and the car is low, we need to go back to a hub
+    /*
     if (car.milesAvailable() < 21 && !isAdmin) {
       throw error.parse({
         code    : `CHARGE_TOO_LOW`,
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
       }, 400);
     }
+    */
     if(zone) {
       zone.isZone = true;
       return zone;
     } else if(!isAdmin) {
       throw error.parse({
         code    : `OUTSIDE_ZONE`,
-        message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+        message : `You cannot return the WaiveCar here. Please end your ride at one of the hubs that it is assigned to.`
       }, 400);
     }
     return isAdmin;
