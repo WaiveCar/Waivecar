@@ -114,7 +114,7 @@ class BookCars extends Component {
         if (err) {
           return snackbar.notify({
             type: 'danger',
-            message: err,
+            message: err.message,
           });
         }
         this.setState({currentBooking: null}, () => {

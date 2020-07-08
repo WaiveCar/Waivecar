@@ -140,7 +140,7 @@ class Hub extends Component {
                   <GMap
                     markerIcon={'/images/map/icon-homebase.svg'}
                     markers={[
-                      hub,
+                      {...hub, type: 'hub'},
                       ...currentCars.map(car => {
                         car.type = 'start';
                         return car;

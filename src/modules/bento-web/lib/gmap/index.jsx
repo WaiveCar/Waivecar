@@ -337,9 +337,10 @@ module.exports = class GMap extends React.Component {
   }
 
   getMarkerIcon(name) {
+    let size = name === 'hub' ? [50, 50] : [16, 20]
     return {
       url        : name && icons.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
-      scaledSize : new google.maps.Size( 16, 20 ),
+      scaledSize : new google.maps.Size(...size),
       anchor     : new google.maps.Point(8, 20 ),
       origin     : new google.maps.Point(0, 0)
     };
