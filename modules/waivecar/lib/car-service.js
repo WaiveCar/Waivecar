@@ -435,7 +435,7 @@ module.exports = {
       lastActionMap[row.carId] = row;
     });
 
-    cars.forEach(function(car){
+    for (let car of cars) {
       car.lastAction = lastActionMap[car.id];
       if(car.lastAction) {
         car.lastActionTime = car.lastAction.createdAt;
@@ -458,7 +458,11 @@ module.exports = {
       car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
       car.organizationName = car.organization && car.organization.name;
       car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
-    });
+      if (query.checkForHub) {
+        let bookingService = require('./booking-service');
+        car.isAtHub = yield bookingService.isAtHub(car);
+      }
+    };
     perf.push("misc " + (new Date() - start));
 
     //console.log(perf.join(' | '));
