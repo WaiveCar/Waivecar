@@ -201,7 +201,11 @@ module.exports = {
       //
       // oh what fun type systems are!
       data.priority = +isInside;
-
+      for (let field in data) {
+        if (!data[field].length) {
+          delete data[field];
+        }
+      }
       record = new Waitlist(data);
       yield record.save();
       if(data.accountType == 'waivework') {
@@ -585,7 +589,6 @@ module.exports = {
               ]
             }
           });
-
           if (userRecord) {
             // Even if we've seen the user before, and they are
             // trying to sign up again, we send them another invite 
@@ -624,6 +627,7 @@ module.exports = {
           }
         }
       }
+      console.log('record before err', record);
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
 
       // X-ref it back so that we don't do this again.
