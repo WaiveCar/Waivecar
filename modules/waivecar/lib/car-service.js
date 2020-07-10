@@ -491,7 +491,7 @@ module.exports = {
         car.isAtHub = (yield bookingService.isAtHub(car)) ? true : false;
       }
       if (query.type === 'fridge') {
-        car.fridgeDoor = JSON.parse(car.fridgeData).fridge_door || 'open';
+        car.fridgeDoor = JSON.parse(car.fridgeData).fridge_door || 'closed';
       }
     };
     perf.push("misc " + (new Date() - start));
