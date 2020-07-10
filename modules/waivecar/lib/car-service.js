@@ -419,6 +419,9 @@ module.exports = {
       if (Object.keys(searchObj).length) {
         q.where = searchObj;
       }
+      if (query.type) {
+        q.where.type = query.type;
+      }
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
