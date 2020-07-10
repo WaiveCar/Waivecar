@@ -16,7 +16,7 @@ class OrganizationResource extends Component {
       this.props.resource,
       null,
       `/${this.props.resourceUrl}?organizationIds=[${
-        this.props.organizationId
+        this.props.organizationId ? this.props.organizationId : this.props.organizationIds.join(',')
       }]${this.props.queryOpts ? this.props.queryOpts : ''}`,
       10,
     );
