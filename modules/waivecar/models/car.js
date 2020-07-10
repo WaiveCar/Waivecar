@@ -296,6 +296,9 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type: Sequelize.STRING(255),
       default: 'car',
     }
+    fridgeData: {
+      type: Sequelize.Text,
+    }
   };
 
   model.methods = {
