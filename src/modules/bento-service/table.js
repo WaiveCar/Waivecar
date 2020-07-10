@@ -180,7 +180,7 @@ module.exports = class Table {
         }
       });
     } else {
-      this.init();
+      this.init(queryObj);
       this.ctx.setState({
         search : null,
         searchObj: queryObj
@@ -237,8 +237,8 @@ module.exports = class Table {
       });
       if (!replace) {
         data = [
+          ...data,
           ...this.ctx.state[this.resource],
-          ...data
         ];
       }
       this.data = data;

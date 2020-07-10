@@ -28,7 +28,7 @@ class OrganizationResource extends Component {
     this.setState({
       sort: {
         key: 'updatedAt',
-        order: 'DESC',
+        order: 'ASC',
       },
       searchObj: {
         order: 'updated_at,DESC',

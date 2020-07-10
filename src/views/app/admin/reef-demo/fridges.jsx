@@ -3,6 +3,7 @@ import OrganizationResource from '../organizations/organization-resource-table';
 import ThSort from '../components/table-th';
 import {Link} from 'react-router';
 import {auth} from 'bento';
+import moment from 'moment';
 
 export default class extends Component {
   constructor(props) {
@@ -60,13 +61,13 @@ export default class extends Component {
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
-                      sort="maintenanceDueIn"
-                      value="Maintenance Due In"
+                      sort="organizationName"
+                      value="Organization"
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
-                      sort="organizationName"
-                      value="organization"
+                      sort="updatedAt"
+                      value="Last Updated"
                       ctx={this.refs['assets-resource']}
                     />
                   </tr>
@@ -74,12 +75,20 @@ export default class extends Component {
               }}
               row={car => (
                 <tr key={car.id}>
-                  <td>{car.id}</td>
                   <td>
-                    <Link to={`/cars/${car.id}`}>{car.license}</Link>
+                    <Link to={`/fridges/${car.id}`}>{car.id}</Link>
                   </td>
-                  <td>{car.maintenanceDueIn} miles</td>
-                  <td>{car.organizationName}</td>
+                  <td>
+                    <Link to={`/fridges/${car.id}`}>{car.license}</Link>
+                  </td>
+                  <td>
+                    <Link to={`/organizations/${car.organization.id}`}>
+                      {car.organizationName}
+                    </Link>
+                  </td>
+                  <td>
+                    {moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}
+                  </td>
                 </tr>
               )}
             />
