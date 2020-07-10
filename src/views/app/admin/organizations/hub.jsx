@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 import OrganizationResource from './organization-resource-table.jsx';
 import {auth, api} from 'bento';
 import {snackbar, GMap} from 'bento-web';
+import moment from 'moment';
 
 function SelectedList({list, word, ctx, unSelect, action}) {
   return (
@@ -62,7 +63,7 @@ class Hub extends Component {
   carSearch() {
     let {carSearchWord, hub} = this.state;
     api.get(
-      `/cars/search/?search=${carSearchWord}&organizationIds=[${hub.organizationId}]`,
+      `/carsWithBookings?search=${carSearchWord}&organizationIds=[${hub.organizationId}]`,
       (err, response) => {
         if (err) {
           return snackbar.notify({
@@ -141,10 +142,7 @@ class Hub extends Component {
                     markerIcon={'/images/map/icon-homebase.svg'}
                     markers={[
                       {...hub, type: 'hub'},
-                      ...currentCars.map(car => {
-                        car.type = 'start';
-                        return car;
-                      }),
+                      ...currentCars.map(car => ({...car, type: 'start'})),
                     ]}
                     orgId={hub.organizationId}
                     forOrg
@@ -168,6 +166,11 @@ class Hub extends Component {
                     ctx={this.refs['cars-resource']}
                   />
                   <ThSort
+                    sort="type"
+                    value="Type"
+                    ctx={this.refs['cars-resource']}
+                  />
+                  <ThSort
                     sort="license"
                     value="Name"
                     ctx={this.refs['cars-resource']}
@@ -177,14 +180,22 @@ class Hub extends Component {
                     value="At Hub"
                     ctx={this.refs['cars-resource']}
                   />
+                  <ThSort
+                    sort="updatedAt"
+                    value="Updated"
+                    ctx={this.refs['cars-resource']}
+                  />
                   <th>Select</th>
                 </tr>
               )}
               row={item => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
                   <td>
-                    <Link to={`/cars/${item.id}`}>{item.license}</Link>
+                    <Link to={`/${item.type}s/${item.id}`}>{item.id}</Link>
+                  </td>
+                  <td>{item.type}</td>
+                  <td>
+                    <Link to={`/${item.type}s/${item.id}`}>{item.license}</Link>
                   </td>
                   <td>
                     {item.isAtHub ? (
@@ -201,6 +212,7 @@ class Hub extends Component {
                       </span>
                     )}
                   </td>
+                  <td>{moment(item.updatedAt).format('MM/DD/YYYY HH:MM')}</td>
                   <td>
                     <button
                       className="btn btn-link col-xs-6"
@@ -246,7 +258,7 @@ class Hub extends Component {
             {showAddCars && (
               <div>
                 <div>
-                  <h4 style={{marginTop: '2rem'}}>Car Search</h4>
+                  <h4 style={{marginTop: '2rem'}}>Asset Search</h4>
                   <div
                     className="row"
                     style={{margin: '2rem', marginBottom: '0.5rem'}}>
@@ -272,7 +284,9 @@ class Hub extends Component {
                           className="row"
                           style={{marginLeft: '2rem', marginRight: '2rem'}}>
                           <div style={{padding: '10px 0'}} className="col-xs-6">
-                            <Link to={`/cars/${item.id}`} target="_blank">
+                            <Link
+                              to={`/${item.type}/${item.id}`}
+                              target="_blank">
                               {item.license}
                             </Link>
                           </div>
