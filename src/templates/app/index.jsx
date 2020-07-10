@@ -102,6 +102,26 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/assets',
+        component : require('../../views/app/admin/reef-demo/assets'),
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/fridges',
+        component : require('../../views/app/admin/reef-demo/fridges'),
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/fridges/:id',
+        component : require('../../views/app/admin/reef-demo/fridges-show.jsx'),
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/notifications',
+        component : require('../../views/app/admin/reef-demo/notifications'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/bookings/:id',
         component : require('../../views/app/admin/bookings/show'),
         onEnter   : policies.isAdministrator
@@ -346,14 +366,6 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
-  {
-    title     : 'Bookings',
-    icon      : 'insert_invitation',
-    path      : '/bookings',
-    parent    : null,
-    locations : [ 'sidebar' ],
-    order     : order++
-  },
   /*
   {
     title     : 'Waitlist',
@@ -392,9 +404,41 @@ let order = 2;
     waiveAdmin: true,
   },
   {
+    title     : 'Assets',
+    icon      : 'category',
+    path      : '/assets',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
     title     : 'Cars',
     icon      : 'directions_car',
     path      : '/cars',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Bookings',
+    icon      : 'insert_invitation',
+    path      : '/bookings',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Fridges',
+    icon      : 'kitchen',
+    path      : '/fridges',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Notifications',
+    icon      : 'alarm',
+    path      : '/notifications',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
