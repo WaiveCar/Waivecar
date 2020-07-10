@@ -1175,7 +1175,7 @@ module.exports = {
       for (let fridge of fridges) {
         let telem = yield Telematics.findOne({where: {carId: fridge.id}});
         yield telem.update({lastSeenAt: moment()});
-        yield fridge.update({fridgeData: JSON.stringify(updateMap[telem.id])});
+        yield fridge.update({fridgeData: JSON.stringify(updateMap[telem.telemId])});
         if (updateMap[telem.id].Lat) {
           yield fridge.update({
             latitude: updateMap[telem.id].Lat,
