@@ -420,7 +420,18 @@ module.exports = {
         q.where = searchObj;
       }
       if (query.type) {
+        if (!q.where) {
+          q.where = {};
+        }
         q.where.type = query.type;
+      }
+      if (q.where.organizationId) {
+        if (!q.where.organizationId.$in.length) {
+          delete q.where.organizationId;
+        }
+      }
+      if (!Object.keys(q.where).length) {
+        delete q.where;
       }
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
@@ -1151,10 +1162,17 @@ module.exports = {
 
   *syncFridges() {
     try {
-      let fridges = yield Car.find({where: {type: 'fridge'}});
       let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
-      console.log('fridges', fridges);
-      console.log('updates', updates);
+      let updateMap = {};
+      for (let update of updates) {
+        updateMap[update.id] = update;
+      }
+      let fridges = yield Car.find({where: {type: 'fridge'}});
+      for (let fridge of fridges) {
+        let telem = yield Telematics.findOne({where: {carId: fridge.id}});
+        yield telem.update({lastSeenAt: moment()});
+        yield fridge.update({fridgeData: JSON.stringify(updateMap[telem.id])});
+      }
     } catch(e) {
       console.log('err', e);
     }
