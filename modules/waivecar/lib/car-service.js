@@ -1149,6 +1149,17 @@ module.exports = {
     return newTicket;
   },
 
+  *syncFridges() {
+    try {
+      let fridges = yield Car.find({where: {type: 'fridge'}});
+      let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
+      console.log('fridges', fridges);
+      console.log('updates', updates);
+    } catch(e) {
+      console.log('err', e);
+    }
+  },
+
   // Does sync operations against all cars in the invers fleet.
   *syncCars() {
     //log.debug('CarService : syncCars : start');
@@ -1156,7 +1167,7 @@ module.exports = {
 
     // Retrieve all local cars.
 
-    let allCars = yield Car.find();
+    let allCars = yield Car.find({where: {type: 'car'}});
     let allDevices = yield Telematics.find();
 
     if (process.env.NODE_ENV === 'production') {
@@ -1814,7 +1825,7 @@ module.exports = {
     // ### Request Payload
 
     let payload = {
-      url     : !options.isAirtable ? config.invers.uri + resource : config.airtable.uri + resource,
+      url     : options.customUrl ? resource : (!options.isAirtable ? config.invers.uri + resource : config.airtable.uri + resource),
       method  : options.method || 'GET',
       headers : !options.isAirtable ? config.invers.headers : config.airtable.headers,
       timeout : options.timeout || 60000
