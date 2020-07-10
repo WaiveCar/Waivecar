@@ -5,6 +5,6 @@ export default class extends Component {
     super(props);
   }
   render() {
-    return <div>Comp</div>;
+    return <div>Notifications</div>;
   }
 }
