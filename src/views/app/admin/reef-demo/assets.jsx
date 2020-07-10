@@ -8,34 +8,30 @@ export default class extends Component {
   constructor(props) {
     super(props);
     this._user = auth.user();
-    this.state = {
-      query: null,
-    };
   }
 
-  search() {
-    let {query} = this.state;
-    let child = this.refs['cars-resource'];
-    child.setState({search: query}, () => child.table.search(null, query));
+  search(val) {
+    let child = this.refs['assets-resource'];
+    child.setState({search: val}, () =>
+      child.table.search(null, this.refs['search-input'].value, this.refs['search-input']),
+    );
   }
 
   render() {
-    let {query} = this.state;
     return (
-      <div className="cars-index box full">
+      <div className="assets-index box full">
         <section className="container">
           <h3>Assets</h3>
           <div className="box-content">
             <input
               type="text"
-              onChange={e => this.setState({query: e.target.value})}
+              ref="search-input"
+              onChange={e => this.search({query: e.target.value})}
             />
-            <button onClick={() => this.search()}>Click</button>
             <OrganizationResource
-              ref="cars-resource"
-              resource={'cars'}
+              ref="assets-resource"
+              resource={'assets'}
               resourceUrl={'carsWithBookings'}
-              queryOpts={query}
               organizationIds={this._user.organizations.map(
                 org => org.organizationId,
               )}
@@ -45,22 +41,22 @@ export default class extends Component {
                     <ThSort
                       sort="id"
                       value="Id"
-                      ctx={this.refs['cars-resource']}
+                      ctx={this.refs['assets-resource']}
                     />
                     <ThSort
                       sort="license"
                       value="Name"
-                      ctx={this.refs['cars-resource']}
+                      ctx={this.refs['assets-resource']}
                     />
                     <ThSort
                       sort="maintenanceDueIn"
                       value="Maintenance Due In"
-                      ctx={this.refs['cars-resource']}
+                      ctx={this.refs['assets-resource']}
                     />
                     <ThSort
                       sort="organizationName"
                       value="organization"
-                      ctx={this.refs['cars-resource']}
+                      ctx={this.refs['assets-resource']}
                     />
                   </tr>
                 );
