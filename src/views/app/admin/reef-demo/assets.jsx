@@ -80,7 +80,7 @@ export default class extends Component {
               row={car => (
                 <tr key={car.id}>
                   <td>
-                    <Link to={`/${car.type}/${car.id}`}>{car.id}</Link>
+                    <Link to={`/${car.type}s/${car.id}`}>{car.id}</Link>
                   </td>
                   <td>
                     <Link to={`/${car.type}s/${car.id}`}>{car.license}</Link>
