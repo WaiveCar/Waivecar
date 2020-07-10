@@ -356,13 +356,16 @@ module.exports = {
     let cars = [];
     let searchObj = {};
     if (query.search) {
-      let org = yield Organization.findOne({where: {name: {$like: `%${query.search}%`}}});
+      let split = query.search.split(' ');
+      let org = yield Organization.findOne({where: {name: {$in: split}}});
       if (org && query.organizationIds && JSON.parse(query.organizationIds).includes(org.id)) {
         searchObj.organizationId = org.id;
       } else if (!query.organizationIds && org) {
         searchObj.organizationId = org.id;
       } else {
-        searchObj.license = {$like: `%${query.search}%`};
+        searchObj.$or = [];
+        searchObj.$or.push({license: {$in: split}});
+        searchObj.$or.push({type: {$in: split}});
         if (query.organizationIds) {
           searchObj.organizationId = {$in: JSON.parse(query.organizationIds)}
         }
