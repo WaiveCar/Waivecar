@@ -66,6 +66,11 @@ export default class extends Component {
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
+                      sort="temp"
+                      value="Temperature"
+                      ctx={this.refs['assets-resource']}
+                    />
+                    <ThSort
                       sort="fridgeDoor"
                       value="Door"
                       ctx={this.refs['assets-resource']}
@@ -95,6 +100,7 @@ export default class extends Component {
                       'none'
                     )}
                   </td>
+                  <td>{car.temp}</td>
                   <td>{car.fridgeDoor}</td>
                   <td>
                     {moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}
