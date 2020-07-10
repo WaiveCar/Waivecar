@@ -28,7 +28,7 @@ export default class extends Component {
           <h3>Fridges</h3>
           <div className="box-content">
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <input
                   type="text"
                   ref="search-input"

@@ -28,7 +28,7 @@ export default class extends Component {
           <h3>Assets</h3>
           <div className="box-content">
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <input
                   type="text"
                   ref="search-input"
@@ -59,8 +59,8 @@ export default class extends Component {
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
-                      sort="maintenanceDueIn"
-                      value="Maintenance Due In"
+                      sort="type"
+                      value="Type"
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
@@ -75,10 +75,14 @@ export default class extends Component {
                 <tr key={car.id}>
                   <td>{car.id}</td>
                   <td>
-                    <Link to={`/cars/${car.id}`}>{car.license}</Link>
+                    <Link to={`/${car.type}s/${car.id}`}>{car.license}</Link>
                   </td>
-                  <td>{car.maintenanceDueIn} miles</td>
-                  <td>{car.organizationName}</td>
+                  <td>{car.type}</td>
+                  <td>
+                    <Link to={`/organizations/${car.organization.id}`}>
+                      {car.organizationName}
+                    </Link>
+                  </td>
                 </tr>
               )}
             />
