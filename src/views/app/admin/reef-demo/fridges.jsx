@@ -66,6 +66,11 @@ export default class extends Component {
                       ctx={this.refs['assets-resource']}
                     />
                     <ThSort
+                      sort="fridgeDoor"
+                      value="Door"
+                      ctx={this.refs['assets-resource']}
+                    />
+                    <ThSort
                       sort="updatedAt"
                       value="Last Updated"
                       ctx={this.refs['assets-resource']}
@@ -82,10 +87,15 @@ export default class extends Component {
                     <Link to={`/fridges/${car.id}`}>{car.license}</Link>
                   </td>
                   <td>
-                    <Link to={`/organizations/${car.organization.id}`}>
-                      {car.organizationName}
-                    </Link>
+                    {car.organization ? (
+                      <Link to={`/organizations/${car.organization.id}`}>
+                        {car.organizationName}
+                      </Link>
+                    ) : (
+                      'none'
+                    )}
                   </td>
+                  <td>{car.fridgeDoor}</td>
                   <td>
                     {moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}
                   </td>

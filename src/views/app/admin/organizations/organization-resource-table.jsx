@@ -18,7 +18,7 @@ class OrganizationResource extends Component {
       `/${this.props.resourceUrl}?organizationIds=[${
         this.props.organizationId ? this.props.organizationId : this.props.organizationIds.join(',')
       }]${this.props.queryOpts ? this.props.queryOpts : ''}`,
-      10,
+      this.props.requestSize || 10,
     );
     relay.subscribe(this, this.props.resource);
   }

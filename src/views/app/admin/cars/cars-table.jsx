@@ -17,8 +17,8 @@ class CarsTable extends Component {
       null,
       `/carsWithBookings${
         organizationIds.length
-          ? `?organizationIds=[${organizationIds.join(',')}]`
-          : ''
+          ? `?organizationIds=[${organizationIds.join(',')}]&type=car`
+          : '?type=car'
       }`,
       20,
     );

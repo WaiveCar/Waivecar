@@ -46,8 +46,8 @@ export default class extends Component {
               organizationIds={this._user.organizations.map(
                 org => org.organizationId,
               )}
-              header={() => {
-                return (
+              requestSize={20}
+              header={() => (
                   <tr ref="sort">
                     <ThSort
                       sort="id"
@@ -75,8 +75,8 @@ export default class extends Component {
                       ctx={this.refs['assets-resource']}
                     />
                   </tr>
-                );
-              }}
+                )
+              }
               row={car => (
                 <tr key={car.id}>
                   <td>
@@ -89,13 +89,15 @@ export default class extends Component {
                     <Link to={`/${car.type}s`}>{car.type}</Link>
                   </td>
                   <td>
-                    <Link to={`/organizations/${car.organization.id}`}>
-                      {car.organizationName}
-                    </Link>
+                    {car.organization ? (
+                      <Link to={`/organizations/${car.organization.id}`}>
+                        {car.organizationName}
+                      </Link>
+                    ) : (
+                      'none'
+                    )}
                   </td>
-                  <td>
-                    {moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}
-                  </td>
+                  <td>{moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}</td>
                 </tr>
               )}
             />
