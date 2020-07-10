@@ -40,7 +40,6 @@ export default class extends Component {
                   </div>
                 </div>
               </div>
-              <h4>Data</h4>
               <div>
                 <table className="table-logs">
                   <thead>
