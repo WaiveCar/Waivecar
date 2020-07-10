@@ -17,9 +17,7 @@ export default class extends Component {
 
   render() {
     let {fridge} = this.state;
-    console.log(fridge);
     let fridgeData = fridge && JSON.parse(fridge.fridgeData);
-    console.log(fridgeData);
     return (
       fridge && (
         <div className="logs">
