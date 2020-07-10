@@ -358,17 +358,15 @@ module.exports = {
     if (query.search) {
       let split = query.search.split(' ');
       let org = yield Organization.findOne({where: {name: {$in: split}}});
-      if (org && query.organizationIds && JSON.parse(query.organizationIds).includes(org.id)) {
-        searchObj.organizationId = org.id;
-      } else if (!query.organizationIds && org) {
-        searchObj.organizationId = org.id;
-      } else {
+      if (!org || (org && split.length > 1)) {
         searchObj.$or = [];
         searchObj.$or.push({license: {$in: split}});
         searchObj.$or.push({type: {$in: split}});
-        if (query.organizationIds) {
-          searchObj.organizationId = {$in: JSON.parse(query.organizationIds)}
-        }
+      }
+      if (org) {
+        searchObj.organizationId = org.id;
+      } else if (query.organizationIds) {
+        searchObj.organizationId = {$in: JSON.parse(query.organizationIds)}
       }
     }
     function *join_method() {
