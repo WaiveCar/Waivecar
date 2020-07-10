@@ -492,6 +492,7 @@ module.exports = {
       }
       if (query.type === 'fridge') {
         car.fridgeDoor = JSON.parse(car.fridgeData).fridge_door || 'closed';
+        car.temp = JSON.parse(car.fridgeData).temp;
       }
     };
     perf.push("misc " + (new Date() - start));
