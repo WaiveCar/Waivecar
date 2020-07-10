@@ -22,6 +22,36 @@ export default class extends Component {
     );
   }
 
+  getCSVFromTable() {
+    let toJoin = [];
+    let table = document;
+    let headerCells = table.querySelectorAll('thead tr th');
+    let headerRow = [];
+    headerCells.forEach(cell => {
+      headerRow.push(cell.textContent.replace('arrow_drop_uparrow_drop_down', ''));
+    });
+    toJoin.push(headerRow.join(','));
+    let rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      let currentRow = [];
+      for (let child of row.children) {
+        currentRow.push(child.textContent);
+      }
+      toJoin.push(currentRow.join(','));
+    });
+    this.downloadCSV(toJoin.join('\n'));
+  }
+
+  downloadCSV(csv) {
+    let csvFile = new Blob([csv], {type: 'text/csv'});
+    let downloadLink = document.createElement('a');
+    downloadLink.download = 'fridges.csv';
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
   render() {
     return (
       <div className="assets-index box full">
@@ -102,12 +132,17 @@ export default class extends Component {
                   </td>
                   <td>{car.temp}</td>
                   <td>{car.fridgeDoor}</td>
-                  <td>
-                    {moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}
-                  </td>
+                  <td>{moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}</td>
                 </tr>
               )}
             />
+          </div>
+          <div>
+            <button
+              className="btn btn-primary get-csv"
+              onClick={() => this.getCSVFromTable()}>
+              Get CSV
+            </button>
           </div>
         </section>
       </div>

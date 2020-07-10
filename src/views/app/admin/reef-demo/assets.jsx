@@ -22,6 +22,36 @@ export default class extends Component {
     );
   }
 
+  getCSVFromTable() {
+    let toJoin = [];
+    let table = document;
+    let headerCells = table.querySelectorAll('thead tr th');
+    let headerRow = [];
+    headerCells.forEach(cell => {
+      headerRow.push(cell.textContent.replace('arrow_drop_uparrow_drop_down', ''));
+    });
+    toJoin.push(headerRow.join(','));
+    let rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      let currentRow = [];
+      for (let child of row.children) {
+        currentRow.push(child.textContent);
+      }
+      toJoin.push(currentRow.join(','));
+    });
+    this.downloadCSV(toJoin.join('\n'));
+  }
+
+  downloadCSV(csv) {
+    let csvFile = new Blob([csv], {type: 'text/csv'});
+    let downloadLink = document.createElement('a');
+    downloadLink.download = 'assets.csv';
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
   render() {
     return (
       <div className="assets-index box full">
@@ -48,35 +78,34 @@ export default class extends Component {
               )}
               requestSize={20}
               header={() => (
-                  <tr ref="sort">
-                    <ThSort
-                      sort="id"
-                      value="Id"
-                      ctx={this.refs['assets-resource']}
-                    />
-                    <ThSort
-                      sort="license"
-                      value="Name"
-                      ctx={this.refs['assets-resource']}
-                    />
-                    <ThSort
-                      sort="type"
-                      value="Type"
-                      ctx={this.refs['assets-resource']}
-                    />
-                    <ThSort
-                      sort="organizationName"
-                      value="Organization"
-                      ctx={this.refs['assets-resource']}
-                    />
-                    <ThSort
-                      sort="updatedAt"
-                      value="Last Updated"
-                      ctx={this.refs['assets-resource']}
-                    />
-                  </tr>
-                )
-              }
+                <tr ref="sort">
+                  <ThSort
+                    sort="id"
+                    value="Id"
+                    ctx={this.refs['assets-resource']}
+                  />
+                  <ThSort
+                    sort="license"
+                    value="Name"
+                    ctx={this.refs['assets-resource']}
+                  />
+                  <ThSort
+                    sort="type"
+                    value="Type"
+                    ctx={this.refs['assets-resource']}
+                  />
+                  <ThSort
+                    sort="organizationName"
+                    value="Organization"
+                    ctx={this.refs['assets-resource']}
+                  />
+                  <ThSort
+                    sort="updatedAt"
+                    value="Last Updated"
+                    ctx={this.refs['assets-resource']}
+                  />
+                </tr>
+              )}
               row={car => (
                 <tr key={car.id}>
                   <td>
@@ -101,6 +130,13 @@ export default class extends Component {
                 </tr>
               )}
             />
+          </div>
+          <div>
+            <button
+              className="btn btn-primary get-csv"
+              onClick={() => this.getCSVFromTable()}>
+              Get CSV
+            </button>
           </div>
         </section>
       </div>
