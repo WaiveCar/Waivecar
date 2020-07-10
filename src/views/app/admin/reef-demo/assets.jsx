@@ -13,7 +13,11 @@ export default class extends Component {
   search(val) {
     let child = this.refs['assets-resource'];
     child.setState({search: val}, () =>
-      child.table.search(null, this.refs['search-input'].value, this.refs['search-input']),
+      child.table.search(
+        null,
+        this.refs['search-input'].value,
+        this.refs['search-input'],
+      ),
     );
   }
 
@@ -23,11 +27,17 @@ export default class extends Component {
         <section className="container">
           <h3>Assets</h3>
           <div className="box-content">
-            <input
-              type="text"
-              ref="search-input"
-              onChange={e => this.search({query: e.target.value})}
-            />
+            <div className="row">
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  ref="search-input"
+                  onChange={e => this.search({query: e.target.value})}
+                  className="form-control box-table-search"
+                  placeholder="search"
+                />
+              </div>
+            </div>
             <OrganizationResource
               ref="assets-resource"
               resource={'assets'}
