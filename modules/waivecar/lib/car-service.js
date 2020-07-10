@@ -490,6 +490,9 @@ module.exports = {
         let bookingService = require('./booking-service');
         car.isAtHub = (yield bookingService.isAtHub(car)) ? true : false;
       }
+      if (query.type === 'fridge') {
+        car.fridgeDoor = JSON.parse(car.fridgeData).fridge_door || 'open';
+      }
     };
     perf.push("misc " + (new Date() - start));
 
@@ -1172,9 +1175,15 @@ module.exports = {
         let telem = yield Telematics.findOne({where: {carId: fridge.id}});
         yield telem.update({lastSeenAt: moment()});
         yield fridge.update({fridgeData: JSON.stringify(updateMap[telem.id])});
+        if (updateMap[telem.id].Lat) {
+          yield fridge.update({
+            latitude: updateMap[telem.id].Lat,
+            longitude: updateMap[telem.id].Lng,
+          });
+        }
       }
     } catch(e) {
-      console.log('err', e);
+      console.log('err updating fridges', e);
     }
   },
 
