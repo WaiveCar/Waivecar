@@ -133,7 +133,7 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
             code: 'CARS_ALREADY_ADDED',
             message: `${errs.join(
               ', ',
-            )} ${err.length === 1 ? 'has' : 'have'} already been added to this location.`,
+            )} ${errs.length === 1 ? 'has' : 'have'} already been added to this location.`,
           },
           400,
         );
