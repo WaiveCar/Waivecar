@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {GMap, Form} from 'bento-web';
+import Switch from 'react-toolbox/lib/switch';
+import {GMap, Form, snackbar} from 'bento-web';
 import {api, auth} from 'bento';
-import {fields, snackbar} from 'bento-ui';
+import {fields} from 'bento-ui';
 import {Link} from 'react-router';
 import moment from 'moment';
+import Service from '../../lib/car-service';
 
 let formFields = [
   [
@@ -55,6 +57,7 @@ export default class extends Component {
       searchResults: [],
       selected: null,
     };
+    this.service = new Service(this);
   }
 
   componentDidMount() {
@@ -76,6 +79,26 @@ export default class extends Component {
         }
       }),
     );
+  }
+
+  toggleService(fridge) {
+    opts = {};
+    if (fridge.inRepair) {
+      opts.reason = prompt(
+        'How much did it cost to do the repair listed?\n' +
+          (fridge.repairReason || ''),
+      );
+    } else {
+      opts.reason = prompt('What is wrong with the vehicle?');
+      if (!opts.reason) {
+        snackbar.notify({
+          type: 'danger',
+          message: 'You need to have a reason.',
+        });
+        return;
+      }
+    }
+    this.service.executeCommand(fridge, 'repair', opts);
   }
 
   convertTemp(val) {
@@ -145,6 +168,35 @@ export default class extends Component {
                   </div>
                 </div>
               </div>
+              <h4>Info</h4>
+              <div className="container-fluid car-controls">
+                <div className="row">
+                  <div className="col-md-6 col-xs-12">Here</div>
+                  <div className="col-md-6">
+                    <Switch
+                      ref={0}
+                      {...{
+                        checked: fridge.inRepair,
+                        label: fridge.inRepair ? (
+                          <div>
+                            Put in Service
+                            <em className="reason">
+                              {moment(fridge.lastServiceAt).format(
+                                'YYYY/MM/DD',
+                              )}{' '}
+                              {fridge.repairReason}
+                            </em>
+                          </div>
+                        ) : (
+                          'Put in Repair'
+                        ),
+                        onChange: this.toggleService.bind(this, fridge),
+                      }}
+                    />
+                  </div>
+                  <div className="col-md-6"></div>
+                </div>
+              </div>
               <div>
                 <table className="table-logs">
                   <thead>
@@ -177,7 +229,11 @@ export default class extends Component {
               {!selected ? (
                 <div
                   className="row"
-                  style={{display: 'flex', justifyContent: 'center', marginBottom: '1rem'}}>
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginBottom: '1rem',
+                  }}>
                   <div className="col-md-9">
                     <div className="row" style={{marginTop: '10px'}}>
                       <input
