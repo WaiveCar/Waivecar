@@ -152,7 +152,7 @@ module.exports = {
     if (params && params.channel) payload.channel = params.channel;
     log_message('slack', payload);
 
-    if (process.env.NODE_ENV === 'production' || params.force) {
+    if (process.env.NODE_ENV === 'production' /*|| params.force*/) {
       try {
         yield slack.message(payload);
       } catch (err) {

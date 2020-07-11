@@ -1168,25 +1168,39 @@ module.exports = {
     try {
       let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
       let fridge = yield Car.findOne({where: {type: 'fridge'}});
-      yield fridge.update({fridgeData: JSON.stringify(updates[0])});
-      
+      let lastFault = JSON.parse(fridge.fridgeData).Last_fault;
+      let alerted = false; 
       if (updates[0].Temp > 10) {
-
+        yield notify.notifyAdmins(`:hot_springs: The fridge in ${fridge.license} is getting too warm.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
       }
       if (updates[0].Temp_2 > -2) {
-
-
+        yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
       }
       if (updates[0].Humidity > 90) {
-
+        yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
       }
       if (updates[0].Fridge_door) {
-
+        yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
+      }
+      if (updates[0].Jolt_event) {
+        yield notify.notifyAdmins(`:zap: ${fridge.license} has been jolted.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
       }
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
-      console.log(lastUpdate - minAgo, lastUpdate, minAgo, updates[0].created_at, updates[0]);
-      //yield notify.notifyAdmins(`${fridge.license}`, { channel : '#fridge-alerts' }, {force: true});
+      if (lastUpdate - minAgo > 180000) {
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over 3 minutes.`, { channel : '#fridge-alerts' }, {force: true});
+        alerted = true;
+      }
+      if (alerted) {
+        updates[0].Last_fault = updates[0].created_at;
+      }
+      updates[0].Last_fault = alerted ? updates[0].created_at : lastFault;
+      yield fridge.update({fridgeData: JSON.stringify(updates[0])});
     } catch(e) {
       console.log('err updating fridges', e);
     }
