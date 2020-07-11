@@ -1172,15 +1172,17 @@ module.exports = {
       let alerted = false; 
 
       if (updates[0].Temp > 10) {
-        yield notify.notifyAdmins(`:hotsprings: The fridge in ${fridge.license} is getting too warm.`, ['slack'], { channel : '#fridge-alerts', force: true});
+        let temp = (updates[0].Temp * (9 / 5) + 32).toFixed(2);
+        yield notify.notifyAdmins(`:hotsprings: The fridge in ${fridge.license} is getting too warm. It is at ${temp}F.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Temp_2 > -2) {
-        yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm.`, ['slack'], { channel : '#fridge-alerts', force: true});
+        let temp = (updates[0].Temp * (9 / 5) + 32).toFixed(2);
+        yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm. It is at ${temp}F.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Humidity > 90) {
-        yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid.`, ['slack'], { channel : '#fridge-alerts', force: true});
+        yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid. The humidity is ${updates[0].Humidity}%.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Fridge_door) {
@@ -1194,7 +1196,7 @@ module.exports = {
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
       if (lastUpdate - minAgo > 180000) {
-        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over 3 minutes.`, ['slack'], { channel : '#fridge-alerts', force: true});
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${moment().diff(moment(updates[0].Humidity), 'minutes')} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (alerted) {
