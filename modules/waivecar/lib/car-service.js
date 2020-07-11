@@ -1167,22 +1167,8 @@ module.exports = {
   *syncFridges() {
     try {
       let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
-      let updateMap = {};
-      for (let update of updates) {
-        updateMap[update.id] = update;
-      }
-      let fridges = yield Car.find({where: {type: 'fridge'}});
-      for (let fridge of fridges) {
-        let telem = yield Telematics.findOne({where: {carId: fridge.id}});
-        yield telem.update({lastSeenAt: moment()});
-        yield fridge.update({fridgeData: JSON.stringify(updateMap[telem.telemId])});
-        if (updateMap[telem.id].Lat) {
-          yield fridge.update({
-            latitude: updateMap[telem.id].Lat,
-            longitude: updateMap[telem.id].Lng,
-          });
-        }
-      }
+      let fridge = yield Car.findOne({where: {type: 'fridge'}});
+      yield fridge.update({fridgeData: JSON.stringify(updates[0])});
     } catch(e) {
       console.log('err updating fridges', e);
     }
