@@ -1,9 +1,45 @@
 import React, {Component} from 'react';
 import {GMap, Form} from 'bento-web';
 import {api, relay} from 'bento';
+import {fields} from 'bento-ui';
 import moment from 'moment';
 
-let formFields = [];
+let formFields = [
+  [
+    {
+      label: 'Max Fridge Temperature',
+      component: 'input',
+      type: 'text',
+      className: 'col-md-6 bento-form-input',
+      name: 'fridge',
+      required: true,
+    },
+    {
+      label: 'Max Freezer Temperature',
+      component: 'input',
+      type: 'text',
+      className: 'col-md-6 bento-form-input',
+      name: 'freezer',
+      required: true,
+    },
+    {
+      label: 'Max Humidity',
+      component: 'input',
+      type: 'text',
+      className: 'col-md-6 bento-form-input',
+      name: 'humidity',
+      required: true,
+    },
+    {
+      label: 'Update Interval',
+      component: 'input',
+      type: 'text',
+      className: 'col-md-6 bento-form-input',
+      name: 'humidity',
+      required: true,
+    },
+  ],
+];
 
 export default class extends Component {
   constructor(props) {
@@ -81,7 +117,7 @@ export default class extends Component {
                 <table className="table-logs">
                   <thead>
                     <tr ref="sort">
-                      <th>Alert</th>
+                      <th>Attribute</th>
                       <th>Latest Update</th>
                     </tr>
                   </thead>
