@@ -303,7 +303,7 @@ export default class extends Component {
                     class: 'btn btn-primary btn-profile-submit',
                   },
                 ]}
-                submit={e => e.preventDefault}
+                submit={e => this.setState({selected: null, searchResults: [], search: ''})}
               />
             </div>
           </div>
