@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {GMap, Form} from 'bento-web';
-import {api, relay} from 'bento';
-import {fields} from 'bento-ui';
+import {api, auth} from 'bento';
+import {fields, snackbar} from 'bento-ui';
+import {Link} from 'react-router';
 import moment from 'moment';
 
 let formFields = [
@@ -47,8 +48,12 @@ let defaultValues = {
 export default class extends Component {
   constructor(props) {
     super(props);
+    this._user = auth.user();
     this.state = {
       fridge: null,
+      search: '',
+      searchResults: [],
+      selected: null,
     };
   }
 
@@ -91,8 +96,32 @@ export default class extends Component {
     return val ? 'yes' : 'no';
   }
 
+  search() {
+    let {search} = this.state;
+    api.get(
+      `/users?search="${search}"${
+        this._user.organizations.length
+          ? `&organizationIds=[${this._user.organizations.map(
+              org => org.organizationId,
+            )}]`
+          : ''
+      }`,
+      (err, userList) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: err.message,
+          });
+        }
+        this.setState({
+          searchResults: userList,
+        });
+      },
+    );
+  }
+
   render() {
-    let {fridge} = this.state;
+    let {fridge, search, searchResults, selected} = this.state;
     let fridgeData = fridge && JSON.parse(fridge.fridgeData);
     return (
       fridge && (
@@ -145,6 +174,64 @@ export default class extends Component {
                 </table>
               </div>
               <h4 style={{marginTop: '1rem'}}>Notification Settings</h4>
+              {!selected ? (
+                <div
+                  className="row"
+                  style={{display: 'flex', justifyContent: 'center', marginBottom: '1rem'}}>
+                  <div className="col-md-9">
+                    <div className="row" style={{marginTop: '10px'}}>
+                      <input
+                        onChange={e => this.setState({search: e.target.value})}
+                        value={search}
+                        style={{
+                          marginTop: '1px',
+                          padding: '2px',
+                          height: '40px',
+                        }}
+                        className="col-xs-6"
+                        placeholder="Search For User To Notify"
+                      />
+                      <button
+                        className="btn btn-primary btn-sm col-xs-6"
+                        onClick={() => this.search()}>
+                        Find User
+                      </button>
+                    </div>
+                    {searchResults &&
+                      searchResults.map((user, i) => (
+                        <div key={i} className="row">
+                          <div style={{padding: '10px 0'}} className="col-xs-6">
+                            <Link to={`/cars/${user.id}`} target="_blank">
+                              {user.firstName} {user.lastName}
+                            </Link>
+                          </div>
+                          <button
+                            className="btn btn-link col-xs-6"
+                            onClick={() => this.setState({selected: user})}>
+                            select
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="row"
+                  style={{display: 'flex', justifyContent: 'center'}}>
+                  <div className="col-md-9">
+                    <button
+                      className="btn btn-link col-xs-6"
+                      onClick={() => {}}>
+                      selected:
+                    </button>
+                    <div style={{padding: '10px 0'}} className="col-xs-6">
+                      <Link to={`/cars/${selected.id}`} target="_blank">
+                        {selected.firstName} {selected.lastName}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
               <Form
                 ref="car"
                 className="bento-form-static"
