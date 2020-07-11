@@ -1169,6 +1169,24 @@ module.exports = {
       let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
       let fridge = yield Car.findOne({where: {type: 'fridge'}});
       yield fridge.update({fridgeData: JSON.stringify(updates[0])});
+      
+      if (updates[0].Temp > 10) {
+
+      }
+      if (updates[0].Temp_2 > -2) {
+
+
+      }
+      if (updates[0].Humidity > 90) {
+
+      }
+      if (updates[0].Fridge_door) {
+
+      }
+      let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
+      let lastUpdate = moment(updates[0].created_at).toDate().getTime();
+      console.log(lastUpdate - minAgo, lastUpdate, minAgo, updates[0].created_at, updates[0]);
+      //yield notify.notifyAdmins(`${fridge.license}`, { channel : '#fridge-alerts' }, {force: true});
     } catch(e) {
       console.log('err updating fridges', e);
     }
