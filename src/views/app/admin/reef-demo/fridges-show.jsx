@@ -239,7 +239,7 @@ export default class extends Component {
                 default={defaultValues}
                 buttons={[
                   {
-                    value: 'Update Intervals',
+                    value: 'Update Notifications',
                     type: 'submit',
                     class: 'btn btn-primary btn-profile-submit',
                   },
