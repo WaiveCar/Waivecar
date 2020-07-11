@@ -148,7 +148,7 @@ export default class extends Component {
     let fridgeData = fridge && JSON.parse(fridge.fridgeData);
     return (
       fridge && (
-        <div className="logs">
+        <div className="logs cars cars-show">
           <div className="box">
             <h3>{fridge.license}</h3>
             <div className="box-content">
@@ -171,7 +171,11 @@ export default class extends Component {
               <h4>Info</h4>
               <div className="container-fluid car-controls">
                 <div className="row">
-                  <div className="col-md-6 col-xs-12">Here</div>
+                  <div className="col-md-6 col-xs-12">
+                    <div>Make: LG</div>
+                    <div>Model: LRSES2706V</div>
+                    <div>Capacity: 26.8 cu. ft.</div>
+                  </div>
                   <div className="col-md-6">
                     <Switch
                       ref={0}
@@ -194,7 +198,6 @@ export default class extends Component {
                       }}
                     />
                   </div>
-                  <div className="col-md-6"></div>
                 </div>
               </div>
               <div>
