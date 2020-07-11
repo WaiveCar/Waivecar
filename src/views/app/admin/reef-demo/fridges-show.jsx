@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {GMap} from 'bento-web';
 import {api} from 'bento';
+import moment from 'moment';
 
 export default class extends Component {
   constructor(props) {
@@ -15,8 +16,20 @@ export default class extends Component {
     api.get(`/cars/${id}`, (err, res) => this.setState({fridge: res}));
   }
 
-  convert(val) {
+  convertTemp(val) {
     return (val * (9 / 5) + 32).toFixed(2) + ' F';
+  }
+
+  convertHumid(val) {
+    return val + '%';
+  }
+
+  convertTime(val) {
+    return moment(val).subtract(7, 'hours').format('MM/DD: h:MM:SSA');
+  }
+
+  convertBool(val) {
+    return val ? 'yes' : 'no';
   }
 
   render() {
@@ -55,8 +68,13 @@ export default class extends Component {
                   </thead>
                   <tbody>
                     {[
-                      ['Temp', 'Fridge Temperature', this.convert],
-                      ['Temp_2', 'Freezer Temperature', this.convert],
+                      ['Temp', 'Fridge Temperature', this.convertTemp],
+                      ['Temp_2', 'Freezer Temperature', this.convertTemp],
+                      ['Humidity', 'Humidity', this.convertHumid],
+                      ['created_at', 'Last Seen At', this.convertTime],
+                      ['Jolt_event', 'Recent Jolt', this.convertBool],
+                      ['Fridge_door', 'Door Open', this.convertBool],
+                      ['Last_fault', 'Last Fault', this.convertTime],
                     ].map(([key, name, func], i) => (
                       <tr key={i}>
                         <td>{name}</td>
