@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {GMap} from 'bento-web';
+import {GMap, Form} from 'bento-web';
 import {api, relay} from 'bento';
 import moment from 'moment';
+
+let formFields = [];
 
 export default class extends Component {
   constructor(props) {
@@ -79,8 +81,8 @@ export default class extends Component {
                 <table className="table-logs">
                   <thead>
                     <tr ref="sort">
-                      <th>Property</th>
-                      <th>Value</th>
+                      <th>Alert</th>
+                      <th>Latest Update</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -103,6 +105,21 @@ export default class extends Component {
                   </tbody>
                 </table>
               </div>
+              <h4 style={{marginTop: '1rem'}}>Notification Settings</h4>
+              <Form
+                ref="car"
+                className="bento-form-static"
+                fields={formFields}
+                default={{}}
+                buttons={[
+                  {
+                    value: 'Update Intervals',
+                    type: 'submit',
+                    class: 'btn btn-primary btn-profile-submit',
+                  },
+                ]}
+                submit={e => e.preventDefault}
+              />
             </div>
           </div>
         </div>
