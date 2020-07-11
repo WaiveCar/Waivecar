@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {GMap} from 'bento-web';
-import {api} from 'bento';
+import {api, relay} from 'bento';
 import moment from 'moment';
 
 export default class extends Component {
@@ -12,8 +12,24 @@ export default class extends Component {
   }
 
   componentDidMount() {
+    this.fetchFridge(() => {
+      this.interval = setInterval(() => this.fetchFridge(), 1500);
+    });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  fetchFridge(cb) {
     let {id} = this.props.params;
-    api.get(`/cars/${id}`, (err, res) => this.setState({fridge: res}));
+    api.get(`/cars/${id}`, (err, res) =>
+      this.setState({fridge: res}, () => {
+        if (cb) {
+          cb();
+        }
+      }),
+    );
   }
 
   convertTemp(val) {
@@ -25,7 +41,9 @@ export default class extends Component {
   }
 
   convertTime(val) {
-    return moment(val).subtract(7, 'hours').format('MM/DD: h:MM:SSA');
+    return val
+      ? moment(val).subtract(7, 'hours').format('MM/DD: h:mm:SSA')
+      : 'never';
   }
 
   convertBool(val) {
