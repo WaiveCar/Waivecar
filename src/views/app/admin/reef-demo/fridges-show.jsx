@@ -13,7 +13,7 @@ export default class extends Component {
 
   componentDidMount() {
     this.fetchFridge(() => {
-      this.interval = setInterval(() => this.fetchFridge(), 1500);
+      this.interval = setInterval(() => this.fetchFridge(), 5000);
     });
   }
 
@@ -53,7 +53,6 @@ export default class extends Component {
   render() {
     let {fridge} = this.state;
     let fridgeData = fridge && JSON.parse(fridge.fridgeData);
-    console.log(fridgeData);
     return (
       fridge && (
         <div className="logs">
