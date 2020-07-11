@@ -1201,7 +1201,8 @@ module.exports = {
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
       if (lastUpdate - minAgo > 180000) {
-        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${(moment().diff(moment(updates[0].Humidity) / 1000 / 60).toFixed(2), 'minutes')} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
+        console.log('here');
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${((lastUpdate - minAgo) / 1000 / 60).toFixed()} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (alerted) {
