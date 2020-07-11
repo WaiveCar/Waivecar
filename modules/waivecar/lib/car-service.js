@@ -1190,6 +1190,10 @@ module.exports = {
         yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
+      if (!updates[0].Fridge_door && oldData.fridgeDoor) {
+        yield notify.notifyAdmins(`:door: The door of ${fridge.license} has been closed.`, ['slack'], { channel : '#fridge-alerts', force: true});
+        alerted = true;
+      }
       if (updates[0].Jolt_event) {
         yield notify.notifyAdmins(`:zap: ${fridge.license} has been jolted.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
@@ -1197,7 +1201,7 @@ module.exports = {
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
       if (lastUpdate - minAgo > 180000) {
-        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${moment().diff(moment(updates[0].Humidity), 'minutes')} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${(moment().diff(moment(updates[0].Humidity) / 1000 / 60).toFixed(2), 'minutes')} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (alerted) {
