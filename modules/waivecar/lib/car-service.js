@@ -1186,11 +1186,11 @@ module.exports = {
         yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid. The humidity is ${updates[0].Humidity}%.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
-      if (updates[0].Fridge_door && !oldData.fridgeDoor) {
+      if (updates[0].Fridge_door && !oldData.Fridge_door) {
         yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
-      if (!updates[0].Fridge_door && oldData.fridgeDoor) {
+      if (!updates[0].Fridge_door && oldData.Fridge_door) {
         yield notify.notifyAdmins(`:door: The door of ${fridge.license} has been closed.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
