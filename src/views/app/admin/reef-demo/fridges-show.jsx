@@ -12,7 +12,6 @@ let formFields = [
       type: 'text',
       className: 'col-md-6 bento-form-input',
       name: 'fridge',
-      required: true,
     },
     {
       label: 'Max Freezer Temperature',
@@ -20,7 +19,6 @@ let formFields = [
       type: 'text',
       className: 'col-md-6 bento-form-input',
       name: 'freezer',
-      required: true,
     },
     {
       label: 'Max Humidity',
@@ -28,18 +26,23 @@ let formFields = [
       type: 'text',
       className: 'col-md-6 bento-form-input',
       name: 'humidity',
-      required: true,
     },
     {
       label: 'Update Interval',
       component: 'input',
       type: 'text',
       className: 'col-md-6 bento-form-input',
-      name: 'humidity',
-      required: true,
+      name: 'interval',
     },
   ],
 ];
+
+let defaultValues = {
+  fridge: 40,
+  freezer: 31,
+  humidity: 90,
+  interval: 60,
+};
 
 export default class extends Component {
   constructor(props) {
@@ -146,7 +149,7 @@ export default class extends Component {
                 ref="car"
                 className="bento-form-static"
                 fields={formFields}
-                default={{}}
+                default={defaultValues}
                 buttons={[
                   {
                     value: 'Update Intervals',
