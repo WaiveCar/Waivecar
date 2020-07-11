@@ -1167,25 +1167,26 @@ module.exports = {
   *syncFridges() {
     try {
       let updates = yield this.request(`http://waivescreen.com/api/sensor_data`, {customUrl: true});
-      let fridge = yield Car.findOne({where: {type: 'fridge'}});
-      let lastFault = JSON.parse(fridge.fridgeData).Last_fault;
+      let fridge = yield Car.findOne({where: {type: 'fridge'}}); 
+      let oldData = JSON.parse(fridge.fridgeData);
+      let lastFault = oldData.Last_fault;
       let alerted = false; 
 
-      if (updates[0].Temp > 10) {
+      if (updates[0].Temp > 10 && oldData.Temp <= 10) {
         let temp = (updates[0].Temp * (9 / 5) + 32).toFixed(2);
         yield notify.notifyAdmins(`:hotsprings: The fridge in ${fridge.license} is getting too warm. It is at ${temp}F.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
-      if (updates[0].Temp_2 > -2) {
+      if (updates[0].Temp_2 > -2 && oldData.Temp_2 <= -2) {
         let temp = (updates[0].Temp * (9 / 5) + 32).toFixed(2);
         yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm. It is at ${temp}F.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
-      if (updates[0].Humidity > 90) {
+      if (updates[0].Humidity > 90 && oldData.Humidity <= 90) {
         yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid. The humidity is ${updates[0].Humidity}%.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
-      if (updates[0].Fridge_door) {
+      if (updates[0].Fridge_door && !oldData.fridgeDoor) {
         yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
