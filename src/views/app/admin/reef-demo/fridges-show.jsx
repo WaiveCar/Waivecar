@@ -15,9 +15,14 @@ export default class extends Component {
     api.get(`/cars/${id}`, (err, res) => this.setState({fridge: res}));
   }
 
+  convert(val) {
+    return (val * (9 / 5) + 32).toFixed(2) + ' F';
+  }
+
   render() {
     let {fridge} = this.state;
     let fridgeData = fridge && JSON.parse(fridge.fridgeData);
+    console.log(fridgeData);
     return (
       fridge && (
         <div className="logs">
@@ -49,10 +54,15 @@ export default class extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.keys(fridgeData).map((key, i) => (
+                    {[
+                      ['Temp', 'Fridge Temperature', this.convert],
+                      ['Temp_2', 'Freezer Temperature', this.convert],
+                    ].map(([key, name, func], i) => (
                       <tr key={i}>
-                        <td>{key}</td>
-                        <td>{fridgeData[key]}</td>
+                        <td>{name}</td>
+                        <td>
+                          {func ? func(fridgeData[key]) : fridgeData[key]}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
