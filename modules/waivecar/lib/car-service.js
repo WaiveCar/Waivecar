@@ -1170,30 +1170,31 @@ module.exports = {
       let fridge = yield Car.findOne({where: {type: 'fridge'}});
       let lastFault = JSON.parse(fridge.fridgeData).Last_fault;
       let alerted = false; 
+
       if (updates[0].Temp > 10) {
-        yield notify.notifyAdmins(`:hot_springs: The fridge in ${fridge.license} is getting too warm.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:hotsprings: The fridge in ${fridge.license} is getting too warm.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Temp_2 > -2) {
-        yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:icecream: The freezer in ${fridge.license} is getting too warm.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Humidity > 90) {
-        yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:sweat_drops: The fridge in ${fridge.license} is getting too humid.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Fridge_door) {
-        yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:door: The door of ${fridge.license} is open.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (updates[0].Jolt_event) {
-        yield notify.notifyAdmins(`:zap: ${fridge.license} has been jolted.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:zap: ${fridge.license} has been jolted.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
       if (lastUpdate - minAgo > 180000) {
-        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over 3 minutes.`, { channel : '#fridge-alerts' }, {force: true});
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over 3 minutes.`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (alerted) {
