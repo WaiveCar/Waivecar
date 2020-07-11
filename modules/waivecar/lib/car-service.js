@@ -426,7 +426,7 @@ module.exports = {
         q.where.type = query.type;
       }
       if (q.where.organizationId) {
-        if (!q.where.organizationId.$in.length) {
+        if (!q.where.organizationId && q.where.organizationId.$in.length) {
           delete q.where.organizationId;
         }
       }
@@ -1201,7 +1201,6 @@ module.exports = {
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
       if (lastUpdate - minAgo > 180000) {
-        console.log('here');
         yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${((lastUpdate - minAgo) / 1000 / 60).toFixed()} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
