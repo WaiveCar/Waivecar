@@ -492,7 +492,7 @@ module.exports = {
       }
       if (query.type === 'fridge') {
         car.fridgeDoor = JSON.parse(car.fridgeData).fridge_door || 'closed';
-        car.temp = JSON.parse(car.fridgeData).temp;
+        car.temp = JSON.parse(car.fridgeData).Temp;
       }
     };
     perf.push("misc " + (new Date() - start));
@@ -1200,8 +1200,8 @@ module.exports = {
       }
       let minAgo = moment().subtract(3, 'minutes').toDate().getTime();
       let lastUpdate = moment(updates[0].created_at).toDate().getTime();
-      if (lastUpdate - minAgo > 180000) {
-        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${((lastUpdate - minAgo) / 1000 / 60).toFixed()} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
+      if (Math.abs(lastUpdate - minAgo) > 180000) {
+        yield notify.notifyAdmins(`:zzz: ${fridge.license} has not been heard from in over ${(Math.abs(lastUpdate - minAgo) / 1000 / 60).toFixed()} minutes`, ['slack'], { channel : '#fridge-alerts', force: true});
         alerted = true;
       }
       if (alerted) {
