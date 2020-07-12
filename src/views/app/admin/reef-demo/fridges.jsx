@@ -52,6 +52,10 @@ export default class extends Component {
     downloadLink.click();
   }
 
+  convertTemp(val) {
+    return (val * (9 / 5) + 32).toFixed(2) + ' F';
+  }
+
   render() {
     return (
       <div className="assets-index box full">
@@ -130,7 +134,7 @@ export default class extends Component {
                       'none'
                     )}
                   </td>
-                  <td>{car.temp}</td>
+                  <td>{this.convertTemp(car.temp)}</td>
                   <td>{car.fridgeDoor}</td>
                   <td>{moment(car.updatedAt).format('MM/DD/YYYY HH:MM')}</td>
                 </tr>

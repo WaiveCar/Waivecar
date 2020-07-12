@@ -28,7 +28,7 @@ function SelectedList({list, word, ctx, unSelect, action}) {
         ))}{' '}
       </div>
       <button className="btn btn-primary" onClick={() => action()}>
-        {word} cars
+        {word} assets
       </button>
     </div>
   );
@@ -153,7 +153,7 @@ class Hub extends Component {
             <h4 style={{marginTop: '1rem'}}>Current Cars</h4>
             <OrganizationResource
               ref="cars-resource"
-              resource={'cars'}
+              resource={'assets'}
               resourceUrl={'carsWithBookings'}
               queryOpts={`&hubId=${hubId}&checkForHub=true`}
               organizationId={id}
@@ -253,7 +253,7 @@ class Hub extends Component {
               className="btn btn-primary"
               style={{marginTop: '1rem'}}
               onClick={() => this.setState({showAddCars: !showAddCars})}>
-              {!showAddCars ? 'Add Cars' : 'hide'}
+              {!showAddCars ? 'Add Assets' : 'hide'}
             </button>
             {showAddCars && (
               <div>
@@ -269,12 +269,12 @@ class Hub extends Component {
                       value={carSearchWord}
                       style={{marginTop: '1px', padding: '2px', height: '40px'}}
                       className="col-xs-6"
-                      placeholder="Car Name"
+                      placeholder="Asset Name"
                     />
                     <button
                       className="btn btn-primary btn-sm col-xs-6"
                       onClick={() => this.carSearch()}>
-                      Find Car
+                      Find Asset
                     </button>
                   </div>
                   {searchResults.length
