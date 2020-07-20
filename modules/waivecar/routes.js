@@ -92,6 +92,8 @@ Route.post('/locations', [ 'isAuthenticated', 'isAdmin', 'LocationsController@cr
 Route.get('/locations', 'LocationsController@index');
 Route.get('/locations/:id', 'LocationsController@show');
 Route.put('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@update' ]);
+Route.post('/locations/:id/addCars', ['isAuthenticated', 'isAdmin', 'LocationsController@addCars']);
+Route.post('/locations/:id/removeCars', ['isAuthenticated', 'isAdmin', 'LocationsController@removeCars']);
 Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@delete' ]);
 
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
@@ -179,6 +181,7 @@ Route.del('/group/:groupRoleId/removecar/:carId', ['GroupController@removeCar'])
 // ### Organizations
 Route.get('/organizations', ['OrganizationsController@index']);
 Route.post('/organizations', ['isAuthenticated', 'OrganizationsController@create']);
+Route.put('/organizations/:id', ['isAuthenticated', 'OrganizationsController@update']);
 Route.post('/organizations/statements', ['isAuthenticated', 'OrganizationsController@createStatement']);
 Route.put('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@payStatement']);
 Route.del('/organizations/statements/pay/:statementId', ['isAuthenticated', 'OrganizationsController@deleteStatement']);
@@ -186,3 +189,4 @@ Route.post('/organizations/addUsers', ['isAuthenticated', 'OrganizationsControll
 Route.get('/organizations/:id', ['isAuthenticated','OrganizationsController@show']);
 Route.put('/organizations/:id/:action', ['isAuthenticated', 'OrganizationsController@action']);
 Route.get('/organizations/:id/statements', ['isAuthenticated', 'OrganizationsController@getStatements']);
+Route.get('/organizations/:id/hubs', ['isAuthenticated', 'OrganizationsController@hubs']);

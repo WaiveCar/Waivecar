@@ -4,6 +4,7 @@ let OrderService = require('../../shop/lib/order-service');
 let notify = require('./notification-service');
 let Organization = Bento.model('Organization');
 let OrganizationStatement = Bento.model('OrganizationStatement');
+let Location = Bento.model('Location');
 let User = Bento.model('User');
 let Email = Bento.provider('email');
 let error = Bento.Error;
@@ -56,6 +57,24 @@ module.exports = {
       throw error.parse(
         {
           code: 'ERROR_CREATING_ORGANIZATION',
+          message: e.data ? e.data.type : e.message,
+        },
+        500,
+      );
+    }
+  },
+
+  *update(id, payload, _user) {
+    try {
+      let {name} = payload;
+      let org = yield Organization.findById(id);
+      yield org.update(payload);
+      return org;
+    } catch (e) {
+      log.warn(e);
+      throw error.parse(
+        {
+          code: 'ERROR_UPDATING_ORGANIZATION',
           message: e.data ? e.data.type : e.message,
         },
         500,
@@ -317,5 +336,14 @@ module.exports = {
         404,
       );
     }
+  },
+
+  *hubs(organizationId, query) {
+    return yield Location.find({
+      where: {organizationId, type: 'hub'},
+      ...(query.limit ? {limit: Number(query.limit)} : {}),
+      ...(query.offset ? {offset: Number(query.offset)} : {}),
+      ...(query.order ? {order: [query.order.split(',')]} : {}),
+    });
   },
 };

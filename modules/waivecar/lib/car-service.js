@@ -373,26 +373,31 @@ module.exports = {
 
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
+      let include = [
+        {
+          model: 'GroupCar',
+          as :'tagList'
+        },
+        { 
+          model : 'User',
+          as: 'user'
+        },
+        { 
+          model : 'Booking',
+          as: 'currentBooking',
+          ...(query.incomplete ? {where: {status: {$not: 'completed'}}} : {}),
+        },
+        {
+          model: 'Organization',
+          as: 'organization',
+        },
+      ];
+      if (query.hubId) {
+        include.push({model: 'LocationCar', as: 'locationCars', where: {locationId: Number(query.hubId)}, required: true});
+      } 
       let q = {
         ...(query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {}),
-        include: [
-          {
-            model: 'GroupCar',
-            as :'tagList'
-          },
-          { 
-            model : 'User',
-            as: 'user'
-          },
-          { 
-            model : 'Booking',
-            as: 'currentBooking'
-          },
-          {
-            model: 'Organization',
-            as: 'organization',
-          },
-        ],
+        include,
         ...(query.order ? {order: [query.order.split(',')]}: {}),
         ...(query.offset ? {offset: Number(query.offset)}: {}),
         ...(query.limit ? {limit: Number(query.limit)}: {}),
@@ -403,71 +408,8 @@ module.exports = {
       cars = yield Car.find(q);
       perf.push("car " + (new Date() - start));
     }
+    yield join_method();
 
-    function *separate_method() {
-      perf.push('separate');
-
-      // See #1077. Super Admin can access all cars.
-      // But still we need car's group on UI
-      let opts = query.organizationIds ? {where: {organizationId: {$in: JSON.parse(query.organizationIds)}}} : {};
-      opts.include = [
-        {
-          model: 'Organization',
-          as: 'organization',
-        },
-      ];
-      
-      if (query.order) {
-        opts.order = [query.order.split(',')];
-      }
-      if (query.offset) {
-        opts.offset = Number(query.offset);
-      }
-      if (query.limit) {
-        opts.limit = Number(query.limit);
-      }
-      if (Object.keys(searchObj).length) {
-        opts.where = searchObj;
-      }
-      let allCars = yield Car.find(opts);
-      perf.push("cars " + (new Date() - start));
-
-      let carsOfInterest = allCars.filter((row) => row.bookingId);
-
-      let bookingIdList = carsOfInterest.map((row) => row.bookingId);
-      let userIdList = carsOfInterest.map((row) => row.userId);
-      let carIdList = allCars.map((row) => row.id);
-
-      let bookingList = yield Booking.find({where: { id: { $in: bookingIdList } } });
-      perf.push("bookings " + (new Date() - start));
-      let userList = yield User.find({where: { id: { $in: userIdList } } });
-      perf.push("users " + (new Date() - start));
-      let groupList = yield GroupCar.find({where: { carId: { $in: carIdList } } });
-      perf.push("groups " + (new Date() - start));
-
-      let carMap = {};
-      let userMap = {};
-
-      allCars.forEach((row) => { 
-        carMap[row.id] = row; 
-        // there will be multipls groupCars ... see below.
-        carMap[row.id].tagList = [];
-      });
-      userList.forEach((row) => { userMap[row.id] = row; });
-
-      groupList.forEach((row) => { carMap[row.carId].tagList.push( row ); });
-      bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
-      allCars.forEach((row) => { row.user = userMap[row.userId]; });
-
-      cars = allCars;
-      perf.push("car " + (new Date() - start));
-    }
-
-    if(Math.random() < 0.5) {
-      yield join_method();
-    } else {
-      yield separate_method();
-    }
     if (!cars.length) {
       return cars;
     }
@@ -493,7 +435,7 @@ module.exports = {
       lastActionMap[row.carId] = row;
     });
 
-    cars.forEach(function(car){
+    for (let car of cars) {
       car.lastAction = lastActionMap[car.id];
       if(car.lastAction) {
         car.lastActionTime = car.lastAction.createdAt;
@@ -516,7 +458,11 @@ module.exports = {
       car.serviceInterval = airtableData && airtableData.fields['Service Interval'] && airtableData.fields['Service Interval'][0];
       car.organizationName = car.organization && car.organization.name;
       car.maintenanceDueIn = airtableData && (car.maintenanceDueAt - car.totalMileage).toFixed(2);
-    });
+      if (query.checkForHub) {
+        let bookingService = require('./booking-service');
+        car.isAtHub = (yield bookingService.isAtHub(car)) ? true : false;
+      }
+    };
     perf.push("misc " + (new Date() - start));
 
     //console.log(perf.join(' | '));
@@ -1475,12 +1421,14 @@ module.exports = {
   *instaBook(id, _user) {
     // This will allow admins to instantly book into cars and is designed to be a replacement for the "retrieve" api call
     // it creates a booking and starts it immediately.
+    /* We don't need to block this for now
     if (!_user.hasAccess('admin')) {
       throw error.parse({
         code    : 'NON_ADMIN_CANNOT_INSTABOOK',
         message : 'Users that are not admins cannot use instabook.',
       }, 401);
     }
+    */
     let bookingService = require('./booking-service');
 
     let car = yield this.updateAvailabilityAnonymous(id, true, _user);
@@ -1498,19 +1446,21 @@ module.exports = {
 
   *instaEnd(id, _user) {
     let car = yield Car.findById(id);
+    /* We don't need to block this for now
     if (!_user.hasAccess('admin')) {
       throw error.parse({
         code    : 'NON_ADMIN_CANNOT_INSTABOOK',
         message : 'Users that are not admins cannot use instabook.',
       }, 401);
     }
+    */
     let bookingService = require('./booking-service');
 
     try {
       yield bookingService.end(car.bookingId, _user, {}, {}); 
       yield bookingService.complete(car.bookingId, _user, {}, {}); 
     } catch(ex) {
-      yield bookingService.cancel(car.bookingId, _user);
+      throw error.parse({message: ex.message, code: ex.code}, ex.httpStatus);
     }
     
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
@@ -1598,6 +1548,31 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
+  *superImmobilize(id, _user) {
+    if (!(yield _user.isWaiveAdmin())) {
+      throw error.parse({
+        code    : 'WAIVE_ADMIN_FEATURE',
+        message : 'If you are not a Waive employee, you do in have access to this feature',
+      }, 400);
+    }
+    let car = yield Car.findById(id);
+    yield this.lockImmobilizer(id, _user, car);
+    yield car.addTag('super-immobilized')
+  },
+
+  *superUnimmobilize(id, _user) {
+    if (!(yield _user.isWaiveAdmin())) {
+      throw error.parse({
+        code    : 'WAIVE_ADMIN_FEATURE',
+        message : 'If you are not a Waive employee, you do in have access to this feature',
+      }, 400);
+    }
+    let car = yield Car.findById(id);
+    yield car.delTag('super-immobilized')
+    yield this.unlockImmobilizer(id, _user);
+  },
+
+
   *lockAndImmobilize(carId, _user) {
     let existingCar = yield Car.findById(carId);
     // The line below allows for the resassignment of telematics devices
@@ -1642,6 +1617,13 @@ module.exports = {
   *executeCommand(carId, part, command, _user, existingCar, opts) {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(carId));
+
+    if (part === 'immobilizer' && (yield existingCar.hasTag('super-immobilized'))) {
+      throw error.parse({
+        code    : 'WAIVE_IMMOBILIZED',
+        message : 'This car has been immobilized by waive. Please contact customer service to fix this situation.'
+      }, 400);
+    }
 
     let actualDevice = (yield Telematics.findOne({where: {carId}}));
     let actualDeviceId = actualDevice && actualDevice.telemId;
@@ -1863,12 +1845,14 @@ module.exports = {
     let cars = yield Car.find({
       where: {
         license: {
-          $and: [{$like: `%${query.search}`}]
+          $and: [{$like: `%${query.search}%`}]
         },
         ...(query.organizationIds ? {
           organizationId: {$in: JSON.parse(query.organizationIds)},
         } : {}),
-      }
+      },
+      ...(query.limit ? {limit: Number(query.limit)} : {}),
+      ...(query.offset ? {offset: Number(query.offset)} : {}),
     });
     return cars;
   }

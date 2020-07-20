@@ -8,7 +8,7 @@ let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
 let GroupUser = Bento.model('GroupUser');
 let Role      = Bento.model('Role');
-
+let moment = require('moment');
 
 let notify  = require('../notification-service');
 
@@ -172,6 +172,58 @@ module.exports = class Service {
    * @param  {Object}  user
    * @return {Void}
    */
+  static *orgHasAccess(organizationId, driver, car) {
+    let missing = [];
+    let Organization = Bento.model('Organization');
+    let org = yield Organization.findOne({
+      where: {id: organizationId},
+      include: [
+        {
+          model: 'OrganizationStatement',
+          as: 'organizationStatements',
+        }
+      ]
+    })
+    let File = Bento.model('File');
+    let insurance = yield File.find({where: {organizationId, collectionId: 'insurance'}});
+    let validInsurance = insurance.find(each => moment(each.comment).isAfter(moment()));
+
+    if (!validInsurance) {
+      missing.push('expired or no insurance');
+    }
+
+    let pastDueStatement = org.organizationStatements.find(each => moment(each.dueDate).isBefore(moment()));
+
+    if (pastDueStatement) {
+      missing.push('past due statement(s)');
+    }
+
+    if (driver.status !== 'active') {
+      missing.push('user does not have active status');
+    }
+    
+    if (!driver.phone) {
+      missing.push('user has not provided a phone number');
+    }
+
+    let license = yield License.findOne({ where : { userId : driver.id } });
+
+    if (!license) {
+      missing.push('user has not added a license');
+    }
+
+    if (license && moment(license.expirationDate).isBefore(moment())) {
+      missing.push('user\'s license is expired');
+    }
+    if (missing.length) {
+      yield car.update({isAvailable: true});
+      throw error.parse({
+        code    : `BOOKING_INVALID_REQUEST`,
+        message : `You have a few problems with your account that you will need to fix before you can book. They are: ${missing.join(', ')}.`,
+      }, 400);
+    }
+  }
+
   static *hasBookingAccess(user, skipPayment) {
     let missing = [];
     let after = '';

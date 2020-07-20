@@ -234,7 +234,6 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
 
   controller.show = function*(id) {
     let sequelize   = Bento.provider('sequelize');
-
     return yield Location._schema.findById(id, {
       include: [{
         model: sequelize.models.GroupLocation,
@@ -243,6 +242,9 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
           model: sequelize.models.GroupRole,
           as: 'groupRole'
         }]
+      }, {
+        model: sequelize.models.LocationCar,
+        as: 'locationCars' 
       }]
     });
   }
@@ -255,6 +257,16 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       }, 400);
     }
   };
+
+  controller.addCars = function *(id) {
+    let location = yield Location.findById(id);
+    return yield location.addCars(this.payload); 
+  }
+
+  controller.removeCars = function *(id) {
+    let location = yield Location.findById(id);
+    return yield location.removeCars(this.payload); 
+  }
 
   return controller;
 });

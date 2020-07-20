@@ -161,34 +161,37 @@ module.exports = class BookingService extends Service {
 
     this.hasAccess(driver, _user);
 
+    if (car.organizationId && !(yield _user.isWaiveAdmin())) {
+      yield this.orgHasAccess(car.organizationId, driver, car);
+      t('has access');
+    }
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
-    if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
-      // skip access check...
-    } else {
-      // Otherwise we check to see if the driver can drive. This
-      // means that if an admin is booking a driver who is not
-      // themselves, this code is still run.
-      try {
-        if (!car.organizationId) {
-          yield this.hasBookingAccess(driver, data.skipPayment);
-        } else {
-          // run checklist for orgs here
-        }
-      } catch(err) {
-        yield bail(err);
-      } 
-      t("has access");
-
-      if(!_user.hasAccess('admin')) {
-        // This is in #1510 ... we need to have their address on file before we can continue.
+    if (!car.organizationId) {
+      if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
+        // skip access check...
+      } else {
+        // Otherwise we check to see if the driver can drive. This
+        // means that if an admin is booking a driver who is not
+        // themselves, this code is still run.
         try {
-          yield this.makeSureWeHaveLicenseAddress(driver, data);
-        } catch (err) {
+          yield this.hasBookingAccess(driver, data.skipPayment);
+          // run checklist for orgs here
+        } catch(err) {
           yield bail(err);
+        } 
+        t("has access");
+
+        if(!_user.hasAccess('admin')) {
+          // This is in #1510 ... we need to have their address on file before we can continue.
+          try {
+            yield this.makeSureWeHaveLicenseAddress(driver, data);
+          } catch (err) {
+            yield bail(err);
+          }
         }
+        t("address check");
       }
-      t("address check");
     }
 
 
@@ -197,7 +200,7 @@ module.exports = class BookingService extends Service {
     if(driver.credit < -100) {
       yield bail(error.parse({
         code    : 'BOOKING_OUTSTANDING_CREDIT',
-        message : `You have an outstanding balance of <b>$${ (-driver.credit / 100).toFixed(2) }</b>. This needs to be resolved before making a booking.`
+        message : `You have an outstanding balance of $${ (-driver.credit / 100).toFixed(2) }. This needs to be resolved before making a booking.`
       }, 400));
     }
 
@@ -1128,7 +1131,7 @@ module.exports = class BookingService extends Service {
         yield Tikd.removeLiability(car, lastBooking, lastUser);
       }
       */
-      yield Tikd.addLiability(car, booking, user);
+      //yield Tikd.addLiability(car, booking, user);
 
       // yield cars.openDoor(car.id, _user);
 
@@ -1180,7 +1183,8 @@ module.exports = class BookingService extends Service {
       where: {
         type: { 
           $in: ['hub', 'homebase'] 
-        }
+        },
+        ...(car.organizationId ? {organizationId: car.organizationId} : {}),
       } 
     })).forEach(function(row) {
       let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
@@ -1281,23 +1285,24 @@ module.exports = class BookingService extends Service {
     // we are in a zone.
     let zone = yield this.getZone(car);
     // otherwise if we aren't there and the car is low, we need to go back to a hub
+    /*
     if (car.milesAvailable() < 21 && !isAdmin) {
       throw error.parse({
         code    : `CHARGE_TOO_LOW`,
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
       }, 400);
     }
-
-    if(zone) {
+    */
+    /*if(zone) {
       zone.isZone = true;
       return zone;
-    } else if(!isAdmin) {
+    } else */
+    if(!isAdmin) {
       throw error.parse({
         code    : `OUTSIDE_ZONE`,
-        message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+        message : `You cannot return the WaiveCar here. Please end your ride at one of the hubs that it is assigned to.`
       }, 400);
     }
-
     return isAdmin;
   }
 
@@ -1418,13 +1423,21 @@ module.exports = class BookingService extends Service {
   }
 
   // Ends the ride by calculating costs and setting the booking into pending payment state.
-  static * end(id, _user, query, payload) {
+  static *end(id, _user, query, payload) {
     let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
 
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
     let isAdmin = _user.isAdmin();
+    // if the car belongs to a hub, the ride cannot be ended elsewhere and only Waive admins can end the ride anywhere
+    let LocationCar = Bento.model('LocationCar');
+    let locCar = yield LocationCar.findOne({where: {carId: car.id}});
+    if (locCar) {
+      // this makes it so that the booker does not have access to all features for Waive admins if they are not
+      isAdmin = yield _user.isWaiveAdmin();
+    }
+
     let warnings = [];
 
     function *bail(err) {
@@ -1439,7 +1452,6 @@ module.exports = class BookingService extends Service {
     let freeTime = booking.getFreeTime(isLevel);
 
     this.hasAccess(user, _user);
-
     // ### Status Check
     // Go through end booking checklist.
     if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
@@ -1708,7 +1720,6 @@ module.exports = class BookingService extends Service {
       );
       // TODO: Possibly make it refund a prorated amount to the user here?
     }
-
     return {
       isCarReachable : isCarReachable
     };
@@ -1903,7 +1914,7 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.removeDriver();
-    yield Tikd.removeLiability(car, booking, user);
+    //yield Tikd.removeLiability(car, booking, user);
 
     if (user.isProbation()){
       yield user.setActive();
@@ -2095,7 +2106,6 @@ module.exports = class BookingService extends Service {
       // just ignore it and don't worry about it.
       return true;
     }
-
     if (states.indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,

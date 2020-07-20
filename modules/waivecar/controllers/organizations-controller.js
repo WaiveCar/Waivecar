@@ -7,6 +7,9 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
   controller.create = function*() {
     return yield organizations.create(this.payload, this.auth.user);
   };
+  controller.update = function*(id) {
+    return yield organizations.update(id, this.payload);
+  };
   controller.show = function*(id) {
     return yield organizations.show(id, this.query);
   };
@@ -27,6 +30,9 @@ Bento.Register.Controller('OrganizationsController', function(controller) {
   };
   controller.deleteStatement = function*(statementId) {
     return yield organizations.deleteStatement(statementId);
+  };
+  controller.hubs = function*(id) {
+    return yield organizations.hubs(id, this.query);
   };
   return controller;
 });

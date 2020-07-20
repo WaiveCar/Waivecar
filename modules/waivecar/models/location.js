@@ -1,87 +1,164 @@
 'use strict';
+let error = Bento.Error;
 
-Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
-
+Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
   model.table = 'locations';
 
   model.schema = {
-
-    type : {
-      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone', 'user-parking'),
-      defaultValue : 'station'
+    type: {
+      type: Sequelize.ENUM(
+        'station',
+        'valet',
+        'homebase',
+        'item-of-interest',
+        'hub',
+        'zone',
+        'user-parking',
+      ),
+      defaultValue: 'station',
     },
 
-    name : { 
-      type : Sequelize.STRING
+    organizationId: {
+      type: Sequelize.INTEGER,
     },
 
-    description : { type : Sequelize.STRING },
+    name: {
+      type: Sequelize.STRING,
+    },
 
-    isPublic : { type : Sequelize.BOOLEAN, defaultValue : false },
+    description: {type: Sequelize.STRING},
 
-    comments : { type : Sequelize.TEXT() },
+    isPublic: {type: Sequelize.BOOLEAN, defaultValue: false},
 
-    latitude : { type : Sequelize.DECIMAL(10, 8) },
+    comments: {type: Sequelize.TEXT()},
 
-    longitude : { type : Sequelize.DECIMAL(11, 8) },
+    latitude: {type: Sequelize.DECIMAL(10, 8)},
 
-    address : { type : Sequelize.STRING },
+    longitude: {type: Sequelize.DECIMAL(11, 8)},
+
+    address: {type: Sequelize.STRING},
 
     // I guess these will be in US feet because that's
     // how americans roll. What a silly system.
-    radius : {
-      type       : Sequelize.INTEGER,
-      allowNull  : true
+    radius: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
     },
 
-    shape : {
-      type       : Sequelize.STRING,
-      allowNull  : true
-    },
-  
-    restrictions : {
-      type       : Sequelize.STRING,
-      allowNull  : true
-    },
-  
-    streetType : {
-      type       : Sequelize.STRING,
-      allowNull  : true
+    shape: {
+      type: Sequelize.STRING,
+      allowNull: true,
     },
 
-    status : {
-      type : Sequelize.ENUM(
-        'available',
-        'unavailable',
-        'unknown'
-      ),
-      defaultValue : 'available'
+    restrictions: {
+      type: Sequelize.STRING,
+      allowNull: true,
     },
 
-    parkingTime : {
+    streetType: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+
+    status: {
+      type: Sequelize.ENUM('available', 'unavailable', 'unknown'),
+      defaultValue: 'available',
+    },
+
+    parkingTime: {
       type: Sequelize.INTEGER,
       allowNull: true,
       defaultValue: null,
     },
 
-    minimumCharge : {
+    minimumCharge: {
       type: Sequelize.INTEGER,
       allowNull: true,
       defaultValue: null,
-    }
+    },
   };
 
   model.tagSystem = {model: 'GroupLocation', key: 'locationId'};
 
+  model.methods = {
+    addCar: function* (car) {
+      let LocationCar = Bento.model('LocationCar');
+      let current = yield LocationCar.findOne({where: {locationId: this.id, carId: car.id}});
+      if (!current) {
+        let locationCar = new LocationCar({
+          locationId: this.id,
+          carId: car.id,
+        });
+        yield locationCar.save();
+      } else {
+        throw error.parse(
+          {
+            code: 'CAR_ALREADY_ADDED',
+            message: 'This car has already been added to this location',
+          },
+          400,
+        );
+      } 
+    },
+    removeCar: function* (car) {
+      let LocationCar = Bento.model('LocationCar');
+      let current = yield LocationCar.findOne({where: {locationId: this.id, carId: car.id}});
+      if (current) {
+        yield current.delete();
+      } else {
+        throw error.parse(
+          {
+            code: 'CAR_NOT_ADDED',
+            message: 'This car was not assigned to this location',
+          },
+          400,
+        );
+      }
+    },
+    addCars: function* (payload) {
+      let Car = Bento.model('Car');
+      let {carList} = payload;
+      let errs = [];
+      for (let carId of carList) {
+        let car = yield Car.findById(carId);
+        try {
+          yield this.addCar(car);
+        } catch (e) {
+          errs.push(car.license);
+        }
+      }
+      if (errs.length) {
+        throw error.parse(
+          {
+            code: 'CARS_ALREADY_ADDED',
+            message: `${errs.join(
+              ', ',
+            )} have already been added to this location.`,
+          },
+          400,
+        );
+      }
+      return this;
+    },
+    removeCars: function* (payload) {
+      let {carList} = payload;
+      for (let carId of carList) {
+        yield this.removeCar({id: carId});
+      }
+      return this;
+    },
+  };
+
   model.relations = [
     'UserParking',
     'GroupLocation',
-    function relations(UserParking, GroupLocation) {
-      this.hasOne(UserParking, { as : 'parking',  foreignKey : 'locationId' });
-      this.hasMany(GroupLocation,  { as : 'tagList', foreignKey : 'locationId' });
-    }
+    'LocationCar',
+    function relations(UserParking, GroupLocation, LocationCar) {
+      this.hasOne(UserParking, {as: 'parking', foreignKey: 'locationId'});
+      this.hasMany(GroupLocation, {as: 'tagList', foreignKey: 'locationId'});
+      this.hasMany(LocationCar, {as: 'locationCars'});
+    },
   ];
 
   return model;
-
 });
