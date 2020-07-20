@@ -627,7 +627,6 @@ module.exports = {
           }
         }
       }
-      console.log('record before err', record);
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
 
       // X-ref it back so that we don't do this again.
