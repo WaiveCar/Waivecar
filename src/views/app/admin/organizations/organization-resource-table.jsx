@@ -7,38 +7,54 @@ class OrganizationResource extends Component {
     super(props);
     this.state = {
       offset: 0,
-      more   : false,
+      more: false,
+      loaded: false,
     };
     this.row = this.props.row;
     this.table = new Table(
       this,
       this.props.resource,
       null,
-      `/${this.props.resourceUrl}?organizationIds=[${this.props.organizationId}]`,
+      `/${this.props.resourceUrl}?organizationIds=[${
+        this.props.organizationId
+      }]${this.props.queryOpts ? this.props.queryOpts : ''}`,
       10,
     );
     relay.subscribe(this, this.props.resource);
   }
 
   componentDidMount() {
-    this.table.init();
+    this.table.init({order: 'updated_at,DESC'});
     this.setState({
       sort: {
-        key: 'createdAt',
+        key: 'updatedAt',
         order: 'DESC',
       },
       searchObj: {
-        order: 'id,DESC',
+        order: 'updated_at,DESC',
       },
     });
   }
 
   render() {
+    let rows = this.table.index();
+    let {loaded} = this.state;
+    let {resource} = this.props;
     return (
       <div>
         <table className="box-table table-striped">
           <thead>{this.props.header()}</thead>
-          <tbody>{this.table.index()}</tbody>
+          <tbody>
+            {rows.length ? (
+              rows
+            ) : (
+              <tr>
+                <td colSpan={'100%'} style={{textAlign: 'center'}}>
+                  {loaded ? `No ${resource} found` : 'Loading...'}
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
         {this.state.more ? (
           <div className="text-center" style={{marginTop: 20}}>

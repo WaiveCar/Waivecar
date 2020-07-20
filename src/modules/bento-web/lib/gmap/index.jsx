@@ -17,11 +17,10 @@ let icons = [
 
 module.exports = class GMap extends React.Component {
 
-  constructor(...args) {
-    super(...args);
+  constructor(props) {
+    super(props);
     this.map = null;
     this.markers = [];
-
     this.addMarkers   = this.addMarkers.bind(this);
     this.clearMarkers = this.clearMarkers.bind(this);
   }
@@ -43,6 +42,14 @@ module.exports = class GMap extends React.Component {
     };
 
     this.map = new google.maps.Map(ReactDOM.findDOMNode(this.refs.map), mapConfig);
+
+    if (this.props.handleMarker) {
+      this.map.addListener('click', (e) => {
+        this.clearMarkers();
+        this.addMarker(e.latLng, this.props.onMarkerChange);
+      });
+    }
+
     if (this.props.markers) {
       this.prepareMarkers(this.props.markers);
     }
@@ -302,9 +309,10 @@ module.exports = class GMap extends React.Component {
           infoWindow.open(this.map);
         });
       } else if ('radius' in val) {
+        let {forOrg, orgId} = this.props;
         marker.addListener('click', (e) => {
           val.description = val.description || '';
-          let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
+          let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : forOrg ? `<a href=/organizations/${orgId}/hubs/${val.id}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
           infoWindow.setContent(`<b>${linkText}</b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
           infoWindow.setPosition(e.latLng);
           infoWindow.open(this.map);
@@ -329,12 +337,25 @@ module.exports = class GMap extends React.Component {
   }
 
   getMarkerIcon(name) {
+    let size = name === 'hub' ? [50, 50] : [16, 20]
     return {
       url        : name && icons.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
-      scaledSize : new google.maps.Size( 16, 20 ),
+      scaledSize : new google.maps.Size(...size),
       anchor     : new google.maps.Point(8, 20 ),
       origin     : new google.maps.Point(0, 0)
     };
+  }
+
+  addMarker(latLng, onMarkerChange) {
+    let marker = new google.maps.Marker({
+      position: latLng,
+      map: this.map,
+    });
+    this.markers.push(marker);
+    this.map.setCenter(latLng);
+    if (onMarkerChange) {
+      onMarkerChange(latLng);
+    }
   }
 
   render() {

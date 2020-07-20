@@ -570,7 +570,7 @@ class CarsShowView extends React.Component {
         if (err) {
           return snackbar.notify({
             type    : 'danger',
-            message : err,
+            message : err.message,
           });
         }
         this.service.setCar(this.id());
@@ -616,7 +616,19 @@ class CarsShowView extends React.Component {
         ref : 6,
         label    : 'Refresh',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
-      }
+      },
+      ...(!this._user.hasAccess('waiveAdmin') ? [] : [
+        {
+          ref: 7,
+          label: 'Super Immobilize',
+          onChange : this.service.executeCommand.bind(this, car, 'super-immobilize')
+        },
+        {
+          ref: 8,
+          label: 'Super Unimmobilize',
+          onChange : this.service.executeCommand.bind(this, car, 'super-unimmobilize')
+        },
+      ]),
     ];
 
     let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
@@ -658,6 +670,26 @@ class CarsShowView extends React.Component {
                 <Switch { ...switches[4] } />
               </div>
             </div>
+            {this._user.hasAccess('waiveAdmin') &&
+              <div className="row" style={{marginTop: '1rem'}}>
+                <div className="col-md-6">
+                  <Button
+                    key       = { switches[6].ref }
+                    className = { 'btn btn-sm col-xs-6' }
+                    type      = { 'button' }
+                    value     = { switches[6].label }
+                    onClick   = { switches[6].onChange }
+                  />
+                  <Button
+                    key       = { switches[7].ref }
+                    className = { 'btn btn-sm col-xs-6' }
+                    type      = { 'button' }
+                    value     = { switches[7].label }
+                    onClick   = { switches[7].onChange }
+                  />
+                </div>
+              </div>
+            }
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
                 {

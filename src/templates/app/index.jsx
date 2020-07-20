@@ -64,6 +64,11 @@ templates.register('app', {
         onEnter   : policies.isAuthenticated
       },
       {
+        path      : '/account/select-sections',
+        component : require('../../views/app/admin/organizations/select-sections'),
+        onEnter   : policies.isAuthenticated
+      },
+      {
         path      : '/account/password',
         component : require('../../views/app/user/profile/password'),
         onEnter   : policies.isAuthenticated
@@ -171,6 +176,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/locations/create-hub',
+        component : require('../../views/app/admin/organizations/hubs-create'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/locations/:id',
         component : require('../../views/app/admin/locations/update'),
         onEnter   : policies.isAdministrator
@@ -201,9 +211,29 @@ templates.register('app', {
         onEnter   : policies.isAdmin,
       },
       {
+        path: '/organizations/:id/hubs',
+        component : require('../../views/app/admin/organizations/hubs-wrapper'),
+        onEnter   : policies.isAdmin,
+      },
+      {
+        path: '/organizations/:id/hubs/create',
+        component : require('../../views/app/admin/organizations/hubs-create'),
+        onEnter   : policies.isAdmin,
+      },
+      {
+        path: '/organizations/:id/hubs/:hubId',
+        component : require('../../views/app/admin/organizations/hub'),
+        onEnter   : policies.isAdmin,
+      },
+      {
         path      : '/organizations/:id/statements/create',
         component : require('../../views/app/admin/organizations/create-statement'),
         onEnter   : policies.isWaiveAdmin,
+      },
+      {
+        path: '/hubs',
+        component : require('../../views/app/admin/organizations/multi-hub'),
+        onEnter   : policies.isAdmin,
       },
       {
         path: '/forbidden',
@@ -250,6 +280,13 @@ let order = 2;
     title     : 'Logos',
     icon      : 'camera_alt',
     path      : '/account/logos',
+    parent    : null,
+    locations : [ 'sidebar-account' ],
+  },
+  {
+    title     : 'WaiveWork.com Sections',
+    icon      : 'check_box',
+    path      : '/account/select-sections',
     parent    : null,
     locations : [ 'sidebar-account' ],
   },
@@ -381,6 +418,14 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++,
     waiveAdmin: true,
+  },
+  {
+    title     : 'Hubs',
+    icon      : 'location_on',
+    path      : '/hubs',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++,
   },
   {
     title     : 'Organizations',

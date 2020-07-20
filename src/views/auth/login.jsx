@@ -88,7 +88,7 @@ class LoginView extends React.Component {
         <div className="title">
           {!organization ? (
             <div>
-              { config.app.name }&nbsp;
+              Waive&nbsp;
               <span className="title-site">Log in</span>
             </div> ) : (
             <div>

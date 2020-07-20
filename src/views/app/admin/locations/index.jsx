@@ -135,9 +135,14 @@ class TableIndex extends React.Component {
                 ''
           }
           <div className="box-content">
-            <Link className="btn btn-icon" to={ `/locations/create` }>
-              Add location
-            </Link>
+            <div className="btn-group" role="group">
+              <Link to={ '/locations/create' } className="btn btn-primary">
+                Add Location
+              </Link>
+              <Link to={ '/locations/create-hub' } className="btn btn-primary">
+                Add Hub
+              </Link>
+            </div>
             <input
                 type="text"
                 className="box-table-search"
@@ -168,7 +173,7 @@ class TableIndex extends React.Component {
                 ''
             }
             <Link className="btn btn-primary" to={ `/locations/create` }>
-              Add location
+              Add Location
             </Link>
           </div>
         </div>

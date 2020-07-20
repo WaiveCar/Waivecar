@@ -55,13 +55,17 @@ module.exports = class Table {
       }
       this.ctx.setState({
         more   : data.length === this.limit,
-        offset : this.ctx.state.offset + data.length
+        offset : this.ctx.state.offset + data.length,
+        [this.ctx.props.resource]: data,
+        loaded: true,
       });
       this.data = data;
-      relay.dispatch(this.resource, {
-        type : 'index',
-        data : data
-      });
+      if (!this.ctx.props.skipDispatch) {
+        relay.dispatch(this.resource, {
+          type : 'index',
+          data : data,
+        });
+      }
       if (this.ctx.props.updateParent) {
         this.ctx.props.updateParent(data);
       }
