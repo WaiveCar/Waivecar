@@ -13,7 +13,6 @@ module.exports = (function() {
   } else {
     client = require('redis').createClient();
   }
-
   let res = wrapper(client);
 
   res.lockTimeMS = 25000;
