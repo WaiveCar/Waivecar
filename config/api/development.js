@@ -13,12 +13,6 @@ module.exports = {
   web : {
     uri : 'https://waivecar-dev.cleverbuild.biz'
   },
-  /*
-  redis : {
-    host : 'waivecar-development.xvq4ay.ng.0001.use2.cache.amazonaws.com',
-    port : 6379
-  },
-  */
   users : [
     {
       firstName     : 'Steven',

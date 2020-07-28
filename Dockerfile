@@ -1,24 +1,24 @@
-FROM node:4.2.1
-MAINTAINER Clevertech DevOps <support@clevertech.biz>
+FROM ubuntu:latest
+ENV DEBIAN_FRONTEND noninteractive
 
-# No further dependencies at the moment
-# RUN apt-get update
-# RUN apt-get -y install ...
 
-RUN npm install bentojs nodemon -g --loglevel warn
+RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get install -y git
+RUN apt-get install -y redis-server 
+RUN apt-get install -y nginx
+COPY ./nginx.conf ./
+RUN cp nginx.conf /etc/nginx
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -E -
+RUN apt-get install -y nodejs
+RUN mkdir /var/log/outgoing /var/log/invers
+RUN chmod 0777 /var/log/outgoing /var/log/invers
+RUN echo "127.0.0.1 datastore" >> /etc/hosts
+RUN service nginx restart
+ADD package.json ./
 
-# Do not use cache when we change node dependencies in package.json
-ADD package.json /tmp/package.json
-RUN cd /tmp && npm install --loglevel warn
-RUN mkdir -p /opt/api && cp -a /tmp/node_modules /opt/api/
+RUN npm install
+EXPOSE 6379
+EXPOSE 3080
 
-# TODO Do the same for gulp, bower, etc...
-
-# Node api lives on a layer on its own
-WORKDIR /opt/api
-ADD . /opt/api/
-RUN cd /opt/api && bento package
-
-EXPOSE 8080
-
-CMD ["npm", "run", "local"]
+CMD ["node", "NODE_ENV=development", "run.js"]
