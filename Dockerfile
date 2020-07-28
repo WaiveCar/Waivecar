@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 ENV DEBIAN_FRONTEND noninteractive
-
+ENV NODE_ENV development
 
 RUN apt-get update
 RUN apt-get install -y curl
@@ -16,9 +16,9 @@ RUN chmod 0777 /var/log/outgoing /var/log/invers
 RUN echo "127.0.0.1 datastore" >> /etc/hosts
 RUN service nginx restart
 ADD package.json ./
-
+COPY ./ ./
 RUN npm install
 EXPOSE 6379
 EXPOSE 3080
 
-CMD ["node", "NODE_ENV=development", "run.js"]
+CMD ["node", "./run.js"]
