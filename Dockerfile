@@ -18,5 +18,6 @@ ADD package.json ./
 COPY ./ ./
 RUN npm install
 RUN rm dump.rdb
+RUN chmod 1777 /tmp
 
 CMD ["./start-docker.sh"]
