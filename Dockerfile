@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_ENV development
 
@@ -9,16 +9,14 @@ RUN apt-get install -y redis-server
 RUN apt-get install -y nginx
 COPY ./nginx.conf ./
 RUN cp nginx.conf /etc/nginx
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -E -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -E -
+RUN apt-get install -y vim
 RUN apt-get install -y nodejs
 RUN mkdir /var/log/outgoing /var/log/invers
 RUN chmod 0777 /var/log/outgoing /var/log/invers
-RUN echo "127.0.0.1 datastore" >> /etc/hosts
-RUN service nginx restart
 ADD package.json ./
 COPY ./ ./
 RUN npm install
-EXPOSE 6379
-EXPOSE 3080
+RUN rm dump.rdb
 
-CMD ["node", "./run.js"]
+CMD ["./start-docker.sh"]
