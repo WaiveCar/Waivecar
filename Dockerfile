@@ -14,10 +14,8 @@ RUN apt-get install -y vim
 RUN apt-get install -y nodejs
 RUN mkdir /var/log/outgoing /var/log/invers
 RUN chmod 0777 /var/log/outgoing /var/log/invers
-ADD package.json ./
-COPY ./ ./
-RUN npm install
-RUN rm dump.rdb
 RUN chmod 1777 /tmp
+ADD ./ ./
+RUN rm dump.rdb
 
 CMD ["./start-docker.sh"]
