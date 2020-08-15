@@ -41,7 +41,12 @@ var checkBooking = co.wrap(function *(booking) {
     }
 
     let car = booking.car;
-    let device = yield cars.getDevice(car.id, null, 'booking-loop');
+    let device;
+    try {
+      device = yield cars.getDevice(car.id, null, 'booking-loop', true);
+    } catch (e) {
+    }
+    /*
     let user = booking.user;
     let duration = 0;
     let isLevel = yield car.hasTag('level');
@@ -70,7 +75,7 @@ var checkBooking = co.wrap(function *(booking) {
           yield notify.sendTextMessage(booking.user, 
             `${booking.car.license} has been parked for ${minute_count} minutes and is still active. This courtesy message is brought to you to help save you money.`
           );
-          */
+          * /
           yield redis.hset('sitLast', booking.id, now);
         }
       }
@@ -123,7 +128,7 @@ var checkBooking = co.wrap(function *(booking) {
       if (milesDriven >= 7 && car.charge === device.charge) {
         yield notify.notifyAdmins(`${ car.info() } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
-      */
+      * /
 
       duration = moment().utc().diff(start.createdAt, 'minutes');
 
@@ -226,12 +231,13 @@ var checkBooking = co.wrap(function *(booking) {
         yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
+    */
 
     // Log current position
     let newLocation = new Location({
       bookingId : booking.id,
-      latitude  : device.latitude,
-      longitude : device.longitude
+      latitude  : -118.382,
+      longitude : 34.831
     });
     yield newLocation.save();
     
@@ -244,7 +250,7 @@ var checkBooking = co.wrap(function *(booking) {
     }
     */
 
-    yield cars.syncUpdate(car.id, device, car);
+    yield cars.syncUpdate(car.id, car, car);
   } catch(err) {
     log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
   }

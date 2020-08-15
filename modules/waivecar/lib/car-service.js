@@ -1271,8 +1271,8 @@ module.exports = {
     fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n", function(){});
   },
 
-  *getDevice(carId, _user, source) {
-    if (process.env.NODE_ENV !== 'production') {
+  *getDevice(carId, _user, source, forTesting) {
+    if (process.env.NODE_ENV !== 'production' && !forTesting) {
       return false;
     }
     // The line below is done so that devices can be switched from airtable
