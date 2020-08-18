@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_ENV development
+WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y apt-utils \
@@ -14,6 +15,8 @@ RUN mkdir /var/log/outgoing /var/log/invers \
     && chmod 1777 /tmp
 
 COPY ./nginx.conf /etc/nginx/
+COPY ./package*.json ./
+RUN npm install
 COPY ./ ./
 #RUN rm dump.rdb
 
