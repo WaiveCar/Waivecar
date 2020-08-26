@@ -7,7 +7,8 @@
     "local": "NODE_ENV=development node webpack.local.js",
     "staging": "NODE_ENV=staging node webpack.local.js",
     "build": "NODE_ENV=production node_modules/webpack/bin/webpack.js -p --config ./webpack/config/deployment.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "docker-dev": "sudo docker build --tag waivecar-web-dev . && sudo docker run -p 8080:8080 -it waivecar-web-dev:latest"
   },
   "repository": {
     "type": "git",

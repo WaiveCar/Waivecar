@@ -1,17 +1,18 @@
-FROM node:4.2.1
-MAINTAINER Clevertech DevOps <support@clevertech.biz>
+FROM ubuntu:16.04
+ENV DEBIAN_FRONTEND noninteractive
+ENV NODE_ENV development
+WORKDIR /app
 
-RUN npm install nodemon -g --loglevel warn
+RUN apt-get update \
+    && apt-get install -y apt-utils \ 
+    && apt-get install -y curl git vim \
+    && curl -sL https://deb.nodesource.com/setup_4.x | bash -E - \
+    && apt-get install -y nodejs \
+    && apt-get full-upgrade -y
 
-# Do not use cache when we change node dependencies in package.json
-ADD package.json /tmp/package.json
-RUN cd /tmp && npm install --loglevel warn
-RUN mkdir -p /opt/web && cp -a /tmp/node_modules /opt/web/
+COPY ./package.json ./
+RUN npm install
 
-WORKDIR /opt/web
-ADD . /opt/web/
-RUN cd /opt/web
+COPY ./ ./
 
-EXPOSE 8080
-
-CMD ["npm", "run", "local"]
+CMD ["./run.sh"]
