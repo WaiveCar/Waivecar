@@ -12,7 +12,7 @@
     "start": " DEBUG=api:* node run.js",
     "lint": "eslint ./",
     "prepaid": "node scripts/prepaid.js",
-    "docker-dev": "sudo docker build --tag waivecar-dev . && sudo docker run -p 3080:80 -p 5000:5000 -it waivecar-dev:latest"
+    "docker-dev": "sudo docker build --tag waivecar-api-dev . && sudo docker run -p 3080:80 -p 5000:5000 -it waivecar-api-dev:latest"
   },
   "pre-commit": [
     "lint"

@@ -15,7 +15,7 @@ RUN mkdir /var/log/outgoing /var/log/invers \
     && chmod 1777 /tmp
 
 COPY ./nginx.conf /etc/nginx/
-COPY ./package*.json ./
+COPY ./package.json ./
 RUN npm install
 COPY ./ ./
 #RUN rm dump.rdb
