@@ -1,6 +1,6 @@
 module.exports = {
   app : {
-    uri  : 'http://staging.waivecar.com',
+    uri  : 'http://' + (process.env.COPILOT_LB_DNS || 'staging.waivecar.com').toLowerCase(),
     port : 8080
   }
 };

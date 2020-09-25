@@ -1,9 +1,9 @@
 module.exports = {
   api : {
-    uri    : 'http://staging.waivecar.com',
+    uri    : 'http://' + (process.env.COPILOT_LB_DNS || 'staging.waivecar.com').toLowerCase(),
     port   : 3080,
     socket : {
-      uri     : 'http://staging.waivecar.com:3080',
+      uri     : 'http://' + (process.env.COPILOT_LB_DNS || 'staging.waivecar.com').toLowerCase() + ':3080',
       options : {
          path : '/socket/socket.io'
       }
