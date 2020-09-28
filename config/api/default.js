@@ -21,7 +21,7 @@ module.exports = {
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
-      origins : ['https://dnwihac33h5pn.cloudfront.net', 'http://waivecar.com', 'https://waivecar.com', 'http://waive.com', 'https://waive.com', 'http://lb.waivecar.com', 'https://lb.waivecar.com', 'http://staging.waivecar.com:8080', 'http://staging.waivecar.com:8081', 'http://127.0.0.1:8081'],
+      origins : ['https://dnwihac33h5pn.cloudfront.net', 'http://waivecar.com', 'https://waivecar.com', 'http://waive.com', 'https://waive.com', 'http://lb.waivecar.com', 'https://lb.waivecar.com', 'http://' + (process.env.COPILOT_LB_DNS || 'staging.waivecar.com').toLowerCase(), 'http://' + (process.env.COPILOT_LB_DNS || 'staging.waivecar.com').toLowerCase() + ':8080' , 'http://staging.waivecar.com:8081', 'http://127.0.0.1:8081'],
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
     },
     log : {

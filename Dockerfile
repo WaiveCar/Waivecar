@@ -18,6 +18,7 @@ COPY ./nginx.conf /etc/nginx/
 COPY ./package.json ./
 RUN npm install
 COPY ./ ./
-#RUN rm dump.rdb
+
+EXPOSE 80
 
 CMD ["./start-docker.sh"]

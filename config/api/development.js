@@ -4,6 +4,10 @@ module.exports = {
     uri  : 'http://localhost:3000'
   },
   socket : {
+    redis : {
+      host : process.env.COPILOT_REDIS || 'datastore',
+      port : 6379
+    },
     api : {
       url   : 'http://localhost:3000',
       me    : '/users/me',
@@ -12,6 +16,10 @@ module.exports = {
   },
   web : {
     uri : 'https://waivecar-dev.cleverbuild.biz'
+  },
+  redis : {
+    host : process.env.COPILOT_REDIS || 'datastore',
+    port : 6379
   },
   users : [
     {
