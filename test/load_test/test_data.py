@@ -4,20 +4,44 @@ import logging
 import mysql.connector
 import requests
 from concurrent.futures import ThreadPoolExecutor
+from env import *
 
 logging.basicConfig(level=logging.INFO)
 
-test_count = 1000
-db_host = 'waivecar-development.c9qxbaxup5ni.us-east-1.rds.amazonaws.com'
-db_user = 'admin'
-db_pass = 'password'
-db_name = 'waivecar_development'
-authorization_token = 'tcfQCLay7Ob9wRC6IjPUl00t7A20Wkjb8DQtyQN5kfMJsdWXOfEbOrwcqeC2awnm'
-
-booking_url = 'http://typhoeus:3080/bookings'
-headers = { 'Authorization': authorization_token }
+test_count = 10000
+booking_url = '{}/bookings'.format(api_url)
+headers = api_headers
 
 bookings = []
+_conn = None
+_c = None
+
+def db_connect():
+  global _conn, _c
+  if _c is None:
+    logging.info('Connecting to MySQL database: {}'.format(db_host))
+    _conn = mysql.connector.connect(user=db_user, password=db_pass, host=db_host, database=db_name)
+    _c = _conn.cursor()
+  return _conn, _c
+
+def delete_fake_data_from_db():
+  conn, c = db_connect()
+
+  logging.info('Deleting old test data...')
+  c.execute("DELETE FROM logs WHERE car_id LIKE 'test%%'")
+  c.execute("DELETE FROM booking_details WHERE booking_id IN (SELECT id FROM bookings WHERE car_id LIKE 'test%%')")
+  #c.execute("DELETE FROM booking_locations WHERE booking_id IN (SELECT id FROM bookings WHERE car_id LIKE 'test%%')") # Super Slow
+  c.execute("DELETE FROM bookings WHERE car_id LIKE 'test%%'")
+  c.execute("DELETE FROM cars WHERE id LIKE 'test%%'")
+  c.execute("DELETE FROM telematics WHERE telem_id LIKE 'telemtest%%'")
+  c.execute("DELETE FROM group_users WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
+  c.execute("DELETE FROM licenses WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
+  c.execute("DELETE FROM shop_payment_cards WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
+  c.execute("DELETE FROM users WHERE email LIKE 'testuser%%@waive.car'")
+
+  logging.info('Committing changes to database...')
+  conn.commit()
+
 
 def load_fake_data_into_db():
   lat1, lat2 = 33.758807, 34.148135
@@ -32,22 +56,7 @@ def load_fake_data_into_db():
   groups = []
   global bookings
 
-  logging.info('Connecting to MySQL database: {}'.format(db_host))
-  conn = mysql.connector.connect(user=db_user, password=db_pass, host=db_host, database=db_name)
-  c = conn.cursor()
-
-  logging.info('Deleting old test data...')
-  c.execute("DELETE FROM logs WHERE car_id LIKE 'test%%'")
-  c.execute("DELETE FROM booking_details WHERE booking_id IN (SELECT id FROM bookings WHERE car_id LIKE 'test%%')")
-  #c.execute("DELETE FROM booking_locations WHERE booking_id IN (SELECT id FROM bookings WHERE car_id LIKE 'test%%')") # Super Slow
-  c.execute("DELETE FROM bookings WHERE car_id LIKE 'test%%'")
-  c.execute("DELETE FROM cars WHERE id LIKE 'test%%'")
-  c.execute("DELETE FROM telematics WHERE telem_id LIKE 'telemtest%%'")
-  c.execute("DELETE FROM group_users WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
-  c.execute("DELETE FROM licenses WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
-  c.execute("DELETE FROM shop_payment_cards WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'testuser%%@waive.car')")
-  c.execute("DELETE FROM users WHERE email LIKE 'testuser%%@waive.car'")
-
+  conn, c = db_connect()
 
   for i in range(1, test_count + 1):
     cars.append(('test{:05d}'.format(i), 'Test{:05d}'.format(i), 'TST{:04x}'.format(i), '{:.8f}'.format(random.uniform(lat1, lat2)), '{:.8f}'.format(random.uniform(lng1, lng2))))
@@ -79,7 +88,7 @@ def load_fake_data_into_db():
 
   logging.info('Committing changes to database...')
   conn.commit()
-  conn.close()
+
 
 def create_test_bookings():
   
@@ -87,7 +96,9 @@ def create_test_bookings():
     uid, cid = ids
     data = {  'source': 'web',
               'carId': cid,
-              'userId': uid }
+              'userId': uid,
+              'isWaivework': True,
+              'skipChecklist': True }
     logging.debug('{} Booking...'.format(cid))
     res = requests.post(booking_url, json=data, headers=headers)
     if res.status_code != 200:
@@ -100,5 +111,6 @@ def create_test_bookings():
     executor.map(make_booking, bookings)
 
 
+delete_fake_data_from_db()
 load_fake_data_into_db()
 create_test_bookings()
