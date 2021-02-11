@@ -19,7 +19,7 @@
   "dependencies": {
     "babel-eslint": "4.1.1",
     "bcryptjs": "2.3.0",
-    "bentojs-api": "git://github.com/waivecar/bentojs-api.git",
+    "bentojs-api": "https://github.com/WaiveCar/bentojs-api",
     "bentojs-config": "https://github.com/WaiveCar/bentojs-config",
     "bentojs-socket": "https://github.com/WaiveCar/bentojs-socket",
     "co": "4.6.0",
