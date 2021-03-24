@@ -75,23 +75,6 @@ hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   });
 });
 
-// this is total bullshit and is not the way you do this.
-let phoneFormat = function(phone) {
-  phone = phone.replace(/[^0-9+]/g, '');
-  if (phone.startsWith('0')) {
-    phone = phone.substring(1);
-  }
-
-  if (!phone.startsWith('+1')) {
-    if (phone.startsWith('+')) {
-      return phone;
-    }
-    phone = `+1${ phone }`;
-  }
-
-  return phone;
-};
-
 // ### Store Hooks
 
 /**
@@ -102,7 +85,7 @@ let phoneFormat = function(phone) {
  */
 hooks.set('user:store:before', function *(payload, _user) {
   if (payload.phone) {
-    payload.phone = phoneFormat(payload.phone);
+    payload.phone = notify.phoneFormat(payload.phone);
   }
   return payload;
 });
@@ -143,7 +126,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
   }
 
   if (nextUser.phone) {
-    nextUser.phone = phoneFormat(nextUser.phone);
+    nextUser.phone = notify.phoneFormat(nextUser.phone);
   }
 
   if(!_user.hasAccess('admin')) {

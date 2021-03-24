@@ -462,6 +462,34 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       }
       return orgUsers;
     },
+    
+    // I gotta be honest, this feels like the wrong place for it, but we don't have a
+    // conventional user-model so I guess this is it.
+    *sendCode(secretCode) {
+      let redis = require('../modules/waivecar/lib/redis-service');
+      let notification = require('../modules/waivecar/lib/notification-service');
+      let length = 4;
+
+      // honestly random numbers should come from elsewhere but this is fine for now
+      secretCode = secretCode || (Math.random()*1e5).toString().replace('.','').slice(0, length);
+      yield redis.set(`usercode:${ this.id }`, secretCode, 'nx', 'px', 15 * 60 * 1000);
+      yield notification.sendTextMessage({
+        _phone: this.phone,
+        _silent: true,
+      }, `${secretCode} is your Go authentication code`);
+    },
+
+    *checkCode(toCheck) {
+      let redis = require('../modules/waivecar/lib/redis-service');
+      let key = `usercode:${ this.id }`;
+      let realCode = yield redis.get(key);
+      if(realCode) {
+        if(toCheck == realCode) {
+          yield redis.del(key);
+        }
+        return true;
+      }
+    },
   };
   return model;
 

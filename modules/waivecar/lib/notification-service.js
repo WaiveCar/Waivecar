@@ -35,12 +35,14 @@ module.exports = {
   *sendTextMessage(query, message, _user) {
     // this allows us to send messages to whomever
     // regardless of whether we've contacted them prior
-    if(query._phone) {
-      let sms = new Sms();
-      yield sms.send({
-        to      : query._phone,
-        message : message
-      });
+    if (process.env.NODE_ENV === 'production') {
+      if(query._phone) {
+        let sms = new Sms();
+        yield sms.send({
+          to      : query._phone,
+          message : message
+        });
+      }
     }
 
     let user = false;
@@ -55,7 +57,7 @@ module.exports = {
 
     log_message('sms', {phone: user.phone, text: message});
     // User communications will only be saved for users that have already been let in
-    if (user && !user.accountType) {
+    if (!query._silent && (user && !user.accountType) ) {
       let UserCommunication = Bento.model('UserCommunication');
       let communication = new UserCommunication({
         userId: user.id,
@@ -129,6 +131,7 @@ module.exports = {
     }
   },
 
+  
   *tellChris(what, body) {
     body = body || {};
     yield this.email({
@@ -165,6 +168,24 @@ module.exports = {
     let email = new Email();
     log_message('email', payload);
     yield email.send(payload);
-  }
+  },
 
+  // This is total bullshit and is not the way you do this.
+  // But we'll keep it like this because it was written this
+  // way in 2015, moved here in 2021.
+  phoneFormat(phone) {
+    phone = phone.replace(/[^0-9+]/g, '');
+    if (phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+
+    if (!phone.startsWith('+1')) {
+      if (phone.startsWith('+')) {
+        return phone;
+      }
+      phone = `+1${ phone }`;
+    }
+
+    return phone;
+  }
 };

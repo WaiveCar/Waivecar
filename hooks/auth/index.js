@@ -13,9 +13,21 @@ let error     = Bento.Error;
  * @return {Object}
  */
 hooks.set('auth:login', function *(payload) {
-  let user = yield getUser(payload.identifier);
+  let user;
+  let authMethod;
+  // if a phone number is defined we see if the user
+  // provided a code AND if we have one waiting for them.
+  if (payload.phone) {
+    let notify  = Bento.module('waivecar/lib/notification-service');
+    user = yield getUserByPhone(notify.phoneFormat(payload.phone));
+    authMethod = 'phone';
+  } else {
+    user = yield getUser(payload.identifier);
+    authMethod = 'email';
+  }
+
   if (!user) {
-    throw invalidCredentials('The email is unrecognized. Please check the spelling.');
+    throw invalidCredentials('Unrecognized account. Please check the spelling.');
   }
 
   if(user.status === 'waitlist') {
@@ -25,13 +37,24 @@ hooks.set('auth:login', function *(payload) {
     }, 400);
   }
 
-  if(!user.password) {
-    throw invalidCredentials('You signed up through Facebook.');
-  }
+  if(authMethod == 'email') {
+    if(!user.password) {
+      throw invalidCredentials('You signed up through Facebook.');
+    }
 
-  let password = yield bcrypt.compare(payload.password, user.password);
-  if (!password) {
-    throw invalidCredentials('We found an account with that email but the password is incorrect. Please try again.');
+    let password = yield bcrypt.compare(payload.password, user.password);
+    if (!password) {
+      throw invalidCredentials('We found an account with that email but the password is incorrect. Please try again.');
+    }
+  } else {
+    if (!payload.code) {
+      yield user.sendCode();
+      throw error.parse({
+        code    : `AUTH_NEED_CODE`,
+        message : 'Enter the code'
+      }, 400);
+    }
+
   }
 
   yield verifyUser(user, payload);
@@ -81,6 +104,14 @@ function *verifyUser(user, payload) {
   if (!group) {
     throw invalidGroup();
   }
+}
+
+function *getUserByPhone(identifier) {
+  return yield User.findOne({
+    where : {
+      phone : identifier
+    }
+  });
 }
 
 function *getUser(identifier) {

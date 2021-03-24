@@ -1,9 +1,6 @@
 'use strict';
 
-Route.pst('/auth/login', {
-  uses   : 'AuthController@login',
-  params : [ 'identifier', 'password' ]
-});
+Route.pst('/auth/login', { uses   : 'AuthController@login' });
 
 Route.pst('/auth/facebook', {
   uses   : 'AuthController@facebook',
