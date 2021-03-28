@@ -53,8 +53,9 @@ hooks.set('auth:login', function *(payload) {
         code    : `AUTH_NEED_CODE`,
         message : 'Enter the code'
       }, 400);
+    } else if (!(yield user.checkCode(payload.code))) {
+      throw invalidCredentials("Incorrect code");
     }
-
   }
 
   yield verifyUser(user, payload);
