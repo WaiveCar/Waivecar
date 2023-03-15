@@ -12,7 +12,7 @@ You need nvm in order to run this.
      
     $ mysql -uroot
     > create database waivecar_development
-    > create user 'waivecar'@'%' identified by 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X';
+    > create user 'waivecar'@'%' identified by '';
     > grant all on *.* to 'waivecar'@'%';
     $ mysql -uroot waivecar_development < (backup file)
 
@@ -46,7 +46,7 @@ Anyway, getting all the booking start and end times is done through something li
 
     select * from booking_details where booking_id in (
       select id from bookings where 
-        car_id='59000018940C5501' and 
+        car_id='' and 
         status in ('completed', 'closed', 'ended') and 
         created_at > '2017-01-10';
       )
